@@ -1,15 +1,15 @@
 {
   "metadata": {
-    "generated": "2026-03-24T21:35:56.092Z",
-    "proximity_index_hash": "e2647798",
+    "generated": "2026-03-25T11:01:59.269Z",
+    "proximity_index_hash": "0316257f",
     "threshold": 0.7,
     "max_hops": 5,
     "total_pairs_checked": 0,
     "candidates_found": 0,
     "candidates_filtered": 0,
     "orphan_models_count": 1,
-    "orphan_requirements_count": 1,
-    "uncovered_requirements_count": 1,
+    "orphan_requirements_count": 0,
+    "uncovered_requirements_count": 0,
     "non_neighbor_top": 20,
     "fast_path": true
   },
@@ -21,17 +21,7 @@
         "edges": 0
       }
     ],
-    "requirements": [
-      {
-        "id": "PERF-03",
-        "edges": 0
-      }
-    ]
+    "requirements": []
   },
-  "uncovered_requirements": [
-    {
-      "id": "PERF-03",
-      "text": "Solve diagnostic Phase 1 uses direct Bash invocation of nf-solve.cjs for baseline residual computation by default (~60s) with optional full Agent dispatch path when --verbose flag is passed"
-    }
-  ]
+  "uncovered_requirements": []
 }

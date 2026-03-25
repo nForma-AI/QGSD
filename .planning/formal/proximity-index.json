@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-24T22:12:47.735Z",
+  "generated": "2026-03-25T11:07:40.380Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -84,24 +84,24 @@
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-03-24T22:10:45.771Z",
-      "hash": "c4dad2aa"
+      "mtime": "2026-03-25T11:03:24.865Z",
+      "hash": "a7bd89ed"
     },
     "invariant-catalog.json": {
       "mtime": "2026-03-06T14:00:17.868Z",
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-03-24T22:04:52.383Z",
-      "hash": "2a36a6ac"
+      "mtime": "2026-03-25T11:07:16.204Z",
+      "hash": "bb4203a3"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-03-24T22:08:29.706Z",
-      "hash": "f74a531a"
+      "mtime": "2026-03-25T11:02:38.992Z",
+      "hash": "52cab1a7"
     },
     "instrumentation-map.json": {
-      "mtime": "2026-03-24T21:35:59.773Z",
-      "hash": "aab1fd0b"
+      "mtime": "2026-03-25T11:02:04.051Z",
+      "hash": "2a25267f"
     },
     "event-vocabulary.json": {
       "mtime": "2026-03-08T20:28:45.150Z",
@@ -116,18 +116,18 @@
       "hash": "2df5c0d7"
     },
     "git-heatmap.json": {
-      "mtime": "2026-03-24T21:37:23.080Z",
-      "hash": "e9b3deda"
+      "mtime": "2026-03-25T11:03:34.249Z",
+      "hash": "dd4e6f3c"
     },
     "debt.json": {
       "mtime": "2026-03-04T13:33:16.983Z",
       "hash": "4f085cf2"
     },
     "source-annotations": {
-      "mtime": "2026-03-24T22:10:43.695Z"
+      "mtime": "2026-03-25T11:03:18.476Z"
     },
     "code-source-annotations": {
-      "mtime": "2026-03-24T21:46:51.724Z"
+      "mtime": "2026-03-25T11:02:58.054Z"
     }
   },
   "nodes": {
@@ -9021,6 +9021,11 @@
           "source": "traceability-matrix"
         },
         {
+          "to": "test_file::.planning/formal/generated-stubs/SOLVE-22.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
+        },
+        {
           "to": "formal_model::.planning/formal/alloy/hook-module-existence.als",
           "rel": "modeled_by",
           "source": "source-annotation"
@@ -9060,6 +9065,11 @@
           "to": "invariant::MCPDispatchGuardExists",
           "rel": "verified_by",
           "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/SOLVE-23.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         },
         {
           "to": "formal_model::.planning/formal/alloy/hook-module-existence.als",
@@ -30028,6 +30038,11 @@
           "source": "traceability-matrix"
         },
         {
+          "to": "test_file::.planning/formal/generated-stubs/PERF-03.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
+        },
+        {
           "to": "formal_model::.planning/formal/tla/NFSolveFastPath.tla",
           "rel": "modeled_by",
           "source": "source-annotation"
@@ -49741,6 +49756,17 @@
         }
       ]
     },
+    "test_file::.planning/formal/generated-stubs/PERF-03.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/PERF-03.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::PERF-03",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
     "test_file::.planning/formal/generated-stubs/PF-01.stub.test.js": {
       "type": "test_file",
       "id": ".planning/formal/generated-stubs/PF-01.stub.test.js",
@@ -51001,6 +51027,28 @@
       "edges": [
         {
           "to": "requirement::SOLVE-21",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/SOLVE-22.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SOLVE-22.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SOLVE-22",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/SOLVE-23.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SOLVE-23.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SOLVE-23",
           "rel": "tests",
           "source": "unit-test-coverage"
         }

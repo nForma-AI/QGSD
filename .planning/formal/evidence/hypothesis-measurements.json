@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-24T21:47:34.161Z",
+  "generated": "2026-03-25T11:13:36.560Z",
   "total_measured": 107,
   "verdicts": {
     "CONFIRMED": 0,
@@ -531,6 +531,15 @@
       "reason": "formal value not extractable from source model"
     },
     {
+      "assumption_name": "MaxSteps",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
       "assumption_name": "MaxTurnLines",
       "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCStopHook.cfg",
       "formal_value": null,
@@ -912,15 +921,6 @@
       "assumption_name": "p_fail",
       "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/prism/oauth-rotation.pm",
       "formal_value": 0.3,
-      "actual_value": null,
-      "actual_source": null,
-      "verdict": "UNMEASURABLE",
-      "reason": "no matching actual data source found"
-    },
-    {
-      "assumption_name": "max_retries",
-      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/prism/oauth-rotation.pm",
-      "formal_value": 3,
       "actual_value": null,
       "actual_source": null,
       "verdict": "UNMEASURABLE",

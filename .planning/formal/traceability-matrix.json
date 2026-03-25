@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-03-24T22:04:52.366Z",
+    "generated_at": "2026-03-25T11:13:18.912Z",
     "generator_version": "1.1",
     "data_sources": {
       "annotations": {
@@ -12,11 +12,11 @@
         "used_as_fallback": 6
       },
       "check_results": {
-        "entry_count": 215
+        "entry_count": 1072
       },
       "unit_test_coverage": {
         "available": true,
-        "requirements_matched": 408
+        "requirements_matched": 410
       }
     }
   },
@@ -602,7 +602,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -3028,7 +3028,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -3677,7 +3677,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -3880,7 +3880,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -3915,7 +3915,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -4282,7 +4282,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -4516,7 +4516,16 @@
           "latest_result": "pass",
           "check_id": "alloy:hook-module-existence"
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SOLVE-22.stub.test.js",
+            "test_name": "SOLVE-22: hooks/nf-stop.js exists on disk"
+          }
+        ]
+      }
     },
     "SOLVE-23": {
       "id": "SOLVE-23",
@@ -4556,7 +4565,16 @@
           "latest_result": "pass",
           "check_id": "alloy:hook-module-existence"
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SOLVE-23.stub.test.js",
+            "test_name": "SOLVE-23: hooks/nf-mcp-dispatch-guard.js exists on disk"
+          }
+        ]
+      }
     },
     "GUARD-02": {
       "id": "GUARD-02",
@@ -5367,7 +5385,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mcp-environment"
         },
         {
@@ -5395,7 +5413,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mcp-environment"
         },
         {
@@ -5430,7 +5448,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mcp-environment"
         },
         {
@@ -5465,7 +5483,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mcp-environment"
         },
         {
@@ -5500,7 +5518,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mcp-environment"
         },
         {
@@ -5535,14 +5553,14 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mcp-environment"
         },
         {
           "model_file": ".planning/formal/tla/QGSDMCPEnv.tla",
           "property_name": "NoSpuriousConsensus",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -5563,7 +5581,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mcp-environment"
         },
         {
@@ -5598,7 +5616,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mcp-environment"
         },
         {
@@ -5633,7 +5651,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mcp-environment"
         },
         {
@@ -5668,7 +5686,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mcp-environment"
         },
         {
@@ -7487,28 +7505,28 @@
           "property_name": "ThresholdPasses",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/alloy/quorum-votes.als",
           "property_name": "BelowThresholdFails",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "UnanimityMet",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "UnanimityMet",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/petri/quorum-petri-net.dot",
@@ -7536,28 +7554,28 @@
           "property_name": "ThresholdPasses",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/alloy/quorum-votes.als",
           "property_name": "BelowThresholdFails",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "UnanimityMet",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "UnanimityMet",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         }
       ],
       "unit_test_coverage": {
@@ -12157,43 +12175,43 @@
           "model_file": ".planning/formal/tla/NFAccountManager.tla",
           "property_name": "TypeOK",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "tla:account-manager"
+          "latest_result": "error",
+          "check_id": "prism:oauth-rotation"
         },
         {
           "model_file": ".planning/formal/prism/oauth-rotation.props",
           "property_name": "P=? [ F s=1 ]",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "tla:account-manager"
+          "latest_result": "error",
+          "check_id": "prism:oauth-rotation"
         },
         {
           "model_file": ".planning/formal/prism/oauth-rotation.props",
           "property_name": "P=? [ F s=0 ]",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "tla:account-manager"
+          "latest_result": "error",
+          "check_id": "prism:oauth-rotation"
         },
         {
           "model_file": ".planning/formal/prism/oauth-rotation.props",
           "property_name": "R{\"rotations\"}=? [ F s<=1 ]",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "tla:account-manager"
+          "latest_result": "error",
+          "check_id": "prism:oauth-rotation"
         },
         {
           "model_file": ".planning/formal/petri/account-manager-petri-net.dot",
           "property_name": "(model-level)",
           "source": "model-registry",
-          "latest_result": "pass",
-          "check_id": "tla:account-manager"
+          "latest_result": "error",
+          "check_id": "prism:oauth-rotation"
         },
         {
           "model_file": ".planning/formal/prism/oauth-rotation.pm",
           "property_name": "(model-level)",
           "source": "model-registry",
-          "latest_result": "pass",
-          "check_id": "tla:account-manager"
+          "latest_result": "error",
+          "check_id": "prism:oauth-rotation"
         }
       ],
       "unit_test_coverage": {
@@ -12220,8 +12238,8 @@
           "model_file": ".planning/formal/petri/account-manager-petri-net.dot",
           "property_name": "(model-level)",
           "source": "model-registry",
-          "latest_result": "pass",
-          "check_id": "tla:account-manager"
+          "latest_result": "error",
+          "check_id": "prism:oauth-rotation"
         }
       ],
       "unit_test_coverage": {
@@ -14578,7 +14596,7 @@
           "model_file": ".planning/formal/tla/QGSDMCPEnv.tla",
           "property_name": "TypeInvariantHolds",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -14599,7 +14617,7 @@
           "model_file": ".planning/formal/tla/QGSDMCPEnv.tla",
           "property_name": "EventualDecision",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -15197,28 +15215,28 @@
           "model_file": ".planning/formal/tla/QGSDTUISessions.tla",
           "property_name": "TypeOK",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mctuisessions"
         },
         {
           "model_file": ".planning/formal/tla/QGSDTUISessions.tla",
           "property_name": "CreateSession",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mctuisessions"
         },
         {
           "model_file": ".planning/formal/tla/QGSDTUISessions.tla",
           "property_name": "ConnectSession",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mctuisessions"
         },
         {
           "model_file": ".planning/formal/tla/QGSDTUISessions.tla",
           "property_name": "TerminateSession",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "tla:mctuisessions"
         }
       ]
@@ -17405,8 +17423,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/PERF-03.stub.test.js",
+            "test_name": "PERF-03 TypeOK — nf-solve.cjs exists and is loadable source"
+          }
+        ]
       }
     },
     "HEAL-01": {
@@ -17486,29 +17509,29 @@
           "model_file": ".planning/formal/prism/mcp-availability.props",
           "property_name": "S=? [ \"min_quorum_available\" ]",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "prism:mcp-availability"
         },
         {
           "model_file": ".planning/formal/prism/mcp-availability.props",
           "property_name": "S=? [ \"total_outage\" ]",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "prism:mcp-availability"
         },
         {
           "model_file": ".planning/formal/prism/mcp-availability.props",
           "property_name": "S=? [ \"majority_available\" ]",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "prism:mcp-availability"
         },
         {
           "model_file": ".planning/formal/prism/mcp-availability.pm",
           "property_name": "(model-level)",
           "source": "model-registry",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "prism:mcp-availability"
         }
       ],
       "unit_test_coverage": {
@@ -17528,15 +17551,15 @@
           "model_file": ".planning/formal/prism/mcp-availability.props",
           "property_name": "S=? [ \"total_outage\" ]",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "prism:mcp-availability"
         },
         {
           "model_file": ".planning/formal/prism/mcp-availability.pm",
           "property_name": "(model-level)",
           "source": "model-registry",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "prism:mcp-availability"
         }
       ],
       "unit_test_coverage": {
@@ -21637,7 +21660,7 @@
         "VALID-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "tla:mcp-environment"
     },
     ".planning/formal/alloy/misc-behavioral.als::AutoDetect": {
@@ -23190,7 +23213,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "alloy:quorum-votes"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/alloy/quorum-votes.als::BelowThresholdFails": {
       "model_file": ".planning/formal/alloy/quorum-votes.als",
@@ -23201,7 +23224,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "alloy:quorum-votes"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/alloy/quorum-votes.als::ZeroApprovalsFail": {
       "model_file": ".planning/formal/alloy/quorum-votes.als",
@@ -26674,8 +26697,8 @@
         "CRED-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "tla:account-manager"
+      "latest_result": "error",
+      "check_id": "prism:oauth-rotation"
     },
     ".planning/formal/tla/NFAccountManager.tla::ActiveIsPoolMember": {
       "model_file": ".planning/formal/tla/NFAccountManager.tla",
@@ -27089,7 +27112,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "alloy:quorum-votes"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/tla/NFQuorum.tla::QuorumCeilingMet": {
       "model_file": ".planning/formal/tla/NFQuorum.tla",
@@ -28428,7 +28451,7 @@
         "MCPENV-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "tla:mcp-environment"
     },
     ".planning/formal/tla/QGSDMCPEnv.tla::TypeInvariantHolds": {
@@ -28438,7 +28461,7 @@
         "MCPENV-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "tla:mcp-environment"
     },
     ".planning/formal/tla/QGSDMCPEnv.tla::EventualDecision": {
@@ -28448,7 +28471,7 @@
         "MCPENV-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "tla:mcp-environment"
     },
     ".planning/formal/tla/QGSDPromptHook.tla::TypeOK": {
@@ -28541,7 +28564,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "alloy:quorum-votes"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/tla/QGSDQuorum.tla::QuorumCeilingMet": {
       "model_file": ".planning/formal/tla/QGSDQuorum.tla",
@@ -28973,7 +28996,7 @@
         "NAV-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "tla:mctuisessions"
     },
     ".planning/formal/tla/QGSDTUISessions.tla::CreateSession": {
@@ -28983,7 +29006,7 @@
         "NAV-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "tla:mctuisessions"
     },
     ".planning/formal/tla/QGSDTUISessions.tla::ConnectSession": {
@@ -28993,7 +29016,7 @@
         "NAV-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "tla:mctuisessions"
     },
     ".planning/formal/tla/QGSDTUISessions.tla::TerminateSession": {
@@ -29003,7 +29026,7 @@
         "NAV-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "tla:mctuisessions"
     },
     ".planning/formal/tla/TUINavigation.tla::TypeOK": {
@@ -30833,8 +30856,8 @@
         "MCPENV-04"
       ],
       "source": "annotation",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "prism:mcp-availability"
     },
     ".planning/formal/prism/mcp-availability.props::S=? [ \"total_outage\" ]": {
       "model_file": ".planning/formal/prism/mcp-availability.props",
@@ -30844,8 +30867,8 @@
         "FAIL-01"
       ],
       "source": "annotation",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "prism:mcp-availability"
     },
     ".planning/formal/prism/mcp-availability.props::S=? [ \"majority_available\" ]": {
       "model_file": ".planning/formal/prism/mcp-availability.props",
@@ -30854,8 +30877,8 @@
         "MCPENV-04"
       ],
       "source": "annotation",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "prism:mcp-availability"
     },
     ".planning/formal/prism/oauth-rotation.props::P=? [ F s=1 ]": {
       "model_file": ".planning/formal/prism/oauth-rotation.props",
@@ -30864,8 +30887,8 @@
         "CRED-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "tla:account-manager"
+      "latest_result": "error",
+      "check_id": "prism:oauth-rotation"
     },
     ".planning/formal/prism/oauth-rotation.props::P=? [ F s=0 ]": {
       "model_file": ".planning/formal/prism/oauth-rotation.props",
@@ -30874,8 +30897,8 @@
         "CRED-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "tla:account-manager"
+      "latest_result": "error",
+      "check_id": "prism:oauth-rotation"
     },
     ".planning/formal/prism/oauth-rotation.props::R{\"rotations\"}=? [ F s<=1 ]": {
       "model_file": ".planning/formal/prism/oauth-rotation.props",
@@ -30884,8 +30907,8 @@
         "CRED-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "tla:account-manager"
+      "latest_result": "error",
+      "check_id": "prism:oauth-rotation"
     },
     ".planning/formal/prism/observability-delivery.props::S=? [ \"full_delivery\" ]": {
       "model_file": ".planning/formal/prism/observability-delivery.props",
@@ -30988,8 +31011,8 @@
         "CRED-02"
       ],
       "source": "model-registry",
-      "latest_result": "pass",
-      "check_id": "tla:account-manager"
+      "latest_result": "error",
+      "check_id": "prism:oauth-rotation"
     },
     ".planning/formal/petri/quorum-petri-net.dot::(model-level)": {
       "model_file": ".planning/formal/petri/quorum-petri-net.dot",
@@ -31021,8 +31044,8 @@
         "FAIL-01"
       ],
       "source": "model-registry",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "prism:mcp-availability"
     },
     ".planning/formal/prism/oauth-rotation.pm::(model-level)": {
       "model_file": ".planning/formal/prism/oauth-rotation.pm",
@@ -31031,8 +31054,8 @@
         "CRED-01"
       ],
       "source": "model-registry",
-      "latest_result": "pass",
-      "check_id": "tla:account-manager"
+      "latest_result": "error",
+      "check_id": "prism:oauth-rotation"
     },
     ".planning/formal/prism/observability-delivery.pm::(model-level)": {
       "model_file": ".planning/formal/prism/observability-delivery.pm",
@@ -31049,8 +31072,8 @@
     }
   },
   "coverage_summary": {
-    "total_requirements": 408,
-    "covered_count": 408,
+    "total_requirements": 410,
+    "covered_count": 410,
     "coverage_percentage": 100,
     "uncovered_requirements": [],
     "orphan_properties": []
@@ -31488,6 +31511,18 @@
         "requirement_id": "SOLVE-21",
         "direction": "model_claims_requirement",
         "detail": "model-registry lists SOLVE-21 for .planning/formal/alloy/hook-module-existence.als but requirements.json SOLVE-21 does not list .planning/formal/alloy/hook-module-existence.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/hook-module-existence.als",
+        "requirement_id": "SOLVE-22",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists SOLVE-22 for .planning/formal/alloy/hook-module-existence.als but requirements.json SOLVE-22 does not list .planning/formal/alloy/hook-module-existence.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/hook-module-existence.als",
+        "requirement_id": "SOLVE-23",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists SOLVE-23 for .planning/formal/alloy/hook-module-existence.als but requirements.json SOLVE-23 does not list .planning/formal/alloy/hook-module-existence.als in formal_models"
       },
       {
         "model_file": ".planning/formal/alloy/integration-layers.als",
@@ -33321,16 +33356,6 @@
       },
       {
         "type": "unknown_requirement_id",
-        "reference": "SOLVE-22",
-        "referenced_by": "model-registry .planning/formal/alloy/hook-module-existence.als requirements"
-      },
-      {
-        "type": "unknown_requirement_id",
-        "reference": "SOLVE-23",
-        "referenced_by": "model-registry .planning/formal/alloy/hook-module-existence.als requirements"
-      },
-      {
-        "type": "unknown_requirement_id",
         "reference": "GUARD-02",
         "referenced_by": "model-registry .planning/formal/alloy/hook-portability-guard.als requirements"
       },
@@ -33697,8 +33722,8 @@
     ],
     "summary": {
       "total_checked": 638,
-      "asymmetric_count": 355,
-      "stale_count": 101,
+      "asymmetric_count": 357,
+      "stale_count": 99,
       "clean": false
     }
   },
@@ -34345,8 +34370,8 @@
   },
   "coverage_preservation": {
     "baseline_found": true,
-    "baseline_date": "2026-03-24T21:48:27.977Z",
-    "requirements_checked": 506,
+    "baseline_date": "2026-03-25T11:12:41.879Z",
+    "requirements_checked": 507,
     "regressions": [],
     "summary": {
       "total_regressions": 0,

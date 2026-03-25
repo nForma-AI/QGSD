@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-24T22:08:29.701Z",
+  "generated_at": "2026-03-25T11:02:38.988Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -1876,6 +1876,15 @@
         }
       ]
     },
+    "PERF-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PERF-03.stub.test.js",
+          "test_name": "PERF-03 TypeOK — nf-solve.cjs exists and is loadable source"
+        }
+      ]
+    },
     "PF-01": {
       "covered": true,
       "test_cases": [
@@ -2911,6 +2920,24 @@
         }
       ]
     },
+    "SOLVE-22": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SOLVE-22.stub.test.js",
+          "test_name": "SOLVE-22: hooks/nf-stop.js exists on disk"
+        }
+      ]
+    },
+    "SOLVE-23": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SOLVE-23.stub.test.js",
+          "test_name": "SOLVE-23: hooks/nf-mcp-dispatch-guard.js exists on disk"
+        }
+      ]
+    },
     "SPEC-01": {
       "covered": true,
       "test_cases": [
@@ -3675,10 +3702,6 @@
           "test_name": "XPLAT-03: resolve-cli.cjs exists and exports resolveCli"
         }
       ]
-    },
-    "PERF-03": {
-      "covered": false,
-      "test_cases": []
     }
   }
 }

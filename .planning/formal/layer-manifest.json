@@ -1,6 +1,6 @@
 {
   "schema_version": "2",
-  "generated": "2026-03-24T21:35:16.702Z",
+  "generated": "2026-03-25T11:01:20.315Z",
   "layers": {
     "L1": [
       {
@@ -1035,6 +1035,11 @@
         "path": ".planning/formal/alloy/ccr-binary-resolution.als",
         "description": "CCR provider slot dynamic binary path resolution with missing install detection",
         "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFSolveFastPath.tla",
+        "description": "Solve diagnostic fast path: mode selection between direct Bash invocation (~60s) and full Agent dispatch (--verbose)",
+        "grounding_status": "ungrounded"
       }
     ]
   },
@@ -1058,16 +1063,16 @@
   "collapsed_layers": {
     "L2": {
       "reason": "Empty layer — zero entries permanently blocked Gate B (STRUCT-01)",
-      "collapsed_at": "2026-03-24T21:35:16.702Z"
+      "collapsed_at": "2026-03-25T11:01:20.315Z"
     }
   },
   "summary": {
-    "total_models": 206,
+    "total_models": 207,
     "L1_count": 2,
     "L2_count": 0,
-    "L3_count": 204,
+    "L3_count": 205,
     "maturity_distribution": {
-      "0": 171,
+      "0": 172,
       "1": 35
     },
     "spec_modules_with_invariants": 18
