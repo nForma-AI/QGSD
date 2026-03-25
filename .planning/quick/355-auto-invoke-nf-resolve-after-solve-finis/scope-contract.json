@@ -1,0 +1,21 @@
+{
+  "nf/quick-337-fast-path-initial-diagnostic": {
+    "task_id": 355,
+    "task_description": "Auto-invoke nf:resolve after solve finishes iterating",
+    "approach": "Add Phase 6 to solve.md that invokes /nf:resolve via Skill tool after convergence loop completes with non-zero residual, and sync the installed copy",
+    "out_of_scope": [
+      "Changing resolve.md behavior or flags",
+      "Modifying the convergence loop logic",
+      "Adding new resolve modes or arguments"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.9,
+      "routed_through_debug": false
+    },
+    "branches_affected": ["nf/quick-337-fast-path-initial-diagnostic"],
+    "created_at": "2026-03-25T11:48:29.082Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}
