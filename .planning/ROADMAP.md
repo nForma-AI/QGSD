@@ -14,7 +14,7 @@
 
 ## Phases
 
-- [x] **Phase 50: Debug Integration** - /nf:debug absorbs model-driven-fix Phases 1-4 and runs Loop 1 natively for bug reproduction (1 of 2 plans complete)
+- [x] **Phase 50: Debug Integration** - /nf:debug absorbs model-driven-fix Phases 1-4 and runs Loop 1 natively for bug reproduction (2 of 2 plans complete)
 - [ ] **Phase 51: Task Classification** - Haiku subagent classifies tasks and routes bug fixes through the debug pipeline
 - [ ] **Phase 52: Pre-Commit Simulation Gate** - Loop 2 fires as a universal pre-commit quality gate in executor workflows
 - [ ] **Phase 53: Skill Deprecation** - Deprecate /nf:model-driven-fix and rewire all consumers to new integration points
@@ -34,7 +34,7 @@
 
 Plans:
 - [x] 50-01-PLAN.md — Rewrite debug.md Steps A.5-A.8 to absorb model-driven-fix Phases 1-4 (discovery, reproduction, refinement, constraint extraction) ✓ COMPLETED
-- [ ] 50-02-PLAN.md — Wire constraint injection into quorum worker prompts and formal model artifact tracking
+- [x] 50-02-PLAN.md — Wire constraint injection into quorum worker prompts and formal model artifact tracking ✓ COMPLETED
 
 ### Phase 51: Task Classification
 **Goal**: quick.md automatically classifies tasks and routes bug fixes through the debug pipeline while sending features/refactors to normal execution
@@ -86,7 +86,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 50. Debug Integration | 0/2 | Planning complete | - |
+| 50. Debug Integration | 2/2 | Complete ✓ | 2026-03-25 |
 | 51. Task Classification | 0/TBD | Not started | - |
 | 52. Pre-Commit Simulation Gate | 0/TBD | Not started | - |
 | 53. Skill Deprecation | 0/TBD | Not started | - |
