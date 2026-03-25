@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-19)
 Phase: v0.40-03 (1/1 plans complete)
 Plan: 01
 Status: Phase v0.40-03 complete — nf-scope-guard PreToolUse hook warns on out-of-scope edits
-Last activity: 2026-03-25 - Completed quick task 350: Add autoresearch-style iteration to solution-simulation-loop
+Last activity: 2026-03-25 - Completed quick task 351: Enforce FALLBACK-01 in all workflow fail-open rules and add preflight slot/fallback preview display
 
 Progress: [████████████████] Phase v0.40-03 Complete (1/1 plans = 100%)
 
@@ -96,6 +96,7 @@ None currently.
 | 347 | Implement hybrid A+B formal model sync | 2026-03-24 | 1cb41d81 | Pending | [347-implement-hybrid-a-b-formal-model-sync](./quick/347-implement-hybrid-a-b-formal-model-sync/) |
 | 348 | Add autoresearch-style iteration to formal model refinement | 2026-03-24 | 50945418 | Verified | [348-add-autoresearch-style-iteration-to-form](./quick/348-add-autoresearch-style-iteration-to-form/) |
 | 350 | Add autoresearch-style iteration to solution-simulation-loop | 2026-03-25 | 1cd50f66 | Verified | [350-add-autoresearch-style-iteration-to-solu](./quick/350-add-autoresearch-style-iteration-to-solu/) |
+| 351 | Enforce FALLBACK-01 in all workflow fail-open rules and add preflight slot/fallback preview display | 2026-03-25 | e107b7f1 | Verified | [351-enforce-fallback-01-in-all-workflow-fail](./quick/351-enforce-fallback-01-in-all-workflow-fail/) |
 
 ## Session Continuity
 
