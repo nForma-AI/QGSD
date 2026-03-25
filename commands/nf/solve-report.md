@@ -66,6 +66,7 @@ F -> C (Formal->Code)       {N}    {M}    {delta}   [status]
 R -> D (Req->Docs)          {N}    {M}    {delta}   [status]
 D -> C (Docs->Code)         {N}    {M}    {delta}   [status]
 P -> F (Prod->Formal)       {N}    {M}    {delta}   [status]
+B -> F (Bug->Formal)        {N}    {M}    {delta}   [status]
   Forward subtotal:         {N}    {M}    {delta}
 ─ Reverse Discovery ────────────────────────────────────
 C -> R (Code->Req)          {N}    {M}    {delta}   [status]
@@ -73,14 +74,16 @@ T -> R (Test->Req)          {N}    {M}    {delta}   [status]
 D -> R (Docs->Req)          {N}    {M}    {delta}   [status]
   Discovery subtotal:       {N}    {M}    {delta}
 ─ Layer Alignment ──────────────────────────────────────
-L1 -> L2 (Gate A)           {N}    {M}    {delta}   [status]
-L2 -> L3 (Gate B)           {N}    {M}    {delta}   [status]
+L1 -> L3 (Gate A)           {N}    {M}    {delta}   [status]
 L3 -> TC (Gate C)           {N}    {M}    {delta}   [status]
   Alignment subtotal:       {N}    {M}    {delta}
 ─ Informational Signals (not gaps) ────────────────────
+PMG (Per-Model Gates)        {N}    {M}    {delta}   [signal]
 G -> H (Git Heatmap)         {N}    {M}    {delta}   [signal]
 GitHist (TLA+ drift)         {N}    {M}    {delta}   [signal]
+F-Lint (Formal Model Lint)   {N}    {M}    {delta}   [signal]
 Hazard (FMEA high-RPN)       {N}    {M}    {delta}   [signal]
+H -> M (Hazard->Model)       {N}    {M}    {delta}   [signal]
   Signal count:              {N}    {M}    {delta}
 ═════════════════════════════════════════════════════════
 Grand total (forward):       {N}    {M}    {delta}
