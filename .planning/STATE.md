@@ -70,7 +70,7 @@ None yet.
 | 352 | Add TLC process timeout and model size guards to formal verification spawning | 2026-03-25 | 62a12a4a | Verified | [352-add-tlc-process-timeout-and-model-size-g](./quick/352-add-tlc-process-timeout-and-model-size-g/) |
 | 353 | Add state-space preflight guard to run-tlc.cjs | 2026-03-25 | 1d52a48e | Verified | [353-add-state-space-preflight-guard-to-run-t](./quick/353-add-state-space-preflight-guard-to-run-t/) |
 | 354 | Add 5 missing layers to solve-report table renderer | 2026-03-25 | a931c0cc | Verified | [354-add-5-missing-layers-p-to-f-b-to-f-per-m](./quick/354-add-5-missing-layers-p-to-f-b-to-f-per-m/) |
-| 355 | Auto-invoke nf:resolve after solve finishes iterating | 2026-03-25 | 72a9a6d8 | Pending | [355-auto-invoke-nf-resolve-after-solve-finis](./quick/355-auto-invoke-nf-resolve-after-solve-finis/) |
+| 355 | Auto-invoke nf:resolve after solve finishes iterating | 2026-03-25 | 72a9a6d8 | Verified | [355-auto-invoke-nf-resolve-after-solve-finis](./quick/355-auto-invoke-nf-resolve-after-solve-finis/) |
 
 ### Blockers/Concerns
 
