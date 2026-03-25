@@ -8,6 +8,12 @@
  *
  * Phase 4.5 of model-driven-fix workflow.
  *
+ * Features:
+ * - onTweakFix callback for evolving fix ideas between iterations
+ * - In-memory rollback tracking on regression (fewer gates passing)
+ * - TSV-as-memory logging (simulation-results.tsv)
+ * - When-stuck protocol after 3+ consecutive same-gate failures
+ *
  * Module exports: { simulateSolutionLoop }
  */
 
@@ -15,6 +21,88 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const os = require('os');
+
+// ---- TSV Logging ----
+
+const SIM_TSV_HEADER = 'iteration\tgate1\tgate2\tgate3\tgates_passing\tstatus\tdescription\n';
+
+/**
+ * Ensure the TSV file exists with a header row.
+ * @param {string} tsvPath - Path to simulation-results.tsv
+ */
+function ensureSimTsvHeader(tsvPath) {
+  try {
+    if (!fs.existsSync(tsvPath)) {
+      fs.writeFileSync(tsvPath, SIM_TSV_HEADER, 'utf-8');
+    }
+  } catch (_err) {
+    process.stderr.write(`[solution-simulation-loop] Warning: could not write TSV header: ${_err.message}\n`);
+  }
+}
+
+/**
+ * Append a TSV row to the results log.
+ * @param {string} tsvPath - Path to simulation-results.tsv
+ * @param {Object} row - { iteration, gate1, gate2, gate3, gates_passing, status, description }
+ */
+function appendSimTsvRow(tsvPath, row) {
+  try {
+    const line = `${row.iteration}\t${row.gate1}\t${row.gate2}\t${row.gate3}\t${row.gates_passing}\t${row.status}\t${row.description}\n`;
+    fs.appendFileSync(tsvPath, line, 'utf-8');
+  } catch (_err) {
+    process.stderr.write(`[solution-simulation-loop] Warning: could not append TSV row: ${_err.message}\n`);
+  }
+}
+
+/**
+ * Parse TSV file into array of row objects.
+ * @param {string} tsvPath - Path to simulation-results.tsv
+ * @returns {Array<Object>} Parsed rows (excluding header)
+ */
+function parseSimTsv(tsvPath) {
+  try {
+    if (!fs.existsSync(tsvPath)) return [];
+    const content = fs.readFileSync(tsvPath, 'utf-8');
+    const lines = content.trim().split('\n');
+    if (lines.length <= 1) return []; // Header only
+    const headers = lines[0].split('\t');
+    return lines.slice(1).map(line => {
+      const values = line.split('\t');
+      const row = {};
+      headers.forEach((h, i) => { row[h] = values[i] || ''; });
+      return row;
+    });
+  } catch (_err) {
+    return [];
+  }
+}
+
+// ---- Gate Pass Count Helper ----
+
+/**
+ * Count how many gates are passing from a verdict object.
+ * @param {Object} verdict - Gate runner verdict
+ * @returns {number} 0-3
+ */
+function countGatesPassing(verdict) {
+  let count = 0;
+  if (verdict.gate1_invariants?.passed === true) count++;
+  if (verdict.gate2_bug_resolved?.passed === true) count++;
+  if (verdict.gate3_neighbors?.passed === true) count++;
+  return count;
+}
+
+/**
+ * Compute a failure signature string from a verdict (for stuck detection).
+ * @param {Object} verdict
+ * @returns {string} e.g. "gate1:PASS,gate2:FAIL,gate3:PASS"
+ */
+function failureSignature(verdict) {
+  const g1 = verdict.gate1_invariants?.passed === true ? 'PASS' : 'FAIL';
+  const g2 = verdict.gate2_bug_resolved?.passed === true ? 'PASS' : 'FAIL';
+  const g3 = verdict.gate3_neighbors?.passed === true ? 'PASS' : 'FAIL';
+  return `gate1:${g1},gate2:${g2},gate3:${g3}`;
+}
 
 /**
  * Simulate solution in model space through iterating cycles.
@@ -25,8 +113,9 @@ const os = require('os');
  *   - reproducingModelPath: string (path to bug-reproducing model)
  *   - neighborModelPaths: array (paths to neighbor models for regression testing)
  *   - bugTracePath: string (path to ITF bug trace)
- *   - maxIterations: number (default from config.json or 3)
+ *   - maxIterations: number (default from config.json or 10)
  *   - formalism: 'tla'|'alloy' (model formalism)
+ *   - onTweakFix: async (fixIdea, iterationContext) => revisedFixIdea|null (optional)
  *
  * @param {Object} deps (optional)
  *   - normalizer: { normalizeFixIntent(intent, context) } for dependency injection
@@ -38,7 +127,10 @@ const os = require('os');
  *   iterations: Array<{iteration, invariants, bugResolved, neighbors, status}>,
  *   finalVerdict: Object,
  *   escalationReason: string|null,
- *   sessionId: string
+ *   sessionId: string,
+ *   stuck_reason: string|null,
+ *   bestGatesPassing: number,
+ *   tsvPath: string
  * }>}
  */
 async function simulateSolutionLoop(input, deps) {
@@ -49,7 +141,8 @@ async function simulateSolutionLoop(input, deps) {
     neighborModelPaths = [],
     bugTracePath,
     maxIterations: inputMaxIterations,
-    formalism
+    formalism,
+    onTweakFix
   } = input;
 
   // Step 0: Validate inputs
@@ -67,22 +160,21 @@ async function simulateSolutionLoop(input, deps) {
   }
 
   // Step 1: Initialize
-  // Generate sessionId with 8 bytes (96-bit entropy)
   const sessionId = crypto.randomBytes(8).toString('hex');
 
-  // Read maxIterations from config, fall back to input or default 3
+  // Read maxIterations from config, fall back to input or default 10
   let maxIterations = inputMaxIterations;
   if (!maxIterations) {
     try {
       const configPath = path.join(process.cwd(), '.planning', 'config.json');
       if (fs.existsSync(configPath)) {
         const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-        maxIterations = config.max_iterations || 3;
+        maxIterations = config.max_iterations || 10;
       } else {
-        maxIterations = 3;
+        maxIterations = 10;
       }
     } catch (e) {
-      maxIterations = 3;
+      maxIterations = 10;
     }
   }
 
@@ -99,22 +191,94 @@ async function simulateSolutionLoop(input, deps) {
   console.log(`Session: ${sessionId}`);
   console.log('');
 
-  // Step 2: Set up dependency injection (use provided modules or require real ones)
+  // Step 2: Set up dependency injection
   const normalizer = deps?.normalizer || require('./intent-normalizer.cjs');
   const generator = deps?.generator || require('./consequence-model-generator.cjs');
   const gateRunner = deps?.gateRunner || require('./convergence-gate-runner.cjs');
+
+  // Set up TSV logging
+  const modelDir = path.dirname(reproducingModelPath);
+  const tsvPath = path.join(modelDir, 'simulation-results.tsv');
+  ensureSimTsvHeader(tsvPath);
 
   const iterations = [];
   let converged = false;
   let escalationReason = null;
   let finalVerdict = null;
+  let bestGatesPassing = 0;
+  let bestVerdict = null;
+  let previousGatesPassing = 0;
+  let previousFailureSig = null;
+  let sameGateFailureStreak = 0;
+  let stuck_reason = null;
+  let currentFixIdea = fixIdea;
 
   // Step 3: Main iteration loop
   for (let i = 1; i <= maxIterations; i++) {
-    // 3a: Normalize fix intent
+    // 3a: If onTweakFix is provided and this is not the first iteration, invoke it
+    if (i > 1 && typeof onTweakFix === 'function') {
+      const prevIteration = iterations[iterations.length - 1];
+      const prevVerdict = prevIteration.verdict;
+
+      const gateResults = {
+        gate1: prevVerdict.gate1_invariants?.passed === true,
+        gate2: prevVerdict.gate2_bug_resolved?.passed === true,
+        gate3: prevVerdict.gate3_neighbors?.passed === true
+      };
+
+      const iterationContext = {
+        iteration: i,
+        gateResults,
+        gatesPassing: countGatesPassing(prevVerdict),
+        tsvHistory: parseSimTsv(tsvPath),
+        consecutiveStuckCount: sameGateFailureStreak
+      };
+
+      let revisedFixIdea;
+      try {
+        revisedFixIdea = await onTweakFix(currentFixIdea, iterationContext);
+      } catch (e) {
+        // onTweakFix error — log and continue with current fix idea
+        process.stderr.write(`[solution-simulation-loop] onTweakFix error on iteration ${i}: ${e.message}\n`);
+        revisedFixIdea = undefined; // treat as no change
+      }
+
+      if (revisedFixIdea === null) {
+        // Null return = skip this iteration as no-op
+        const tsvRow = {
+          iteration: i,
+          gate1: '--',
+          gate2: '--',
+          gate3: '--',
+          gates_passing: 0,
+          status: 'no-op',
+          description: 'no-op'
+        };
+        appendSimTsvRow(tsvPath, tsvRow);
+
+        iterations.push({
+          iteration: i,
+          invariants: '--',
+          bugResolved: '--',
+          neighbors: '--',
+          status: 'NO-OP',
+          verdict: null
+        });
+
+        console.log(`Iteration ${i}/${maxIterations}: Invariants (--) | Bug Resolved (--) | Neighbors (--) | NO-OP`);
+        continue;
+      }
+
+      if (revisedFixIdea !== undefined && typeof revisedFixIdea === 'string') {
+        currentFixIdea = revisedFixIdea;
+      }
+      // If undefined (error or no return), keep currentFixIdea unchanged
+    }
+
+    // 3b: Normalize fix intent
     let normalizedIntent;
     try {
-      normalizedIntent = normalizer.normalizeFixIntent(fixIdea, {
+      normalizedIntent = normalizer.normalizeFixIntent(currentFixIdea, {
         bugDescription,
         reproducingModelPath
       });
@@ -123,10 +287,9 @@ async function simulateSolutionLoop(input, deps) {
       break;
     }
 
-    // Reuse mutations from prior iterations, or use freshly normalized ones
     const mutations = normalizedIntent.mutations;
 
-    // 3b: Generate consequence model
+    // 3c: Generate consequence model
     let consequenceResult;
     try {
       consequenceResult = generator.generateConsequenceModel(
@@ -139,7 +302,7 @@ async function simulateSolutionLoop(input, deps) {
       break;
     }
 
-    // 3c: Run convergence gates
+    // 3d: Run convergence gates
     let verdict;
     try {
       verdict = await gateRunner.runConvergenceGates(
@@ -155,9 +318,7 @@ async function simulateSolutionLoop(input, deps) {
         }
       );
     } catch (e) {
-      // Gate runner threw an error (not an unavailability signal)
       if (e.message && e.message.includes('ResolvedAtWriteOnce')) {
-        // This is a formal invariant violation
         escalationReason = `Formal invariant violation: ${e.message}`;
       } else {
         escalationReason = `Convergence gate execution failed at iteration ${i}: ${e.message}`;
@@ -165,7 +326,7 @@ async function simulateSolutionLoop(input, deps) {
       break;
     }
 
-    // 3d: Display iteration row
+    // 3e: Compute gate pass counts and status labels
     const invariantsStatus = verdict.gate1_invariants?.passed === true ? 'PASS'
       : verdict.gate1_invariants?.passed === false ? 'FAIL' : '--';
     const bugResolvedStatus = verdict.gate2_bug_resolved?.passed === true ? 'PASS'
@@ -173,12 +334,46 @@ async function simulateSolutionLoop(input, deps) {
     const neighborsStatus = verdict.gate3_neighbors?.passed === true ? 'PASS'
       : verdict.gate3_neighbors?.passed === false ? 'FAIL' : '--';
 
+    const currentGatesPassing = countGatesPassing(verdict);
+
+    // 3f: Determine iteration status with rollback tracking
     let status = 'FAILED';
     if (verdict.converged === true) {
       status = 'CONVERGED';
     } else if (verdict.unavailable === true) {
       status = 'UNAVAILABLE';
+    } else if (i > 1 && currentGatesPassing < previousGatesPassing) {
+      // Regression detected — fewer gates passing than previous iteration
+      status = 'DISCARDED';
+    } else {
+      status = 'KEPT';
     }
+
+    // Update best tracking
+    if (currentGatesPassing >= bestGatesPassing) {
+      bestGatesPassing = currentGatesPassing;
+      bestVerdict = verdict;
+    }
+
+    // Update previousGatesPassing for next iteration
+    previousGatesPassing = currentGatesPassing;
+
+    // 3g: TSV logging
+    const descTruncated = currentFixIdea.length > 80 ? currentFixIdea.slice(0, 80) : currentFixIdea;
+    const tsvStatus = status === 'CONVERGED' ? 'converged'
+      : status === 'UNAVAILABLE' ? 'unavailable'
+      : status === 'DISCARDED' ? 'discarded'
+      : 'kept';
+
+    appendSimTsvRow(tsvPath, {
+      iteration: i,
+      gate1: invariantsStatus,
+      gate2: bugResolvedStatus,
+      gate3: neighborsStatus,
+      gates_passing: currentGatesPassing,
+      status: tsvStatus,
+      description: descTruncated
+    });
 
     const iterationRecord = {
       iteration: i,
@@ -193,18 +388,38 @@ async function simulateSolutionLoop(input, deps) {
 
     console.log(`Iteration ${i}/${maxIterations}: Invariants (${invariantsStatus}) | Bug Resolved (${bugResolvedStatus}) | Neighbors (${neighborsStatus}) | ${status}`);
 
-    // 3e: Check outcome
+    // 3h: Check outcome
     if (verdict.converged === true) {
-      // Convergence achieved
       converged = true;
       finalVerdict = verdict;
       break;
     } else if (verdict.unavailable === true) {
-      // HaikuUnavailableNoCorruption: dependency became unavailable
       escalationReason = `Dependency unavailable: ${verdict.gate1_invariants?.details || 'external service'}. Simulation paused. All state preserved.`;
       finalVerdict = verdict;
       break;
-    } else if (i === maxIterations) {
+    }
+
+    // 3i: When-stuck detection
+    const currentSig = failureSignature(verdict);
+    if (previousFailureSig === currentSig) {
+      sameGateFailureStreak++;
+    } else {
+      sameGateFailureStreak = 1;
+    }
+    previousFailureSig = currentSig;
+
+    if (sameGateFailureStreak >= 3) {
+      const recentTsv = parseSimTsv(tsvPath);
+      const last5 = recentTsv.slice(-5);
+      stuck_reason = `3+ consecutive iterations with same gate failure pattern (${currentSig}). Last ${last5.length} entries:\n` +
+        last5.map(r => `  iter=${r.iteration} gate1=${r.gate1} gate2=${r.gate2} gate3=${r.gate3} status=${r.status}`).join('\n');
+
+      console.log(`\nSTUCK: ${stuck_reason}`);
+      finalVerdict = verdict;
+      break;
+    }
+
+    if (i === maxIterations) {
       // Last iteration and not converged
       const failedGates = [];
       if (!verdict.gate1_invariants?.passed) failedGates.push('Invariants');
@@ -231,6 +446,8 @@ async function simulateSolutionLoop(input, deps) {
   console.log('');
   if (converged) {
     console.log(`✓ Fix CONVERGED after ${iterations.length} iteration(s). Consequence model verified at: ${finalVerdict?.writeOnceTimestamp || 'verified'}`);
+  } else if (stuck_reason) {
+    console.log(`⚠ STUCK: ${stuck_reason}`);
   } else if (escalationReason && escalationReason.includes('unavailable')) {
     console.log(`⏸ PAUSED: ${escalationReason}`);
     console.log('');
@@ -259,6 +476,7 @@ async function simulateSolutionLoop(input, deps) {
     totalIterations: iterations.length,
     maxIterations,
     escalationReason,
+    stuck_reason,
     iterations: iterations.map(iter => ({
       iteration: iter.iteration,
       invariants: iter.invariants,
@@ -280,7 +498,10 @@ async function simulateSolutionLoop(input, deps) {
     iterations,
     finalVerdict: finalVerdict || null,
     escalationReason,
-    sessionId
+    sessionId,
+    stuck_reason: stuck_reason || null,
+    bestGatesPassing,
+    tsvPath
   };
 }
 
