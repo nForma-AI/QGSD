@@ -6,6 +6,26 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.41.1] - 2026-03-26 — Risk-Based Adaptive Quorum Fan-Out
+
+### Added
+- **Risk classifier** — Haiku subagent in quick workflow Step 2.7 classifies tasks as low/medium/high risk based on file count, task type, requirements impact, and scope
+- **Adaptive quorum fan-out** — Step 5.7 dispatches low=1 (skip quorum), medium=3, high=5 participants based on risk level
+- **`--force-quorum` flag** — Overrides low risk classification to medium, forcing external quorum dispatch
+- **Quorum audit logging** — Structured audit log emitted for every quorum reduction or skip with risk level, reason, and fan-out count
+- **Risk guardrails** — ROADMAP, formal model, hook, and workflow files can never be classified as low risk
+- **Scope contract risk fields** — `risk_level` and `risk_reason` persisted in scope-contract.json
+- **Graph-first discovery** — formal-scope-scan.cjs uses unified semantic+graph search module shared with candidate-discovery.cjs
+- **Automation-first verification** — verify-work and execute-phase workflows prefer Playwright/agent-browser over manual testing
+
+### Changed
+- **quorum-dispatch.md Section 3** — Updated fan-out mapping: low=1/skip, medium=3, high=5 (previously low=2, high=MAX_QUORUM_SIZE)
+- **Quorum timeout defaults** — Increased from 30s to 300s for slot worker dispatch
+
+### Fixed
+- **Formal scope scan gap** — Allow `formal_artifacts: create` when scope-scan returns empty (new model bootstrapping)
+- **Orphan requirements** — Triaged 48 orphan requirements across 6 category groups
+
 ## [0.41.0] - 2026-03-25 — Unified Autoresearch Execution Pipeline
 
 ### Added
