@@ -4,6 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { keywordOverlap } = require('./formal-graph-search.cjs');
 
 const FORMAL_DIR = path.join(process.cwd(), '.planning', 'formal');
 const PROXIMITY_INDEX_PATH = path.join(FORMAL_DIR, 'proximity-index.json');
@@ -15,50 +16,7 @@ const OUTPUT_PATH = path.join(FORMAL_DIR, 'candidates.json');
 // Core discovery logic (exported for testability)
 // ─────────────────────────────────────────────────────────────────────────────
 
-/**
- * Keyword pre-screen: extract key terms from requirement text and model file,
- * compute overlap. Zero overlap = auto-reject.
- * @param {string} modelPath - Path to formal model file
- * @param {string} reqText - Requirement text
- * @returns {boolean} true if there is meaningful keyword overlap
- */
-function keywordOverlap(modelPath, reqText) {
-  // Extract terms from requirement (3+ char words, lowercased, deduplicated)
-  const STOP_WORDS = new Set(['the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'can', 'has', 'her', 'was', 'one', 'our', 'out', 'with', 'that', 'this', 'from', 'they', 'been', 'have', 'its', 'will', 'would', 'could', 'should', 'each', 'which', 'their', 'there', 'when', 'must', 'shall']);
-  const extractTerms = (text) => {
-    if (!text) return new Set();
-    return new Set(
-      text.toLowerCase()
-        .replace(/[^a-z0-9\s-_]/g, ' ')
-        .split(/\s+/)
-        .filter(w => w.length >= 3 && !STOP_WORDS.has(w))
-    );
-  };
-
-  const reqTerms = extractTerms(reqText);
-  if (reqTerms.size === 0) return true; // Can't filter if no terms
-
-  // Read model file content
-  let modelContent = '';
-  try {
-    const fullPath = path.join(process.cwd(), modelPath);
-    modelContent = fs.readFileSync(fullPath, 'utf8');
-  } catch {
-    return true; // Can't read file = don't filter
-  }
-
-  const modelTerms = extractTerms(modelContent);
-  if (modelTerms.size === 0) return true;
-
-  // Count overlapping terms
-  let overlap = 0;
-  for (const term of reqTerms) {
-    if (modelTerms.has(term)) overlap++;
-  }
-
-  // Zero overlap = reject
-  return overlap > 0;
-}
+// Note: keywordOverlap is imported from formal-graph-search.cjs
 
 /**
  * Scan formal model source files for requirement ID mentions.

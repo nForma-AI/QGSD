@@ -7,6 +7,7 @@ const { spawnSync, execFileSync } = require('child_process');
 const os = require('os');
 
 const crypto = require('crypto');
+const { reachFiltered, proximityScore, graphDiscoverModules } = require('./formal-graph-search.cjs');
 
 const ROOT = process.cwd();
 const SPEC_DIR = path.join(ROOT, '.planning', 'formal', 'spec');
@@ -163,86 +164,6 @@ function loadProximityIndex() {
 }
 
 /**
- * BFS reach from a node, up to maxDepth hops, filtered by type.
- */
-function reachFiltered(index, startKey, maxDepth, typeFilter) {
-  const results = [];
-  const visited = new Set([startKey]);
-  let frontier = [{ key: startKey, depth: 0 }];
-
-  while (frontier.length > 0) {
-    const nextFrontier = [];
-    for (const { key, depth } of frontier) {
-      if (depth >= maxDepth) continue;
-      const node = index.nodes[key];
-      if (!node) continue;
-      for (const edge of node.edges) {
-        if (visited.has(edge.to)) continue;
-        visited.add(edge.to);
-        const target = index.nodes[edge.to];
-        if (!target) continue;
-        const d = depth + 1;
-        if (typeFilter.includes(target.type)) {
-          results.push({ key: edge.to, type: target.type, rel: edge.rel, depth: d });
-        }
-        nextFrontier.push({ key: edge.to, depth: d });
-      }
-    }
-    frontier = nextFrontier;
-  }
-
-  return results;
-}
-
-/**
- * Compute proximity score between two nodes using edge weights and decay.
- * Uses BFS with weighted propagation — first path found (shortest) wins.
- */
-function proximityScore(index, fromKey, toKey) {
-  const EDGE_WEIGHTS = {
-    owns: 1.0, owned_by: 1.0,
-    contains: 1.0, in_file: 1.0,
-    emits: 0.9, emitted_by: 0.9,
-    maps_to: 0.9, mapped_from: 0.9,
-    declared_in: 0.9,
-    modeled_by: 0.8, models: 0.8,
-    declares: 0.8, declared_by: 0.8,
-    verified_by: 0.8, verifies: 0.8,
-    tested_by: 0.7, tests: 0.7,
-    triggers: 0.7, triggered_by: 0.7,
-    transitions: 0.6,
-    describes: 0.5, described_by: 0.5,
-    constrains: 0.5, constrained_by: 0.5,
-    scores: 0.4, scored_by: 0.4,
-    affects: 0.4, affected_by: 0.4
-  };
-  const DECAY = 0.7;
-
-  if (fromKey === toKey) return 1.0;
-  const visited = new Set([fromKey]);
-  const queue = [{ key: fromKey, score: 1.0 }];
-
-  while (queue.length > 0) {
-    const { key, score } = queue.shift();
-    const node = index.nodes[key];
-    if (!node) continue;
-
-    for (const edge of node.edges) {
-      if (visited.has(edge.to)) continue;
-      visited.add(edge.to);
-      const edgeWeight = EDGE_WEIGHTS[edge.rel] || 0.3;
-      const nextScore = score * edgeWeight * DECAY;
-      if (edge.to === toKey) return nextScore;
-      if (nextScore > 0.01) {
-        queue.push({ key: edge.to, score: nextScore });
-      }
-    }
-  }
-
-  return 0;
-}
-
-/**
  * Enrich scope-scan matches with proximity index data.
  * Also discovers modules missed by token matching via graph walks from --files.
  */
@@ -251,6 +172,23 @@ function enrichWithProximityIndex(matches, files, tokens) {
   if (!index || !index.nodes) return matches;
 
   const matchedModules = new Set(matches.map(m => m.module));
+
+  // Graph-first discovery: walk from description-derived concept nodes to formal_module nodes
+  if (tokens.length > 0) {
+    const discovered = graphDiscoverModules(index, tokens, '');
+    for (const d of discovered) {
+      if (!matchedModules.has(d.module)) {
+        matchedModules.add(d.module);
+        const invariantsPath = '.planning/formal/spec/' + d.module + '/invariants.md';
+        matches.push({
+          module: d.module,
+          path: invariantsPath,
+          matched_by: 'graph_discovery',
+          discovered_via: d.discoveredVia
+        });
+      }
+    }
+  }
 
   // Walk from provided --files to discover formal_modules via graph
   if (files.length > 0) {
@@ -317,7 +255,7 @@ function enrichWithProximityIndex(matches, files, tokens) {
 
   // Sort: direct matches first (source_file > concept > module_name > proximity_graph), then by score
   matches.sort((a, b) => {
-    const weights = { source_file: 3, concept: 2, module_name: 1, proximity_graph: 0 };
+    const weights = { source_file: 4, concept: 3, module_name: 2, graph_discovery: 1, proximity_graph: 0 };
     const aWeight = weights[a.matched_by] || 0;
     const bWeight = weights[b.matched_by] || 0;
     if (aWeight !== bWeight) return bWeight - aWeight;
