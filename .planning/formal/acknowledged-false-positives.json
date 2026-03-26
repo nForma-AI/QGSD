@@ -392,6 +392,78 @@
       "value": "1e87ef8638400298",
       "reason": "Acknowledged via TUI",
       "acknowledged_at": "2026-03-25T11:29:12.204Z"
+    },
+    {
+      "source": "D->R",
+      "value": "c1addb2c3278cdc6",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-26T10:22:09.689Z"
+    },
+    {
+      "source": "D->R",
+      "value": "194e14bc2c1cf0d8",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-26T10:22:09.690Z"
+    },
+    {
+      "source": "D->R",
+      "value": "ed0c79780491f602",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-26T10:22:09.690Z"
+    },
+    {
+      "source": "D->R",
+      "value": "5d7ff7cc8312db4f",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-26T10:22:09.690Z"
+    },
+    {
+      "source": "D->R",
+      "value": "111b9ef63d874fb7",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-26T10:22:09.691Z"
+    },
+    {
+      "source": "D->R",
+      "value": "7ab1ed566fb26e59",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-26T10:22:09.691Z"
+    },
+    {
+      "source": "D->R",
+      "value": "c2867b71d5a9ba54",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-26T10:22:09.691Z"
+    },
+    {
+      "source": "D->R",
+      "value": "69a61fc1d5803594",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-26T10:22:09.691Z"
+    },
+    {
+      "source": "D->R",
+      "value": "af907e7e3d53d06f",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-26T10:22:09.692Z"
+    },
+    {
+      "source": "D->R",
+      "value": "e6eca5e6932d066a",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-26T10:22:09.692Z"
+    },
+    {
+      "source": "D->R",
+      "value": "1e87ef8638400298",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-26T10:40:10.584Z"
+    },
+    {
+      "source": "D->R",
+      "value": "3a25d26471d2efe1",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-26T10:40:10.585Z"
     }
   ],
   "patterns": [

@@ -561,6 +561,191 @@
       "source_scanner": "C_to_R+T_to_R",
       "date": "2026-03-26T10:07:59.157Z",
       "category": "A"
+    },
+    {
+      "id": "BTF-01",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T10:47:09.127Z"
+    },
+    {
+      "id": "BTF-02",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T10:47:09.128Z"
+    },
+    {
+      "id": "BTF-03",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T10:47:09.128Z"
+    },
+    {
+      "id": "BTF-04",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T10:47:09.128Z"
+    },
+    {
+      "id": "CLINK-01",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T10:55:04.659Z"
+    },
+    {
+      "id": "CLINK-02",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T10:55:04.660Z"
+    },
+    {
+      "id": "FPTUNE-01",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T10:55:04.660Z"
+    },
+    {
+      "id": "FPTUNE-02",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T10:55:04.660Z"
+    },
+    {
+      "id": "FPTUNE-03",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T10:55:04.660Z"
+    },
+    {
+      "id": "GPROMO-01",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T10:55:04.660Z"
+    },
+    {
+      "id": "GPROMO-02",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T10:55:04.660Z"
+    },
+    {
+      "id": "GPROMO-03",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T10:55:04.660Z"
+    },
+    {
+      "id": "TLINK-01",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T10:55:04.660Z"
+    },
+    {
+      "id": "TLINK-03",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T10:55:04.660Z"
+    },
+    {
+      "id": "HTARGET-02",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T10:55:04.660Z"
+    },
+    {
+      "id": "ROOT-02",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T10:55:04.660Z"
+    },
+    {
+      "id": "DEPR-01",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T11:07:24.830Z"
+    },
+    {
+      "id": "DEPR-02",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T11:07:24.830Z"
+    },
+    {
+      "id": "DEPR-03",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T11:07:24.830Z"
+    },
+    {
+      "id": "SCOPE-01",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T11:11:18.926Z"
+    },
+    {
+      "id": "SCOPE-02",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T11:11:18.927Z"
+    },
+    {
+      "id": "SCOPE-03",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T11:11:18.927Z"
+    },
+    {
+      "id": "INTENT-01",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T11:11:18.927Z"
+    },
+    {
+      "id": "INTENT-02",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T11:11:18.927Z"
+    },
+    {
+      "id": "INTENT-03",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T11:11:18.927Z"
+    },
+    {
+      "id": "SIM-01",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T11:11:18.927Z"
+    },
+    {
+      "id": "SIM-02",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T11:11:18.927Z"
+    },
+    {
+      "id": "SIM-03",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T11:11:18.927Z"
+    },
+    {
+      "id": "SIM-04",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T11:11:18.927Z"
+    },
+    {
+      "id": "REG-01",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T11:11:18.927Z"
+    },
+    {
+      "id": "REG-02",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T11:11:18.927Z"
+    },
+    {
+      "id": "REG-03",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T11:11:18.927Z"
+    },
+    {
+      "id": "FND-01",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T11:13:19.779Z"
+    },
+    {
+      "id": "FND-02",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T11:13:19.780Z"
+    },
+    {
+      "id": "FND-03",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T11:13:19.780Z"
+    },
+    {
+      "id": "QPREC-02",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T11:13:19.780Z"
+    },
+    {
+      "id": "QPREC-03",
+      "reason": "implementation_structure",
+      "acknowledged_at": "2026-03-26T11:13:19.780Z"
     }
   ]
 }

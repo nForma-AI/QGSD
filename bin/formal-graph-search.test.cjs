@@ -1,4 +1,5 @@
 'use strict';
+/** @requirement SOLVE-01 — validates BFS graph traversal and semantic search in formal-graph-search.cjs */
 
 const { describe, it, beforeEach, afterEach } = require('node:test');
 const assert = require('node:assert');

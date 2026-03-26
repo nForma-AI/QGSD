@@ -3528,7 +3528,18 @@
       "requirements": [
         "BML-01",
         "BML-02",
-        "BML-03"
+        "BML-03",
+        "DBG-01",
+        "DBG-02",
+        "DBG-03",
+        "DBG-04",
+        "DBUG-01",
+        "DBUG-02",
+        "DBUG-03",
+        "DBUG-04",
+        "MRF-01",
+        "MRF-02",
+        "MRF-03"
       ],
       "layer_maturity": 2,
       "consecutive_pass_count": 35,

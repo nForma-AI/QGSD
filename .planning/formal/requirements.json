@@ -1,7 +1,6 @@
 {
-  "aggregated_at": "2026-03-25T13:42:23.941Z",
-  "content_hash": "48cc27deb8bd1e06367a6bcb4e19d133ee071e2cca558c9c46db951dac009cd8",
-  "frozen_at": "2026-03-25T13:42:23.942Z",
+  "aggregated_at": "2026-03-26T10:37:01.126Z",
+  "content_hash": "d2d099c2f926eb7c",
   "requirements": [
     {
       "id": "ACT-01",
@@ -5939,6 +5938,16 @@
       "provenance": {
         "source_file": ".planning/milestones/v0.35-REQUIREMENTS.md",
         "milestone": "unknown"
+      }
+    },
+    {
+      "id": "SOLVE-01",
+      "text": "bin/formal-graph-search.cjs provides BFS graph traversal over the proximity index (reachFiltered, semanticSearch) used by formal-scope-scan.cjs and candidate-discovery.cjs for graph-first requirement and model lookups",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "bin/formal-graph-search.cjs",
+        "milestone": "solver-tui"
       }
     }
   ],
