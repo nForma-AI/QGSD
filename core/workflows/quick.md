@@ -310,7 +310,15 @@ Constraints:
   - \`update: [list of .planning/formal/ file paths]\` — task modifies existing .planning/formal/ files
   - \`create: [list of {path, type (tla|alloy|prism), description}]\` — task creates new .planning/formal/ files
 - Plan tasks MUST NOT violate the identified invariants` :
-`No formal modules matched this task. Declare \`formal_artifacts: none\` in plan frontmatter.`}
+`No existing formal modules matched this task. Evaluate whether this task introduces logic that warrants a NEW formal model:
+- Does it add logic with 3+ distinct states and conditional transitions? (state machine candidate)
+- Does it introduce invariants or safety properties that should be formally verified?
+- Does it add a new subsystem with correctness requirements?
+
+If YES to any: declare \`formal_artifacts: create\` with specific file paths, types (tla|alloy|prism), and descriptions.
+If NO: declare \`formal_artifacts: none\`.
+
+The \`formal_artifacts:\` field is REQUIRED in plan frontmatter regardless of FORMAL_SPEC_CONTEXT.`}
 </formal_context>
 
 </planning_context>
@@ -385,7 +393,7 @@ Skip: context compliance (no CONTEXT.md), cross-plan deps (single plan), ROADMAP
 </check_dimensions>
 
 <formal_context>
-${FORMAL_SPEC_CONTEXT.length > 0 ? `Relevant formal modules: ${FORMAL_SPEC_CONTEXT.map(f => f.module).join(', ')}. Check plan formal_artifacts declaration and invariant compliance.` : 'No formal modules matched. Verify plan declares formal_artifacts: none.'}
+${FORMAL_SPEC_CONTEXT.length > 0 ? `Relevant formal modules: ${FORMAL_SPEC_CONTEXT.map(f => f.module).join(', ')}. Check plan formal_artifacts declaration and invariant compliance.` : 'No formal modules matched. If plan declares formal_artifacts: none, that is valid. If plan declares formal_artifacts: create, validate that file paths and types are well-specified.'}
 </formal_context>
 
 <expected_output>
@@ -888,7 +896,7 @@ Additional verification checks:
 
 Formal check result from Step 6.3: ${FORMAL_CHECK_RESULT !== null ? JSON.stringify(FORMAL_CHECK_RESULT) : 'skipped (tool unavailable)'}
 If failed > 0 in formal check result: treat as a HARD FAILURE in your verification — must_haves cannot pass if a counterexample was found.` :
-'No formal modules matched. Skip formal invariant checks.'}
+'No existing formal modules matched. If plan declared formal_artifacts: create, verify the created .planning/formal/ files are syntactically reasonable for their type. If plan declared formal_artifacts: none, skip formal invariant checks.'}
 </formal_context>
 
 Check must_haves against actual codebase. Create VERIFICATION.md at ${QUICK_DIR}/${next_num}-VERIFICATION.md.",
