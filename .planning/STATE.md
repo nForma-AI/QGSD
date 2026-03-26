@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 Phase: 53 of 53 (Skill Deprecation) — COMPLETED
 Plan: 53-01 of 1 — COMPLETED
 Status: All phases complete — /nf:model-driven-fix deprecated, all consumers rewired to /nf:debug
-Last activity: 2026-03-26 - Completed quick task 359: Close gap in formal model bootstrapping
+Last activity: 2026-03-26 - Completed quick task 360: Add risk-based adaptive quorum fan-out with Haiku risk classifier
 
 Progress: [██████████] 100% (Phase 50 done; Phase 51 done; Phase 52 done; Phase 53 done)
 
@@ -76,6 +76,7 @@ None yet.
 | 357 | Add require-path tracing to sweepTtoR and @req annotations to 8 domain-named test files to eliminate T→R false positives | 2026-03-25 | 9d5f82d2 | Verified | [357-add-require-path-tracing-to-sweepttor-an](./quick/357-add-require-path-tracing-to-sweepttor-an/) |
 | 358 | Add graph-first discovery to formal-scope-scan.cjs and extract unified semantic+graph search module shared by both formal-scope-scan.cjs and candidate-discovery.cjs | 2026-03-26 | 871e21f2 | Needs Review | [358-add-graph-first-discovery-to-formal-scop](./quick/358-add-graph-first-discovery-to-formal-scop/) |
 | 359 | Close gap: allow formal_artifacts create when scope-scan empty | 2026-03-26 | afdea71c | Verified | [359-close-the-gap-when-formal-scope-scan-fin](./quick/359-close-the-gap-when-formal-scope-scan-fin/) |
+| 360 | Add risk-based adaptive quorum fan-out: risk classifier, adaptive dispatch, audit logging | 2026-03-26 | 8e27fe35 | Pending | [360-add-risk-based-adaptive-quorum-fan-out-r](./quick/360-add-risk-based-adaptive-quorum-fan-out-r/) |
 
 ### Blockers/Concerns
 

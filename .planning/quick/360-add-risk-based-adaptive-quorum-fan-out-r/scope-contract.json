@@ -1,0 +1,23 @@
+{
+  "nf/quick-337-fast-path-initial-diagnostic": {
+    "task_id": 360,
+    "task_description": "Add risk-based adaptive quorum fan-out: risk classifier in quick workflow Step 2.7 (Haiku subagent), wire risk_level into quorum dispatch (low=1/skip, medium=3, high=5), audit logging when quorum is reduced/skipped, --force-quorum override flag",
+    "approach": "Implement risk-based adaptive quorum fan-out by adding a risk classifier in quick workflow Step 2.7 (Haiku subagent), wiring risk_level output into quorum dispatch logic (low=1/skip, medium=3, high=5), adding audit logging for quorum reduction/skip events, and introducing a --force-quorum override flag.",
+    "out_of_scope": [
+      "Modifying the formal verification requirements envelope or category mappings",
+      "Changing the structure or schema of audit logs beyond risk-level tracking",
+      "Implementing machine learning or statistical models for risk classification (Haiku prompt-based heuristics only)",
+      "Altering quorum slot provider configuration or dual-subscription failover logic",
+      "Retrofitting risk classification to existing workflow steps beyond Step 2.7"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.95,
+      "routed_through_debug": false
+    },
+    "branches_affected": ["nf/quick-337-fast-path-initial-diagnostic"],
+    "created_at": "2026-03-26T11:07:54.524Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}
