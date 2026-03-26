@@ -58,6 +58,7 @@ Recent decisions affecting current work:
 - Plan 51-01: Classification happens at Step 2.7 (after approach, before planner) with Haiku subagent
 - Plan 51-02: Bug_fix routing threshold: confidence >= 0.7 (clear signals only; ambiguous cases skip debug, fail-open)
 - [Phase quick-356]: All 7 new diagnostic sweeps are informational (not automatable) with no-op LAYER_HANDLERS
+- [Phase quick-361]: Automation-first verification: Playwright/agent-browser > CLI > code inspection > manual user testing
 
 ### Pending Todos
 
@@ -77,6 +78,7 @@ None yet.
 | 358 | Add graph-first discovery to formal-scope-scan.cjs and extract unified semantic+graph search module shared by both formal-scope-scan.cjs and candidate-discovery.cjs | 2026-03-26 | 871e21f2 | Needs Review | [358-add-graph-first-discovery-to-formal-scop](./quick/358-add-graph-first-discovery-to-formal-scop/) |
 | 359 | Close gap: allow formal_artifacts create when scope-scan empty | 2026-03-26 | afdea71c | Verified | [359-close-the-gap-when-formal-scope-scan-fin](./quick/359-close-the-gap-when-formal-scope-scan-fin/) |
 | 360 | Add risk-based adaptive quorum fan-out: risk classifier, adaptive dispatch, audit logging | 2026-03-26 | 8e27fe35 | Verified | [360-add-risk-based-adaptive-quorum-fan-out-r](./quick/360-add-risk-based-adaptive-quorum-fan-out-r/) |
+| 361 | Add automation-first bias to verify-work and execute-phase workflows | 2026-03-26 | afbeac9e | Complete | [361-add-automation-first-bias-to-verify-work](./quick/361-add-automation-first-bias-to-verify-work/) |
 
 ### Blockers/Concerns
 
@@ -85,5 +87,5 @@ None currently.
 ## Session Continuity
 
 Last session: 2026-03-26
-Stopped at: Completed quick task 358: Add graph-first discovery and unified search module
+Stopped at: Completed quick-361: Add automation-first bias to verify-work and execute-phase workflows
 Resume file: None
