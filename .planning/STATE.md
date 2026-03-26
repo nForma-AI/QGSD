@@ -75,7 +75,7 @@ None yet.
 | 356 | Wire 15 diagnostic scripts into nf-solve.cjs as sweeps | 2026-03-25 | 3b476722 | Verified | [356-wire-15-remaining-diagnostic-scripts-int](./quick/356-wire-15-remaining-diagnostic-scripts-int/) |
 | 357 | Add require-path tracing to sweepTtoR and @req annotations to 8 domain-named test files to eliminate T→R false positives | 2026-03-25 | 9d5f82d2 | Verified | [357-add-require-path-tracing-to-sweepttor-an](./quick/357-add-require-path-tracing-to-sweepttor-an/) |
 | 358 | Add graph-first discovery to formal-scope-scan.cjs and extract unified semantic+graph search module shared by both formal-scope-scan.cjs and candidate-discovery.cjs | 2026-03-26 | 871e21f2 | Needs Review | [358-add-graph-first-discovery-to-formal-scop](./quick/358-add-graph-first-discovery-to-formal-scop/) |
-| 359 | Close gap: allow formal_artifacts create when scope-scan empty | 2026-03-26 | afdea71c | Pending | [359-close-the-gap-when-formal-scope-scan-fin](./quick/359-close-the-gap-when-formal-scope-scan-fin/) |
+| 359 | Close gap: allow formal_artifacts create when scope-scan empty | 2026-03-26 | afdea71c | Verified | [359-close-the-gap-when-formal-scope-scan-fin](./quick/359-close-the-gap-when-formal-scope-scan-fin/) |
 
 ### Blockers/Concerns
 
