@@ -73,29 +73,33 @@ Use `$SLOT_CLI[slotName]` and `$SLOT_MODELS[slotName]` in Task description field
 
 ## 3. Adaptive Fan-Out (Based on Risk Level)
 
-**Purpose:** Determine quorum size from envelope risk_level.
+**Purpose:** Determine quorum size from risk_level (classified by Step 2.7 risk classifier in quick workflow, or from envelope in phase workflows).
 
 ```bash
-# Read risk_level from envelope (ENV-03 — fail-open)
-RISK_LEVEL=$(cat "$ENVELOPE_PATH" | jq -r '.risk_level // "medium"')
+# Read risk_level from classifier output or envelope (ENV-03 — fail-open)
+# Quick workflow: $RISK_LEVEL set by Step 2.7 Haiku risk classifier
+# Phase workflow: RISK_LEVEL=$(cat "$ENVELOPE_PATH" | jq -r '.risk_level // "medium"')
 
 # Map to fan-out count
 case "$RISK_LEVEL" in
-  routine|low)    FAN_OUT_COUNT=2 ;;
-  medium)         FAN_OUT_COUNT=3 ;;
-  high|absent)    FAN_OUT_COUNT="$MAX_QUORUM_SIZE" ;;
+  low)      FAN_OUT_COUNT=1 ;;    # Self only — quorum SKIPPED
+  medium)   FAN_OUT_COUNT=3 ;;    # 2 external + self
+  high)     FAN_OUT_COUNT=5 ;;    # 4 external + self
+  *)        FAN_OUT_COUNT=3 ;;    # fail-open: unknown/absent -> medium
 esac
 
 # Build DISPATCH_LIST = first (FAN_OUT_COUNT - 1) available slots
 # This is the definitive cap for all rounds in this quorum run.
+# When FAN_OUT_COUNT = 1: DISPATCH_LIST is empty — quorum is skipped entirely.
 ```
 
-**Reduced-quorum note (FAN-05):** If FAN_OUT_COUNT < MAX_QUORUM_SIZE, emit:
+**Skip-quorum path (FAN_OUT_COUNT = 1):** When risk_level is "low", no external quorum workers are dispatched. The orchestrator proceeds directly to execution. EventualConsensus and ProtocolTerminates invariants do not apply (no quorum protocol runs). An audit log is emitted to ensure traceability.
+
+**Reduced-quorum note (FAN-05):** If FAN_OUT_COUNT < MAX_QUORUM_SIZE AND FAN_OUT_COUNT > 1, emit:
 ```
 [R6.4 reduced-quorum note] Operating with ${FAN_OUT_COUNT} total participants
-(Claude + ${EXTERNAL_COUNT} external); max_quorum_size is ${MAX_QUORUM_SIZE}.
-Reason: envelope risk_level=${RISK_LEVEL}. This is intentional — routine/medium
-tasks use fewer models to reduce token cost.
+(Claude + ${FAN_OUT_COUNT - 1} external); max_quorum_size is ${MAX_QUORUM_SIZE}.
+Reason: risk_level=${RISK_LEVEL}. Reduced fan-out — task risk does not warrant full quorum.
 ```
 
 **Preflight Slot Assignment Display (FAN-06):** After computing `$DISPATCH_LIST`, emit:
