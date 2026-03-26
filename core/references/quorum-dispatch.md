@@ -53,8 +53,8 @@ node "$HOME/.claude/nf-bin/quorum-preflight.cjs" --max-quorum-size
 # Capture team fingerprint from providers.json
 TEAM_JSON=$(node "$HOME/.claude/nf-bin/quorum-preflight.cjs" --team)
 
-# Build lookup maps:
-# - $SLOT_TIMEOUTS: { slotName: quorum_timeout_ms } (fallback: 30000)
+# Build lookup maps from team JSON (each slot includes quorum_timeout_ms, idle_timeout_ms):
+# - $SLOT_TIMEOUTS: { slotName: quorum_timeout_ms } (from team JSON, fallback: 300000)
 # - $SLOT_MODELS: { slotName: model } (fallback: "unknown")
 # - $SLOT_CLI: { slotName: display_type } (fallback: "cli")
 
@@ -130,7 +130,7 @@ This display allows users to diagnose slot assignment and understand the fallbac
 ```yaml
 slot: <slotName>
 round: <round_number>
-timeout_ms: <timeout from $SLOT_TIMEOUTS, default 30000>
+timeout_ms: <timeout from $SLOT_TIMEOUTS, default 300000>
 repo_dir: <absolute path to project root>
 mode: <A|B>
 question: <question text>

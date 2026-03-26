@@ -1,0 +1,17 @@
+{
+  "nf/quick-337-fast-path-initial-diagnostic": {
+    "task_id": 350,
+    "task_description": "Add autoresearch-style iteration to solution-simulation-loop: onTweakFix callback, in-memory rollback, TSV logging, when-stuck protocol for Phase 4.5",
+    "approach": "Refactor solution-simulation-loop.cjs to accept an onTweakFix callback for evolving fix ideas between iterations, add in-memory consequence model rollback, TSV-as-memory logging, and when-stuck protocol after 3+ same-gate failures.",
+    "out_of_scope": [
+      "Changes to the bug reproduction loop (autoresearch-refine.cjs — done in quick-348)",
+      "Changes to convergence-gate-runner.cjs, intent-normalizer.cjs, or consequence-model-generator.cjs internals",
+      "Interactive user prompts during the simulation loop",
+      "New formal model creation or modification"
+    ],
+    "branches_affected": ["nf/quick-337-fast-path-initial-diagnostic"],
+    "created_at": "2026-03-25T07:14:50.335Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

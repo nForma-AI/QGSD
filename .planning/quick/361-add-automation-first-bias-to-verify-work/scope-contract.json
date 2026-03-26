@@ -1,0 +1,24 @@
+{
+  "nf/quick-337-fast-path-initial-diagnostic": {
+    "task_id": 361,
+    "task_description": "Add automation-first bias to verify-work and execute-phase workflows — default to Playwright/agent-browser for UAT instead of asking user to manually test",
+    "approach": "Add automation-first bias to verify-work and execute-phase workflows by defaulting to Playwright/agent-browser for UAT with fallback to human interaction only when automation is unavailable or subjective judgment is required.",
+    "out_of_scope": [
+      "Implementing new Playwright testing patterns or framework changes",
+      "Creating comprehensive end-to-end test suites for all workflows",
+      "Replacing manual user acceptance testing for subjective UI/UX validation",
+      "Adding Playwright infrastructure or CI/CD pipeline integration"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.95,
+      "routed_through_debug": false
+    },
+    "risk_level": "medium",
+    "risk_reason": "Changes to 2+ workflow files with potential impact on verification phase behavior",
+    "branches_affected": ["nf/quick-337-fast-path-initial-diagnostic"],
+    "created_at": "2026-03-26T12:26:45.914Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

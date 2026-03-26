@@ -375,7 +375,7 @@ Run quorum inline — follow the canonical protocol in @core/references/quorum-d
   ```yaml
   slot: <slotName>
   round: <round_number>
-  timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+  timeout_ms: <from $SLOT_TIMEOUTS or 300000>
   repo_dir: <absolute path to project root>
   mode: A
   question: "Does the triage report correctly categorize test failures..."
@@ -601,7 +601,7 @@ Run quorum inline — follow the canonical protocol in @core/references/quorum-d
   ```yaml
   slot: <slotName>
   round: <round_number>
-  timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+  timeout_ms: <from $SLOT_TIMEOUTS or 300000>
   repo_dir: <absolute path to project root>
   mode: A
   question: "Does this fix correctly address the root cause..."
@@ -888,7 +888,7 @@ Run quorum inline — follow the canonical protocol in @core/references/quorum-d
   ```yaml
   slot: <slotName>
   round: <round_number>
-  timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+  timeout_ms: <from $SLOT_TIMEOUTS or 300000>
   repo_dir: <absolute path to project root>
   mode: A
   question: "Is the fix pipeline complete and the final report accurate..."

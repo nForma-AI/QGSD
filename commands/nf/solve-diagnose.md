@@ -212,7 +212,7 @@ For each slot in `$DISPATCH_LIST`, dispatch a parallel `nf-quorum-slot-worker` T
 ```yaml
 slot: <slotName>
 round: 1
-timeout_ms: 30000
+timeout_ms: 300000
 repo_dir: <absolute path to project root>
 mode: A
 question: "Review the hypothesis measurement results and diagnostic context below. Is the root cause diagnosis sound, complete, and ready for the diagnostic sweep and subsequent remediation? Vote APPROVE if the diagnosis is actionable and sufficient. Vote BLOCK if the diagnosis is incomplete, contradictory, or likely to lead remediation astray."

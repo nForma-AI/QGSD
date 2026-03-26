@@ -211,7 +211,7 @@ node "$HOME/.claude/nf-bin/update-scoreboard.cjs" init-team \
   --team '<TEAM_JSON>'
 ```
 
-**Pre-resolve slot timeouts:** Build `$SLOT_TIMEOUTS` by reading `providers.json` using the same search paths as Step 1. For each slot in the active working list, record `quorum_timeout_ms` (fallback: 30000). Store as a map `{ slotName: timeoutMs }`. Workers receive their specific timeout in `timeout_ms:` — they do NOT read `providers.json` themselves.
+**Pre-resolve slot timeouts:** Build `$SLOT_TIMEOUTS` by reading `providers.json` using the same search paths as Step 1. For each slot in the active working list, record `quorum_timeout_ms` (fallback: 300000). Store as a map `{ slotName: timeoutMs }`. Workers receive their specific timeout in `timeout_ms:` — they do NOT read `providers.json` themselves.
 
 ---
 

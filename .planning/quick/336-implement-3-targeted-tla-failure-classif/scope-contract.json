@@ -1,0 +1,18 @@
+{
+  "nf/quick-333-add-requirement-mappings-for-4-models-wi": {
+    "task_id": 336,
+    "task_description": "Implement 3 targeted TLA+ failure classifiers in F->C remediation layer",
+    "approach": "Create bin/classify-tlc-failure.cjs with 3 pattern-matched detectors for deadlock, semantic errors, and fairness gaps to auto-fix common TLC failures in the F->C remediation layer without LLM dispatch.",
+    "out_of_scope": [
+      "Implementing additional failure detectors beyond the 3 specified",
+      "Modifying the quorum layer or verification dispatch logic outside of solve-remediate.md F->C section",
+      "Refactoring the entire solve-remediate.md workflow or step architecture"
+    ],
+    "branches_affected": [
+      "nf/quick-333-add-requirement-mappings-for-4-models-wi"
+    ],
+    "created_at": "2026-03-20T06:35:46.454Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

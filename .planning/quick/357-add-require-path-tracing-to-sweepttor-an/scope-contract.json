@@ -1,0 +1,23 @@
+{
+  "nf/quick-337-fast-path-initial-diagnostic": {
+    "task_id": 357,
+    "task_description": "Add require-path tracing to sweepTtoR and @req annotations to 8 domain-named test files to eliminate T→R false positives",
+    "approach": "Add require-path tracing instrumentation to sweepTtoR function and @req annotations to 8 domain-named test files to suppress T→R false positive findings.",
+    "out_of_scope": [
+      "Modifying test assertions or test logic itself",
+      "Creating new test files or test suites",
+      "Refactoring sweepTtoR algorithm or its core matching logic",
+      "Updating formal requirements.json or invariant definitions",
+      "Fixing actual (non-false-positive) T→R violations"
+    ],
+    "classification": {
+      "type": "bug_fix",
+      "confidence": 0.85,
+      "routed_through_debug": true
+    },
+    "branches_affected": ["nf/quick-337-fast-path-initial-diagnostic"],
+    "created_at": "2026-03-25T19:22:55.975Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

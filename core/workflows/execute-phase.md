@@ -276,7 +276,7 @@ When executor returns a checkpoint AND `AUTO_CFG` is `"true"`:
        ```yaml
        slot: <slotName>
        round: <round_number>
-       timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+       timeout_ms: <from $SLOT_TIMEOUTS or 300000>
        repo_dir: <absolute path to project root>
        mode: A
        question: "Checkpoint verification for auto-mode..."
@@ -525,6 +525,21 @@ grep "^status:" "$PHASE_DIR"/*-VERIFICATION.md | cut -d: -f2 | tr -d ' '
 
 **If human_needed:**
 
+**Automation-first attempt (before quorum):**
+
+Before dispatching quorum workers, attempt to resolve each human_needed item using available automation tools:
+
+a. Read each item from the `human_verification` section of VERIFICATION.md.
+b. For each item, classify whether it can be verified automatically:
+   - **URL/UI checks**: Use agent-browser or Playwright to navigate, screenshot, and verify DOM state
+   - **API checks**: Use curl to verify endpoint responses
+   - **File/artifact checks**: Use file reads and grep to verify existence and content
+   - **Build/test checks**: Run relevant test or build commands
+c. Attempt automated verification for each classifiable item.
+d. If ALL items pass automated verification: treat as `passed` (skip quorum entirely). Log: `Automation resolved all human_needed items — treating as passed`. Proceed to update_roadmap.
+e. If SOME items remain unresolved: include only the unresolved items in the quorum question (reduce quorum scope to genuinely ambiguous items).
+f. If NO items could be automated: proceed to quorum as before (existing flow unchanged).
+
 Before escalating to the user, run a quorum resolution loop to attempt automated resolution:
 
 1. Read the full `human_verification` section from `${PHASE_DIR}/${PHASE_NUM}-VERIFICATION.md`.
@@ -539,7 +554,7 @@ Before escalating to the user, run a quorum resolution loop to attempt automated
      ```yaml
      slot: <slotName>
      round: <round_number>
-     timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+     timeout_ms: <from $SLOT_TIMEOUTS or 300000>
      repo_dir: <absolute path to project root>
      mode: A
      question: "Can each human_needed item from phase..."
@@ -581,7 +596,7 @@ Run R3 quorum inline — follow the canonical protocol in @core/references/quoru
   ```yaml
   slot: <slotName>
   round: <round_number>
-  timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+  timeout_ms: <from $SLOT_TIMEOUTS or 300000>
   repo_dir: <absolute path to project root>
   mode: A
   question: "Phase {PHASE_NUMBER} verification found {N} gaps..."

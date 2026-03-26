@@ -12,7 +12,47 @@ Claude presents what SHOULD happen. User confirms or describes what's different.
 - Anything else → logged as issue, severity inferred
 
 No Pass/Fail buttons. No severity questions. Just: "Here's what should happen. Does it?"
+
+**Automate first, ask second.** For each test, attempt automated verification using available tools before presenting to the user.
 </philosophy>
+
+<automation_first>
+**Default: Automate verification. Fallback: Ask user.**
+
+Before presenting ANY test to the user for manual verification, attempt automated verification using available tools in this priority order:
+
+1. **Playwright/agent-browser** — If a browser MCP tool is available, use it to:
+   - Navigate to the relevant URL
+   - Take screenshots and verify visual state
+   - Check browser console for errors
+   - Verify DOM elements exist and contain expected content
+   - Test interactive flows (click, type, submit)
+
+2. **CLI verification** — Use curl, grep, file reads, or test commands:
+   - API endpoints: `curl` the endpoint and verify response shape/status
+   - File artifacts: Read the file, verify contents match expectations
+   - Test suites: Run relevant test commands and check output
+   - Build output: Verify build artifacts exist and are valid
+
+3. **Code inspection** — Read source files to verify:
+   - Correct imports and wiring between modules
+   - Expected patterns present (e.g., error handling, type usage)
+   - No regressions in related code
+
+**Fall back to manual user testing ONLY when:**
+- Subjective judgment required (design aesthetics, UX feel, copy tone)
+- Real authentication credentials needed (OAuth flows, payment testing)
+- Physical device interaction required (mobile gestures, hardware)
+- All automated tools genuinely unavailable or insufficient
+
+**For each test, record the verification method used:**
+- `auto:browser` — Verified via Playwright/agent-browser
+- `auto:cli` — Verified via curl/grep/test commands
+- `auto:inspect` — Verified via code inspection
+- `manual` — Required user interaction (state why)
+
+When automated verification passes, auto-mark the test as passed and move to the next one. Only pause for user interaction when automation cannot resolve the test.
+</automation_first>
 
 <template>
 @~/.claude/nf/templates/UAT.md
@@ -174,6 +214,10 @@ Proceed to `present_test`.
 
 Read Current Test section from UAT file.
 
+Before presenting this test, attempt automated verification per the `<automation_first>` protocol.
+- If automated verification succeeds: update the test result to `pass` with method `auto:{type}`, skip user presentation, and proceed to the next test.
+- If automated verification fails or is insufficient: present to user as normal (existing checkpoint box flow).
+
 Display using checkpoint box format:
 
 ```
@@ -204,6 +248,7 @@ Update Tests section:
 ### {N}. {name}
 expected: {expected}
 result: pass
+method: {auto:browser|auto:cli|auto:inspect|manual}
 ```
 
 **If response indicates skip:**
@@ -592,6 +637,8 @@ Default to **major** if unclear. User can correct if needed.
 
 <success_criteria>
 - [ ] UAT file created with all tests from SUMMARY.md
+- [ ] Automated verification attempted for each test before user presentation
+- [ ] Verification method recorded for each test result
 - [ ] Tests presented one at a time with expected behavior
 - [ ] User responses processed as pass/issue/skip
 - [ ] Severity inferred from description (never asked)

@@ -123,7 +123,7 @@ Run R3 quorum inline — follow the canonical protocol in @core/references/quoru
   ```yaml
   slot: <slotName>
   round: <round_number>
-  timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+  timeout_ms: <from $SLOT_TIMEOUTS or 300000>
   repo_dir: <absolute path to project root>
   mode: A
   question: "Are these gap closure phases correctly scoped and complete..."

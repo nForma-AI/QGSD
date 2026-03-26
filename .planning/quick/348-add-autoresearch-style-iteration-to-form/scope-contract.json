@@ -1,0 +1,18 @@
+{
+  "nf/quick-337-fast-path-initial-diagnostic": {
+    "task_id": 348,
+    "task_description": "Add autoresearch-style iteration to formal model refinement: one model tweak per iteration, mechanical verification, git-as-memory, atomic rollback, TSV logging",
+    "approach": "Implement autoresearch-style iteration for formal model refinement with mechanical verification, git rollback capability, and TSV logging of each model tweak.",
+    "out_of_scope": [
+      "Multi-model simultaneous tweaks or batch refinement",
+      "Interactive user feedback loops during iteration",
+      "Visualization or graphical diff tools for model changes",
+      "Automated model generation or synthesis",
+      "Integration with external formal verification tools beyond current infrastructure"
+    ],
+    "branches_affected": ["nf/quick-337-fast-path-initial-diagnostic"],
+    "created_at": "2026-03-24T21:21:30.324Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

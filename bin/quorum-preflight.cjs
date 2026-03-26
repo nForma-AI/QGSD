@@ -76,7 +76,12 @@ function buildTeam(providers, active) {
   const team = {};
   for (const p of providers) {
     if (active.length > 0 && !active.includes(p.name)) continue;
-    team[p.name] = { model: p.model, display_provider: p.display_provider || p.provider };
+    team[p.name] = {
+      model: p.model,
+      display_provider: p.display_provider || p.provider,
+      quorum_timeout_ms: p.quorum_timeout_ms ?? 300000,
+      idle_timeout_ms: p.idle_timeout_ms ?? 90000,
+    };
   }
   return team;
 }

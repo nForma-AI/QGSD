@@ -1,0 +1,24 @@
+{
+  "nf/quick-337-fast-path-initial-diagnostic": {
+    "task_id": 358,
+    "task_description": "Add graph-first discovery to formal-scope-scan.cjs and extract a unified semantic+graph search module shared by both formal-scope-scan.cjs and candidate-discovery.cjs",
+    "approach": "Extract shared semantic and graph search functions from formal-scope-scan.cjs and candidate-discovery.cjs into a unified search module, and add graph-first discovery to formal-scope-scan.cjs Layer 1-2 matching pipeline.",
+    "out_of_scope": [
+      "Refactoring the full candidate-discovery.cjs pipeline or ensemble methods",
+      "Implementing new Layer 3/Layer 4 semantic or agentic search algorithms beyond what exists",
+      "Modifying the bug-mode matching or bug-model-gaps persistence logic",
+      "Changing model registry structure or requirement coverage tracking",
+      "Performance optimization or caching layer for semantic embeddings",
+      "Adding new formal model types or formalism detection beyond tla/alloy"
+    ],
+    "classification": {
+      "type": "refactor",
+      "confidence": 0.85,
+      "routed_through_debug": false
+    },
+    "branches_affected": ["nf/quick-337-fast-path-initial-diagnostic"],
+    "created_at": "2026-03-26T09:06:04.657Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

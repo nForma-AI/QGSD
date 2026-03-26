@@ -412,7 +412,7 @@ Run quorum inline — follow the canonical protocol in @core/references/quorum-d
   ```yaml
   slot: <slotName>
   round: <round_number>
-  timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+  timeout_ms: <from $SLOT_TIMEOUTS or 300000>
   repo_dir: <absolute path to project root>
   mode: A
   question: <question text>

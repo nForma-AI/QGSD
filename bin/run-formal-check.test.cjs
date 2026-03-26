@@ -82,6 +82,62 @@ test('prism delegation spawns run-prism.cjs not prism binary directly', () => {
   );
 });
 
+test('MODULE_CHECKS covers all spec directories that have checker files', () => {
+  // Prevents vacuous passes: if a formal spec dir exists AND has a corresponding
+  // .als/.tla/.pm file, MODULE_CHECKS must have an entry for it.
+  const fs = require('fs');
+  const specDir = path.join(process.cwd(), '.planning', 'formal', 'spec');
+  if (!fs.existsSync(specDir)) return; // skip if no spec dir
+
+  const specModules = fs.readdirSync(specDir).filter(f =>
+    fs.statSync(path.join(specDir, f)).isDirectory()
+  );
+
+  const formalDir = path.join(process.cwd(), '.planning', 'formal');
+  const missing = [];
+
+  for (const mod of specModules) {
+    if (MODULE_CHECKS[mod]) continue;
+
+    // Check if this module has any checkable model files (tla, als, pm)
+    const hasAlloy = fs.readdirSync(path.join(formalDir, 'alloy')).some(f =>
+      f.includes(mod.replace('formal-', '')) && f.endsWith('.als')
+    );
+    const hasTla = fs.readdirSync(path.join(formalDir, 'tla')).some(f =>
+      f.toLowerCase().includes(mod.replace(/-/g, '').toLowerCase()) && f.endsWith('.tla')
+    );
+    const hasPrism = fs.existsSync(path.join(formalDir, 'prism')) &&
+      fs.readdirSync(path.join(formalDir, 'prism')).some(f =>
+        f.includes(mod) && (f.endsWith('.pm') || f.endsWith('.prism'))
+      );
+
+    if (hasAlloy || hasTla || hasPrism) {
+      missing.push(mod);
+    }
+  }
+
+  assert.deepStrictEqual(missing, [],
+    'Spec dirs with checker files but no MODULE_CHECKS entry (vacuous pass risk): ' +
+    missing.join(', ') + '. Add entries to MODULE_CHECKS in run-formal-check.cjs'
+  );
+});
+
+test('unknown modules cause exit 1 (no vacuous passes)', () => {
+  const result = spawnSync(process.execPath, [RUN_FORMAL_CHECK, '--modules=nonexistent-module-xyz'], {
+    cwd: process.cwd(),
+    stdio: 'pipe',
+    encoding: 'utf8',
+    timeout: 10000
+  });
+
+  assert.strictEqual(result.status, 1,
+    'unknown module must exit 1, not vacuously pass with 0 checks');
+  assert.ok(
+    result.stderr.includes('unknown module'),
+    'stderr must mention the unknown module'
+  );
+});
+
 test('runCheck returns correct shape for prism tool', () => {
   const prismCheck = MODULE_CHECKS.quorum.find(c => c.tool === 'prism');
   assert.ok(prismCheck, 'quorum module must have a prism check definition');

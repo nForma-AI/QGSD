@@ -1,0 +1,23 @@
+{
+  "nf/quick-337-fast-path-initial-diagnostic": {
+    "task_id": 359,
+    "task_description": "Close the gap: when formal-scope-scan finds no matching modules, the quick workflow planner should evaluate whether the task warrants a new formal model and can declare formal_artifacts: create even with empty FORMAL_SPEC_CONTEXT",
+    "approach": "Modify the quick workflow planner to evaluate when formal-scope-scan returns empty results and allow formal_artifacts: create declarations with empty FORMAL_SPEC_CONTEXT when the task warrants a new formal model.",
+    "out_of_scope": [
+      "Implementing the actual new formal model creation or code generation",
+      "Changing the formal-scope-scan search algorithm or matching logic",
+      "Creating new formal verification tools or TLA+/Alloy templates",
+      "Modifying the formal model validation or gate-checking process",
+      "Backfilling existing tasks with formal models for tasks that previously had empty context"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.85,
+      "routed_through_debug": false
+    },
+    "branches_affected": ["nf/quick-337-fast-path-initial-diagnostic"],
+    "created_at": "2026-03-26T10:47:05.660Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

@@ -563,10 +563,10 @@ Form your ADVISORY position on the current plan (per CE-1 from quorum.md, your p
 ```bash
 # Get all quorum config in one call
 PREFLIGHT=$(node "$HOME/.claude/nf-bin/quorum-preflight.cjs" --all)
-# → { "quorum_active": [...], "max_quorum_size": 3, "team": { "slot-name": { "model": "..." }, ... } }
+# → { "quorum_active": [...], "max_quorum_size": 3, "team": { "slot-name": { "model": "...", "quorum_timeout_ms": 300000, "idle_timeout_ms": 90000 }, ... } }
 ```
 
-Parse `PREFLIGHT` JSON to get `$MAX_QUORUM_SIZE` and the list of active slot names (keys of `team` object).
+Parse `PREFLIGHT` JSON to get `$MAX_QUORUM_SIZE`, the list of active slot names (keys of `team` object), and build `$SLOT_TIMEOUTS` map from each slot's `quorum_timeout_ms` field (used as `timeout_ms` in dispatch YAML).
 
 Use `$RISK_LEVEL` from Step 2.7 risk classification (defaults to "medium" if not set). Compute fan-out:
 
@@ -618,7 +618,7 @@ Run quorum inline — follow the canonical protocol in @core/references/quorum-d
   ```yaml
   slot: <slotName>
   round: <round_number>
-  timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+  timeout_ms: <from $SLOT_TIMEOUTS or 300000>
   repo_dir: <absolute path to project root>
   mode: A
   question: <question text>
@@ -1063,7 +1063,7 @@ Run quorum inline — follow the canonical protocol in @core/references/quorum-d
   ```yaml
   slot: <slotName>
   round: <round_number>
-  timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+  timeout_ms: <from $SLOT_TIMEOUTS or 300000>
   repo_dir: <absolute path to project root>
   mode: A
   question: <question text>
@@ -1101,7 +1101,7 @@ Route on quorum result:
      ```yaml
      slot: <slotName>
      round: <round_number>
-     timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+     timeout_ms: <from $SLOT_TIMEOUTS or 300000>
      repo_dir: <absolute path to project root>
      mode: A
      question: "Can each human_needed item from quick task..."

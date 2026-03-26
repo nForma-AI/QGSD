@@ -158,6 +158,83 @@ const MODULE_CHECKS = {
         '.planning/formal/alloy/proximity-index.als'
       ]
     }
+  ],
+  'agent-loop': [
+    {
+      tool: 'tlc',
+      cmd: [
+        'java', '-cp', '.planning/formal/tla/tla2tools.jar', 'tlc2.TLC',
+        '-config', '.planning/formal/tla/MCAgentLoop.cfg',
+        '.planning/formal/tla/QGSDAgentLoop.tla',
+        '-workers', '1'
+      ]
+    }
+  ],
+  'deliberation-revision': [
+    {
+      tool: 'tlc',
+      cmd: [
+        'java', '-cp', '.planning/formal/tla/tla2tools.jar', 'tlc2.TLC',
+        '-config', '.planning/formal/tla/MCDeliberationRevision.cfg',
+        '.planning/formal/tla/QGSDDeliberationRevision.tla',
+        '-workers', '1'
+      ]
+    }
+  ],
+  installer: [
+    {
+      tool: 'tlc',
+      cmd: [
+        'java', '-cp', '.planning/formal/tla/tla2tools.jar', 'tlc2.TLC',
+        '-config', '.planning/formal/tla/MCinstaller.cfg',
+        '.planning/formal/tla/QGSDInstallerIdempotency.tla',
+        '-workers', '1'
+      ]
+    }
+  ],
+  safety: [
+    {
+      tool: 'tlc',
+      cmd: [
+        'java', '-cp', '.planning/formal/tla/tla2tools.jar', 'tlc2.TLC',
+        '-config', '.planning/formal/tla/MCsafety.cfg',
+        '.planning/formal/tla/NFQuorum_xstate.tla',
+        '-workers', '1'
+      ]
+    }
+  ],
+  sessionpersistence: [
+    {
+      tool: 'tlc',
+      cmd: [
+        'java', '-cp', '.planning/formal/tla/tla2tools.jar', 'tlc2.TLC',
+        '-config', '.planning/formal/tla/MCSessionPersistence.cfg',
+        '.planning/formal/tla/QGSDSessionPersistence.tla',
+        '-workers', '1'
+      ]
+    }
+  ],
+  'solve-convergence': [
+    {
+      tool: 'tlc',
+      cmd: [
+        'java', '-cp', '.planning/formal/tla/tla2tools.jar', 'tlc2.TLC',
+        '-config', '.planning/formal/tla/MCSolveConvergenceV2.cfg',
+        '.planning/formal/tla/NFSolveConvergenceV2.tla',
+        '-workers', '1'
+      ]
+    }
+  ],
+  'stop-hook': [
+    {
+      tool: 'tlc',
+      cmd: [
+        'java', '-cp', '.planning/formal/tla/tla2tools.jar', 'tlc2.TLC',
+        '-config', '.planning/formal/tla/MCStopHook.cfg',
+        '.planning/formal/tla/NFStopHook.tla',
+        '-workers', '1'
+      ]
+    }
   ]
 };
 

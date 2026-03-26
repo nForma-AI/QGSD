@@ -209,7 +209,7 @@ Apply the R4 pre-filter (CLAUDE.md §R4) to every gray area candidate before pre
      ```yaml
      slot: <slotName>
      round: <round_number>
-     timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+     timeout_ms: <from $SLOT_TIMEOUTS or 300000>
      repo_dir: <absolute path to project root>
      mode: A
      question: "Should '[question text]' be decided by quorum..."
@@ -268,7 +268,7 @@ For each question still in `for_user[]` (process sequentially):
      ```yaml
      slot: <slotName>
      round: <round_number>
-     timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+     timeout_ms: <from $SLOT_TIMEOUTS or 300000>
      repo_dir: <absolute path to project root>
      mode: A
      question: "Should '[question text]' be decided by quorum now..."
