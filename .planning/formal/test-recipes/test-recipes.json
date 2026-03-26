@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-25T16:56:45.511Z",
+  "generated": "2026-03-26T10:11:50.746Z",
   "source": {
     "failure_mode_catalog": "reasoning/failure-mode-catalog.json",
     "hazard_model": "reasoning/hazard-model.json",
@@ -8191,22 +8191,792 @@
           "ref": "failure_modes[id=FM-REQ-H2M-01-OMISSION]"
         }
       ]
+    },
+    {
+      "id": "TR-FM-REQ-CL-02-OMISSION",
+      "failure_mode_id": "FM-REQ-CL-02-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-CL-02-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-REQ-RLS-01-OMISSION",
+      "failure_mode_id": "FM-REQ-RLS-01-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-RLS-01-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-REQ-RLS-02-OMISSION",
+      "failure_mode_id": "FM-REQ-RLS-02-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-RLS-02-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-REQ-RLS-03-OMISSION",
+      "failure_mode_id": "FM-REQ-RLS-03-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-RLS-03-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-REQ-RLS-04-OMISSION",
+      "failure_mode_id": "FM-REQ-RLS-04-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-RLS-04-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-REQ-CI-06-OMISSION",
+      "failure_mode_id": "FM-REQ-CI-06-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-CI-06-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-REQ-DIAG-07-OMISSION",
+      "failure_mode_id": "FM-REQ-DIAG-07-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-DIAG-07-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-REQ-DIAG-08-OMISSION",
+      "failure_mode_id": "FM-REQ-DIAG-08-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-DIAG-08-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-REQ-DIAG-09-OMISSION",
+      "failure_mode_id": "FM-REQ-DIAG-09-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-DIAG-09-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-REQ-REL-04-OMISSION",
+      "failure_mode_id": "FM-REQ-REL-04-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-REL-04-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-REQ-SEC-06-OMISSION",
+      "failure_mode_id": "FM-REQ-SEC-06-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-SEC-06-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-REQ-SEC-07-OMISSION",
+      "failure_mode_id": "FM-REQ-SEC-07-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-SEC-07-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-REQ-SEC-08-OMISSION",
+      "failure_mode_id": "FM-REQ-SEC-08-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-SEC-08-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-REQ-SOLVE-04-OMISSION",
+      "failure_mode_id": "FM-REQ-SOLVE-04-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-SOLVE-04-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-REQ-DISPATCH-02-OMISSION",
+      "failure_mode_id": "FM-REQ-DISPATCH-02-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-DISPATCH-02-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-REQ-CLASS-02-OMISSION",
+      "failure_mode_id": "FM-REQ-CLASS-02-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-CLASS-02-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-REQ-CLASS-03-OMISSION",
+      "failure_mode_id": "FM-REQ-CLASS-03-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-CLASS-03-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-REQ-AGENT-04-OMISSION",
+      "failure_mode_id": "FM-REQ-AGENT-04-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-AGENT-04-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-REQ-RSN-06-OMISSION",
+      "failure_mode_id": "FM-REQ-RSN-06-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-RSN-06-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-REQ-VERF-04-OMISSION",
+      "failure_mode_id": "FM-REQ-VERF-04-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-VERF-04-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-REQ-XPLAT-03-OMISSION",
+      "failure_mode_id": "FM-REQ-XPLAT-03-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-XPLAT-03-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-REQ-PERF-03-OMISSION",
+      "failure_mode_id": "FM-REQ-PERF-03-OMISSION",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
+      "setup": {
+        "preconditions": [
+          "Machine is in undefined state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "description": "Send undefined event to machine in undefined state"
+        }
+      ],
+      "expected_outcome": {
+        "assertions": []
+      },
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REQ-PERF-03-OMISSION]"
+        }
+      ]
     }
   ],
   "summary": {
-    "total_recipes": 221,
+    "total_recipes": 243,
     "by_failure_mode": {
       "omission": 41,
       "corruption": 5,
       "commission": 11,
-      "unknown": 164
+      "unknown": 186
     },
     "by_risk_tier": {
       "high": 14,
       "critical": 15,
       "low": 1,
       "medium": 2,
-      "unclassified": 189
+      "unclassified": 211
     }
   }
 }

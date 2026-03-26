@@ -1,11 +1,11 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-25T16:30:14.968Z",
-  "total_measured": 107,
+  "generated": "2026-03-26T10:09:41.574Z",
+  "total_measured": 110,
   "verdicts": {
     "CONFIRMED": 0,
     "VIOLATED": 0,
-    "UNMEASURABLE": 107
+    "UNMEASURABLE": 110
   },
   "measurements": [
     {
@@ -360,6 +360,24 @@
       "reason": "formal value not extractable from source model"
     },
     {
+      "assumption_name": "MaxModels",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCBugModelLookup.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxTimeout",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCBugModelLookup.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
       "assumption_name": "MaxRounds",
       "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCDeliberationRevision.cfg",
       "formal_value": null,
@@ -470,6 +488,15 @@
     {
       "assumption_name": "MaxRestarts",
       "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSessionPersistence.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxMessages",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSessionStateInjection.cfg",
       "formal_value": null,
       "actual_value": null,
       "actual_source": null,

@@ -1,19 +1,44 @@
 {
   "metadata": {
-    "generated": "2026-03-25T11:01:59.269Z",
-    "proximity_index_hash": "0316257f",
+    "generated": "2026-03-26T09:48:36.503Z",
+    "proximity_index_hash": "d67f3760",
     "threshold": 0.7,
     "max_hops": 5,
-    "total_pairs_checked": 0,
-    "candidates_found": 0,
+    "total_pairs_checked": 91747,
+    "candidates_found": 3,
     "candidates_filtered": 0,
     "orphan_models_count": 1,
-    "orphan_requirements_count": 0,
-    "uncovered_requirements_count": 0,
+    "orphan_requirements_count": 48,
+    "uncovered_requirements_count": 51,
     "non_neighbor_top": 20,
-    "fast_path": true
+    "candidates_before_top": 6,
+    "top": 3,
+    "top_strategy": "diversity_round_robin",
+    "models_represented": 4
   },
-  "candidates": [],
+  "candidates": [
+    {
+      "model": ".planning/formal/alloy/event-vocabulary.als",
+      "requirement": "EVID-03",
+      "proximity_score": 0.749,
+      "source": "ensemble",
+      "scoring_method": "semantic+hub+embed"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDQuorum.tla",
+      "requirement": "MULTI-01",
+      "proximity_score": 0.7346,
+      "source": "ensemble",
+      "scoring_method": "semantic+hub+embed"
+    },
+    {
+      "model": ".planning/formal/alloy/evidence-triage.als",
+      "requirement": "EVID-03",
+      "proximity_score": 0.7331,
+      "source": "ensemble",
+      "scoring_method": "semantic+hub+embed"
+    }
+  ],
   "orphans": {
     "models": [
       {
@@ -21,7 +46,405 @@
         "edges": 0
       }
     ],
-    "requirements": []
+    "requirements": [
+      {
+        "id": "BTF-01",
+        "edges": 0
+      },
+      {
+        "id": "BTF-02",
+        "edges": 0
+      },
+      {
+        "id": "BTF-03",
+        "edges": 0
+      },
+      {
+        "id": "BTF-04",
+        "edges": 0
+      },
+      {
+        "id": "CLINK-01",
+        "edges": 0
+      },
+      {
+        "id": "CLINK-02",
+        "edges": 0
+      },
+      {
+        "id": "DBG-01",
+        "edges": 0
+      },
+      {
+        "id": "DBG-02",
+        "edges": 0
+      },
+      {
+        "id": "DBG-03",
+        "edges": 0
+      },
+      {
+        "id": "DBG-04",
+        "edges": 0
+      },
+      {
+        "id": "DBUG-01",
+        "edges": 0
+      },
+      {
+        "id": "DBUG-02",
+        "edges": 0
+      },
+      {
+        "id": "DBUG-03",
+        "edges": 0
+      },
+      {
+        "id": "DBUG-04",
+        "edges": 0
+      },
+      {
+        "id": "DEPR-01",
+        "edges": 0
+      },
+      {
+        "id": "DEPR-02",
+        "edges": 0
+      },
+      {
+        "id": "DEPR-03",
+        "edges": 0
+      },
+      {
+        "id": "FND-01",
+        "edges": 0
+      },
+      {
+        "id": "FND-02",
+        "edges": 0
+      },
+      {
+        "id": "FND-03",
+        "edges": 0
+      },
+      {
+        "id": "FPTUNE-01",
+        "edges": 0
+      },
+      {
+        "id": "FPTUNE-02",
+        "edges": 0
+      },
+      {
+        "id": "FPTUNE-03",
+        "edges": 0
+      },
+      {
+        "id": "GPROMO-01",
+        "edges": 0
+      },
+      {
+        "id": "GPROMO-02",
+        "edges": 0
+      },
+      {
+        "id": "GPROMO-03",
+        "edges": 0
+      },
+      {
+        "id": "HTARGET-02",
+        "edges": 0
+      },
+      {
+        "id": "INTENT-01",
+        "edges": 0
+      },
+      {
+        "id": "INTENT-02",
+        "edges": 0
+      },
+      {
+        "id": "INTENT-03",
+        "edges": 0
+      },
+      {
+        "id": "MRF-01",
+        "edges": 0
+      },
+      {
+        "id": "MRF-02",
+        "edges": 0
+      },
+      {
+        "id": "MRF-03",
+        "edges": 0
+      },
+      {
+        "id": "QPREC-02",
+        "edges": 0
+      },
+      {
+        "id": "QPREC-03",
+        "edges": 0
+      },
+      {
+        "id": "REG-01",
+        "edges": 0
+      },
+      {
+        "id": "REG-02",
+        "edges": 0
+      },
+      {
+        "id": "REG-03",
+        "edges": 0
+      },
+      {
+        "id": "ROOT-02",
+        "edges": 0
+      },
+      {
+        "id": "SCOPE-01",
+        "edges": 0
+      },
+      {
+        "id": "SCOPE-02",
+        "edges": 0
+      },
+      {
+        "id": "SCOPE-03",
+        "edges": 0
+      },
+      {
+        "id": "SIM-01",
+        "edges": 0
+      },
+      {
+        "id": "SIM-02",
+        "edges": 0
+      },
+      {
+        "id": "SIM-03",
+        "edges": 0
+      },
+      {
+        "id": "SIM-04",
+        "edges": 0
+      },
+      {
+        "id": "TLINK-01",
+        "edges": 0
+      },
+      {
+        "id": "TLINK-03",
+        "edges": 0
+      }
+    ]
   },
-  "uncovered_requirements": []
+  "uncovered_requirements": [
+    {
+      "id": "BTF-01",
+      "text": "layer-constants.cjs includes `b_to_f` as the 20th layer key"
+    },
+    {
+      "id": "BTF-02",
+      "text": "solve-wave-dag.cjs includes `b_to_f` in LAYER_DEPS with dependency on `t_to_c`"
+    },
+    {
+      "id": "BTF-03",
+      "text": "nf-solve.cjs diagnostic sweep computes b_to_f residual by classifying failing tests as covered_reproduced (0), covered_not_reproduced (+1), or not_covered (+1)"
+    },
+    {
+      "id": "BTF-04",
+      "text": "solve-remediate.md section 3a-extra dispatches close-formal-gaps for not_covered gaps (max 3/cycle) and model refinement for blind spots (max 2/cycle)"
+    },
+    {
+      "id": "CLINK-01",
+      "text": "C→R scanner queries proximity-index.json for code file→requirement edges before flagging; score >= 0.6 auto-suppresses"
+    },
+    {
+      "id": "CLINK-02",
+      "text": "`@requirement` annotations in source files (bin/*.cjs) are parsed by the proximity graph builder and create direct edges"
+    },
+    {
+      "id": "DBG-01",
+      "text": "/nf:debug Step A.5 runs formal model consultation before quorum dispatch, appending $FORMAL_CONTEXT to the worker bundle"
+    },
+    {
+      "id": "DBG-02",
+      "text": "Quorum worker prompts include a rule to respect fix constraints and not violate listed invariants"
+    },
+    {
+      "id": "DBG-03",
+      "text": "NEXT STEP result table includes a FORMAL row showing model verdict (reproduced/not-reproduced/no-model)"
+    },
+    {
+      "id": "DBG-04",
+      "text": "When no model covers the failure, debug Step G appends an entry to bug-model-gaps.json for future model creation"
+    },
+    {
+      "id": "DBUG-01",
+      "text": "/nf:debug absorbs model-driven-fix Phases 1-4 (discovery, reproduction, refinement, constraint extraction)"
+    },
+    {
+      "id": "DBUG-02",
+      "text": "Loop 1 (autoresearch-refine.cjs) runs natively within debug flow for bug reproduction"
+    },
+    {
+      "id": "DBUG-03",
+      "text": "Extracted constraints from Loop 1 feed back into debug fix guidance and quorum worker prompts"
+    },
+    {
+      "id": "DBUG-04",
+      "text": "Debug skill produces a reproducing formal model as a deliverable (not just a fix)"
+    },
+    {
+      "id": "DEPR-01",
+      "text": "/nf:model-driven-fix deprecated — invocation prints deprecation notice routing to /nf:debug"
+    },
+    {
+      "id": "DEPR-02",
+      "text": "solve-remediate b_to_f layer dispatches through /nf:debug (not deprecated /nf:model-driven-fix)"
+    },
+    {
+      "id": "DEPR-03",
+      "text": "All consumers of model-driven-fix.md rewired to new integration points"
+    },
+    {
+      "id": "FND-01",
+      "text": "Verification mode tagging — each model checker invocation is tagged as 'diagnostic' (Cycle 1, inverted semantics) or 'validation' (Cycle 2, normal semantics) to prevent mode contradiction"
+    },
+    {
+      "id": "FND-02",
+      "text": "Trace comparison infrastructure — TLC counterexample traces parsed into structured JSON (ITF format) with state-by-state field extraction for diff generation"
+    },
+    {
+      "id": "FND-03",
+      "text": "Configurable iteration limit — --max-iterations flag (default 3) controls both diagnostic refinement (Cycle 1) and simulation loop (Cycle 2), persisted in .planning/config.json"
+    },
+    {
+      "id": "FPTUNE-01",
+      "text": "solve-classifications.json tracks per-scanner per-category FP rates across sessions (rolling window of last 10 sessions)"
+    },
+    {
+      "id": "FPTUNE-02",
+      "text": "Scanners with FP rate > 60% over 5+ sessions auto-raise their suppression threshold by 0.1 (capped at 0.9)"
+    },
+    {
+      "id": "FPTUNE-03",
+      "text": "`/nf:solve --report-only` displays per-scanner FP rate table in the diagnostics output"
+    },
+    {
+      "id": "GPROMO-01",
+      "text": "model-registry.json entries track `consecutive_pass_count` (incremented on pass, reset to 0 on fail) per solve session"
+    },
+    {
+      "id": "GPROMO-02",
+      "text": "Models with consecutive_pass_count >= 3 AND wiring >= 1.0 AND semantic >= 0.8 auto-promote from SOFT_GATE to HARD_GATE"
+    },
+    {
+      "id": "GPROMO-03",
+      "text": "Auto-promotion fires during solve Phase 4 (report) and logs to promotion-changelog.json with evidence snapshot"
+    },
+    {
+      "id": "HTARGET-01",
+      "text": "When a hypothesis transitions from UNMEASURABLE to CONFIRMED/VIOLATED, the layer it belongs to gets +1 priority weight in the next solve remediation wave ordering"
+    },
+    {
+      "id": "HTARGET-02",
+      "text": "solve-wave-dag.cjs reads hypothesis measurements and adjusts wave ordering to prioritize layers with recent transitions"
+    },
+    {
+      "id": "INTENT-01",
+      "text": "When a quick task is triggered (`/nf:quick`), the workflow derives an APPROACH block (what will be done, what is explicitly out of scope) from the task description before spawning the planner"
+    },
+    {
+      "id": "INTENT-02",
+      "text": "The APPROACH block is written to `.claude/scope-contract.json` with the task branch name as the key, making it available to the scope guard"
+    },
+    {
+      "id": "INTENT-03",
+      "text": "The APPROACH block is non-modal — it is derived automatically from the task description text, not via a user dialog or confirmation step"
+    },
+    {
+      "id": "MRF-01",
+      "text": "close-formal-gaps.md accepts `--bug-context` flag that injects failure description into spec generation, biasing toward capturing the failure mode"
+    },
+    {
+      "id": "MRF-02",
+      "text": "Model refinement loop creates/refines a model, verifies it FAILS (reproduces the bug), and iterates up to 2 additional times if model passes despite bug"
+    },
+    {
+      "id": "MRF-03",
+      "text": "model-driven-fix.md workflow orchestrates the 6-phase prescriptive cycle (discovery, reproduction, refinement, constraint extraction, constrained fix, pre-verification)"
+    },
+    {
+      "id": "QPREC-01",
+      "text": "`bin/extract-precedents.cjs` mines quorum debate archives for key decisions (BLOCK/APPROVE with reasoning) and writes `.planning/quorum/precedents.json`"
+    },
+    {
+      "id": "QPREC-02",
+      "text": "Quorum dispatch prompts include up to 3 relevant precedents (matched by keyword overlap with current question)"
+    },
+    {
+      "id": "QPREC-03",
+      "text": "Precedents have TTL (90 days default) and are auto-pruned"
+    },
+    {
+      "id": "REG-01",
+      "text": "model-driven-fix.md Phase 5 runs model checkers on proximity-neighbor models (2-hop in proximity-index.json) before declaring fix done"
+    },
+    {
+      "id": "REG-02",
+      "text": "run-formal-verify.cjs accepts `--scope=model1,model2` flag to run only specified models"
+    },
+    {
+      "id": "REG-03",
+      "text": "bug-model-gaps.json entries include post_fix_verification results (model_pass, neighbor_models_pass, regressions array)"
+    },
+    {
+      "id": "ROOT-02",
+      "text": "In `solve-diagnose`, after the existing Step 0e hypothesis synthesis, a quorum vote is dispatched on the root cause diagnosis before proceeding — requiring multi-model consensus on the causal chain"
+    },
+    {
+      "id": "SCOPE-01",
+      "text": "A new `nf-scope-guard.js` PreToolUse hook fires on Edit, Write, and MultiEdit tool calls and checks whether the target file is within the declared scope from `.claude/scope-contract.json`"
+    },
+    {
+      "id": "SCOPE-02",
+      "text": "When a file edit targets a path outside the declared scope, the scope guard emits a warning advisory via `additionalContext` (non-blocking, exits 0) — it does not deny the tool call"
+    },
+    {
+      "id": "SCOPE-03",
+      "text": "The scope guard is a no-op when no scope contract exists for the current session — the hook exits immediately without any output or overhead"
+    },
+    {
+      "id": "SIM-01",
+      "text": "Fix intent normalization — accept fix ideas as natural language, constraint sets, or code sketches and normalize internally to formal model mutations"
+    },
+    {
+      "id": "SIM-02",
+      "text": "Consequence model generation — given a reproducing model + normalized fix intent, generate a consequence model representing the system after the proposed fix is applied"
+    },
+    {
+      "id": "SIM-03",
+      "text": "Three-gate convergence — automated convergence check: (1) original invariants still hold, (2) bug no longer triggered (inverted check passes), (3) no 2-hop neighbor regressions"
+    },
+    {
+      "id": "SIM-04",
+      "text": "Simulation loop UX — Phase 4.5 in model-driven-fix.md with iteration display, per-gate pass/fail status, convergence progress, and escalation to user after max iterations"
+    },
+    {
+      "id": "TLINK-01",
+      "text": "Test files containing `@requirement REQ-ID` annotations are excluded from T→R scanner flagging for those requirement IDs"
+    },
+    {
+      "id": "TLINK-02",
+      "text": "`bin/annotate-tests.cjs` scans test files, uses proximity graph to suggest `@requirement` annotations, and writes them as comments"
+    },
+    {
+      "id": "TLINK-03",
+      "text": "T→R scanner reports annotation coverage percentage alongside orphan test count"
+    }
+  ]
 }

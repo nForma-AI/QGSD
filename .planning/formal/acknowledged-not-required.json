@@ -554,6 +554,13 @@
       ],
       "evidence": "README.md:890",
       "acknowledged_at": "2026-03-25T16:53:28.980Z"
+    },
+    {
+      "file_or_claim": "bin/formal-graph-search.cjs",
+      "reason": "solve-iteration-1-deferred: internal tooling module for formal graph search; quorum deferred for next interactive session",
+      "source_scanner": "C_to_R+T_to_R",
+      "date": "2026-03-26T10:07:59.157Z",
+      "category": "A"
     }
   ]
 }

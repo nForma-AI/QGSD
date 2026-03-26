@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-03-25T17:18:35.415Z",
+    "generated_at": "2026-03-26T10:16:21.517Z",
     "generator_version": "1.1",
     "data_sources": {
       "annotations": {
@@ -16985,8 +16985,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/BML-01.stub.test.js",
+            "test_name": "BML-01: BugModelLookup.tla exists and defines TypeOK invariant"
+          }
+        ]
       }
     },
     "BML-03": {
@@ -17001,8 +17006,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/BML-03.stub.test.js",
+            "test_name": "BML-03: BugModelLookup.tla defines DoneImpliesTracked invariant"
+          }
+        ]
       }
     },
     "ROUTE-01": {
@@ -17017,8 +17027,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/ROUTE-01.stub.test.js",
+            "test_name": "ROUTE-01: TaskClassification.tla defines TypeOK invariant"
+          }
+        ]
       }
     },
     "SESSION-01": {
@@ -17033,8 +17048,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SESSION-01.stub.test.js",
+            "test_name": "SESSION-01: SessionStateInjection.tla defines TypeOK invariant"
+          }
+        ]
       }
     },
     "SESSION-02": {
@@ -17049,8 +17069,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SESSION-02.stub.test.js",
+            "test_name": "SESSION-02: SessionStateInjection.tla defines IdempotentInjection invariant"
+          }
+        ]
       }
     },
     "SESSION-03": {
@@ -17065,8 +17090,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SESSION-03.stub.test.js",
+            "test_name": "SESSION-03: SessionStateInjection.tla defines FailOpen invariant"
+          }
+        ]
       }
     },
     "CEX-01": {
@@ -17081,8 +17111,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/CEX-01.stub.test.js",
+            "test_name": "CEX-01: constraint-extraction.als defines TLAParsing fact"
+          }
+        ]
       }
     },
     "CEX-02": {
@@ -17097,8 +17132,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/CEX-02.stub.test.js",
+            "test_name": "CEX-02: constraint-extraction.als defines AlloyParsing fact"
+          }
+        ]
       }
     },
     "CEX-03": {
@@ -17113,8 +17153,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/CEX-03.stub.test.js",
+            "test_name": "CEX-03: PlainEnglishRendering fact enforces summaries on all constraints"
+          }
+        ]
       }
     },
     "CONST-01": {
@@ -17129,8 +17174,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/CONST-01.stub.test.js",
+            "test_name": "CONST-01: constraint-extraction.als defines EditPromptInjection fact"
+          }
+        ]
       }
     },
     "CONST-02": {
@@ -17145,8 +17195,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/CONST-02.stub.test.js",
+            "test_name": "CONST-02: NewFeatureExclusion fact prevents injection on new-feature prompts"
+          }
+        ]
       }
     },
     "FV-04": {
@@ -17161,8 +17216,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/FV-04.stub.test.js",
+            "test_name": "FV-04: fv-cicd-invariant.als defines CICDIsFirstClass fact"
+          }
+        ]
       }
     },
     "ROOT-01": {
@@ -17177,8 +17237,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/ROOT-01.stub.test.js",
+            "test_name": "ROOT-01: root-cause-enforcement.als defines DebugPromptsGetTemplate fact"
+          }
+        ]
       }
     },
     "ROOT-03": {
@@ -17193,8 +17258,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/ROOT-03.stub.test.js",
+            "test_name": "ROOT-03: NonDebugNoTemplate fact prevents injection on non-debug prompts"
+          }
+        ]
       }
     },
     "UPPAAL-01": {
@@ -17209,8 +17279,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/UPPAAL-01.stub.test.js",
+            "test_name": "UPPAAL-01: uppaal-race-modeling.als defines ModelCapturesConcurrency fact"
+          }
+        ]
       }
     },
     "UPPAAL-02": {
@@ -17225,8 +17300,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/UPPAAL-02.stub.test.js",
+            "test_name": "UPPAAL-02: uppaal-race-modeling.als defines RunnerWritesResults fact"
+          }
+        ]
       }
     },
     "UPPAAL-03": {
@@ -17241,8 +17321,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/UPPAAL-03.stub.test.js",
+            "test_name": "UPPAAL-03: MinimumMeasurementPoints fact requires TwoOrMore"
+          }
+        ]
       }
     },
     "HEAL-01": {
@@ -32774,12 +32859,6 @@
       },
       {
         "model_file": ".planning/formal/tla/BugModelLookup.tla",
-        "requirement_id": "BML-02",
-        "direction": "model_claims_requirement",
-        "detail": "model-registry lists BML-02 for .planning/formal/tla/BugModelLookup.tla but requirements.json BML-02 does not list .planning/formal/tla/BugModelLookup.tla in formal_models"
-      },
-      {
-        "model_file": ".planning/formal/tla/BugModelLookup.tla",
         "requirement_id": "BML-03",
         "direction": "model_claims_requirement",
         "detail": "model-registry lists BML-03 for .planning/formal/tla/BugModelLookup.tla but requirements.json BML-03 does not list .planning/formal/tla/BugModelLookup.tla in formal_models"
@@ -32789,24 +32868,6 @@
         "requirement_id": "ROUTE-01",
         "direction": "model_claims_requirement",
         "detail": "model-registry lists ROUTE-01 for .planning/formal/tla/TaskClassification.tla but requirements.json ROUTE-01 does not list .planning/formal/tla/TaskClassification.tla in formal_models"
-      },
-      {
-        "model_file": ".planning/formal/tla/TaskClassification.tla",
-        "requirement_id": "ROUTE-02",
-        "direction": "model_claims_requirement",
-        "detail": "model-registry lists ROUTE-02 for .planning/formal/tla/TaskClassification.tla but requirements.json ROUTE-02 does not list .planning/formal/tla/TaskClassification.tla in formal_models"
-      },
-      {
-        "model_file": ".planning/formal/tla/TaskClassification.tla",
-        "requirement_id": "ROUTE-03",
-        "direction": "model_claims_requirement",
-        "detail": "model-registry lists ROUTE-03 for .planning/formal/tla/TaskClassification.tla but requirements.json ROUTE-03 does not list .planning/formal/tla/TaskClassification.tla in formal_models"
-      },
-      {
-        "model_file": ".planning/formal/tla/TaskClassification.tla",
-        "requirement_id": "ROUTE-04",
-        "direction": "model_claims_requirement",
-        "detail": "model-registry lists ROUTE-04 for .planning/formal/tla/TaskClassification.tla but requirements.json ROUTE-04 does not list .planning/formal/tla/TaskClassification.tla in formal_models"
       },
       {
         "model_file": ".planning/formal/tla/SessionStateInjection.tla",
@@ -33769,7 +33830,7 @@
     ],
     "summary": {
       "total_checked": 659,
-      "asymmetric_count": 318,
+      "asymmetric_count": 314,
       "stale_count": 160,
       "clean": false
     }
@@ -34450,8 +34511,8 @@
   },
   "coverage_preservation": {
     "baseline_found": true,
-    "baseline_date": "2026-03-25T16:40:21.964Z",
-    "requirements_checked": 507,
+    "baseline_date": "2026-03-26T10:10:37.750Z",
+    "requirements_checked": 524,
     "regressions": [],
     "summary": {
       "total_regressions": 0,

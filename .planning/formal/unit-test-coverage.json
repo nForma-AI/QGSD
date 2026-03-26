@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-25T17:03:13.578Z",
+  "generated_at": "2026-03-26T09:58:48.764Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -208,6 +208,24 @@
         }
       ]
     },
+    "BML-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/BML-01.stub.test.js",
+          "test_name": "BML-01: BugModelLookup.tla exists and defines TypeOK invariant"
+        }
+      ]
+    },
+    "BML-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/BML-03.stub.test.js",
+          "test_name": "BML-03: BugModelLookup.tla defines DoneImpliesTracked invariant"
+        }
+      ]
+    },
     "BRKR-01": {
       "covered": true,
       "test_cases": [
@@ -250,6 +268,33 @@
         {
           "test_file": ".planning/formal/generated-stubs/CALIB-04.stub.test.js",
           "test_name": "CALIB-04: policy.yaml conservative_priors.tp_rate matches expected value"
+        }
+      ]
+    },
+    "CEX-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CEX-01.stub.test.js",
+          "test_name": "CEX-01: constraint-extraction.als defines TLAParsing fact"
+        }
+      ]
+    },
+    "CEX-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CEX-02.stub.test.js",
+          "test_name": "CEX-02: constraint-extraction.als defines AlloyParsing fact"
+        }
+      ]
+    },
+    "CEX-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CEX-03.stub.test.js",
+          "test_name": "CEX-03: PlainEnglishRendering fact enforces summaries on all constraints"
         }
       ]
     },
@@ -407,6 +452,24 @@
         {
           "test_file": ".planning/formal/generated-stubs/CONF-09.stub.test.js",
           "test_name": "CONF-09: config-loader exports DEFAULT_CONFIG with circuit_breaker sub-object"
+        }
+      ]
+    },
+    "CONST-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CONST-01.stub.test.js",
+          "test_name": "CONST-01: constraint-extraction.als defines EditPromptInjection fact"
+        }
+      ]
+    },
+    "CONST-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CONST-02.stub.test.js",
+          "test_name": "CONST-02: NewFeatureExclusion fact prevents injection on new-feature prompts"
         }
       ]
     },
@@ -883,6 +946,15 @@
         {
           "test_file": ".planning/formal/generated-stubs/FV-03.stub.test.js",
           "test_name": "FV-03 — EventualConvergence: structural verification"
+        }
+      ]
+    },
+    "FV-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/FV-04.stub.test.js",
+          "test_name": "FV-04: fv-cicd-invariant.als defines CICDIsFirstClass fact"
         }
       ]
     },
@@ -2182,6 +2254,33 @@
         }
       ]
     },
+    "ROOT-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/ROOT-01.stub.test.js",
+          "test_name": "ROOT-01: root-cause-enforcement.als defines DebugPromptsGetTemplate fact"
+        }
+      ]
+    },
+    "ROOT-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/ROOT-03.stub.test.js",
+          "test_name": "ROOT-03: NonDebugNoTemplate fact prevents injection on non-debug prompts"
+        }
+      ]
+    },
+    "ROUTE-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/ROUTE-01.stub.test.js",
+          "test_name": "ROUTE-01: TaskClassification.tla defines TypeOK invariant"
+        }
+      ]
+    },
     "RSN-01": {
       "covered": true,
       "test_cases": [
@@ -2413,6 +2512,33 @@
         {
           "test_file": ".planning/formal/generated-stubs/SENS-03.stub.test.js",
           "test_name": "SENS-03 — GenerateReport: sensitivity-report.cjs exists"
+        }
+      ]
+    },
+    "SESSION-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SESSION-01.stub.test.js",
+          "test_name": "SESSION-01: SessionStateInjection.tla defines TypeOK invariant"
+        }
+      ]
+    },
+    "SESSION-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SESSION-02.stub.test.js",
+          "test_name": "SESSION-02: SessionStateInjection.tla defines IdempotentInjection invariant"
+        }
+      ]
+    },
+    "SESSION-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SESSION-03.stub.test.js",
+          "test_name": "SESSION-03: SessionStateInjection.tla defines FailOpen invariant"
         }
       ]
     },
@@ -3010,6 +3136,33 @@
         }
       ]
     },
+    "UPPAAL-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/UPPAAL-01.stub.test.js",
+          "test_name": "UPPAAL-01: uppaal-race-modeling.als defines ModelCapturesConcurrency fact"
+        }
+      ]
+    },
+    "UPPAAL-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/UPPAAL-02.stub.test.js",
+          "test_name": "UPPAAL-02: uppaal-race-modeling.als defines RunnerWritesResults fact"
+        }
+      ]
+    },
+    "UPPAAL-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/UPPAAL-03.stub.test.js",
+          "test_name": "UPPAAL-03: MinimumMeasurementPoints fact requires TwoOrMore"
+        }
+      ]
+    },
     "UPS-01": {
       "covered": true,
       "test_cases": [
@@ -3243,74 +3396,6 @@
           "test_name": "XPLAT-02 — Bool: structural verification"
         }
       ]
-    },
-    "BML-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "BML-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CEX-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CEX-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CEX-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CONST-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CONST-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "FV-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ROOT-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ROOT-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ROUTE-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SESSION-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SESSION-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SESSION-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "UPPAAL-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "UPPAAL-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "UPPAAL-03": {
-      "covered": false,
-      "test_cases": []
     },
     "BML-02": {
       "covered": false,

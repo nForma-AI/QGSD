@@ -3766,6 +3766,336 @@
       ],
       "severity_class": "degraded",
       "category": "Solve H->M Integration"
+    },
+    {
+      "id": "FM-REQ-CL-02-OMISSION",
+      "type": "omission",
+      "description": "Requirement CL-02 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "CL-02"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.736Z",
+      "source": "solve-remediate-gate-a"
+    },
+    {
+      "id": "FM-REQ-RLS-01-OMISSION",
+      "type": "omission",
+      "description": "Requirement RLS-01 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "RLS-01"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.736Z",
+      "source": "solve-remediate-gate-a"
+    },
+    {
+      "id": "FM-REQ-RLS-02-OMISSION",
+      "type": "omission",
+      "description": "Requirement RLS-02 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "RLS-02"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.736Z",
+      "source": "solve-remediate-gate-a"
+    },
+    {
+      "id": "FM-REQ-RLS-03-OMISSION",
+      "type": "omission",
+      "description": "Requirement RLS-03 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "RLS-03"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.736Z",
+      "source": "solve-remediate-gate-a"
+    },
+    {
+      "id": "FM-REQ-RLS-04-OMISSION",
+      "type": "omission",
+      "description": "Requirement RLS-04 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "RLS-04"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.736Z",
+      "source": "solve-remediate-gate-a"
+    },
+    {
+      "id": "FM-REQ-CI-06-OMISSION",
+      "type": "omission",
+      "description": "Requirement CI-06 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "CI-06"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.736Z",
+      "source": "solve-remediate-gate-a"
+    },
+    {
+      "id": "FM-REQ-DIAG-07-OMISSION",
+      "type": "omission",
+      "description": "Requirement DIAG-07 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "DIAG-07"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.736Z",
+      "source": "solve-remediate-gate-a"
+    },
+    {
+      "id": "FM-REQ-DIAG-08-OMISSION",
+      "type": "omission",
+      "description": "Requirement DIAG-08 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "DIAG-08"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.736Z",
+      "source": "solve-remediate-gate-a"
+    },
+    {
+      "id": "FM-REQ-DIAG-09-OMISSION",
+      "type": "omission",
+      "description": "Requirement DIAG-09 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "DIAG-09"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.736Z",
+      "source": "solve-remediate-gate-a"
+    },
+    {
+      "id": "FM-REQ-REL-04-OMISSION",
+      "type": "omission",
+      "description": "Requirement REL-04 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "REL-04"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.737Z",
+      "source": "solve-remediate-gate-a"
+    },
+    {
+      "id": "FM-REQ-SEC-06-OMISSION",
+      "type": "omission",
+      "description": "Requirement SEC-06 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "SEC-06"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.737Z",
+      "source": "solve-remediate-gate-a"
+    },
+    {
+      "id": "FM-REQ-SEC-07-OMISSION",
+      "type": "omission",
+      "description": "Requirement SEC-07 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "SEC-07"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.737Z",
+      "source": "solve-remediate-gate-a"
+    },
+    {
+      "id": "FM-REQ-SEC-08-OMISSION",
+      "type": "omission",
+      "description": "Requirement SEC-08 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "SEC-08"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.737Z",
+      "source": "solve-remediate-gate-a"
+    },
+    {
+      "id": "FM-REQ-SOLVE-04-OMISSION",
+      "type": "omission",
+      "description": "Requirement SOLVE-04 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "SOLVE-04"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.737Z",
+      "source": "solve-remediate-gate-a"
+    },
+    {
+      "id": "FM-REQ-DISPATCH-02-OMISSION",
+      "type": "omission",
+      "description": "Requirement DISPATCH-02 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "DISPATCH-02"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.737Z",
+      "source": "solve-remediate-gate-a"
+    },
+    {
+      "id": "FM-REQ-CLASS-02-OMISSION",
+      "type": "omission",
+      "description": "Requirement CLASS-02 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "CLASS-02"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.737Z",
+      "source": "solve-remediate-gate-a"
+    },
+    {
+      "id": "FM-REQ-CLASS-03-OMISSION",
+      "type": "omission",
+      "description": "Requirement CLASS-03 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "CLASS-03"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.737Z",
+      "source": "solve-remediate-gate-a"
+    },
+    {
+      "id": "FM-REQ-AGENT-04-OMISSION",
+      "type": "omission",
+      "description": "Requirement AGENT-04 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "AGENT-04"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.737Z",
+      "source": "solve-remediate-gate-a"
+    },
+    {
+      "id": "FM-REQ-RSN-06-OMISSION",
+      "type": "omission",
+      "description": "Requirement RSN-06 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "RSN-06"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.737Z",
+      "source": "solve-remediate-gate-a"
+    },
+    {
+      "id": "FM-REQ-VERF-04-OMISSION",
+      "type": "omission",
+      "description": "Requirement VERF-04 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "VERF-04"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.737Z",
+      "source": "solve-remediate-gate-a"
+    },
+    {
+      "id": "FM-REQ-XPLAT-03-OMISSION",
+      "type": "omission",
+      "description": "Requirement XPLAT-03 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "XPLAT-03"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.737Z",
+      "source": "solve-remediate-gate-a"
+    },
+    {
+      "id": "FM-REQ-PERF-03-OMISSION",
+      "type": "omission",
+      "description": "Requirement PERF-03 behavior is not implemented or not active",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "requirements.json",
+          "ref": "PERF-03"
+        }
+      ],
+      "generated": "2026-03-26T10:11:44.737Z",
+      "source": "solve-remediate-gate-a"
     }
   ],
   "summary": {
@@ -3783,5 +4113,5 @@
       "cosmetic": 4
     }
   },
-  "last_updated": "2026-03-09T14:20:08.330Z"
+  "last_updated": "2026-03-26T10:11:44.737Z"
 }

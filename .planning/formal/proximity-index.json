@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-25T17:13:11.423Z",
+  "generated": "2026-03-26T10:16:07.164Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -84,24 +84,24 @@
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-03-25T16:50:00.336Z",
-      "hash": "e483955b"
+      "mtime": "2026-03-26T10:14:07.380Z",
+      "hash": "1ff642dc"
     },
     "invariant-catalog.json": {
       "mtime": "2026-03-06T14:00:17.868Z",
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-03-25T16:40:21.974Z",
-      "hash": "86cf58f2"
+      "mtime": "2026-03-26T10:10:37.758Z",
+      "hash": "4c9e7dee"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-03-25T17:03:13.580Z",
-      "hash": "b01e13d8"
+      "mtime": "2026-03-26T09:58:48.776Z",
+      "hash": "ecb4ca4b"
     },
     "instrumentation-map.json": {
-      "mtime": "2026-03-25T16:19:11.305Z",
-      "hash": "65485eb9"
+      "mtime": "2026-03-26T09:59:43.332Z",
+      "hash": "a930bfdf"
     },
     "event-vocabulary.json": {
       "mtime": "2026-03-08T20:28:45.150Z",
@@ -116,18 +116,18 @@
       "hash": "2df5c0d7"
     },
     "git-heatmap.json": {
-      "mtime": "2026-03-25T16:19:46.092Z",
-      "hash": "48d5bd96"
+      "mtime": "2026-03-26T10:09:11.260Z",
+      "hash": "cdaf9614"
     },
     "debt.json": {
       "mtime": "2026-03-04T13:33:16.983Z",
       "hash": "4f085cf2"
     },
     "source-annotations": {
-      "mtime": "2026-03-25T16:48:40.686Z"
+      "mtime": "2026-03-26T10:14:06.356Z"
     },
     "code-source-annotations": {
-      "mtime": "2026-03-25T16:19:09.946Z"
+      "mtime": "2026-03-26T10:15:02.246Z"
     }
   },
   "nodes": {
@@ -29828,7 +29828,9 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::BML-01": {
       "type": "requirement",
@@ -29838,6 +29840,16 @@
           "to": "formal_model::.planning/formal/tla/BugModelLookup.tla",
           "rel": "modeled_by",
           "source": "model-registry"
+        },
+        {
+          "to": "invariant::TypeOK",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/BML-01.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         },
         {
           "to": "formal_model::.planning/formal/tla/BugModelLookup.tla",
@@ -29870,6 +29882,16 @@
           "to": "formal_model::.planning/formal/tla/BugModelLookup.tla",
           "rel": "modeled_by",
           "source": "model-registry"
+        },
+        {
+          "to": "invariant::DoneImpliesTracked",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/BML-03.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         },
         {
           "to": "formal_model::.planning/formal/tla/BugModelLookup.tla",
@@ -29922,7 +29944,9 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::ROUTE-01": {
       "type": "requirement",
@@ -29932,6 +29956,16 @@
           "to": "formal_model::.planning/formal/tla/TaskClassification.tla",
           "rel": "modeled_by",
           "source": "model-registry"
+        },
+        {
+          "to": "invariant::TypeOK",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/ROUTE-01.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         },
         {
           "to": "formal_model::.planning/formal/tla/TaskClassification.tla",
@@ -30022,7 +30056,9 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::SESSION-01": {
       "type": "requirement",
@@ -30032,6 +30068,16 @@
           "to": "formal_model::.planning/formal/tla/SessionStateInjection.tla",
           "rel": "modeled_by",
           "source": "model-registry"
+        },
+        {
+          "to": "invariant::TypeOK",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/SESSION-01.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         },
         {
           "to": "formal_model::.planning/formal/tla/SessionStateInjection.tla",
@@ -30050,6 +30096,16 @@
           "source": "model-registry"
         },
         {
+          "to": "invariant::IdempotentInjection",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/SESSION-02.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
+        },
+        {
           "to": "formal_model::.planning/formal/tla/SessionStateInjection.tla",
           "rel": "modeled_by",
           "source": "source-annotation"
@@ -30064,6 +30120,16 @@
           "to": "formal_model::.planning/formal/tla/SessionStateInjection.tla",
           "rel": "modeled_by",
           "source": "model-registry"
+        },
+        {
+          "to": "invariant::FailOpen",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/SESSION-03.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         },
         {
           "to": "formal_model::.planning/formal/tla/SessionStateInjection.tla",
@@ -30126,7 +30192,9 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::CEX-01": {
       "type": "requirement",
@@ -30136,6 +30204,16 @@
           "to": "formal_model::.planning/formal/alloy/constraint-extraction.als",
           "rel": "modeled_by",
           "source": "model-registry"
+        },
+        {
+          "to": "invariant::SpecType",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/CEX-01.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         },
         {
           "to": "formal_model::.planning/formal/alloy/constraint-extraction.als",
@@ -30154,6 +30232,16 @@
           "source": "model-registry"
         },
         {
+          "to": "invariant::SpecType",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/CEX-02.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
+        },
+        {
           "to": "formal_model::.planning/formal/alloy/constraint-extraction.als",
           "rel": "modeled_by",
           "source": "source-annotation"
@@ -30168,6 +30256,16 @@
           "to": "formal_model::.planning/formal/alloy/constraint-extraction.als",
           "rel": "modeled_by",
           "source": "model-registry"
+        },
+        {
+          "to": "invariant::SpecType",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/CEX-03.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         },
         {
           "to": "formal_model::.planning/formal/alloy/constraint-extraction.als",
@@ -30186,6 +30284,16 @@
           "source": "model-registry"
         },
         {
+          "to": "invariant::SpecType",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/CONST-01.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
+        },
+        {
           "to": "formal_model::.planning/formal/alloy/constraint-extraction.als",
           "rel": "modeled_by",
           "source": "source-annotation"
@@ -30200,6 +30308,16 @@
           "to": "formal_model::.planning/formal/alloy/constraint-extraction.als",
           "rel": "modeled_by",
           "source": "model-registry"
+        },
+        {
+          "to": "invariant::SpecType",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/CONST-02.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         },
         {
           "to": "formal_model::.planning/formal/alloy/constraint-extraction.als",
@@ -30222,7 +30340,9 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::FV-04": {
       "type": "requirement",
@@ -30232,6 +30352,16 @@
           "to": "formal_model::.planning/formal/alloy/fv-cicd-invariant.als",
           "rel": "modeled_by",
           "source": "model-registry"
+        },
+        {
+          "to": "invariant::Bool",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/FV-04.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         },
         {
           "to": "formal_model::.planning/formal/alloy/fv-cicd-invariant.als",
@@ -30264,7 +30394,9 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::ROOT-01": {
       "type": "requirement",
@@ -30274,6 +30406,16 @@
           "to": "formal_model::.planning/formal/alloy/root-cause-enforcement.als",
           "rel": "modeled_by",
           "source": "model-registry"
+        },
+        {
+          "to": "invariant::Bool",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/ROOT-01.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         },
         {
           "to": "formal_model::.planning/formal/alloy/root-cause-enforcement.als",
@@ -30290,6 +30432,16 @@
           "to": "formal_model::.planning/formal/alloy/root-cause-enforcement.als",
           "rel": "modeled_by",
           "source": "model-registry"
+        },
+        {
+          "to": "invariant::Bool",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/ROOT-03.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         },
         {
           "to": "formal_model::.planning/formal/alloy/root-cause-enforcement.als",
@@ -30332,7 +30484,9 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::UPPAAL-01": {
       "type": "requirement",
@@ -30342,6 +30496,16 @@
           "to": "formal_model::.planning/formal/alloy/uppaal-race-modeling.als",
           "rel": "modeled_by",
           "source": "model-registry"
+        },
+        {
+          "to": "invariant::Bool",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/UPPAAL-01.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         },
         {
           "to": "formal_model::.planning/formal/alloy/uppaal-race-modeling.als",
@@ -30360,6 +30524,16 @@
           "source": "model-registry"
         },
         {
+          "to": "invariant::Bool",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/UPPAAL-02.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
+        },
+        {
           "to": "formal_model::.planning/formal/alloy/uppaal-race-modeling.als",
           "rel": "modeled_by",
           "source": "source-annotation"
@@ -30374,6 +30548,16 @@
           "to": "formal_model::.planning/formal/alloy/uppaal-race-modeling.als",
           "rel": "modeled_by",
           "source": "model-registry"
+        },
+        {
+          "to": "invariant::Bool",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/UPPAAL-03.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         },
         {
           "to": "formal_model::.planning/formal/alloy/uppaal-race-modeling.als",
@@ -33854,6 +34038,36 @@
           "to": "requirement::XPLAT-03",
           "rel": "verifies",
           "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::FV-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::ROOT-01",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::ROOT-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::UPPAAL-01",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::UPPAAL-02",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::UPPAAL-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
         }
       ]
     },
@@ -36515,6 +36729,21 @@
         },
         {
           "to": "requirement::PERF-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::BML-01",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::ROUTE-01",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::SESSION-01",
           "rel": "verifies",
           "source": "traceability-matrix"
         }
@@ -47579,6 +47808,70 @@
         }
       ]
     },
+    "invariant::DoneImpliesTracked": {
+      "type": "invariant",
+      "id": "DoneImpliesTracked",
+      "edges": [
+        {
+          "to": "requirement::BML-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::IdempotentInjection": {
+      "type": "invariant",
+      "id": "IdempotentInjection",
+      "edges": [
+        {
+          "to": "requirement::SESSION-02",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::FailOpen": {
+      "type": "invariant",
+      "id": "FailOpen",
+      "edges": [
+        {
+          "to": "requirement::SESSION-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::SpecType": {
+      "type": "invariant",
+      "id": "SpecType",
+      "edges": [
+        {
+          "to": "requirement::CEX-01",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::CEX-02",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::CEX-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::CONST-01",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::CONST-02",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
     "invariant::P=? [ F \"consensus\" ]": {
       "type": "invariant",
       "id": "P=? [ F \"consensus\" ]",
@@ -48032,6 +48325,28 @@
         }
       ]
     },
+    "test_file::.planning/formal/generated-stubs/BML-01.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/BML-01.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::BML-01",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/BML-03.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/BML-03.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::BML-03",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
     "test_file::.planning/formal/generated-stubs/BRKR-01.stub.test.js": {
       "type": "test_file",
       "id": ".planning/formal/generated-stubs/BRKR-01.stub.test.js",
@@ -48082,6 +48397,39 @@
       "edges": [
         {
           "to": "requirement::CALIB-04",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/CEX-01.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/CEX-01.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::CEX-01",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/CEX-02.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/CEX-02.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::CEX-02",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/CEX-03.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/CEX-03.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::CEX-03",
           "rel": "tests",
           "source": "unit-test-coverage"
         }
@@ -48280,6 +48628,28 @@
       "edges": [
         {
           "to": "requirement::CONF-09",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/CONST-01.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/CONST-01.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::CONST-01",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/CONST-02.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/CONST-02.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::CONST-02",
           "rel": "tests",
           "source": "unit-test-coverage"
         }
@@ -48874,6 +49244,17 @@
       "edges": [
         {
           "to": "requirement::FV-03",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/FV-04.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/FV-04.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::FV-04",
           "rel": "tests",
           "source": "unit-test-coverage"
         }
@@ -50463,6 +50844,39 @@
         }
       ]
     },
+    "test_file::.planning/formal/generated-stubs/ROOT-01.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/ROOT-01.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::ROOT-01",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/ROOT-03.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/ROOT-03.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::ROOT-03",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/ROUTE-01.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/ROUTE-01.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::ROUTE-01",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
     "test_file::.planning/formal/generated-stubs/RSN-01.stub.test.js": {
       "type": "test_file",
       "id": ".planning/formal/generated-stubs/RSN-01.stub.test.js",
@@ -50744,6 +51158,39 @@
       "edges": [
         {
           "to": "requirement::SENS-03",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/SESSION-01.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SESSION-01.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SESSION-01",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/SESSION-02.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SESSION-02.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SESSION-02",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/SESSION-03.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SESSION-03.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SESSION-03",
           "rel": "tests",
           "source": "unit-test-coverage"
         }
@@ -51470,6 +51917,39 @@
       "edges": [
         {
           "to": "requirement::UNIF-04",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/UPPAAL-01.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/UPPAAL-01.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::UPPAAL-01",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/UPPAAL-02.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/UPPAAL-02.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::UPPAAL-02",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/UPPAAL-03.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/UPPAAL-03.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::UPPAAL-03",
           "rel": "tests",
           "source": "unit-test-coverage"
         }

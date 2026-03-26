@@ -1,6 +1,6 @@
 {
   "schema_version": "2",
-  "generated": "2026-03-25T16:18:03.341Z",
+  "generated": "2026-03-26T09:58:30.707Z",
   "layers": {
     "L1": [
       {
@@ -1040,6 +1040,41 @@
         "path": ".planning/formal/tla/NFSolveFastPath.tla",
         "description": "Solve diagnostic fast path: mode selection between direct Bash invocation (~60s) and full Agent dispatch (--verbose)",
         "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/BugModelLookup.tla",
+        "description": "Bug-to-model lookup pipeline: scan, match, check, report",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/TaskClassification.tla",
+        "description": "Task classification and routing: classify -> route to debug/normal pipeline",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/SessionStateInjection.tla",
+        "description": "Session state injection: idempotent STATE.md injection, fail-open",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/constraint-extraction.als",
+        "description": "Constraint extraction from TLA+/Alloy and injection into edit prompts",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/fv-cicd-invariant.als",
+        "description": "CI/CD, build artifacts, and IaC as first-class invariant gate components",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/root-cause-enforcement.als",
+        "description": "Root cause reasoning template injection with fail-open pattern matching",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/uppaal-race-modeling.als",
+        "description": "UPPAAL timed race modeling: model structure, runner integration, measurements",
+        "grounding_status": "ungrounded"
       }
     ]
   },
@@ -1063,16 +1098,16 @@
   "collapsed_layers": {
     "L2": {
       "reason": "Empty layer — zero entries permanently blocked Gate B (STRUCT-01)",
-      "collapsed_at": "2026-03-25T16:18:03.341Z"
+      "collapsed_at": "2026-03-26T09:58:30.707Z"
     }
   },
   "summary": {
-    "total_models": 207,
+    "total_models": 214,
     "L1_count": 2,
     "L2_count": 0,
-    "L3_count": 205,
+    "L3_count": 212,
     "maturity_distribution": {
-      "0": 172,
+      "0": 179,
       "1": 35
     },
     "spec_modules_with_invariants": 18

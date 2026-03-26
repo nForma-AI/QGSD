@@ -1,6 +1,6 @@
 {
   "aggregated_at": "2026-03-25T13:42:23.941Z",
-  "content_hash": "67b456314683b982",
+  "content_hash": "48cc27deb8bd1e06367a6bcb4e19d133ee071e2cca558c9c46db951dac009cd8",
   "frozen_at": "2026-03-25T13:42:23.942Z",
   "requirements": [
     {
@@ -358,7 +358,10 @@
       "provenance": {
         "source_file": ".planning/milestones/v0.38-REQUIREMENTS.md",
         "milestone": "v0.38"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/tla/BugModelLookup.tla"
+      ]
     },
     {
       "id": "BML-03",
@@ -4026,7 +4029,10 @@
       "provenance": {
         "source_file": ".planning/REQUIREMENTS.md",
         "milestone": "v0.41"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/tla/TaskClassification.tla"
+      ]
     },
     {
       "id": "ROUTE-03",
@@ -4038,7 +4044,10 @@
       "provenance": {
         "source_file": ".planning/REQUIREMENTS.md",
         "milestone": "v0.41"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/tla/TaskClassification.tla"
+      ]
     },
     {
       "id": "ROUTE-04",
@@ -4050,7 +4059,10 @@
       "provenance": {
         "source_file": ".planning/REQUIREMENTS.md",
         "milestone": "v0.41"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/tla/TaskClassification.tla"
+      ]
     },
     {
       "id": "RSN-01",

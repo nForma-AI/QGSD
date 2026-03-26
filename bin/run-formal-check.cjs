@@ -148,6 +148,16 @@ const MODULE_CHECKS = {
         '-workers', '1'
       ]
     }
+  ],
+  'formal-proximity-index': [
+    {
+      tool: 'alloy',
+      cmd: [
+        'java', '-jar', '.planning/formal/alloy/org.alloytools.alloy.dist.jar', 'exec',
+        '--output', '-', '--type', 'text', '--quiet',
+        '.planning/formal/alloy/proximity-index.als'
+      ]
+    }
   ]
 };
 
@@ -312,9 +322,11 @@ if (require.main === module) {
     process.stderr.write('[run-formal-check] WARNING: java not found — skipping all TLC/Alloy checks\n');
     // All checks become skipped
     const allResults = [];
+    const unknownModules = [];
     for (const module of modules) {
       if (!MODULE_CHECKS[module]) {
-        process.stderr.write(`[run-formal-check] WARNING: unknown module "${module}" — skipping\n`);
+        process.stderr.write(`[run-formal-check] ERROR: unknown module "${module}" — no checks registered\n`);
+        unknownModules.push(module);
         continue;
       }
       for (const checkDef of MODULE_CHECKS[module]) {
@@ -334,6 +346,10 @@ if (require.main === module) {
 
     process.stdout.write(`[run-formal-check] Results: ${allResults.length} checks, ${passed} passed, ${failed} failed, ${skipped} skipped\n`);
     process.stdout.write(`FORMAL_CHECK_RESULT=${JSON.stringify({ passed, failed, skipped, counterexamples: [] })}\n`);
+    if (unknownModules.length > 0) {
+      process.stderr.write(`[run-formal-check] FAIL: ${unknownModules.length} unknown module(s): ${unknownModules.join(', ')} — register in MODULE_CHECKS\n`);
+      process.exit(1);
+    }
     process.exit(0);
   }
 
@@ -347,10 +363,12 @@ if (require.main === module) {
 
   // Run all checks
   const allResults = [];
+  const unknownModules = [];
 
   for (const module of modules) {
     if (!MODULE_CHECKS[module]) {
-      process.stderr.write(`[run-formal-check] WARNING: unknown module "${module}" — skipping\n`);
+      process.stderr.write(`[run-formal-check] ERROR: unknown module "${module}" — no checks registered\n`);
+      unknownModules.push(module);
       continue;
     }
 
@@ -394,8 +412,11 @@ if (require.main === module) {
   // Machine-readable result line
   process.stdout.write(`FORMAL_CHECK_RESULT=${JSON.stringify({ passed, failed, skipped, counterexamples })}\n`);
 
-  // Exit code: 0 if no failures, 1 if any failed
-  const exitCode = failed > 0 ? 1 : 0;
+  // Exit code: 1 if any failed OR if any requested modules were unknown (vacuous pass prevention)
+  if (unknownModules.length > 0) {
+    process.stderr.write(`[run-formal-check] FAIL: ${unknownModules.length} unknown module(s): ${unknownModules.join(', ')} — register in MODULE_CHECKS\n`);
+  }
+  const exitCode = (failed > 0 || unknownModules.length > 0) ? 1 : 0;
   process.exit(exitCode);
 }
 
