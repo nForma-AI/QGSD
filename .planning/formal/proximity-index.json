@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-26T10:16:07.164Z",
+  "generated": "2026-03-26T15:42:16.739Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -84,31 +84,31 @@
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-03-26T10:14:07.380Z",
-      "hash": "1ff642dc"
+      "mtime": "2026-03-26T15:41:53.090Z",
+      "hash": "534afd83"
     },
     "invariant-catalog.json": {
       "mtime": "2026-03-06T14:00:17.868Z",
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-03-26T10:10:37.758Z",
-      "hash": "4c9e7dee"
+      "mtime": "2026-03-26T15:24:52.370Z",
+      "hash": "eba2ee78"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-03-26T09:58:48.776Z",
-      "hash": "ecb4ca4b"
+      "mtime": "2026-03-26T15:20:44.101Z",
+      "hash": "0daefb25"
     },
     "instrumentation-map.json": {
-      "mtime": "2026-03-26T09:59:43.332Z",
-      "hash": "a930bfdf"
+      "mtime": "2026-03-26T15:20:04.198Z",
+      "hash": "6aaf02e5"
     },
     "event-vocabulary.json": {
       "mtime": "2026-03-08T20:28:45.150Z",
       "hash": "fa1b7cf9"
     },
     "observed-fsm.json": {
-      "mtime": "2026-03-24T22:04:47.852Z",
+      "mtime": "2026-03-26T12:46:16.386Z",
       "hash": "ad0a60cf"
     },
     "risk-heatmap.json": {
@@ -116,18 +116,18 @@
       "hash": "2df5c0d7"
     },
     "git-heatmap.json": {
-      "mtime": "2026-03-26T10:09:11.260Z",
-      "hash": "cdaf9614"
+      "mtime": "2026-03-26T15:20:22.966Z",
+      "hash": "c9bb6baf"
     },
     "debt.json": {
       "mtime": "2026-03-04T13:33:16.983Z",
       "hash": "4f085cf2"
     },
     "source-annotations": {
-      "mtime": "2026-03-26T10:14:06.356Z"
+      "mtime": "2026-03-26T15:40:46.275Z"
     },
     "code-source-annotations": {
-      "mtime": "2026-03-26T10:15:02.246Z"
+      "mtime": "2026-03-26T15:19:49.208Z"
     }
   },
   "nodes": {
@@ -13567,9 +13567,7 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ],
-      "source_layer": "L3",
-      "gate_maturity": "SOFT_GATE"
+      ]
     },
     "formal_model::.planning/formal/alloy/readme-structure.als": {
       "type": "formal_model",
@@ -16197,6 +16195,11 @@
           "to": "invariant::DiagnosePrecedesRemediate",
           "rel": "verified_by",
           "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/SOLVE-01.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         },
         {
           "to": "formal_model::.planning/formal/alloy/solve-consistency.als",
@@ -20990,9 +20993,7 @@
     "formal_model::.planning/formal/prism/quorum.pm": {
       "type": "formal_model",
       "id": ".planning/formal/prism/quorum.pm",
-      "edges": [],
-      "source_layer": "L3",
-      "gate_maturity": "SOFT_GATE"
+      "edges": []
     },
     "formal_model::.planning/formal/tla/NFAccountManager.tla": {
       "type": "formal_model",
@@ -22447,9 +22448,7 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ],
-      "source_layer": "L3",
-      "gate_maturity": "SOFT_GATE"
+      ]
     },
     "formal_model::.planning/formal/tla/NFQuorum_xstate.tla": {
       "type": "formal_model",
@@ -22460,9 +22459,7 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ],
-      "source_layer": "L3",
-      "gate_maturity": "SOFT_GATE"
+      ]
     },
     "formal_model::.planning/formal/tla/NFReasoning.tla": {
       "type": "formal_model",
@@ -29827,6 +29824,61 @@
           "to": "requirement::BML-03",
           "rel": "models",
           "source": "source-annotation"
+        },
+        {
+          "to": "requirement::DBG-01",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::DBG-02",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::DBG-03",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::DBG-04",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::DBUG-01",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::DBUG-02",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::DBUG-03",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::DBUG-04",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::MRF-01",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::MRF-02",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::MRF-03",
+          "rel": "models",
+          "source": "model-registry"
         }
       ],
       "source_layer": "L3",
@@ -29897,6 +29949,127 @@
           "to": "formal_model::.planning/formal/tla/BugModelLookup.tla",
           "rel": "modeled_by",
           "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::DBG-01": {
+      "type": "requirement",
+      "id": "DBG-01",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/BugModelLookup.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        }
+      ]
+    },
+    "requirement::DBG-02": {
+      "type": "requirement",
+      "id": "DBG-02",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/BugModelLookup.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        }
+      ]
+    },
+    "requirement::DBG-03": {
+      "type": "requirement",
+      "id": "DBG-03",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/BugModelLookup.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        }
+      ]
+    },
+    "requirement::DBG-04": {
+      "type": "requirement",
+      "id": "DBG-04",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/BugModelLookup.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        }
+      ]
+    },
+    "requirement::DBUG-01": {
+      "type": "requirement",
+      "id": "DBUG-01",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/BugModelLookup.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        }
+      ]
+    },
+    "requirement::DBUG-02": {
+      "type": "requirement",
+      "id": "DBUG-02",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/BugModelLookup.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        }
+      ]
+    },
+    "requirement::DBUG-03": {
+      "type": "requirement",
+      "id": "DBUG-03",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/BugModelLookup.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        }
+      ]
+    },
+    "requirement::DBUG-04": {
+      "type": "requirement",
+      "id": "DBUG-04",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/BugModelLookup.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        }
+      ]
+    },
+    "requirement::MRF-01": {
+      "type": "requirement",
+      "id": "MRF-01",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/BugModelLookup.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        }
+      ]
+    },
+    "requirement::MRF-02": {
+      "type": "requirement",
+      "id": "MRF-02",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/BugModelLookup.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        }
+      ]
+    },
+    "requirement::MRF-03": {
+      "type": "requirement",
+      "id": "MRF-03",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/BugModelLookup.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
         }
       ]
     },
@@ -30561,6 +30734,1145 @@
         },
         {
           "to": "formal_model::.planning/formal/alloy/uppaal-race-modeling.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/alloy/btf-layer-integration.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/btf-layer-integration.als",
+      "edges": [
+        {
+          "to": "requirement::BTF-01",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::BTF-01",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::BTF-02",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::BTF-02",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::BTF-03",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::BTF-03",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::BTF-04",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::BTF-04",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::BTF-01": {
+      "type": "requirement",
+      "id": "BTF-01",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/btf-layer-integration.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/btf-layer-integration.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::BTF-02": {
+      "type": "requirement",
+      "id": "BTF-02",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/btf-layer-integration.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/btf-layer-integration.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::BTF-03": {
+      "type": "requirement",
+      "id": "BTF-03",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/btf-layer-integration.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/btf-layer-integration.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::BTF-04": {
+      "type": "requirement",
+      "id": "BTF-04",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/btf-layer-integration.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/btf-layer-integration.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/alloy/coverage-link-suppression.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/coverage-link-suppression.als",
+      "edges": [
+        {
+          "to": "requirement::CLINK-01",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::CLINK-01",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::CLINK-02",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::CLINK-02",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::CLINK-01": {
+      "type": "requirement",
+      "id": "CLINK-01",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/coverage-link-suppression.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/coverage-link-suppression.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::CLINK-02": {
+      "type": "requirement",
+      "id": "CLINK-02",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/coverage-link-suppression.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/coverage-link-suppression.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/alloy/deprecation-routing.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/deprecation-routing.als",
+      "edges": [
+        {
+          "to": "requirement::DEPR-01",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::DEPR-01",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::DEPR-02",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::DEPR-02",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::DEPR-03",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::DEPR-03",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::DEPR-01": {
+      "type": "requirement",
+      "id": "DEPR-01",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/deprecation-routing.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/deprecation-routing.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::DEPR-02": {
+      "type": "requirement",
+      "id": "DEPR-02",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/deprecation-routing.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/deprecation-routing.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::DEPR-03": {
+      "type": "requirement",
+      "id": "DEPR-03",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/deprecation-routing.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/deprecation-routing.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/alloy/verification-foundations.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/verification-foundations.als",
+      "edges": [
+        {
+          "to": "requirement::FND-01",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::FND-01",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::FND-02",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::FND-02",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::FND-03",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::FND-03",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::FND-01": {
+      "type": "requirement",
+      "id": "FND-01",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/verification-foundations.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/verification-foundations.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::FND-02": {
+      "type": "requirement",
+      "id": "FND-02",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/verification-foundations.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/verification-foundations.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::FND-03": {
+      "type": "requirement",
+      "id": "FND-03",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/verification-foundations.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/verification-foundations.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/alloy/fp-rate-tuning.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/fp-rate-tuning.als",
+      "edges": [
+        {
+          "to": "requirement::FPTUNE-01",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::FPTUNE-01",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::FPTUNE-02",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::FPTUNE-02",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::FPTUNE-03",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::FPTUNE-03",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::FPTUNE-01": {
+      "type": "requirement",
+      "id": "FPTUNE-01",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/fp-rate-tuning.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/fp-rate-tuning.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::FPTUNE-02": {
+      "type": "requirement",
+      "id": "FPTUNE-02",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/fp-rate-tuning.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/fp-rate-tuning.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::FPTUNE-03": {
+      "type": "requirement",
+      "id": "FPTUNE-03",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/fp-rate-tuning.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/fp-rate-tuning.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/alloy/gate-auto-promotion.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/gate-auto-promotion.als",
+      "edges": [
+        {
+          "to": "requirement::GPROMO-01",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::GPROMO-01",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::GPROMO-02",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::GPROMO-02",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::GPROMO-03",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::GPROMO-03",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::GPROMO-01": {
+      "type": "requirement",
+      "id": "GPROMO-01",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/gate-auto-promotion.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/gate-auto-promotion.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::GPROMO-02": {
+      "type": "requirement",
+      "id": "GPROMO-02",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/gate-auto-promotion.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/gate-auto-promotion.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::GPROMO-03": {
+      "type": "requirement",
+      "id": "GPROMO-03",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/gate-auto-promotion.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/gate-auto-promotion.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/alloy/hypothesis-targeting.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/hypothesis-targeting.als",
+      "edges": [
+        {
+          "to": "requirement::HTARGET-01",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::HTARGET-01",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::HTARGET-02",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::HTARGET-02",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::HTARGET-01": {
+      "type": "requirement",
+      "id": "HTARGET-01",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/hypothesis-targeting.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/hypothesis-targeting.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        },
+        {
+          "to": "code_file::bin/hypothesis-layer-map.cjs",
+          "rel": "declared_in",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::HTARGET-02": {
+      "type": "requirement",
+      "id": "HTARGET-02",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/hypothesis-targeting.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/hypothesis-targeting.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/alloy/intent-approach-block.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/intent-approach-block.als",
+      "edges": [
+        {
+          "to": "requirement::INTENT-01",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::INTENT-01",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::INTENT-02",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::INTENT-02",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::INTENT-03",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::INTENT-03",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::INTENT-01": {
+      "type": "requirement",
+      "id": "INTENT-01",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/intent-approach-block.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/intent-approach-block.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::INTENT-02": {
+      "type": "requirement",
+      "id": "INTENT-02",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/intent-approach-block.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/intent-approach-block.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::INTENT-03": {
+      "type": "requirement",
+      "id": "INTENT-03",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/intent-approach-block.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/intent-approach-block.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/alloy/quorum-precedents.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/quorum-precedents.als",
+      "edges": [
+        {
+          "to": "requirement::QPREC-01",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::QPREC-01",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::QPREC-02",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::QPREC-02",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::QPREC-03",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::QPREC-03",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::QPREC-01": {
+      "type": "requirement",
+      "id": "QPREC-01",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/quorum-precedents.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/quorum-precedents.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        },
+        {
+          "to": "code_file::bin/extract-precedents.cjs",
+          "rel": "declared_in",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::QPREC-02": {
+      "type": "requirement",
+      "id": "QPREC-02",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/quorum-precedents.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/quorum-precedents.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::QPREC-03": {
+      "type": "requirement",
+      "id": "QPREC-03",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/quorum-precedents.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/quorum-precedents.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/alloy/regression-verification.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/regression-verification.als",
+      "edges": [
+        {
+          "to": "requirement::REG-01",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::REG-01",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::REG-02",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::REG-02",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::REG-03",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::REG-03",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::REG-01": {
+      "type": "requirement",
+      "id": "REG-01",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/regression-verification.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/regression-verification.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::REG-02": {
+      "type": "requirement",
+      "id": "REG-02",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/regression-verification.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/regression-verification.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::REG-03": {
+      "type": "requirement",
+      "id": "REG-03",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/regression-verification.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/regression-verification.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/alloy/root-cause-quorum.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/root-cause-quorum.als",
+      "edges": [
+        {
+          "to": "requirement::ROOT-02",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::ROOT-02",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::ROOT-02": {
+      "type": "requirement",
+      "id": "ROOT-02",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/root-cause-quorum.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/root-cause-quorum.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/tla/NFScopeGuard.tla": {
+      "type": "formal_model",
+      "id": ".planning/formal/tla/NFScopeGuard.tla",
+      "edges": [
+        {
+          "to": "requirement::SCOPE-01",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::SCOPE-01",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::SCOPE-02",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::SCOPE-02",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::SCOPE-03",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::SCOPE-03",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::SCOPE-01": {
+      "type": "requirement",
+      "id": "SCOPE-01",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/NFScopeGuard.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/tla/NFScopeGuard.tla",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::SCOPE-02": {
+      "type": "requirement",
+      "id": "SCOPE-02",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/NFScopeGuard.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/tla/NFScopeGuard.tla",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::SCOPE-03": {
+      "type": "requirement",
+      "id": "SCOPE-03",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/NFScopeGuard.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/tla/NFScopeGuard.tla",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/tla/NFSimulationLoop.tla": {
+      "type": "formal_model",
+      "id": ".planning/formal/tla/NFSimulationLoop.tla",
+      "edges": [
+        {
+          "to": "requirement::SIM-01",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::SIM-01",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::SIM-02",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::SIM-02",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::SIM-03",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::SIM-03",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::SIM-04",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::SIM-04",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::SIM-01": {
+      "type": "requirement",
+      "id": "SIM-01",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/NFSimulationLoop.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/tla/NFSimulationLoop.tla",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::SIM-02": {
+      "type": "requirement",
+      "id": "SIM-02",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/NFSimulationLoop.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/tla/NFSimulationLoop.tla",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::SIM-03": {
+      "type": "requirement",
+      "id": "SIM-03",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/NFSimulationLoop.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/tla/NFSimulationLoop.tla",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::SIM-04": {
+      "type": "requirement",
+      "id": "SIM-04",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/NFSimulationLoop.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/tla/NFSimulationLoop.tla",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/alloy/test-link-annotations.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/test-link-annotations.als",
+      "edges": [
+        {
+          "to": "requirement::TLINK-01",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::TLINK-01",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::TLINK-02",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::TLINK-02",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::TLINK-03",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::TLINK-03",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::TLINK-01": {
+      "type": "requirement",
+      "id": "TLINK-01",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/test-link-annotations.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/test-link-annotations.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::TLINK-02": {
+      "type": "requirement",
+      "id": "TLINK-02",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/test-link-annotations.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/test-link-annotations.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        },
+        {
+          "to": "code_file::bin/annotate-tests.cjs",
+          "rel": "declared_in",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::TLINK-03": {
+      "type": "requirement",
+      "id": "TLINK-03",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/test-link-annotations.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/test-link-annotations.als",
           "rel": "modeled_by",
           "source": "source-annotation"
         }
@@ -52241,6 +53553,17 @@
         }
       ]
     },
+    "test_file::.planning/formal/generated-stubs/SOLVE-01.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SOLVE-01.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SOLVE-01",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
     "code_line::hooks/nf-prompt.js:713": {
       "type": "code_line",
       "id": "hooks/nf-prompt.js:713",
@@ -53364,17 +54687,6 @@
         }
       ]
     },
-    "requirement::TLINK-02": {
-      "type": "requirement",
-      "id": "TLINK-02",
-      "edges": [
-        {
-          "to": "code_file::bin/annotate-tests.cjs",
-          "rel": "declared_in",
-          "source": "source-annotation"
-        }
-      ]
-    },
     "code_file::bin/build-layer-manifest.cjs": {
       "type": "code_file",
       "id": "bin/build-layer-manifest.cjs",
@@ -53505,17 +54817,6 @@
         }
       ]
     },
-    "requirement::QPREC-01": {
-      "type": "requirement",
-      "id": "QPREC-01",
-      "edges": [
-        {
-          "to": "code_file::bin/extract-precedents.cjs",
-          "rel": "declared_in",
-          "source": "source-annotation"
-        }
-      ]
-    },
     "code_file::bin/formal-test-sync.cjs": {
       "type": "code_file",
       "id": "bin/formal-test-sync.cjs",
@@ -53636,17 +54937,6 @@
         {
           "to": "requirement::HTARGET-01",
           "rel": "declares",
-          "source": "source-annotation"
-        }
-      ]
-    },
-    "requirement::HTARGET-01": {
-      "type": "requirement",
-      "id": "HTARGET-01",
-      "edges": [
-        {
-          "to": "code_file::bin/hypothesis-layer-map.cjs",
-          "rel": "declared_in",
           "source": "source-annotation"
         }
       ]

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-26T09:58:48.764Z",
+  "generated_at": "2026-03-26T15:20:44.099Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -3394,6 +3394,15 @@
         {
           "test_file": ".planning/formal/generated-stubs/XPLAT-02.stub.test.js",
           "test_name": "XPLAT-02 — Bool: structural verification"
+        }
+      ]
+    },
+    "SOLVE-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SOLVE-01.stub.test.js",
+          "test_name": "SOLVE-01: nf-solve.cjs exists and is loadable"
         }
       ]
     },

@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-26T10:37:01.126Z",
-  "content_hash": "d2d099c2f926eb7c",
+  "aggregated_at": "2026-03-26T18:42:33.792Z",
+  "content_hash": "2e0d6298ed4dc05c",
   "requirements": [
     {
       "id": "ACT-01",
@@ -5947,6 +5947,86 @@
       "status": "Proposed",
       "provenance": {
         "source_file": "bin/formal-graph-search.cjs",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-02",
+      "text": "Quick mode (/nf:quick) shall provide the same atomic commit and state tracking guarantees as full phase execution while skipping optional steps (research, plan checker, verifier), tracking work in .planning/quick/",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-03",
+      "text": "The fsm-to-tla transpiler shall accept state machine definitions from supported frameworks and produce valid TLA+ specifications, supporting at least 28 framework patterns across 13 languages",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-04",
+      "text": "/nf:close-formal-gaps shall auto-generate formal specifications (TLA+, Alloy, or PRISM) from project requirements to close formal model coverage gaps",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-05",
+      "text": "Quorum dispatch shall perform pre-dispatch authentication checks on all agent slots, detecting unauthenticated agents before sending work to avoid timeout-based failure discovery",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-06",
+      "text": "Plan-phase verification shall check generated plans against phase requirements and loop until plans pass validation before allowing execution to proceed",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-07",
+      "text": "Execute-phase verification shall check that the codebase delivers what the phase goal promised after task execution completes, using goal-backward analysis",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-08",
+      "text": "/nf:solve-report shall generate a before/after summary including full formal verification results showing what changed during the solve cycle",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-09",
+      "text": "The circuit breaker shall detect ping-pong commit oscillation by collapsing consecutive commits on the same file set into run-groups and triggering when 3+ alternating groups are detected, blocking write commands until Haiku classification confirms genuine oscillation, quorum diagnosis identifies the structural coupling, and user approval is granted",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
         "milestone": "solver-tui"
       }
     }
