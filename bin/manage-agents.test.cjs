@@ -1259,14 +1259,14 @@ test('parseUpdateLogErrors: uses 24h window as default when maxAgeMs not provide
 // ── v0.10-07 Wave 0 stubs: probeAllSlots + liveDashboard _pure exports ──────
 // These stubs MUST fail with TypeError until Plan 02 adds the _pure exports.
 
-test('probeAllSlots: subprocess slots return healthy:null without HTTP probe', async () => {
-  const { probeAllSlots } = _pure;   // TypeError until _pure export added
+test('probeAllSlots: unknown slots (no providers.json entry, no HTTP URL) return no-probe', async () => {
+  const { probeAllSlots } = _pure;
   const mockMcpServers = {
     'subprocess-slot': { command: 'node', args: ['server.js'], env: {} },
   };
   const result = await probeAllSlots(mockMcpServers, ['subprocess-slot'], null);
   assert.strictEqual(result['subprocess-slot'].healthy, null);
-  assert.strictEqual(result['subprocess-slot'].error, 'subprocess');
+  assert.strictEqual(result['subprocess-slot'].error, 'no-probe');
 });
 
 test('probeAllSlots: empty slots returns empty object', async () => {

@@ -2002,17 +2002,20 @@ async function checkHealthSingle() {
   const slots   = Object.keys(servers);
   if (!slots.length) { toast('No agents configured', true); return; }
 
+  let pdata;
+  try { pdata = readProvidersJson(); } catch { pdata = { providers: [] }; }
+  const providerMap = new Map((pdata.providers || []).map(p => [p.name, p]));
   const target = await promptList({ title: 'Check Health — Pick slot',
-    items: slots.map(s => ({ label: pad(s, 14) + ' ' + ((servers[s].env || {}).CLAUDE_DEFAULT_MODEL || '—'), value: s })) });
+    items: slots.map(s => {
+      const env = (servers[s].env || {});
+      const meta = providerMap.get(s);
+      const model = env.CLAUDE_DEFAULT_MODEL || (meta && meta.model) || '—';
+      return { label: pad(s, 14) + ' ' + model, value: s };
+    }) });
 
   const slotName = target.value;
   const env      = (servers[slotName].env || {});
   setContent('Agent Health', `{gray-fg}Probing ${slotName}…{/}`);
-
-  if (!env.ANTHROPIC_BASE_URL) {
-    setContent('Agent Health', `{yellow-fg}${slotName} is a subprocess provider — no HTTP endpoint to probe.{/}`);
-    return;
-  }
 
   const secrets = loadSecrets();
   const lines   = [`{bold}${slotName}{/bold}`, '─'.repeat(50)];
@@ -2022,12 +2025,25 @@ async function checkHealthSingle() {
   const status = p.healthy
     ? `{green-fg}✓ UP (${p.latencyMs}ms){/}`
     : p.healthy === null
-      ? `{gray-fg}— subprocess (no HTTP endpoint){/}`
+      ? `{gray-fg}— not probed{/}`
       : `{red-fg}✗ DOWN [${p.error || 'timeout'}]{/}`;
   lines.push(`  Status:  ${status}`);
 
-  lines.push(`  URL:     ${env.ANTHROPIC_BASE_URL}`);
-  lines.push(`  Model:   ${env.CLAUDE_DEFAULT_MODEL || '—'}`);
+  // Show provider info from providers.json or MCP env
+  let pdata;
+  try { pdata = readProvidersJson(); } catch { pdata = { providers: [] }; }
+  const providerMeta = (pdata.providers || []).find(pr => pr.name === slotName);
+  const displayProvider = env.ANTHROPIC_BASE_URL
+    || (providerMeta && providerMeta.display_provider)
+    || 'subprocess';
+  const displayModel = env.CLAUDE_DEFAULT_MODEL
+    || (providerMeta && providerMeta.model)
+    || '—';
+  lines.push(`  Provider: ${displayProvider}`);
+  lines.push(`  Model:   ${displayModel}`);
+  if (p.type === 'subprocess' && providerMeta && providerMeta.cli) {
+    lines.push(`  CLI:     ${providerMeta.cli}`);
+  }
   setContent('Agent Health', lines.join('\n'));
 }
 

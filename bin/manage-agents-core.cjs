@@ -213,6 +213,7 @@ function formatTimestamp(ts) {
  * Pure function — no process.stdout.write, no side effects.
  */
 function buildDashboardLines(slots, mcpServers, healthMap, lastUpdated) {
+  const providerIdx = getProviderIndex();
   const lines = [];
   lines.push('  nForma Live Health Dashboard');
   lines.push('  ' + '\u2500'.repeat(60));
@@ -221,13 +222,25 @@ function buildDashboardLines(slots, mcpServers, healthMap, lastUpdated) {
   for (const slotName of slots) {
     const cfg = mcpServers[slotName] || {};
     const env = cfg.env || {};
-    const model = env.CLAUDE_DEFAULT_MODEL || '\u2014';
-    const provider = env.ANTHROPIC_BASE_URL
-      ? env.ANTHROPIC_BASE_URL
-          .replace(/^https?:\/\//, '')
-          .replace(/\/v\d+\/?$/, '')
-          .replace(/\/.*$/, '')
-      : (cfg.command || '\u2014');
+    const providerMeta = providerIdx.get(slotName);
+
+    // Resolve display model: env override → providers.json → fallback
+    const model = env.CLAUDE_DEFAULT_MODEL
+      || (providerMeta && providerMeta.model)
+      || '\u2014';
+
+    // Resolve display provider: env URL → providers.json display_provider → command fallback
+    let provider;
+    if (env.ANTHROPIC_BASE_URL) {
+      provider = env.ANTHROPIC_BASE_URL
+        .replace(/^https?:\/\//, '')
+        .replace(/\/v\d+\/?$/, '')
+        .replace(/\/.*$/, '');
+    } else if (providerMeta && providerMeta.display_provider) {
+      provider = providerMeta.display_provider;
+    } else {
+      provider = cfg.command || '\u2014';
+    }
 
     const probe = healthMap[slotName];
     let status;
@@ -631,23 +644,81 @@ async function probeAndPersistKey(slotName, baseUrl, apiKey) {
   return probe;
 }
 
+/**
+ * Probe a subprocess provider by running its health_check_args (e.g., --version).
+ * Mirrors the logic in unified-mcp-server.mjs runSubprocessHealthCheck().
+ * @param {object} provider  Entry from providers.json
+ * @returns {{ healthy: boolean, latencyMs: number, statusCode: null, error: string|null, type: string }}
+ */
+function probeSubprocess(provider) {
+  const cliPath = provider.resolvedCli || provider.cli;
+  if (!cliPath) {
+    return { healthy: false, latencyMs: 0, statusCode: null, error: 'No CLI path', type: 'subprocess' };
+  }
+  const bareName = cliPath.split('/').pop();
+  const resolved = resolveCli(bareName);
+  const args = provider.health_check_args || ['--version'];
+  const start = Date.now();
+  try {
+    const result = spawnSync(resolved, args, {
+      encoding: 'utf8',
+      timeout: 10000,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    const latencyMs = Date.now() - start;
+    const output = (result.stdout || '') + (result.stderr || '');
+    if (result.error) {
+      return { healthy: false, latencyMs, statusCode: null, error: result.error.message, type: 'subprocess' };
+    }
+    const healthy = result.status === 0 || (output.length > 0 && !output.startsWith('[spawn error'));
+    return { healthy, latencyMs, statusCode: null, error: healthy ? null : output.slice(0, 200).trim(), type: 'subprocess' };
+  } catch (err) {
+    return { healthy: false, latencyMs: Date.now() - start, statusCode: null, error: err.message, type: 'subprocess' };
+  }
+}
+
+// Build a name→provider lookup from providers.json (cached per call)
+let _providerIndex = null;
+function getProviderIndex() {
+  if (_providerIndex) return _providerIndex;
+  try {
+    const data = readProvidersJson();
+    _providerIndex = new Map((data.providers || []).map(p => [p.name, p]));
+  } catch (_) {
+    _providerIndex = new Map();
+  }
+  return _providerIndex;
+}
+
 async function probeAllSlots(mcpServers, slots, secretsLib) {
+  const providerIdx = getProviderIndex();
   const results = await Promise.all(slots.map(async (slotName) => {
     const cfg = mcpServers[slotName] || {};
     const env = cfg.env || {};
-    if (!env.ANTHROPIC_BASE_URL) {
-      return [slotName, { healthy: null, latencyMs: 0, statusCode: null, error: 'subprocess' }];
+
+    // HTTP provider path (legacy — has ANTHROPIC_BASE_URL in env)
+    if (env.ANTHROPIC_BASE_URL) {
+      const account = deriveSecretAccount(slotName);
+      let apiKey = env.ANTHROPIC_API_KEY || '';
+      if (secretsLib) {
+        try {
+          const k = await secretsLib.get('nforma', account);
+          if (k) apiKey = k;
+        } catch (_) {}
+      }
+      const probe = await probeAndPersistKey(slotName, env.ANTHROPIC_BASE_URL, apiKey);
+      return [slotName, probe];
     }
-    const account = deriveSecretAccount(slotName);
-    let apiKey = env.ANTHROPIC_API_KEY || '';
-    if (secretsLib) {
-      try {
-        const k = await secretsLib.get('nforma', account);
-        if (k) apiKey = k;
-      } catch (_) {}
+
+    // Subprocess provider path — probe via CLI health_check_args
+    const provider = providerIdx.get(slotName);
+    if (provider && provider.cli) {
+      const probe = probeSubprocess(provider);
+      return [slotName, probe];
     }
-    const probe = await probeAndPersistKey(slotName, env.ANTHROPIC_BASE_URL, apiKey);
-    return [slotName, probe];
+
+    // Unknown provider type — no way to probe
+    return [slotName, { healthy: null, latencyMs: 0, statusCode: null, error: 'no-probe', type: 'unknown' }];
   }));
   return Object.fromEntries(results);
 }
