@@ -2030,9 +2030,7 @@ async function checkHealthSingle() {
   lines.push(`  Status:  ${status}`);
 
   // Show provider info from providers.json or MCP env
-  let pdata;
-  try { pdata = readProvidersJson(); } catch { pdata = { providers: [] }; }
-  const providerMeta = (pdata.providers || []).find(pr => pr.name === slotName);
+  const providerMeta = providerMap.get(slotName);
   const displayProvider = env.ANTHROPIC_BASE_URL
     || (providerMeta && providerMeta.display_provider)
     || 'subprocess';
