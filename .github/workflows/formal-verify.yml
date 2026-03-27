@@ -123,8 +123,6 @@ jobs:
         run: node bin/run-tlc.cjs MCliveness
 
       - name: TLA+ QGSDMCPEnv — MCMCPEnv (MCPENV-02)
-        env:
-          NF_SKIP_STATE_SPACE_GUARD: '1'
         run: node bin/run-tlc.cjs MCMCPEnv
 
       - name: Alloy — majority threshold assertions (ThresholdPasses, BelowThresholdFails, ZeroApprovalsFail)
@@ -167,6 +165,7 @@ jobs:
       - name: Run full FV pipeline via master runner (run-formal-verify.cjs)
         env:
           PRISM_BIN: /tmp/prism/bin/prism
+          NF_SKIP_STATE_SPACE_GUARD: '1'
         run: node bin/run-formal-verify.cjs
 
       - name: Trace redaction enforcement (check-trace-redaction.cjs)
