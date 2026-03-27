@@ -6,6 +6,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.41.3] - 2026-03-27 — Live Health Dashboard Fix
+
+### Fixed
+- **Health dashboard probing** — TUI Live Health dashboard now actually probes subprocess providers via CLI `--version` checks instead of silently skipping all slots
+- **Provider metadata display** — Dashboard shows provider name (OpenAI, Google, etc.) and model from `providers.json` instead of blank "node" fallback
+- **Single-slot health check** — Removed early bail that blocked probing subprocess providers entirely
+
 ## [0.41.2] - 2026-03-27 — Enhanced Resolve Triage
 
 ### Added
