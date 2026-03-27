@@ -118,7 +118,47 @@ grep -n "type=\"checkpoint" .planning/phases/XX-name/{phase}-{plan}-PLAN.md
 
 Pattern D is selected ONLY when: (1) no checkpoints found AND (2) --parallel flag is present. Otherwise, existing A/B/C routing applies unchanged.
 
-**Pattern A:** init_agent_tracking → spawn Task(subagent_type="nf-executor", model=executor_model, description="Execute plan {plan_number}: {phase_number}-{phase_name}") with prompt: execute plan at [path], autonomous, all tasks + SUMMARY + commit, follow deviation/auth rules, report: plan name, tasks, SUMMARY path, commit hash → track agent_id → wait → update tracking → report.
+**Pattern A:** init_agent_tracking → spawn Task with the following prompt → track agent_id → wait → update tracking → report.
+
+```
+Task(
+  subagent_type="nf-executor",
+  model=executor_model,
+  description="Execute plan {plan_number}: {phase_number}-{phase_name}",
+  prompt="
+    Execute plan at {plan_path}. Autonomous mode: all tasks + SUMMARY + commit.
+    Follow deviation/auth rules. Report: plan name, tasks, SUMMARY path, commit hash.
+
+    <formal_coverage_auto_detection>
+    **Formal coverage auto-detection (hybrid A+B):** Before each atomic commit:
+    1. Get changed files: CHANGED=$(git diff --name-only HEAD 2>/dev/null | tr '\n' ',')
+    2. If CHANGED is non-empty, run: node bin/formal-coverage-intersect.cjs --files \"$CHANGED\" 2>/dev/null
+    3. If exit code is 0 (intersections found) OR the plan declares `formal_artifacts: update`:
+       - Run: node bin/run-formal-verify.cjs 2>&1
+       - If exit 0: log 'Formal coverage verified: models OK'
+       - If exit 1: log 'WARNING: Formal model drift detected' (do NOT block commit -- fail-open)
+    4. If formal-coverage-intersect.cjs is not found or errors: skip silently (fail-open)
+    5. **Loop 2 simulation gate (GATE-02, GATE-03, GATE-04):** If step 2 found intersections (exit code 0):
+       a. Run Loop 2 via `simulateSolutionLoop` from `$HOME/.claude/nf-bin/solution-simulation-loop.cjs` with:
+          - `fixIdea`: description of code changes in current diff
+          - `bugDescription`: plan objective or task description
+          - `maxIterations`: 10, `formalism`: 'tla'
+          - `onTweakFix` callback (GATE-05): reads `iterationContext.verdict` to identify failing gates. Returns `null` if all pass or stuck. Otherwise returns refinement string.
+          Store result with fields: `converged`, `iterations`, `escalationReason`, `bestGatesPassing`, `tsvPath`.
+       b. Route on result:
+          - **converged === true:** Log 'Loop 2: CONVERGED'. Continue to commit.
+          - **converged === false (fail-open, default):** Log 'WARNING: Loop 2 did not converge'. Continue to commit.
+          - **converged === false AND plan frontmatter `strict_simulation: true`:** Log 'BLOCKED'. Do NOT commit.
+       c. If solution-simulation-loop.cjs is not found or throws: skip silently (fail-open)
+    6. If step 2 found NO intersections: skip Loop 2 entirely — silent, no log
+    </formal_coverage_auto_detection>
+
+    ${PARENT_DEBUG_CONTEXT || ''}
+  "
+)
+```
+
+**PARENT_DEBUG_CONTEXT passthrough:** When the parent nf-executor (spawned by execute-phase.md) received a `<debug_context>` block in its own prompt, it MUST forward that block verbatim as `${PARENT_DEBUG_CONTEXT}` in the Pattern A child's prompt. If no debug_context was received, this evaluates to empty string (no block injected).
 
 **Pattern B:** Execute segment-by-segment. Autonomous segments: spawn subagent for assigned tasks only (no SUMMARY/commit). Checkpoints: main context. After all segments: aggregate, create SUMMARY, commit. See segment_execution.
 
