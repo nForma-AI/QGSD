@@ -1,0 +1,23 @@
+{
+  "nf/quick-362-wire-debug-routing-into-execute-phase-md": {
+    "task_id": 363,
+    "task_description": "Push Loop 2 (formal_coverage_auto_detection + solution-simulation-loop) and debug_context into execute-plan.md Pattern A spawn prompt",
+    "approach": "Inject formal_coverage_auto_detection, solution-simulation-loop, and debug_context constraint blocks into the Pattern A nf-executor spawn prompt in execute-plan.md so nested child executors inherit both verification loops.",
+    "out_of_scope": [
+      "Implementation of Loop modules (already exist)",
+      "Changes to Pattern B, C, or D routing",
+      "Loop 1 debug routing integration (already handled at orchestrator level)"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.85,
+      "routed_through_debug": false
+    },
+    "risk_level": "high",
+    "risk_reason": "Workflow file modification (execute-plan.md) — guardrail-protected",
+    "branches_affected": ["nf/quick-362-wire-debug-routing-into-execute-phase-md"],
+    "created_at": "2026-03-27T13:46:18.360Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}
