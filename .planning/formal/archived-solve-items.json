@@ -191,6 +191,14 @@
       "file": "bin/solution-simulation-loop.test.cjs",
       "archived_at": "2026-03-20T20:03:48.810Z",
       "auto_classified": "fp"
+    },
+    {
+      "key": "3a25d26471d2efe1",
+      "type": "dtor",
+      "summary": "Quick mode gives you nForma guarantees (atomic commits, state tracking) with a faster path:",
+      "doc_file": "README.md",
+      "line": 861,
+      "archived_at": "2026-03-26T17:56:35.627Z"
     }
   ]
 }

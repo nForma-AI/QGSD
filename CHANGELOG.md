@@ -6,6 +6,22 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.41.2] - 2026-03-27 — Enhanced Resolve Triage
+
+### Added
+- **Detailed resolve reports** — `/nf:resolve` now shows Key Files, Analysis, Pros & Cons, and Conclusion sections for every item type (solve items, pairings, orphan models, orphan requirements)
+- **Clickable file paths** — All file references in resolve output use `file_path:line_number` format for direct navigation
+- **Mandatory quorum action bar** — Every resolve item and batch displays `[q] Quorum` option for multi-model consensus review
+- **Batch action choices** — Batch presentations include confirm-all, FP-all, and individual-item-by-number actions
+
+### Changed
+- **Resolve presentation format** — Upgraded from simple verdict+recommendation to structured analysis with pros/cons trade-offs per action option
+- **Orphan model context** — Shows 15-20 lines of model file (up from 10-15) with module identification
+- **Pairing analysis depth** — Reads both model file and requirement text to assess semantic connection vs keyword overlap
+
+### Fixed
+- **Local patch drift** — Synced enhanced resolve.md from nf-local-patches back to repo source
+
 ## [0.41.1] - 2026-03-26 — Risk-Based Adaptive Quorum Fan-Out
 
 ### Added

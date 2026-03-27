@@ -172,42 +172,106 @@ Apply `--category` and `--verdict` filters if specified. Take up to `--limit` it
 
 Before presenting item-by-item, scan the queue for groups of 3+ items sharing the same pattern (e.g., all reference ".formal/X" where ".planning/formal/X" exists). Present these as a batch with a single confirmation.
 
+**Batch action choices (ALWAYS show after batch evidence):**
+```
+   [y] Confirm all  [f] FP all  [a] Archive all  [s] Skip all
+   [#] Act on individual item by number
+   [q] Quorum (dispatch batch to multi-model review)  [x] Exit
+```
+
+Every batch and every individual item MUST show an action bar with `[q] Quorum` as an option. The quorum option dispatches the current item(s) to external models for multi-model consensus (see Step 3f).
+
 ### For each item (or batch):
 
 #### Step 3a: Display the evidence
 
-**For solve items**, present using this format:
+**For solve items**, present using this format. IMPORTANT: All file paths must be clickable — use `file_path:line_number` format (e.g., `bin/nf-solve.cjs:2374`). Read the relevant files to gather line numbers for key references.
+
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- Item N/Total — <Category Label>
+ Item N/Total — <Category Label> (<verdict>)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
  Haiku:     [verdict badge]
  Type/File: [key identifier]
  Reason:    [why it was flagged]
 
-── Evidence ──────────────────────────────────────────
- [✓/✗/○ checks with explanations]
+── Key Files ─────────────────────────────────────────
+ [For each relevant file, show as clickable path:line_number]
+ Source:  bin/example.cjs:42         (what the item references)
+ Test:    test/example.test.cjs:15   (related test if exists, or "none found")
+ Req:     requirements.json → REQ-01 (linked requirement if any, or "none")
+ Related: [other files that touch this code — use git log or grep to find]
 
-── Full Claim / Context ──────────────────────────────
+── Evidence ──────────────────────────────────────────
+ [✓/✗/○ checks with explanations — be specific, cite file:line]
+
+── Context ───────────────────────────────────────────
  [word-wrapped claim text or file purpose]
+ [Show 5-10 lines of the actual code or claim content, with line numbers]
+
+── Analysis ──────────────────────────────────────────
+ [2-4 sentences of in-depth analysis: What does this code actually do?
+  Why was it flagged? Is the flag legitimate or a false positive?
+  What would happen if we ignore it vs. act on it?]
+
+── Pros & Cons ───────────────────────────────────────
+ Marking as FP:
+   + [benefit of dismissing, e.g., "reduces noise, item is clearly infrastructure"]
+   - [risk of dismissing, e.g., "if it IS a real gap, we lose traceability"]
+
+ Creating requirement/TODO:
+   + [benefit of acting, e.g., "closes a real coverage gap"]
+   - [cost of acting, e.g., "adds maintenance burden for marginal value"]
+
+── Conclusion ────────────────────────────────────────
+ Confidence: [HIGH/MEDIUM/LOW] — [one-line rationale]
+ Recommended action: [action] — [why this is the best choice]
+
+── Actions ───────────────────────────────────────────
+   [t] TODO  [f] FP  [a] Archive  [w] Write req  [s] Skip
+   [q] Quorum  [r] Revision  [x] Exit
 ```
+
+**IMPORTANT:** The action bar above (including `[q] Quorum`) MUST always be displayed for every item type, even when a recommendation or question section follows. The recommendation may highlight one suggested action, but the full action bar must be visible.
 
 **For proximity pairings**, present using this format:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- Item N/Total — Proximity Pairing
+ Item N/Total — Proximity Pairing (<verdict>)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
  Model:       [item.model basename]
+ Full Path:   [item.model as clickable file_path:1]
  Requirement: [item.requirement] — "[requirement description from requirements.json]"
  Proximity:   [item.proximity_score]  |  Verdict: [item.verdict]
  Confidence:  [item.confidence]%
  Reasoning:   [item.reasoning]
 
-── Recommendation ──────────────────────────────────
- Haiku says [VERDICT] with proximity [SCORE]
- → [Confirm if yes+high score / Review if maybe / Likely reject if no]
+── Key Files ─────────────────────────────────────────
+ Model:   .planning/formal/alloy/example.als:1
+ Req:     requirements.json → REQ-01 (category: CATEGORY)
+ Related: [other models in the same module/domain]
+
+── Analysis ──────────────────────────────────────────
+ [Read both the model file and the requirement text. Explain:
+  - What the model actually specifies (invariants, properties)
+  - What the requirement asks for
+  - Whether there's a real semantic connection or just keyword overlap
+  - What confirming/rejecting this pairing would mean for coverage]
+
+── Pros & Cons ───────────────────────────────────────
+ Confirming:
+   + [benefit, e.g., "closes coverage gap, model does verify this requirement"]
+   - [risk, e.g., "weak semantic link — may overstate coverage"]
+
+ Rejecting:
+   + [benefit, e.g., "keeps traceability honest — no false coverage"]
+   - [risk, e.g., "requirement stays uncovered, may need a new model"]
+
+── Conclusion ────────────────────────────────────────
+ Confidence: [HIGH/MEDIUM/LOW]
+ Recommended action: [Confirm/Reject/Skip] — [reasoning]
 
    [c] Confirm  [n] Reject  [s] Skip  [q] Quorum  [r] Revision  [x] Exit
 ```
@@ -219,17 +283,35 @@ Before presenting item-by-item, scan the queue for groups of 3+ items sharing th
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
  Model:        [item.path basename]
- Full Path:    [item.path]
+ Full Path:    [item.path as clickable file_path:1]
  Zero Pairs:   [item.zeroPairCount] (requirements with no graph path to this model)
  Linked Reqs:  0
 
-── Context ──────────────────────────────────────────
- [First 10-15 lines of the model file, or "File not readable"]
+── Key Files ─────────────────────────────────────────
+ Model:    [item.path:1]
+ Registry: .planning/formal/model-registry.json → [entry if exists]
+ Related:  [other models in same directory or same formalism type]
 
-── Recommendation ──────────────────────────────────
- This model has no linked requirements. It either:
- (a) covers requirements that haven't been annotated yet, or
- (b) is an unused/obsolete model that can be archived.
+── Context ──────────────────────────────────────────
+ [First 15-20 lines of the model file, with line numbers]
+ [Identify: what module/invariant does this model specify?]
+
+── Analysis ──────────────────────────────────────────
+ [Read the model file. Explain what it verifies, which domain it belongs to,
+  and search requirements.json for candidate requirements that could link.
+  Show top 3 candidate requirements with match reasoning.]
+
+── Pros & Cons ───────────────────────────────────────
+ Annotating (linking to requirement):
+   + [e.g., "model is active and covers REQ-X, just missing annotation"]
+   - [e.g., "weak match — forced link reduces traceability quality"]
+
+ Archiving:
+   + [e.g., "model is stale/obsolete, no matching requirement exists"]
+   - [e.g., "model may cover future requirements we haven't written yet"]
+
+── Conclusion ────────────────────────────────────────
+ Recommended action: [Annotate/Archive/Skip] — [reasoning]
 
    [w] Write requirement annotation  [a] Archive  [s] Skip  [q] Quorum  [r] Revision  [x] Exit
 ```
@@ -245,10 +327,34 @@ Before presenting item-by-item, scan the queue for groups of 3+ items sharing th
  Zero Pairs:   [item.zeroPairCount] (models with no graph path to this requirement)
  Formal Models: [] (none)
 
-── Recommendation ──────────────────────────────────
- This requirement has no formal model coverage. It either:
- (a) needs a new Alloy/TLA+/PRISM model to be created, or
- (b) is covered by existing models that aren't properly linked.
+── Key Files ─────────────────────────────────────────
+ Req source: .planning/formal/requirements.json → [item.id]
+ Related:    [code files that implement this requirement — grep for the req ID]
+ Tests:      [test files with @requirement [item.id] annotation, if any]
+
+── Analysis ──────────────────────────────────────────
+ [Read the requirement text. Explain:
+  - What this requirement demands
+  - Search model-registry.json for models whose domain overlaps
+  - Show top 3 candidate models that could potentially cover it
+  - Assess whether this requirement is verifiable via formal methods
+    or if it's inherently non-formalizable (e.g., UX preference)]
+
+── Pros & Cons ───────────────────────────────────────
+ Creating formal model:
+   + [e.g., "requirement has clear invariant properties that TLA+/Alloy can check"]
+   - [e.g., "complex to model, may not justify the effort for this category"]
+
+ Linking to existing model:
+   + [e.g., "model X already partially covers this — just needs annotation"]
+   - [e.g., "match is weak, would overstate actual verification"]
+
+ Skipping:
+   + [e.g., "requirement is non-formalizable (UX), no model makes sense"]
+   - [e.g., "leaves a real coverage gap in formal verification"]
+
+── Conclusion ────────────────────────────────────────
+ Recommended action: [Create model/Link/Skip] — [reasoning]
 
    [m] Create formal model (TODO)  [l] Link to existing model  [s] Skip  [q] Quorum  [r] Revision  [x] Exit
 ```
