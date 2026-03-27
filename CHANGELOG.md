@@ -8,68 +8,139 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [0.41.3] - 2026-03-27 — Live Health Dashboard Fix
 
+Incremental on [0.41.2]. Fixes TUI health dashboard that silently skipped all subprocess providers.
+
+### Added
+- `feat(agents)`: subprocess probing and `providers.json`-backed dashboard — TUI Live Health dashboard now probes subprocess providers via CLI `--version` checks and shows provider name + model from `providers.json`
+
 ### Fixed
-- **Health dashboard probing** — TUI Live Health dashboard now actually probes subprocess providers via CLI `--version` checks instead of silently skipping all slots
-- **Provider metadata display** — Dashboard shows provider name (OpenAI, Google, etc.) and model from `providers.json` instead of blank "node" fallback
-- **Single-slot health check** — Removed early bail that blocked probing subprocess providers entirely
+- `fix(tui)`: remove duplicate `pdata` declaration in `checkHealthSingle` — eliminated early bail that blocked probing subprocess providers entirely
 
 ## [0.41.2] - 2026-03-27 — Enhanced Resolve Triage
 
+Incremental on [0.41.1]. Overhauls `/nf:resolve` presentation with structured analysis and quorum integration.
+
 ### Added
 - **Detailed resolve reports** — `/nf:resolve` now shows Key Files, Analysis, Pros & Cons, and Conclusion sections for every item type (solve items, pairings, orphan models, orphan requirements)
-- **Clickable file paths** — All file references in resolve output use `file_path:line_number` format for direct navigation
-- **Mandatory quorum action bar** — Every resolve item and batch displays `[q] Quorum` option for multi-model consensus review
-- **Batch action choices** — Batch presentations include confirm-all, FP-all, and individual-item-by-number actions
+- **Clickable file paths** — all file references in resolve output use `file_path:line_number` format for direct navigation
+- **Mandatory quorum action bar** — every resolve item and batch displays `[q] Quorum` option for multi-model consensus review
+- **Batch action choices** — batch presentations include confirm-all, FP-all, and individual-item-by-number actions
 
 ### Changed
-- **Resolve presentation format** — Upgraded from simple verdict+recommendation to structured analysis with pros/cons trade-offs per action option
-- **Orphan model context** — Shows 15-20 lines of model file (up from 10-15) with module identification
-- **Pairing analysis depth** — Reads both model file and requirement text to assess semantic connection vs keyword overlap
+- **Resolve presentation format** — upgraded from simple verdict+recommendation to structured analysis with pros/cons trade-offs per action option
+- **Orphan model context** — shows 15-20 lines of model file (up from 10-15) with module identification
+- **Pairing analysis depth** — reads both model file and requirement text to assess semantic connection vs keyword overlap
 
 ### Fixed
-- **Local patch drift** — Synced enhanced resolve.md from nf-local-patches back to repo source
+- **Local patch drift** — synced enhanced resolve.md from nf-local-patches back to repo source
+- `fix(ci)`: skip state-space guard for MCMCPEnv bounded model — individual step + master FV runner
 
-## [0.41.1] - 2026-03-26 — Risk-Based Adaptive Quorum Fan-Out
+## [0.41.1] - 2026-03-26 — Risk-Based Adaptive Quorum, Solve Reporting & Diagnostic Sweeps
+
+Incremental on [0.41.0]. Adds risk-aware quorum sizing, expands diagnostic sweeps to 20 layers, and adds automation-first verification. Includes quick tasks 354-361.
 
 ### Added
-- **Risk classifier** — Haiku subagent in quick workflow Step 2.7 classifies tasks as low/medium/high risk based on file count, task type, requirements impact, and scope
+
+#### Risk-Based Adaptive Quorum (quick-360)
+- `feat(quick-360)`: add risk-based adaptive quorum fan-out with Haiku risk classifier — classifies tasks as low/medium/high risk based on file count, task type, requirements impact, and scope
 - **Adaptive quorum fan-out** — Step 5.7 dispatches low=1 (skip quorum), medium=3, high=5 participants based on risk level
-- **`--force-quorum` flag** — Overrides low risk classification to medium, forcing external quorum dispatch
-- **Quorum audit logging** — Structured audit log emitted for every quorum reduction or skip with risk level, reason, and fan-out count
+- **`--force-quorum` flag** — overrides low risk classification to medium, forcing external quorum dispatch
+- **Quorum audit logging** — structured audit log emitted for every quorum reduction or skip with risk level, reason, and fan-out count
 - **Risk guardrails** — ROADMAP, formal model, hook, and workflow files can never be classified as low risk
 - **Scope contract risk fields** — `risk_level` and `risk_reason` persisted in scope-contract.json
-- **Graph-first discovery** — formal-scope-scan.cjs uses unified semantic+graph search module shared with candidate-discovery.cjs
-- **Automation-first verification** — verify-work and execute-phase workflows prefer Playwright/agent-browser over manual testing
+
+#### Solve Pipeline Enhancements (quick-354 through quick-357)
+- `feat(quick-354)`: add 5 missing layers to solve-report table renderer — full 20-layer coverage with checker alignment and signals fixes
+- `feat(quick-355)`: auto-invoke `/nf:resolve` after solve finishes iterating
+- `feat(quick-356)`: add 7 new sweep functions and fold 8 scripts into existing sweeps — wire 7 new sweeps into `computeResidual`, totals, table, `DEFAULT_WAVES`
+- `feat(quick-357)`: add `@requirement` annotations to 8 domain-named test files + require-path tracing to `sweepTtoR` (TC-CODE-TRACE-8 test)
+
+#### Formal & Discovery (quick-358, quick-359, quick-361)
+- `feat(quick-358)`: extract unified graph search module and add graph-first discovery to `formal-scope-scan.cjs` — shared with `candidate-discovery.cjs`
+- `feat(quick-359)`: allow `formal_artifacts: create` when scope-scan returns empty — enables new model bootstrapping
+- **Automation-first verification** (quick-361) — verify-work and execute-phase workflows prefer Playwright/agent-browser over manual testing
 
 ### Changed
-- **quorum-dispatch.md Section 3** — Updated fan-out mapping: low=1/skip, medium=3, high=5 (previously low=2, high=MAX_QUORUM_SIZE)
-- **Quorum timeout defaults** — Increased from 30s to 300s for slot worker dispatch
+- **quorum-dispatch.md Section 3** — updated fan-out mapping: low=1/skip, medium=3, high=5 (previously low=2, high=MAX_QUORUM_SIZE)
+- **Quorum timeout defaults** — increased from 30s to 300s for slot worker dispatch
 
 ### Fixed
-- **Formal scope scan gap** — Allow `formal_artifacts: create` when scope-scan returns empty (new model bootstrapping)
-- **Orphan requirements** — Triaged 48 orphan requirements across 6 category groups
+- `fix(ci)`: allowlist quorum debate transcripts in gitleaks
+- `fix(ci)`: fetch latest gitleaks version dynamically
+- `fix(ci)`: use gitleaks-action v2 and unpin detect-secrets
+- `fix(quick-354)`: revise plan to address checker alignment and signals issues
+- `fix`: use portable nf-bin path in debug.md require() for lint-isolation
+- **Orphan requirements** — triaged 48 orphan requirements across 6 category groups
 
 ## [0.41.0] - 2026-03-25 — Unified Autoresearch Execution Pipeline
 
-### Added
-- **Debug pipeline absorption** — `/nf:debug` absorbs model-driven-fix Phases 1-4 as Steps A.5-A.8 (discovery, reproduction, refinement via Loop 1, constraint extraction)
-- **Constraint injection** — Formal constraints from Loop 1 injected as [FORMAL CONSTRAINTS] block into quorum worker prompts
-- **Formal model artifact tracking** — Debug artifact includes reproducing model path, verdict, constraints, and TSV trace
-- **Task classification** — Haiku subagent at quick.md Step 2.7 classifies tasks as bug_fix/feature/refactor with confidence scoring
-- **Bug fix routing** — Step 5.8 routes bug_fix tasks (confidence >= 0.7) through `/nf:debug` before executor
-- **Debug context injection** — Executor prompt receives conditional debug_context block with constraints and formal verdict
-- **Loop 2 pre-commit gate** — simulateSolutionLoop with onTweakFix fires before commit in both quick.md and execute-phase.md executors
-- **Fail-open/strict modes** — Loop 2 gate warns by default (fail-open), blocks with --strict flag
+Full milestone release building on [0.40.2]. Includes 4 milestone phases (50-53) and 17 quick tasks (337-353). Major themes: autoresearch-style iteration across all formal loops, solve pipeline optimization, debug unification, and `/nf:model-driven-fix` deprecation.
+
+### Added — Milestone Phases
+
+#### Phase 50: Debug Integration
+- `feat(50-01)`: rewrite debug.md Steps A.5-A.8 to absorb model-driven-fix Phases 1-4
+- `feat(50-02)`: wire constraint injection into quorum worker prompts and add formal model artifact tracking — constraints from Loop 1 injected as `[FORMAL CONSTRAINTS]` block
+
+#### Phase 51: Task Classification & Debug Routing
+- `feat(51-01)`: add task classification subagent to quick.md Step 2.7 — Haiku classifies tasks as bug_fix/feature/refactor with confidence scoring
+- `feat(51-02)`: add debug routing (Step 5.8) and debug context to executor prompt — routes bug_fix tasks (confidence >= 0.7) through `/nf:debug` before executor
 - **Classification persistence** — scope-contract.json extended with classification object (type, confidence, routed_through_debug)
 
+#### Phase 52: Loop 2 Pre-Commit Simulation Gate
+- `feat(phase-52)`: add Loop 2 pre-commit simulation gate to both executor workflows (GATE-01..04) — `simulateSolutionLoop` with `onTweakFix` fires before commit in quick.md and execute-phase.md
+- **Fail-open/strict modes** — Loop 2 gate warns by default (fail-open), blocks with `--strict` flag
+
+#### Phase 53: Skill Deprecation
+- `feat(phase-53)`: replace model-driven-fix with deprecation shim (DEPR-01) — directs users to `/nf:debug`
+- `feat(phase-53)`: rewire solve-remediate b_to_f layer to `/nf:debug` (DEPR-02)
+
+### Added — Quick Tasks
+
+#### Solve Loop Optimization (quick-337 through quick-346)
+- `feat(quick-337)`: fast-path initial diagnostic in solve orchestrator — skips redundant re-scan when no residual exists
+- `fix(quick-338)`: exit 0 on successful diagnostic, add `has_residual` JSON field
+- `feat(quick-339)`: create `solve-inline-dispatch.cjs` for pre-running trivial layers without full Agent spawn + wire into solve orchestrator and remediation
+- `feat(quick-340)`: conditional Haiku classification with 4 skip conditions — avoids redundant classify calls in solve-classify
+- `feat(quick-341)`: cascade budget for R→F remediation dispatch — prevents unbounded cascades
+- `feat(quick-341)`: add anti-self-answer guard + question-file + nonce to quorum dispatch
+- `feat(quick-342)`: N-layer cycle detection with state hashing and bounce counting — detects remediation oscillation across layers
+- `feat(quick-343)`: parallelize F→C sweep via background pre-spawn for faster diagnostics
+- `feat(quick-344)`: incremental diagnostics by file delta — only re-scans files changed since last diagnostic run
+- `feat(quick-345)`: two-phase solve with `--plan-only` and `--execute` flags
+- `feat(quick-346)`: persistent solve state with `--resume` and iteration logging across context resets
+
+#### Formal Model Enhancements (quick-347 through quick-353)
+- `feat(quick-347)`: add `formal-coverage-intersect.cjs` with tests + `--sync` mode and executor auto-detection wiring
+- `feat(quick-348)`: add `autoresearch-refine.cjs` with tests + wire into model-driven-fix and solve-remediate
+- `feat(quick-350)`: add `onTweakFix`, rollback, TSV trace, when-stuck behaviors to solution-simulation-loop + update model-driven-fix Phase 4.5 from CLI to require()
+- `fix(351)`: enforce FALLBACK-01 in all workflow fail-open rules and add preflight slot/fallback preview display
+- `feat(quick-352)`: add TLC process timeout and model size guards to formal verification spawning
+- `feat(quick-353)`: add state-space preflight guard to `run-tlc.cjs`
+
+### Added — New Requirements
+- `req(quick-337)`: add **PERF-03** — fast-path initial diagnostic performance target
+- `req(quick-348)`: add **SOLVE-22** — autoresearch-style iteration for formal model refinement
+- `req(quick-350)`: add **SOLVE-23** — autoresearch-style iteration for solution-simulation-loop
+
 ### Changed
-- **solve-remediate b_to_f** — Rewired from `/nf:model-driven-fix` to `/nf:debug` dispatch
+- `feat(phase-53)`: solve-remediate b_to_f rewired from `/nf:model-driven-fix` to `/nf:debug` dispatch
 
 ### Deprecated
-- **`/nf:model-driven-fix`** — Replaced with deprecation shim directing to `/nf:debug`
+- **`/nf:model-driven-fix`** — replaced with deprecation shim directing to `/nf:debug`
 
 ### Removed
-- **debug-formal-context.cjs single-shot call** — Replaced by 4-step formal pipeline in debug skill
+- **debug-formal-context.cjs single-shot call** — replaced by 4-step formal pipeline in debug skill
+
+### Fixed
+- `fix(formal)`: reduce NFHazardModelMerge state space from ~8T to 29K states
+- `fix(quorum)`: sync FALLBACK-01 checkpoint to reference doc — prevent 1/1 consensus short-circuit
+
+### Tested
+- UAT: Phase 50 (10 passed), Phase 51 (10 passed), Phase 52 (8 passed), Phase 53 (4 passed)
+- `test(50-02)`: validate end-to-end variable flow consistency
+- `test(quick-341)`: add nonce tests + orchestrator/reference doc updates
+- `test(quick-350)`: add 9 tests for onTweakFix, rollback, TSV, when-stuck behaviors
 
 ## [0.40.2] - 2026-03-20 — Prerelease (next channel)
 
@@ -77,19 +148,27 @@ See [0.40.1] for full changelog. This prerelease packages the same changes for t
 
 ## [0.40.1] - 2026-03-20 — Structural Enforcement & TLC Failure Classification
 
-### Added
-- **nf-scope-guard hook** — PreToolUse hook warns on out-of-scope file edits during phase execution
-- **Context injection blocks** — 3 new context blocks in `nf-prompt.js` for richer session intelligence
-- **Root cause quorum vote** — Step 0f added to `solve-diagnose` workflow for consensus-based root cause selection
-- **TLC failure classifier** — 6-class pattern matching engine for TLA+ model checker output (`bin/classify-tlc-failure.cjs`)
-- **F→C remediation dispatch** — classifier wired into `solve-remediate` formal→code layer with schema extension
-- **FSM candidate detection** — phase researcher now identifies implicit finite state machines in target code
-- **21 requirements from triage** — D→R and T→R requirement creation via `/nf:resolve`, linked to `quorum.pm`
-- **CLASS-03 requirement** — formal requirement for TLC failure classification coverage
+Version bump within the 0.40 milestone. Never independently tagged — rolled into [0.40.2] prerelease and then [0.41.0].
+
+### Added — v0.40 Milestone (tagged v0.40)
+- `feat(v0.40-03-01)`: wire nf-scope-guard hook and register in installer — PreToolUse hook warns on out-of-scope file edits during phase execution
+- `feat(v0.40-01-01)`: add three context injection blocks to `nf-prompt.js` for richer session intelligence
+- `feat(v0.40-02-02)`: add Step 0f root cause quorum vote to `solve-diagnose.md`
+- `feat(resolve)`: create 21 requirements from D→R/T→R triage + link `quorum.pm`
+- `req(quick-334)`: add **QUORUM-04**
+- `req(quick-335)`: add **AGENT-04**
+
+### Added — Post-v0.40 (quick-336, shipped in 0.40.2-rc.1)
+- `feat(quick-336)`: add TLC failure classifier with 6-class pattern matching engine for TLA+ model checker output (`bin/classify-tlc-failure.cjs`)
+- `feat(quick-336)`: wire classifier into solve-remediate F→C dispatch + extend schema
+- `req(quick-336)`: add **CLASS-03** — formal requirement for TLC failure classification coverage
 
 ### Fixed
-- **Prerelease tag handling** — release workflow skips `v*-rc*` / `v*-next*` tags instead of erroring
-- **TLA+ MCConvergenceTest** — resolved inconclusive formal check in convergence model
+- `fix(ci)`: skip prerelease tags in release workflow instead of erroring
+- `fix(formal)`: resolve `tla:mcconvergencetest` inconclusive check
+- `fix(ci)`: skip version stamp when package.json already matches tag
+- `fix(lint)`: use portable require path for `classify-tlc-failure`
+- `fix(test)`: allow prerelease suffixes in CLI version output test
 
 ## [0.39.0] - 2026-03-19 — Dual-Cycle Formal Reasoning & CI/CD Formalization
 
