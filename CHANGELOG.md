@@ -6,6 +6,27 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.41.4] - 2026-03-27 — Loop 1 + Loop 2 Full Execution Path Coverage
+
+Incremental on [0.41.3]. Wires debug routing (Loop 1) and formal simulation (Loop 2) into all default phase execution paths.
+
+### Added
+- `feat(quick-362)`: wire debug routing (Loop 1 + task classification + `debug_context` injection) into `execute-phase.md` — Step 1.5 classifies each plan via Haiku as bug_fix/feature/refactor, routes bug_fix plans through `/nf:debug` before executor spawn, injects `<debug_context>` block into executor prompt
+- `feat(quick-363)`: push Loop 2 (`formal_coverage_auto_detection` + `solution-simulation-loop`) and `debug_context` passthrough into `execute-plan.md` Pattern A spawn prompt — nested child executors now inherit both verification loops
+
+### Changed
+- **Changelog rewrite** — all 0.41.x entries rewritten from git history; every `feat`/`fix`/`req` commit now has a corresponding entry with git prefix for traceability
+
+### Coverage matrix
+
+| Path | Loop 1 | Loop 2 |
+|------|--------|--------|
+| `quick.md` | Yes | Yes |
+| `execute-phase.md` → Pattern A | Yes | Yes (new) |
+| `execute-phase.md` → Pattern B | Yes | Yes |
+| `execute-phase.md` → Pattern C | Yes | Yes |
+| `execute-phase.md` → Pattern D | Yes | No (opt-in, deferred) |
+
 ## [0.41.3] - 2026-03-27 — Live Health Dashboard Fix
 
 Incremental on [0.41.2]. Fixes TUI health dashboard that silently skipped all subprocess providers.
