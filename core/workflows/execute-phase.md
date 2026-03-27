@@ -101,6 +101,89 @@ node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
    - Bad: "Executing terrain generation plan"
    - Good: "Procedural terrain generator using Perlin noise — creates height maps, biome zones, and collision meshes. Required before vehicle physics can interact with ground."
 
+1.5. **Classify plan type and debug routing (ROUTE-02, ROUTE-03):**
+
+   For each plan, classify its objective and optionally route through `/nf:debug` before execution.
+
+   **1.5a. Classify plan type via Haiku subagent:**
+
+   Spawn a Haiku subagent to classify the plan's objective:
+
+   ```
+   Task(
+     subagent_type="general-purpose",
+     model="haiku",
+     description="Classify plan type for debug routing",
+     prompt="
+   You are classifying a development plan into exactly one category.
+
+   ## Plan Objective
+   {plan_objective_text from <objective> tag}
+
+   ## Categories
+   - bug_fix: The plan fixes a bug, error, regression, crash, or broken behavior.
+   - feature: The plan adds new functionality or capability.
+   - refactor: The plan reorganizes, renames, cleans up, or simplifies existing code without changing behavior.
+
+   Respond with ONLY a JSON object:
+   {
+     \"type\": \"bug_fix\" | \"feature\" | \"refactor\",
+     \"confidence\": 0.0-1.0
+   }
+   "
+   )
+   ```
+
+   Parse response as JSON. Store as `$PLAN_CLASSIFICATION`.
+
+   **Fail-open:** If Haiku is unavailable or JSON parse fails, use `{ "type": "feature", "confidence": 0.0 }`.
+
+   Log: `"Plan classification: ${PLAN_CLASSIFICATION.type} (confidence: ${PLAN_CLASSIFICATION.confidence})"`
+
+   **1.5b. Debug routing:**
+
+   **Skip if:** `$PLAN_CLASSIFICATION.type` is NOT `bug_fix`, OR `$PLAN_CLASSIFICATION.confidence` < 0.7.
+
+   If skipped, log: `"Debug routing: skipped (type: ${PLAN_CLASSIFICATION.type}, confidence: ${PLAN_CLASSIFICATION.confidence})"`
+   Set `$DEBUG_CONSTRAINTS = null`, `$DEBUG_FORMAL_VERDICT = null`, `$DEBUG_REPRODUCING_MODEL = null`.
+
+   **If routing:**
+
+   1. Log: `"Debug routing: bug_fix detected (confidence: ${PLAN_CLASSIFICATION.confidence}) — routing through /nf:debug"`
+
+   2. Spawn `/nf:debug` as a Task subagent:
+
+   ```
+   Task(
+     prompt="
+   Run /nf:debug with the following failure context.
+
+   ## Plan Objective (from phase plan)
+   {plan_objective_text}
+
+   ## Instructions
+   - Run the full debug pipeline (Steps A through A.8: collect context, discovery, reproduction, refinement, constraint extraction)
+   - Return the debug output including:
+     - \$CONSTRAINTS (extracted constraints from Loop 1, if any)
+     - \$FORMAL_VERDICT (pass/fail/skip from formal model checking, if any)
+     - \$REPRODUCING_MODEL (path to reproducing formal model, if any)
+   - If any step fails or produces no output, continue with remaining steps (fail-open)
+   - Do NOT fix the bug — only diagnose and extract constraints. The executor will apply the fix.
+   ",
+     subagent_type="general-purpose",
+     description="Debug routing for plan {plan_number}: {plan_objective_summary}"
+   )
+   ```
+
+   3. Parse debug output. Extract and store:
+      - `$DEBUG_CONSTRAINTS` — constraints from Loop 1 refinement (may be empty)
+      - `$DEBUG_FORMAL_VERDICT` — formal model check result (may be "skipped")
+      - `$DEBUG_REPRODUCING_MODEL` — path to reproducing model (may be null)
+
+   4. Log: `"Debug routing complete. Constraints: ${DEBUG_CONSTRAINTS ? 'found' : 'none'}, Verdict: ${DEBUG_FORMAL_VERDICT || 'skipped'}"`
+
+   **Fail-open:** If the debug subagent errors or times out, log a warning and proceed without debug context. Set all debug vars to null.
+
 2. **Spawn executor agents:**
 
    Pass paths only — executors read files themselves with their fresh 200k context.
@@ -166,6 +249,17 @@ node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
           e. If solution-simulation-loop.cjs is not found or throws: skip silently (fail-open)
        6. If step 2 found NO intersections: skip Loop 2 entirely (GATE-03) — silent, no log
        </formal_coverage_auto_detection>
+
+       ${DEBUG_CONSTRAINTS || DEBUG_FORMAL_VERDICT || DEBUG_REPRODUCING_MODEL ?
+       `<debug_context>
+       This plan was routed through /nf:debug before execution. Use the following debug output as supplementary context for your implementation:
+
+       ${DEBUG_CONSTRAINTS ? '**Constraints from formal model refinement:**\n' + DEBUG_CONSTRAINTS : ''}
+       ${DEBUG_FORMAL_VERDICT ? '**Formal verdict:** ' + DEBUG_FORMAL_VERDICT : ''}
+       ${DEBUG_REPRODUCING_MODEL ? '**Reproducing model:** ' + DEBUG_REPRODUCING_MODEL : ''}
+
+       These constraints inform the fix but do not gate it. If constraints conflict with the plan, follow the plan.
+       </debug_context>` : ''}
 
        <success_criteria>
        - [ ] All tasks executed
