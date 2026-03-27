@@ -1,0 +1,23 @@
+{
+  "nf/quick-362-wire-debug-routing-into-execute-phase-md": {
+    "task_id": 362,
+    "task_description": "Wire debug routing (Loop 1 + task classification + autoresearch-refine + debug_context injection) into execute-phase.md — matching the quick.md Step 5.8 pattern",
+    "approach": "Add phase-level task classification and debug routing to execute-phase.md's plan execution loop, dispatching bug-fix phases through /nf:debug before execution and injecting formal constraints into executor prompts, matching the quick.md Step 5.8 pattern.",
+    "out_of_scope": [
+      "Rewriting the /nf:debug skill itself — only phase-level routing and constraint injection are in scope",
+      "Cross-phase bug-fix dependencies — phase classification is per-plan, not per-milestone",
+      "Modifying quick.md — only execute-phase.md is in scope"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.85,
+      "routed_through_debug": false
+    },
+    "risk_level": "high",
+    "risk_reason": "Workflow file modification (execute-phase.md) — guardrail-protected",
+    "branches_affected": ["nf/quick-362-wire-debug-routing-into-execute-phase-md"],
+    "created_at": "2026-03-27T12:46:04.416Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}
