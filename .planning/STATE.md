@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 Phase: 53 of 53 (Skill Deprecation) — COMPLETED
 Plan: 53-01 of 1 — COMPLETED
 Status: All phases complete — /nf:model-driven-fix deprecated, all consumers rewired to /nf:debug
-Last activity: 2026-03-27 - Completed quick task 363: Push Loop 2 + debug_context into execute-plan.md Pattern A
+Last activity: 2026-03-28 - Completed quick task 364: Restore quorum convergence rewrite logic
 
 Progress: [██████████] 100% (Phase 50 done; Phase 51 done; Phase 52 done; Phase 53 done)
 
@@ -81,6 +81,7 @@ None yet.
 | 361 | Add automation-first bias to verify-work and execute-phase workflows | 2026-03-26 | afbeac9e | Verified | [361-add-automation-first-bias-to-verify-work](./quick/361-add-automation-first-bias-to-verify-work/) |
 | 362 | Wire debug routing (Loop 1 + task classification + debug_context injection) into execute-phase.md | 2026-03-27 | 813c1d77 | Verified | [362-wire-debug-routing-into-execute-phase-md](./quick/362-wire-debug-routing-into-execute-phase-md/) |
 | 363 | Push Loop 2 + debug_context into execute-plan.md Pattern A spawn prompt | 2026-03-27 | 72bbe22d | Verified | [363-push-loop-2-and-debug-context-into-execu](./quick/363-push-loop-2-and-debug-context-into-execu/) |
+| 364 | Restore quorum convergence rewrite logic dropped from quick.md | 2026-03-28 | 9c21ab0a | Verified | [364-restore-quorum-convergence-rewrite-logic](./quick/364-restore-quorum-convergence-rewrite-logic/) |
 
 ### Blockers/Concerns
 

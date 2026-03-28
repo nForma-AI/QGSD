@@ -552,7 +552,7 @@ Offer: 1) Force proceed, 2) Abort
 
 This step is MANDATORY regardless of `--full` mode. R3.1 requires quorum for any planning output from `/nf:quick`. R3.6 wraps this in an improvement-iteration loop (up to 10 iterations).
 
-Initialize: `improvement_iteration = 0`
+Initialize: `improvement_iteration = 0`, `$QUORUM_BLOCK_COUNT = 0`, `$ALL_BLOCK_REASONS = []`
 
 **LOOP** (while `improvement_iteration <= 10`):
 
@@ -650,7 +650,51 @@ If the signal is absent, the delimiters don't match, or JSON.parse would fail: s
 
 **Route:**
 
-- **BLOCKED** → Report the blocker to the user. A BLOCK from any external voter is absolute (CE-2) — do NOT override or rationalize it away. Do not execute. **Break loop.**
+- **BLOCKED** → Increment `$QUORUM_BLOCK_COUNT`. Append the full block reason text to `$ALL_BLOCK_REASONS`.
+
+  If `$QUORUM_BLOCK_COUNT >= 3`:
+    Display:
+    ```
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     nForma ► R3.6 CONVERGENCE REWRITE (block count: ${QUORUM_BLOCK_COUNT})
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    ```
+
+    Collect all BLOCK reasons from `$ALL_BLOCK_REASONS` (accumulated across all previous rounds).
+    Spawn a fresh planner with the original task description AND all accumulated BLOCK reasons as hard constraints:
+
+    ```
+    Task(
+      prompt="First, read ~/.claude/agents/nf-planner.md for your role and instructions.\n\n
+      <revision_context>
+      Mode: convergence-rewrite (R3.6 fresh rewrite after ${QUORUM_BLOCK_COUNT} BLOCK rounds)
+
+      <files_to_read>
+      - ${QUICK_DIR}/${next_num}-PLAN.md (current plan — read for context, then replace)
+      </files_to_read>
+
+      <accumulated_blocks>
+      ${ALL_BLOCK_REASONS formatted as a numbered list}
+      </accumulated_blocks>
+
+      <instructions>
+      The quorum has blocked ${QUORUM_BLOCK_COUNT} times. Incremental patching is not working.
+      Rewrite the plan from scratch using the original task description as the goal.
+      Every item in accumulated_blocks is a HARD CONSTRAINT — the new plan must not repeat these issues.
+      Return ## PLANNING COMPLETE when done.
+      </instructions>
+      </revision_context>",
+      subagent_type="nf-planner",
+      model="{planner_model}",
+      description="Convergence rewrite after ${QUORUM_BLOCK_COUNT} BLOCKs: ${DESCRIPTION}"
+    )
+    ```
+
+    After planner returns, reset `$QUORUM_BLOCK_COUNT = 0` and `improvement_iteration = 0`. Continue loop (do NOT break).
+
+  Else (block count < 3):
+    Report the blocker to the user. A BLOCK from any external voter is absolute (CE-2) — do NOT override or rationalize it away. Do not execute. **Break loop.**
+
 - **ESCALATED** → Present the escalation to the user. Do not execute until resolved. **Break loop.**
 
 - **APPROVED AND ($QUORUM_IMPROVEMENTS is empty OR improvement_iteration >= 10)**:

@@ -1,0 +1,15 @@
+{
+  "nf/quick-364-restore-quorum-convergence-rewrite-logic": {
+    "task_id": 364,
+    "task_description": "Restore quorum convergence rewrite logic dropped from quick.md",
+    "approach": "Re-integrate QUORUM_BLOCK_COUNT tracking, accumulated block reasons, and fresh convergence rewrite after 3 BLOCKs — code originally added in b60d798b, accidentally dropped in 185de4d6.",
+    "out_of_scope": ["Adding convergence rewrite to execute-phase.md", "Modifying quorum-dispatch.md reference"],
+    "classification": { "type": "bug_fix", "confidence": 0.95, "routed_through_debug": false },
+    "risk_level": "high",
+    "risk_reason": "Workflow file modification (quick.md) — guardrail-protected",
+    "branches_affected": ["nf/quick-364-restore-quorum-convergence-rewrite-logic"],
+    "created_at": "2026-03-28T08:31:35.509Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}
