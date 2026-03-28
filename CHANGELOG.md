@@ -6,6 +6,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.41.5] - 2026-03-28 — Quorum Convergence Rewrite Restoration
+
+Restores quorum convergence rewrite logic that was previously removed. When 3+ BLOCK verdicts accumulate, the workflow now triggers a fresh rewrite instead of continuing to iterate on a blocked approach.
+
+### Fixed
+- `fix(quick-364)`: restore `QUORUM_BLOCK_COUNT` tracking, accumulated block reasoning, and fresh-rewrite-after-3-BLOCKs convergence logic in `quick.md`
+
 ## [0.41.4] - 2026-03-27 — Loop 1 + Loop 2 Full Execution Path Coverage
 
 Incremental on [0.41.3]. Wires debug routing (Loop 1) and formal simulation (Loop 2) into all default phase execution paths.
