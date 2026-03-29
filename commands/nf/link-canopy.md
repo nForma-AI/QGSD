@@ -448,7 +448,7 @@ for (const slot of selectedSlots) {
   config.userAgentRegistry[agentId] = {
     id: agentId,
     name: 'nForma: ' + slot.name,
-    command: slot.cli || 'node',
+    command: (slot.cli || 'node').split('/').pop(),
     color: '#6366f1',
     iconId: 'brain-circuit',
     supportsContextInjection: true,
