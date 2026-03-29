@@ -129,8 +129,11 @@ Display discovery banner:
   MCP Server:    {mcp.url or "not configured"}
   Plugins Dir:   {pluginsDir} ({pluginsDirExists ? "exists" : "not created yet"})
 
-  Built-in Agents ({agents.length}):
-    {comma-separated list of agent names from agents array}
+  Built-in Agents (selected):
+    {comma-separated list of agents where agentSettings[agent].selected === true}
+
+  Built-in Agents (disabled):
+    {comma-separated list of agents where agentSettings[agent].selected === false, or "none"}
 
   User Agents ({userAgents.length}):
     {comma-separated list or "none"}
@@ -142,26 +145,69 @@ Continue to Step 2.
 
 ## Step 2: Import Canopy config into nForma (Path A)
 
+### Step 2a: Import MCP endpoint
+
+If `mcp` is not null (Canopy MCP server is configured):
+
 Use AskUserQuestion:
-- header: "Import Canopy Config"
-- question: "Import Canopy's MCP endpoint and agent configuration into nForma?\n\nThis writes a `canopy` section to ~/.claude/nf.json with the MCP URL and discovered agents. nForma commands will become Canopy-aware."
+- header: "MCP"
+- question: "Import Canopy's MCP server endpoint into nForma?\n\n  URL:  {mcp.url}\n  Type: {mcp.type}"
 - options:
-  - "Import — write to nf.json"
-  - "Skip — do not import"
+  - "Yes — import MCP endpoint"
+  - "No — skip MCP"
 
-**If "Skip":** display "Import skipped." Continue to Step 3.
+Track the user's decision. If "Yes": add to pending import list.
 
-**If "Import":**
+If `mcp` is null: skip this question, display "MCP Server: not configured — skipping."
 
-### Step 2a: Backup nf.json
+### Step 2b: Per-agent import decisions
+
+Filter Canopy's agents to only those with `selected: true` in agentSettings. Agents with `selected: false` are disabled in Canopy and should not be offered for import.
+
+For each **selected** agent from the CANOPY_INFO `agentSettings`, use AskUserQuestion:
+- header: "{agent-name}"
+- question: "Import {agent-name} from Canopy?\n\n  Selected:        {agentSettings[agent].selected}\n  Dangerous mode:  {agentSettings[agent].dangerousEnabled}\n  Inline mode:     {agentSettings[agent].inlineMode}\n  Custom flags:    {agentSettings[agent].customFlags || 'none'}"
+- options:
+  - "Yes — import"
+  - "No — skip"
+
+Collect the user's decisions. Build an `importedAgents` array from "Yes" responses.
+
+### Step 2c: Confirm and write
+
+If no MCP and no agents were selected: display "Import skipped — nothing selected." Continue to Step 3.
+
+Otherwise, display pending summary:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ nForma ► REVIEW IMPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Will write to ~/.claude/nf.json:
+
+  {if MCP selected: "◆ MCP endpoint: " + mcp.url}
+  {for each importedAgent: "◆ Agent: " + agent-name}
+```
+
+Use AskUserQuestion:
+- header: "Confirm"
+- question: "Write selected Canopy config to ~/.claude/nf.json?"
+- options:
+  - "Apply"
+  - "Cancel — discard"
+
+**If "Cancel":** display "Import cancelled." Continue to Step 3.
+
+**If "Apply":**
+
+Backup nf.json:
 
 ```bash
 cp ~/.claude/nf.json ~/.claude/nf.json.backup-$(date +%Y-%m-%d-%H%M%S) 2>/dev/null || true
 ```
 
-### Step 2b: Write canopy section to nf.json
-
-Pass all values via environment variables — never interpolate into the script body:
+Write canopy section to nf.json. Pass all values via environment variables — never interpolate:
 
 ```bash
 IMPORT_RESULT=$(node << 'NF_EVAL'
@@ -174,34 +220,37 @@ let nfCfg = {};
 try { nfCfg = JSON.parse(fs.readFileSync(nfPath, 'utf8')); } catch(e) {}
 
 const canopyInfo = JSON.parse(process.env.CANOPY_INFO);
+const importedAgents = JSON.parse(process.env.IMPORTED_AGENTS_JSON);
+const importMcp = process.env.IMPORT_MCP === 'true';
 
 nfCfg.canopy = {
   linked: true,
   linked_at: new Date().toISOString(),
   config_path: canopyInfo.configPath,
-  mcp_url: canopyInfo.mcp ? canopyInfo.mcp.url : null,
-  mcp_type: canopyInfo.mcp ? canopyInfo.mcp.type : null,
-  agents: canopyInfo.agents,
-  user_agents: canopyInfo.userAgents,
+  mcp_url: importMcp && canopyInfo.mcp ? canopyInfo.mcp.url : null,
+  mcp_type: importMcp && canopyInfo.mcp ? canopyInfo.mcp.type : null,
+  agents: importedAgents,
   plugins_dir: canopyInfo.pluginsDir
 };
 
 fs.writeFileSync(nfPath, JSON.stringify(nfCfg, null, 2) + '\n');
-process.stdout.write(JSON.stringify({ written: true }) + '\n');
+process.stdout.write(JSON.stringify({ written: true, agentCount: importedAgents.length, hasMcp: importMcp }) + '\n');
 NF_EVAL
 )
 ```
 
-The `CANOPY_INFO` environment variable is the raw JSON output from Step 1.
+The environment variables are:
+- `CANOPY_INFO` — raw JSON from Step 1
+- `IMPORTED_AGENTS_JSON` — JSON array of selected agent names (e.g., `["claude","gemini","codex"]`)
+- `IMPORT_MCP` — `"true"` or `"false"`
 
 Parse IMPORT_RESULT. If `written: true`:
 
 ```
 ✓ Canopy config imported into ~/.claude/nf.json
 
-  MCP URL:    {mcp.url or "none"}
-  Agents:     {agents list}
-  User Agents: {userAgents list or "none"}
+  {if hasMcp: "MCP URL:  " + mcp.url}
+  Agents:   {importedAgents joined by ", "}
 ```
 
 Continue to Step 3.
