@@ -210,7 +210,9 @@ Continue to Step 3.
 
 ## Step 3: Register nForma agents in Canopy (Path B — optional)
 
-### Step 3a: Read nForma quorum slots
+### Step 3a: Read nForma quorum slots with provider details
+
+Read both `~/.claude.json` (slot names) and `providers.json` (model, provider, auth type) to build a rich slot table. Exclude non-quorum entries (e.g., `canopy` MCP server) by filtering to only slots that appear in providers.json.
 
 ```bash
 QUORUM_SLOTS=$(node << 'NF_EVAL'
@@ -218,18 +220,39 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
+// Read ~/.claude.json for configured slots
 const claudeJsonPath = path.join(os.homedir(), '.claude.json');
 let claudeJson = {};
 try { claudeJson = JSON.parse(fs.readFileSync(claudeJsonPath, 'utf8')); } catch (e) {}
 const servers = claudeJson.mcpServers || {};
+
+// Read providers.json for model/provider details
+const providersCandidates = [
+  path.join(os.homedir(), '.claude', 'nf', 'bin', 'providers.json'),
+  path.join(os.homedir(), '.claude', 'nf-bin', 'providers.json'),
+];
+let providersData = { providers: [] };
+for (const p of providersCandidates) {
+  try { providersData = JSON.parse(fs.readFileSync(p, 'utf8')); break; } catch(e) {}
+}
+const providerMap = {};
+for (const p of providersData.providers) {
+  providerMap[p.name] = p;
+}
+
+// Build slots with enriched data — only include slots found in providers.json
 const slots = [];
-for (const [name, cfg] of Object.entries(servers)) {
-  const env = cfg.env || {};
+for (const [name] of Object.entries(servers)) {
+  const provider = providerMap[name];
+  if (!provider) continue; // Skip non-quorum entries (e.g., canopy MCP server)
   slots.push({
     name,
-    model: env.CLAUDE_DEFAULT_MODEL || 'unknown',
-    provider: env.ANTHROPIC_BASE_URL || 'unknown',
-    command: cfg.command || 'unknown'
+    model: provider.model || 'unknown',
+    display_provider: provider.display_provider || provider.provider || 'unknown',
+    auth_type: provider.auth_type || 'api',
+    cli: provider.cli || 'unknown',
+    description: provider.description || '',
+    type: provider.display_type || provider.type || 'unknown'
   });
 }
 process.stdout.write(JSON.stringify({ slots, count: slots.length }) + '\n');
@@ -252,7 +275,7 @@ Continue to Step 4 (closing).
 
 **If `count` > 0:**
 
-Display the slots:
+Display the slots with full detail:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -261,36 +284,54 @@ Display the slots:
 
 nForma quorum agents found ({count}):
 
-#   Slot              Model                       Provider
-──  ────────────────  ──────────────────────────  ─────────────────────────────────────
-{numbered table of slots}
+#   Slot              Model                                     Provider        Auth   Type
+──  ────────────────  ────────────────────────────────────────  ──────────────  ─────  ──────────────────
+1   codex-1           gpt-5.4                                   OpenAI          sub    codex-cli
+2   gemini-1          gemini-3-pro-preview                      Google          sub    gemini-cli
+3   opencode-1        grok-code-fast-1                          OpenCode        sub    opencode-cli
+4   copilot-1         gpt-4.1                                   GitHub          sub    copilot-cli
+5   claude-1          deepseek-ai/DeepSeek-V3.2                 AkashML         api    claude-code-router
+6   claude-2          MiniMaxAI/MiniMax-M2.5                    AkashML         api    claude-code-router
+7   claude-3          Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8  Together.xyz    api    claude-code-router
+8   claude-4          moonshotai/Kimi-K2.5                      Together.xyz    api    claude-code-router
+9   claude-5          meta-llama/Llama-4-Maverick-17B-128E...   Together.xyz    api    claude-code-router
+10  claude-6          zai-org/GLM-5                             Together.xyz    api    claude-code-router
 ```
 
+(Table rows are dynamically generated from the slots data — the above is an example.)
+
+### Step 3b: Per-agent registration decision
+
+Iterate through each slot and ask the user whether to register it. This gives full control over which agents appear in Canopy.
+
 Use AskUserQuestion:
-- header: "Register in Canopy"
-- question: "Register these nForma quorum agents in Canopy's user agent registry?\n\nThis writes to Canopy's config.json. Canopy will show these agents in its toolbar and agent palette. Requires Canopy restart to take effect."
+- header: "Register"
+- question: "Which agents should be registered in Canopy's user agent registry?\n\nCanopy will show registered agents in its toolbar and agent palette. Requires Canopy restart."
 - options:
-  - "Register all — add all quorum agents to Canopy"
-  - "Select — choose which agents to register"
-  - "Skip — do not register"
+  - "Register all — add all {count} quorum agents to Canopy"
+  - "Pick individually — decide per agent"
+  - "Skip — do not register any"
 
 **If "Skip":** display "Registration skipped." Continue to Step 4.
 
-**If "Select":**
+**If "Register all":** mark all slots as selected. Continue to Step 3c.
 
-Use AskUserQuestion:
-- header: "Select Agents"
-- question: "Select agents to register (comma-separated numbers):"
-- options: one option per slot: "{N} — {slot-name} ({model})"
-  - Plus: "Cancel — back"
+**If "Pick individually":**
 
-If "Cancel": display "Registration skipped." Continue to Step 4.
+For each slot in order, use AskUserQuestion:
+- header: "{slot.name}"
+- question: "Register {slot.name} in Canopy?\n\n  Model:    {slot.model}\n  Provider: {slot.display_provider}\n  Auth:     {slot.auth_type}\n  Type:     {slot.type}\n  {slot.description}"
+- options:
+  - "Yes — register in Canopy"
+  - "No — skip this agent"
 
-Otherwise: parse selected numbers, filter slots to only those selected. Continue to register flow below.
+Collect the user's decision for each slot. Build a `selectedSlots` array from the "Yes" responses.
 
-**If "Register all":** use all slots. Continue to register flow below.
+If no agents were selected: display "No agents selected. Registration skipped." Continue to Step 4.
 
-### Step 3b: Confirm registration
+Continue to Step 3c with the selected slots.
+
+### Step 3c: Confirm registration
 
 Display pending summary:
 
@@ -301,7 +342,7 @@ Display pending summary:
 
 Will add to Canopy's userAgentRegistry:
 
-  ◆ nf-{slot-name}  →  {model} via {provider}
+  ◆ nf-{slot-name}  →  {slot.model} via {slot.display_provider} [{slot.auth_type}]
   [repeat for each selected slot]
 
 Target: {configPath}
@@ -316,7 +357,7 @@ Use AskUserQuestion:
 
 **If "Cancel":** display "Changes discarded." Continue to Step 4.
 
-### Step 3c: Backup and write to Canopy config
+### Step 3d: Backup and write to Canopy config
 
 **If "Apply":**
 
@@ -358,11 +399,11 @@ for (const slot of selectedSlots) {
   config.userAgentRegistry[agentId] = {
     id: agentId,
     name: 'nForma: ' + slot.name,
-    command: slot.command,
+    command: slot.cli || 'node',
     color: '#6366f1',
     iconId: 'brain-circuit',
     supportsContextInjection: true,
-    tooltip: 'nForma quorum agent — ' + slot.model
+    tooltip: slot.display_provider + ' — ' + slot.model + ' [' + slot.auth_type + ']'
   };
 
   registered.push({ id: agentId, status: 'added' });
