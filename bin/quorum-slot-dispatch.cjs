@@ -1395,7 +1395,11 @@ async function main() {
       unavailMessage: output.slice(0, 500)
     });
   } else {
-    const verdict      = parseVerdict(output, mode);
+    let verdict        = parseVerdict(output, mode);
+    // TRUNC-03: distinguish truncation-derived FLAG from genuine FLAG
+    if (verdict === 'FLAG' && parseVerdict.lastTruncationNote) {
+      verdict = 'FLAG_TRUNCATED';
+    }
     const reasoning    = parseReasoning(output) || output.slice(0, 400);
     const citations    = parseCitations(output);
     const improvements = requestImprovements ? parseImprovements(output) : [];

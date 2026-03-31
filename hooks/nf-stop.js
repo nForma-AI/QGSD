@@ -499,12 +499,13 @@ function detectUnavailWithoutFallback(currentTurnLines) {
       }
     }
 
-    // TRUNC-03: Check for verdict_integrity: truncated in slot results (observational, fail-open)
+    // TRUNC-03: FLAG_TRUNCATED verdicts are non-votes (like UNAVAIL) for consensus
     for (const taskId of round.taskIds) {
       const result = taskResults.get(taskId) || '';
-      if (/verdict_integrity:\s*truncated/i.test(result)) {
-        process.stderr.write(`[nf-stop] WARNING: Slot result has verdict_integrity: truncated -- verdict may be from incomplete output\n`);
-        break; // one warning per round is sufficient
+      if (/verdict:\s*FLAG_TRUNCATED/i.test(result)) {
+        process.stderr.write('[nf-stop] WARNING: Slot returned FLAG_TRUNCATED (verdict from truncated output) -- excluding from consensus\n');
+        hasUnavail = true;
+        break;
       }
     }
 

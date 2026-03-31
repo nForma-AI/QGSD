@@ -152,7 +152,7 @@ test('Telemetry record includes 3 new truncation fields alongside originals', ()
 
 // ===== nf-stop.js source check (TRUNC-03) =====
 
-test('nf-stop.js contains verdict_integrity truncated regex pattern', () => {
+test('nf-stop.js contains FLAG_TRUNCATED consensus exclusion pattern (TRUNC-03)', () => {
   const source = fs.readFileSync(path.join(__dirname, '..', 'hooks', 'nf-stop.js'), 'utf8');
-  assert.ok(/verdict_integrity:\s*truncated/.test(source), 'nf-stop.js should contain the truncation regex');
+  assert.ok(source.includes('FLAG_TRUNCATED'), 'nf-stop.js should contain FLAG_TRUNCATED for consensus exclusion');
 });
