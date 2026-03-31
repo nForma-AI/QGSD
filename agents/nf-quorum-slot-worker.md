@@ -28,7 +28,7 @@ REQUEST_IMPROVEMENTS=$(echo "$ARGUMENTS"|grep '^request_improvements:'|awk '{pri
 PRIOR_FILE=$(mktemp); TRACES_FILE=$(mktemp)
 QUESTION_FILE=$(mktemp)
 NONCE_FILE=$(mktemp)
-echo "$ARGUMENTS" | grep '^question:' | sed 's/question: *//' > "$QUESTION_FILE"
+echo "$ARGUMENTS" | awk '/^question:/{f=1; line=$0; sub(/^question: */, "", line); if(line != "|" && line != "") {print line; f=0}; next} f && /^  /{sub(/^  /,"");print;next} f && /^[a-z]/{f=0}' > "$QUESTION_FILE"
 echo "$ARGUMENTS"|awk '/^prior_positions:/{f=1;next}/^[a-z]/{f=0}f{sub(/^  /,"");print}' > "$PRIOR_FILE"
 echo "$ARGUMENTS"|awk '/^traces:/{f=1;next}/^[a-z]/{f=0}f{sub(/^  /,"");print}' > "$TRACES_FILE"
 FLAGS=""; [ -n "$ARTIFACT_PATH" ] && FLAGS="$FLAGS --artifact-path $ARTIFACT_PATH"

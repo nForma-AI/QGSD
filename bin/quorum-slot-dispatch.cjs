@@ -1060,6 +1060,37 @@ function emitResultBlock({ slot, round, verdict, reasoning, citations, improveme
   return lines.join('\n') + '\n';
 }
 
+// ─── L3/L6 supplementary telemetry (TRUNC-04) ────────────────────────────────
+
+/**
+ * appendTelemetryUpdate — writes a supplementary telemetry record for L3/L6 truncation.
+ * The primary record (from call-quorum-slot.cjs) only captures L1.
+ * This closes the TLA+ TelemetryRecordsTruncation gap for L3/L6.
+ * @param {Object} opts
+ */
+function appendTelemetryUpdate({ slot, round, l3Truncated, l6Truncated, effectiveLayer, originalSizeBytes, verdictIntegrity, cwd }) {
+  try {
+    const sessionId = process.env.CLAUDE_SESSION_ID || 'session-' + Date.now();
+    const record = JSON.stringify({
+      ts: new Date().toISOString(),
+      session_id: sessionId,
+      slot,
+      round: parseInt(round, 10) || 0,
+      truncation_update: true,
+      l3_truncated: l3Truncated || false,
+      l6_truncated: l6Truncated || false,
+      effective_layer: effectiveLayer || null,
+      original_size_bytes: originalSizeBytes || null,
+      verdict_integrity: verdictIntegrity || null,
+    });
+    const pp = require('./planning-paths.cjs');
+    const logPath = pp.resolve(cwd || process.cwd(), 'quorum-rounds', { sessionId });
+    require('fs').appendFileSync(logPath, record + '\n', 'utf8');
+  } catch (_) {
+    // Fail-open: telemetry errors never block dispatch
+  }
+}
+
 // ─── Pre-dispatch context enrichment (ORCH-01) ───────────────────────────────
 //
 // ARCHITECTURAL RATIONALE (ORCH-01):
@@ -1385,6 +1416,21 @@ async function main() {
       originalSizeBytes: l3OriginalSize || null,
     });
 
+    // L3/L6 supplementary telemetry (TRUNC-04 gap closure)
+    if (l3Truncated || (output || '').length > 5000) {
+      const l6Truncated_flag = (output || '').length > 5000;
+      appendTelemetryUpdate({
+        slot,
+        round,
+        l3Truncated: l3Truncated || false,
+        l6Truncated: l6Truncated_flag,
+        effectiveLayer: l1Truncated ? 'L1' : (l3Truncated ? 'L3' : (l6Truncated_flag ? 'L6' : null)),
+        originalSizeBytes: l3OriginalSize || null,
+        verdictIntegrity: (l3Truncated || l1Truncated || l6Truncated_flag) ? 'truncated' : null,
+        cwd,
+      });
+    }
+
     // Auto-persist debate trace file (fail-open)
     try {
       const dateStr = new Date().toISOString().slice(0, 10);
@@ -1443,6 +1489,7 @@ module.exports = {
     formatPrecedentsSection,
     enrichPromptWithRetrieval,
     classifyDispatchError,
+    appendTelemetryUpdate,
   };
 
 // ─── Entry point guard ────────────────────────────────────────────────────────
