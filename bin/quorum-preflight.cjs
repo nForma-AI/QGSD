@@ -386,12 +386,17 @@ function ensureServices(providers) {
 
     if (!needsStart) continue;
 
-    // Auto-start the service
+    // Auto-start the service (fire-and-forget, then poll for readiness)
     process.stderr.write(`[preflight] Service ${startCmd} ${startArgs.join(' ')} is down, starting...\n`);
     try {
-      execFileSync(startCmd, startArgs, { encoding: 'utf8', timeout: 10000 });
+      // Spawn as detached background process — don't wait for it to exit.
+      // The poll loop below will detect when the service is ready.
+      const child = require('child_process').spawn(startCmd, startArgs, {
+        detached: true, stdio: 'ignore'
+      });
+      child.unref();
     } catch (e) {
-      process.stderr.write(`[preflight] Service ${startCmd} ${startArgs.join(' ')} start command failed: ${e.message}\n`);
+      process.stderr.write(`[preflight] Service ${startCmd} ${startArgs.join(' ')} spawn failed: ${e.message}\n`);
       continue;
     }
 
@@ -435,6 +440,14 @@ async function main() {
     const providers = findProviders();
     const active    = cfg.quorum_active || [];
     console.log(JSON.stringify(buildTeam(providers, active)));
+  } else if (mode === '--ensure-services') {
+    const providers = findProviders();
+    const active    = cfg.quorum_active || [];
+    const activeProviders = active.length > 0
+      ? providers.filter(p => active.includes(p.name))
+      : providers;
+    ensureServices(activeProviders);
+    console.log('OK');
   } else if (mode === '--all') {
     const providers    = findProviders();
     const active       = cfg.quorum_active || [];
