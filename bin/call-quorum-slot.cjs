@@ -54,7 +54,7 @@ function appendTokenSentinel(slotName) {
 }
 
 // ─── Telemetry logging for quorum slot dispatch (OBS-01) ─────────────────────
-function recordTelemetry(slotName, round, verdict, latencyMs, provider, providerStatus, retryCount, errorType) {
+function recordTelemetry(slotName, round, verdict, latencyMs, provider, providerStatus, retryCount, errorType, truncated, truncationLayer, originalSizeBytes) {
   try {
     const sessionId = process.env.CLAUDE_SESSION_ID || 'session-' + Date.now();
     const record = JSON.stringify({
@@ -68,6 +68,9 @@ function recordTelemetry(slotName, round, verdict, latencyMs, provider, provider
       provider_status: providerStatus,
       retry_count: retryCount,
       error_type: errorType,
+      truncated: truncated || false,
+      truncation_layer: truncationLayer || null,
+      original_size_bytes: originalSizeBytes || null,
     });
     const pp = require('./planning-paths.cjs');
     const logPath = pp.resolve(findProjectRoot(), 'quorum-rounds', { sessionId });
@@ -337,6 +340,8 @@ function runSubprocess(provider, prompt, idleTimeoutMs, hardTimeoutMs, allowedTo
     let timedOut  = false;
     let timeoutType = ''; // 'IDLE' or 'HARD'
     const MAX_BUF = 10 * 1024 * 1024;
+    let l1Truncated = false;
+    let l1OriginalSize = 0;
 
     // Kill entire process group, then destroy streams to force 'close' even if
     // grandchildren keep the pipes open (the common case with ccr/opencode).
@@ -368,7 +373,18 @@ function runSubprocess(provider, prompt, idleTimeoutMs, hardTimeoutMs, allowedTo
     child.stdout.on('data', d => {
       clearTimeout(idleTimer);
       idleTimer = setTimeout(() => { timedOut = true; timeoutType = 'IDLE'; killGroup(); }, idleTimeoutMs);
-      if (stdout.length < MAX_BUF) stdout += d.toString().slice(0, MAX_BUF - stdout.length);
+      const chunk = d.toString();
+      l1OriginalSize += chunk.length;
+      if (stdout.length < MAX_BUF) {
+        if (stdout.length + chunk.length > MAX_BUF) {
+          stdout += chunk.slice(0, MAX_BUF - stdout.length);
+          l1Truncated = true;
+        } else {
+          stdout += chunk;
+        }
+      } else {
+        l1Truncated = true;
+      }
     });
     child.stderr.on('data', d => {
       clearTimeout(idleTimer);
@@ -386,7 +402,8 @@ function runSubprocess(provider, prompt, idleTimeoutMs, hardTimeoutMs, allowedTo
         reject(new Error(label));
         return;
       }
-      const output = stdout || stderr || '(no output)';
+      const l1Suffix = l1Truncated ? '\n\n[OUTPUT TRUNCATED at 10MB by call-quorum-slot]' : '';
+      const output = (stdout || stderr || '(no output)') + l1Suffix;
       resolve(code !== 0 ? `${output}\n[exit code ${code}]` : output);
     });
 
@@ -614,7 +631,7 @@ async function main() {
       writeFailureLog(slot, `Unknown provider type: ${provider.type}`, '');
       appendTokenSentinel(slot);
       const latencyMs = Date.now() - startMs;
-      recordTelemetry(slot, roundNum, 'FLAG', latencyMs, provider.provider || provider.name, 'unavailable', 0, 'UNKNOWN_TYPE');
+      recordTelemetry(slot, roundNum, 'FLAG', latencyMs, provider.provider || provider.name, 'unavailable', 0, 'UNKNOWN_TYPE', false, null, null);
       process.exit(1);
     }
 
@@ -625,7 +642,7 @@ async function main() {
       const latencyMs = Date.now() - startMs;
       const providerName = provider.provider || provider.name;
       const errorType = classifyErrorType(result);
-      recordTelemetry(slot, roundNum, 'FLAG', latencyMs, providerName, 'unavailable', retryCount, errorType);
+      recordTelemetry(slot, roundNum, 'FLAG', latencyMs, providerName, 'unavailable', retryCount, errorType, false, null, null);
       writeFailureLog(slot, result, '');
       // Still output the result so quorum-slot-dispatch can parse it
       process.stdout.write(result);
@@ -639,7 +656,8 @@ async function main() {
     const latencyMs = Date.now() - startMs;
     const providerName = provider.provider || provider.name;
 
-    recordTelemetry(slot, roundNum, verdict, latencyMs, providerName, 'available', retryCount, null);
+    const l1Detect = result.includes('[OUTPUT TRUNCATED at 10MB');
+    recordTelemetry(slot, roundNum, verdict, latencyMs, providerName, 'available', retryCount, null, l1Detect, l1Detect ? 'L1' : null, null);
 
     // Slot succeeded — clear any failure records so next quorum run doesn't skip it
     clearFailureOnSuccess(slot);
@@ -654,7 +672,7 @@ async function main() {
 
     const errorType = classifyErrorType(err.message);
 
-    recordTelemetry(slot, roundNum, 'FLAG', latencyMs, providerName, 'unavailable', 0, errorType);
+    recordTelemetry(slot, roundNum, 'FLAG', latencyMs, providerName, 'unavailable', 0, errorType, false, null, null);
 
     process.stderr.write(`[call-quorum-slot] ${err.message}\n`);
     writeFailureLog(slot, err.message, '');
@@ -671,5 +689,5 @@ if (require.main === module) {
   });
 }
 
-// ─── Test exports (SHELL-ESCAPE-01) ──────────────────────────────────────────
-module.exports = { buildSpawnArgs };
+// ─── Test exports (SHELL-ESCAPE-01, TRUNC-01) ──────────────────────────────────
+module.exports = { buildSpawnArgs, recordTelemetry };

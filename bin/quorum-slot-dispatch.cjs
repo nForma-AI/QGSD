@@ -807,6 +807,8 @@ function buildModeBPrompt({ round, repoDir, question, traces, artifactPath, arti
  * @returns {string}
  */
 function parseVerdict(rawOutput, mode) {
+  // Side-channel: expose whether verdict came from truncated output (TRUNC-02)
+  parseVerdict.lastTruncationNote = (rawOutput || '').includes('[OUTPUT TRUNCATED');
   if (mode === 'A') {
     return (rawOutput || '').slice(0, 500);
   }
@@ -982,7 +984,7 @@ function parseImprovements(rawOutput) {
  * @param {string} [opts.dispatch_nonce] — 32-char hex nonce proving the dispatch script ran
  * @returns {string}
  */
-function emitResultBlock({ slot, round, verdict, reasoning, citations, improvements, matched_requirement_ids, rawOutput, isUnavail, error_type, dispatch_nonce, unavailMessage }) {
+function emitResultBlock({ slot, round, verdict, reasoning, citations, improvements, matched_requirement_ids, rawOutput, isUnavail, error_type, dispatch_nonce, unavailMessage, truncated, truncationLayer, originalSizeBytes }) {
   const lines = [];
 
   lines.push(`slot: ${slot}`);
@@ -1029,11 +1031,30 @@ function emitResultBlock({ slot, round, verdict, reasoning, citations, improveme
     }
   }
 
+  // L6: raw field truncation with marker (TRUNC-05)
   lines.push('raw: |');
-  const rawTruncated = (rawOutput || '').slice(0, 5000);
+  const rawStr = rawOutput || '';
+  const l6Truncated = rawStr.length > 5000;
+  let rawTruncated = rawStr.slice(0, 5000);
+  if (l6Truncated) {
+    rawTruncated += '\n[RAW TRUNCATED at 5KB]';
+  }
   const rawLines = rawTruncated.split('\n');
   for (const rl of rawLines) {
     lines.push(`  ${rl}`);
+  }
+
+  // Verdict integrity tagging (TRUNC-04, TRUNC-05)
+  const effectiveTruncated = truncated || l6Truncated;
+  const effectiveLayer = truncationLayer || (l6Truncated ? 'L6' : null);
+  if (effectiveTruncated) {
+    lines.push('verdict_integrity: truncated');
+    lines.push('truncation:');
+    lines.push('  truncated: true');
+    lines.push(`  layer: ${effectiveLayer}`);
+    if (originalSizeBytes) {
+      lines.push(`  original_size_bytes: ${originalSizeBytes}`);
+    }
   }
 
   return lines.join('\n') + '\n';
@@ -1317,7 +1338,7 @@ async function main() {
 
     child.on('close', (code) => {
       const suffix = truncated ? '\n\n[OUTPUT TRUNCATED at 50KB by quorum-slot-dispatch]' : '';
-      resolve({ exitCode: code, output: (stdout || stderr || '(no output)') + suffix });
+      resolve({ exitCode: code, output: (stdout || stderr || '(no output)') + suffix, truncated, originalSize: stdout.length });
     });
 
     child.on('error', (err) => {
@@ -1325,7 +1346,8 @@ async function main() {
     });
   });
 
-  const { exitCode, output } = rawOutput;
+  const { exitCode, output, truncated: l3Truncated, originalSize: l3OriginalSize } = rawOutput;
+  const l1Truncated = output.includes('[OUTPUT TRUNCATED at 10MB');
   const isUnavail = exitCode !== 0 || output.includes('TIMEOUT');
 
   let result;
@@ -1357,7 +1379,10 @@ async function main() {
       improvements: improvements.length > 0 ? improvements : undefined,
       matched_requirement_ids: matchedReqIds,
       dispatch_nonce: dispatchNonce,
-      rawOutput: output
+      rawOutput: output,
+      truncated: l3Truncated || l1Truncated,
+      truncationLayer: l1Truncated ? 'L1' : (l3Truncated ? 'L3' : null),
+      originalSizeBytes: l3OriginalSize || null,
     });
 
     // Auto-persist debate trace file (fail-open)
