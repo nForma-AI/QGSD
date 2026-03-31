@@ -21,7 +21,7 @@
  * Exit codes: 0 = success, 1 = error (message on stderr)
  */
 
-const { spawn } = require('child_process');
+const { spawn, spawnSync } = require('child_process');
 const https     = require('https');
 const http      = require('http');
 const fs        = require('fs');
@@ -169,6 +169,18 @@ function clearFailureOnSuccess(slotName) {
       fs.writeFileSync(logPath, JSON.stringify(records, null, 2), 'utf8');
     }
   } catch (_) { /* recovery logging must never interrupt the primary flow */ }
+}
+
+// ─── Layer 2: Bridge failure log to scoreboard cooldown ──────────────────────
+// After a slot fails, set a cooldown entry in the scoreboard so future dispatches
+// skip it immediately. Uses spawnSync for synchronous hook context. Fail-open:
+// scoreboard update must never block or crash the dispatch flow.
+function setScoreboardCooldown(slotName, errorMsg) {
+  try {
+    const scoreboardScript = path.join(__dirname, 'update-scoreboard.cjs');
+    spawnSync('node', [scoreboardScript, 'set-availability', '--slot', slotName, '--message', errorMsg], { timeout: 3000, stdio: 'pipe' });
+    process.stderr.write(`[call-quorum-slot] Set cooldown for ${slotName} via set-availability\n`);
+  } catch (_) { /* fail-open: scoreboard update must never block dispatch */ }
 }
 
 // ─── Retry with exponential backoff (FAIL-01) ───────────────────────────────
@@ -628,6 +640,29 @@ async function main() {
     process.exit(1);
   }
 
+  // ─── Layer 3: Pre-dispatch scoreboard cooldown check ────────────────────────
+  // If this slot has an active cooldown from a recent failure, skip immediately.
+  // Zero-latency: local file read, not an API call. Fail-open on any error.
+  try {
+    const pp = require('./planning-paths.cjs');
+    const sbPath = pp.resolveWithFallback(findProjectRoot(spawnCwd), 'quorum-scoreboard');
+    if (fs.existsSync(sbPath)) {
+      const sb = JSON.parse(fs.readFileSync(sbPath, 'utf8'));
+      const avail = sb?.availability?.[slot];
+      if (avail?.available_at_iso) {
+        const cooldownEnd = new Date(avail.available_at_iso).getTime();
+        if (!isNaN(cooldownEnd) && cooldownEnd > Date.now()) {
+          const remainingMs = cooldownEnd - Date.now();
+          process.stderr.write(`[call-quorum-slot] COOLDOWN: ${slot} is cooling down for ${Math.ceil(remainingMs / 1000)}s more (until ${avail.available_at_iso})\n`);
+          recordTelemetry(slot, roundNum, 'FLAG', 0, provider.provider || provider.name, 'cooldown', 0, 'COOLDOWN_ACTIVE', false, null, null, `Cooldown: ${Math.ceil(remainingMs / 1000)}s remaining`, 0, null);
+          writeFailureLog(slot, `COOLDOWN_ACTIVE: ${Math.ceil(remainingMs / 1000)}s remaining`, '');
+          appendTokenSentinel(slot);
+          process.exit(1);
+        }
+      }
+    }
+  } catch (_) { /* fail-open: missing/malformed scoreboard = no cooldown check */ }
+
   // Dual timeout resolution:
   // - idle_timeout_ms: inactivity timer that resets on stdout/stderr, defaults to 90s
   // - hard_timeout_ms: absolute wall-clock cap that never resets, defaults to 5min (300s)
@@ -682,6 +717,7 @@ async function main() {
     } else {
       process.stderr.write(`[call-quorum-slot] Unknown provider type: ${provider.type}\n`);
       writeFailureLog(slot, `Unknown provider type: ${provider.type}`, '');
+      setScoreboardCooldown(slot, 'Unknown provider type: ' + provider.type);
       appendTokenSentinel(slot);
       const latencyMs = Date.now() - startMs;
       recordTelemetry(slot, roundNum, 'FLAG', latencyMs, provider.provider || provider.name, 'unavailable', 0, 'UNKNOWN_TYPE', false, null, null, null, 0, null);
@@ -721,6 +757,7 @@ async function main() {
       const errorType = classifyErrorType(result);
       recordTelemetry(slot, roundNum, 'FLAG', latencyMs, providerName, 'unavailable', retryCount, errorType, false, null, null, result.slice(0, 500), result.length, cliExitCode);
       writeFailureLog(slot, result, '');
+      setScoreboardCooldown(slot, result);
       // Still output the result so quorum-slot-dispatch can parse it
       process.stdout.write(result);
       if (!result.endsWith('\n')) process.stdout.write('\n');
@@ -753,6 +790,7 @@ async function main() {
 
     process.stderr.write(`[call-quorum-slot] ${err.message}\n`);
     writeFailureLog(slot, err.message, '');
+    setScoreboardCooldown(slot, err.message);
     appendTokenSentinel(slot);
     process.exit(1);
   }
