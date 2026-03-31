@@ -43,9 +43,14 @@
       "env": {},
       "display_type": "codex-cli",
       "auth_check": {
-        "args": ["login", "status"],
+        "args": [
+          "login",
+          "status"
+        ],
         "success_pattern": "Logged in",
-        "login_args": ["login"],
+        "login_args": [
+          "login"
+        ],
         "login_hint": "Opens browser for OpenAI authentication",
         "timeout_ms": 5000
       },
@@ -54,8 +59,23 @@
         "creds_dir": "~/.codex/accounts",
         "active_file": "~/.codex/auth.json",
         "max_retries": 3,
-        "retry_on_patterns": ["quota", "rate_limit", "unauthorized", "401", "429", "refresh_token_reused", "token_expired"],
-        "rotate_cmd": ["node", "bin/account-manager.cjs", "switch", "next", "--provider", "codex-1"]
+        "retry_on_patterns": [
+          "quota",
+          "rate_limit",
+          "unauthorized",
+          "401",
+          "429",
+          "refresh_token_reused",
+          "token_expired"
+        ],
+        "rotate_cmd": [
+          "node",
+          "bin/account-manager.cjs",
+          "switch",
+          "next",
+          "--provider",
+          "codex-1"
+        ]
       },
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
@@ -71,7 +91,7 @@
       "has_file_access": true,
       "description": "Query Gemini CLI agent non-interactively (slot 1)",
       "mainTool": "gemini",
-      "model": "gemini-3-pro-preview",
+      "model": "gemini-3-flash-preview",
       "health_check_args": [
         "--version"
       ],
@@ -79,7 +99,7 @@
       "cli": "/opt/homebrew/bin/gemini",
       "args_template": [
         "-m",
-        "gemini-3-pro-preview",
+        "gemini-3-flash-preview",
         "-p",
         "{prompt}"
       ],
@@ -95,9 +115,15 @@
       "env": {},
       "display_type": "gemini-cli",
       "auth_check": {
-        "args": ["auth", "print-access-token"],
+        "args": [
+          "auth",
+          "print-access-token"
+        ],
         "success_pattern": "Loaded cached credentials|ya29\\.",
-        "login_args": ["auth", "login"],
+        "login_args": [
+          "auth",
+          "login"
+        ],
         "login_hint": "Opens browser for Google authentication",
         "timeout_ms": 5000
       },
@@ -106,8 +132,22 @@
         "creds_dir": "~/.gemini/accounts",
         "active_file": "~/.gemini/oauth_creds.json",
         "max_retries": 3,
-        "retry_on_patterns": ["quota", "resource_exhausted", "unauthorized", "401", "403", "429"],
-        "rotate_cmd": ["node", "bin/account-manager.cjs", "switch", "next", "--provider", "gemini-1"]
+        "retry_on_patterns": [
+          "quota",
+          "resource_exhausted",
+          "unauthorized",
+          "401",
+          "403",
+          "429"
+        ],
+        "rotate_cmd": [
+          "node",
+          "bin/account-manager.cjs",
+          "switch",
+          "next",
+          "--provider",
+          "gemini-1"
+        ]
       },
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
@@ -158,9 +198,15 @@
       "env": {},
       "display_type": "opencode-cli",
       "auth_check": {
-        "args": ["auth", "list"],
+        "args": [
+          "auth",
+          "list"
+        ],
         "success_pattern": "api|oauth",
-        "login_args": ["auth", "login"],
+        "login_args": [
+          "auth",
+          "login"
+        ],
         "login_hint": "Configure provider credentials for OpenCode",
         "timeout_ms": 5000
       },
@@ -226,7 +272,9 @@
       "env": {},
       "display_type": "copilot-cli",
       "auth_check": {
-        "args": ["--version"],
+        "args": [
+          "--version"
+        ],
         "success_pattern": "\\d+\\.\\d+",
         "login_args": null,
         "login_hint": "Copilot authenticates via GitHub CLI (gh auth login). No separate login command.",
@@ -270,16 +318,29 @@
       "env": {},
       "display_type": "claude-code-router",
       "auth_check": {
-        "args": ["status"],
+        "args": [
+          "status"
+        ],
         "success_pattern": "running|Running|Status: Running",
-        "login_args": ["start"],
+        "login_args": [
+          "start"
+        ],
         "login_hint": "Start the Claude Code Router service",
         "timeout_ms": 5000
       },
       "service": {
-        "start": ["ccr", "start"],
-        "stop": ["ccr", "stop"],
-        "status": ["ccr", "status"]
+        "start": [
+          "ccr",
+          "start"
+        ],
+        "stop": [
+          "ccr",
+          "stop"
+        ],
+        "status": [
+          "ccr",
+          "status"
+        ]
       },
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
@@ -319,9 +380,18 @@
       "env": {},
       "display_type": "claude-code-router",
       "service": {
-        "start": ["ccr", "start"],
-        "stop": ["ccr", "stop"],
-        "status": ["ccr", "status"]
+        "start": [
+          "ccr",
+          "start"
+        ],
+        "stop": [
+          "ccr",
+          "stop"
+        ],
+        "status": [
+          "ccr",
+          "status"
+        ]
       },
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
@@ -361,9 +431,18 @@
       "env": {},
       "display_type": "claude-code-router",
       "service": {
-        "start": ["ccr", "start"],
-        "stop": ["ccr", "stop"],
-        "status": ["ccr", "status"]
+        "start": [
+          "ccr",
+          "start"
+        ],
+        "stop": [
+          "ccr",
+          "stop"
+        ],
+        "status": [
+          "ccr",
+          "status"
+        ]
       },
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
@@ -403,9 +482,18 @@
       "env": {},
       "display_type": "claude-code-router",
       "service": {
-        "start": ["ccr", "start"],
-        "stop": ["ccr", "stop"],
-        "status": ["ccr", "status"]
+        "start": [
+          "ccr",
+          "start"
+        ],
+        "stop": [
+          "ccr",
+          "stop"
+        ],
+        "status": [
+          "ccr",
+          "status"
+        ]
       },
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
@@ -445,9 +533,18 @@
       "env": {},
       "display_type": "claude-code-router",
       "service": {
-        "start": ["ccr", "start"],
-        "stop": ["ccr", "stop"],
-        "status": ["ccr", "status"]
+        "start": [
+          "ccr",
+          "start"
+        ],
+        "stop": [
+          "ccr",
+          "stop"
+        ],
+        "status": [
+          "ccr",
+          "status"
+        ]
       },
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
@@ -487,9 +584,18 @@
       "env": {},
       "display_type": "claude-code-router",
       "service": {
-        "start": ["ccr", "start"],
-        "stop": ["ccr", "stop"],
-        "status": ["ccr", "status"]
+        "start": [
+          "ccr",
+          "start"
+        ],
+        "stop": [
+          "ccr",
+          "stop"
+        ],
+        "status": [
+          "ccr",
+          "status"
+        ]
       },
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
