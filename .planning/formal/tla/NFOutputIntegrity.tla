@@ -15,6 +15,11 @@
  *   TRUNC-05 FAIL: L6 raw field truncation had no marker, truncationDetected not set
  * Post-fix: ApplyL1 and ApplyL6 now set truncationDetected; ConsensusCheck always records telemetry
  *
+ * Post-fix quick-366: FLAG_TRUNCATED verdict distinguishes truncation-derived defaults
+ *   from genuine FLAG verdicts; consensus excludes FLAG_TRUNCATED from vote count.
+ *   Code emits FLAG_TRUNCATED (modeled as "flag_truncated" here); nf-stop.js treats
+ *   FLAG_TRUNCATED as UNAVAIL for consensus (hasUnavail = true).
+ *
  * @requirement TRUNC-01
  * @requirement TRUNC-02
  * @requirement TRUNC-03
@@ -45,8 +50,8 @@ VARIABLES
     rawFieldSize,       \* function SlotIds -> raw field size after L6 (5KB cap)
     verdictSurvived,    \* function SlotIds -> BOOLEAN: did verdict: line survive truncation?
     truncationDetected, \* function SlotIds -> BOOLEAN: was truncation flagged in result?
-    extractedVerdict,   \* function SlotIds -> {"genuine", "default_flag", "none"}
-    consensusInput,     \* function SlotIds -> {"genuine", "default_flag", "none"}
+    extractedVerdict,   \* function SlotIds -> {"genuine", "flag_truncated", "none"}
+    consensusInput,     \* function SlotIds -> {"genuine", "flag_truncated", "none"}
     phase,              \* pipeline phase: "init", "l1", "l3", "l6", "extract", "consensus", "done"
     telemetryRecorded   \* function SlotIds -> BOOLEAN: truncation recorded in telemetry?
 
@@ -64,8 +69,8 @@ TypeOK ==
         /\ rawFieldSize[s] \in 0..L6Cap
         /\ verdictSurvived[s] \in BOOLEAN
         /\ truncationDetected[s] \in BOOLEAN
-        /\ extractedVerdict[s] \in {"genuine", "default_flag", "none"}
-        /\ consensusInput[s] \in {"genuine", "default_flag", "none"}
+        /\ extractedVerdict[s] \in {"genuine", "flag_truncated", "none"}
+        /\ consensusInput[s] \in {"genuine", "flag_truncated", "none"}
         /\ telemetryRecorded[s] \in BOOLEAN
     /\ phase \in {"init", "l1", "l3", "l6", "extract", "consensus", "done"}
 
@@ -136,13 +141,14 @@ ExtractVerdict ==
            /\ verdictPos[s] <= afterL3[s]
         THEN "genuine"
         ELSE IF verdictPos[s] > 0
-             THEN "default_flag"    \* verdict existed but was truncated away
+             THEN "flag_truncated"    \* verdict truncated -> FLAG_TRUNCATED (quick-366)
              ELSE "none"]           \* no verdict in original output
     /\ phase' = "extract"
     /\ UNCHANGED <<slotOutput, verdictPos, afterL1, afterL3, rawFieldSize,
                    truncationDetected, consensusInput, telemetryRecorded>>
 
-\* Consensus gate: nf-stop.js reads the extracted verdict and logs truncation warnings
+\* Consensus gate: nf-stop.js reads extracted verdict.
+\* FLAG_TRUNCATED verdicts are non-votes (excluded from consensus, quick-366).
 ConsensusCheck ==
     /\ phase = "extract"
     /\ consensusInput' = [s \in SlotIds |-> extractedVerdict[s]]
@@ -180,15 +186,15 @@ VerdictIntegrityPreserved ==
     phase = "done" =>
         \A s \in SlotIds :
             (~verdictSurvived[s] /\ verdictPos[s] > 0) =>
-                extractedVerdict[s] = "default_flag"
+                extractedVerdict[s] = "flag_truncated"
 
 \* @requirement TRUNC-03
 \* Consensus gate MUST distinguish genuine verdicts from truncation-derived defaults.
-\* VIOLATED when: a default_flag verdict enters consensus indistinguishable from genuine.
+\* VIOLATED when: a flag_truncated verdict enters consensus indistinguishable from genuine.
 ConsensusDistinguishesTruncatedVerdicts ==
     phase = "done" =>
         \A s \in SlotIds :
-            consensusInput[s] = "default_flag" =>
+            consensusInput[s] = "flag_truncated" =>
                 truncationDetected[s] = TRUE
 
 \* @requirement TRUNC-04
