@@ -2239,6 +2239,25 @@ function install(isGlobal, runtime = 'claude') {
     }
   }
 
+  // Gemini CLI only supports SessionStart and SessionEnd hook events.
+  // All other events (UserPromptSubmit, Stop, PreToolUse, PostToolUse, etc.) cause
+  // "Invalid hook event name" warnings and are silently ignored.
+  const GEMINI_SUPPORTED_EVENTS = new Set(['SessionStart', 'SessionEnd']);
+
+  // Clean up invalid Gemini hook events from prior installs
+  if (isGemini && settings.hooks) {
+    for (const event of Object.keys(settings.hooks)) {
+      if (!GEMINI_SUPPORTED_EVENTS.has(event)) {
+        delete settings.hooks[event];
+        console.log(`  ${green}!${reset} Removed unsupported Gemini hook event: ${event}`);
+      }
+    }
+  }
+
+  if (isGemini) {
+    console.log(`  ${cyan}i${reset} Gemini CLI: only registering SessionStart + SessionEnd hooks (other events unsupported)`);
+  }
+
   // Configure SessionStart hook for update checking (skip for opencode)
   if (!isOpencode) {
     if (!settings.hooks) {
@@ -2308,6 +2327,9 @@ function install(isGlobal, runtime = 'claude') {
         if (settings.hooks[event].length === 0) delete settings.hooks[event];
       }
     }
+
+    // ── Non-Session hooks: skip for Gemini (only supports SessionStart + SessionEnd) ──
+    if (!isGemini) {
 
     // Register nForma UserPromptSubmit hook (quorum injection)
     // MUST be in settings.json — plugin hooks.json silently discards UserPromptSubmit output (GitHub #10225)
@@ -2475,6 +2497,8 @@ function install(isGlobal, runtime = 'claude') {
       });
       console.log(`  ${green}✓${reset} Configured nForma slot correlator hook (SubagentStart)`);
     }
+
+    } // end if (!isGemini) — non-Session hooks
 
     // Register nForma session-end hook (SessionEnd — learning extraction + skill candidates)
     if (!settings.hooks.SessionEnd) settings.hooks.SessionEnd = [];
