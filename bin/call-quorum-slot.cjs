@@ -298,18 +298,13 @@ function buildSpawnArgs(provider, prompt, allowedToolsFlag) {
 
   let args;
   let useStdinPrompt = false;
-  if (isCcr) {
-    // Strip -p and {prompt} from args — prompt will be piped via stdin
-    // to avoid shell interpretation of backticks/$ by ccr's internal shell:true
-    args = provider.args_template.filter((a, i, arr) => {
-      if (a === '{prompt}') return false;
-      if (a === '-p' && arr[i + 1] === '{prompt}') return false;
-      return true;
-    });
-    useStdinPrompt = true;
-  } else {
-    args = provider.args_template.map(a => (a === '{prompt}' ? prompt : a));
-  }
+  // SHELL-ESCAPE-01 (revised): spawn() uses args array without shell:true,
+  // so there's no shell interpretation risk. Pass prompt via -p for ALL slots
+  // including CCR. The original stdin-piping approach broke CCR because it
+  // doesn't accept stdin input — only -p argument.
+  args = provider.args_template.map(a => (a === '{prompt}' ? prompt : a));
+  // Only use stdin for slots that explicitly require it (none currently do)
+  useStdinPrompt = false;
 
   // EXEC-01: Inject --allowedTools for ccr-based slots when review-only
   if (allowedToolsFlag && isCcr) {
