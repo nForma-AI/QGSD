@@ -1379,7 +1379,11 @@ async function main() {
 
   const { exitCode, output, truncated: l3Truncated, originalSize: l3OriginalSize } = rawOutput;
   const l1Truncated = output.includes('[OUTPUT TRUNCATED at 10MB');
-  const isUnavail = exitCode !== 0 || output.includes('TIMEOUT');
+  // Non-zero exit with valid output = available_with_warning (quick-367)
+  // CLI may exit non-zero due to post-processing hooks (e.g., Gemini SessionEnd)
+  // while still producing a valid response. Check for verdict or substantial output.
+  const hasValidOutput = output.length > 100 || /verdict:\s*(APPROVE|REJECT|FLAG)/i.test(output);
+  const isUnavail = (exitCode !== 0 && !hasValidOutput) || output.includes('TIMEOUT');
 
   let result;
   if (isUnavail) {
