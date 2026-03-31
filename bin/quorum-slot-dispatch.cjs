@@ -807,13 +807,17 @@ function buildModeBPrompt({ round, repoDir, question, traces, artifactPath, arti
  * @returns {string}
  */
 function parseVerdict(rawOutput, mode) {
-  // Side-channel: expose whether verdict came from truncated output (TRUNC-02)
-  parseVerdict.lastTruncationNote = (rawOutput || '').includes('[OUTPUT TRUNCATED');
+  const hasTruncationMarker = (rawOutput || '').includes('[OUTPUT TRUNCATED');
   if (mode === 'A') {
+    // Side-channel: in Mode A, verdict is free-form (first 500 chars), never FLAG_TRUNCATED
+    parseVerdict.lastTruncationNote = false;
     return (rawOutput || '').slice(0, 500);
   }
   // Mode B: extract APPROVE|REJECT|FLAG
   const match = (rawOutput || '').match(/verdict:\s*(APPROVE|REJECT|FLAG)/i);
+  // Side-channel: only flag truncation when verdict was DEFAULT (no verdict: line found)
+  // AND truncation marker is present. A genuine "verdict: FLAG" survives truncation — it's real.
+  parseVerdict.lastTruncationNote = hasTruncationMarker && !match;
   return match ? match[1].toUpperCase() : 'FLAG';
 }
 

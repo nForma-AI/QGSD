@@ -87,9 +87,16 @@ test('L6-only: emitResultBlock emits verdict_integrity when rawOutput > 5000 but
 
 // ===== parseVerdict side-channel (TRUNC-02) =====
 
-test('parseVerdict sets lastTruncationNote=true when input contains [OUTPUT TRUNCATED', () => {
+test('parseVerdict sets lastTruncationNote=false when verdict line SURVIVES truncation', () => {
+  // Genuine "verdict: APPROVE" found despite truncation marker — verdict is real, not default
   parseVerdict('verdict: APPROVE\n[OUTPUT TRUNCATED at 10MB by call-quorum-slot]');
-  assert.strictEqual(parseVerdict.lastTruncationNote, true);
+  assert.strictEqual(parseVerdict.lastTruncationNote, false, 'Surviving verdict should NOT be flagged as truncated');
+});
+
+test('parseVerdict sets lastTruncationNote=true when verdict line is MISSING and truncation occurred', () => {
+  // No verdict: line found + truncation marker = verdict was likely lost to truncation
+  parseVerdict('some output without verdict line\n[OUTPUT TRUNCATED at 10MB by call-quorum-slot]');
+  assert.strictEqual(parseVerdict.lastTruncationNote, true, 'Missing verdict with truncation should be flagged');
 });
 
 test('parseVerdict sets lastTruncationNote=false for clean input', () => {
