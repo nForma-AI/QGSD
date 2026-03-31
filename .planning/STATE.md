@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 Phase: 53 of 53 (Skill Deprecation) — COMPLETED
 Plan: 53-01 of 1 — COMPLETED
 Status: All phases complete — /nf:model-driven-fix deprecated, all consumers rewired to /nf:debug
-Last activity: 2026-03-31 - Completed quick task 365: Fix quorum output truncation integrity
+Last activity: 2026-03-31 - Completed quick task 367: Fix systemic quorum infrastructure issues
 
 Progress: [██████████] 100% (Phase 50 done; Phase 51 done; Phase 52 done; Phase 53 done)
 
@@ -84,6 +84,7 @@ None yet.
 | 363 | Push Loop 2 + debug_context into execute-plan.md Pattern A spawn prompt | 2026-03-27 | 72bbe22d | Verified | [363-push-loop-2-and-debug-context-into-execu](./quick/363-push-loop-2-and-debug-context-into-execu/) |
 | 364 | Restore quorum convergence rewrite logic dropped from quick.md | 2026-03-28 | 9c21ab0a | Verified | [364-restore-quorum-convergence-rewrite-logic](./quick/364-restore-quorum-convergence-rewrite-logic/) |
 | 365 | Fix quorum output truncation integrity | 2026-03-31 | 8d4c12e9 | Verified | [365-fix-quorum-output-truncation-integrity](./quick/365-fix-quorum-output-truncation-integrity/) |
+| 367 | Fix systemic quorum infrastructure issues | 2026-03-31 | 45bac731 | Verified | [367-fix-systemic-quorum-infra-issues](./quick/367-fix-systemic-quorum-infra-issues/) |
 
 ### Blockers/Concerns
 
@@ -92,5 +93,5 @@ None currently.
 ## Session Continuity
 
 Last session: 2026-03-31
-Stopped at: Completed quick-365: Fix quorum output truncation integrity
+Stopped at: Completed quick-367: Fix systemic quorum infrastructure issues
 Resume file: None
