@@ -104,6 +104,7 @@ function findProjectRoot(cwd) {
 function classifyErrorType(msg) {
   if (/usage:|unknown flag|unknown option|invalid flag|unrecognized/i.test(msg)) return 'CLI_SYNTAX';
   if (/RATE_LIMITED/i.test(msg)) return 'RATE_LIMITED';
+  if (/STALL/i.test(msg)) return 'STALL';
   if (/IDLE_TIMEOUT/i.test(msg)) return 'IDLE_TIMEOUT';
   if (/HARD_TIMEOUT/i.test(msg)) return 'HARD_TIMEOUT';
   if (/TIMEOUT/i.test(msg)) return 'TIMEOUT'; // backward compat for old log entries
@@ -379,16 +380,25 @@ function runSubprocess(provider, prompt, idleTimeoutMs, hardTimeoutMs, allowedTo
     }, hardTimeoutMs);
 
     // Rate-limit / quota exhaustion early detection (RLIMIT-01)
-    // When a CLI keeps retrying with rate-limit errors, each retry resets the idle
-    // timer so we'd wait the full hard timeout (5+ min). Instead, detect the pattern
-    // and kill early after 2 consecutive rate-limit messages.
+    // Two detection modes:
+    // A) Stream-based: CLI emits rate-limit messages (Gemini "Attempt N failed", etc.)
+    //    → kill after 2 consecutive matches
+    // B) Silent-hang: CLI produces zero bytes for 30s (OpenCode buffers internally)
+    //    → the idle timer already handles this at 90s, but we add a tighter
+    //    "no first byte" timer: if zero bytes received after 30s, kill early
     const RATE_LIMIT_PATTERNS = /Too Many Requests|exhausted your capacity|rate.limit|429|quota.exceeded|Attempt \d+ failed/i;
     let rateLimitHits = 0;
     const RATE_LIMIT_THRESHOLD = 2; // kill after 2 consecutive rate-limit messages
+    let totalBytesReceived = 0;
+    const STALL_TIMEOUT_MS = 30000; // tighter idle timeout when CLI has produced < 500 bytes
+    const STALL_BYTE_THRESHOLD = 500; // below this = "just a header, probably stalled"
 
     child.stdout.on('data', d => {
+      totalBytesReceived += d.length;
       clearTimeout(idleTimer);
-      idleTimer = setTimeout(() => { timedOut = true; timeoutType = 'IDLE'; killGroup(); }, idleTimeoutMs);
+      // Adaptive idle: use tighter 30s timeout when CLI has barely produced output (header-only stall)
+      const effectiveIdle = totalBytesReceived < STALL_BYTE_THRESHOLD ? STALL_TIMEOUT_MS : idleTimeoutMs;
+      idleTimer = setTimeout(() => { timedOut = true; timeoutType = totalBytesReceived < STALL_BYTE_THRESHOLD ? 'STALL' : 'IDLE'; killGroup(); }, effectiveIdle);
       const chunk = d.toString();
       l1OriginalSize += chunk.length;
       if (stdout.length < MAX_BUF) {
@@ -413,8 +423,10 @@ function runSubprocess(provider, prompt, idleTimeoutMs, hardTimeoutMs, allowedTo
       }
     });
     child.stderr.on('data', d => {
+      totalBytesReceived += d.length;
       clearTimeout(idleTimer);
-      idleTimer = setTimeout(() => { timedOut = true; timeoutType = 'IDLE'; killGroup(); }, idleTimeoutMs);
+      const effectiveIdle = totalBytesReceived < STALL_BYTE_THRESHOLD ? STALL_TIMEOUT_MS : idleTimeoutMs;
+      idleTimer = setTimeout(() => { timedOut = true; timeoutType = totalBytesReceived < STALL_BYTE_THRESHOLD ? 'STALL' : 'IDLE'; killGroup(); }, effectiveIdle);
       const chunk = d.toString().slice(0, 4096);
       stderr += chunk;
       // Check stderr for rate-limit patterns too (gemini logs to stderr)
@@ -435,6 +447,8 @@ function runSubprocess(provider, prompt, idleTimeoutMs, hardTimeoutMs, allowedTo
       if (timedOut) {
         const label = timeoutType === 'RATE_LIMITED'
           ? `RATE_LIMITED after ${rateLimitHits} consecutive rate-limit errors (killed early)`
+          : timeoutType === 'STALL'
+          ? `STALL: only ${totalBytesReceived} bytes received then silence for ${STALL_TIMEOUT_MS}ms — provider likely rate-limited or hung`
           : timeoutType === 'HARD'
           ? `HARD_TIMEOUT after ${hardTimeoutMs}ms total`
           : `IDLE_TIMEOUT after ${idleTimeoutMs}ms of inactivity`;

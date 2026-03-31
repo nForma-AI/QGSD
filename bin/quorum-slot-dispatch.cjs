@@ -61,6 +61,7 @@ function loadNfConfig(cwd) {
 function classifyDispatchError(output) {
   const s = String(output || '');
   if (/RATE_LIMITED/i.test(s)) return 'RATE_LIMITED';
+  if (/STALL/i.test(s)) return 'STALL';
   if (/IDLE_TIMEOUT/i.test(s)) return 'IDLE_TIMEOUT';
   if (/HARD_TIMEOUT/i.test(s)) return 'HARD_TIMEOUT';
   if (/TIMEOUT/i.test(s)) return 'TIMEOUT'; // backward compat
