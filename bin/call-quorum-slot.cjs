@@ -48,7 +48,7 @@ function appendTokenSentinel(slotName) {
       cache_read_input_tokens:     null,
     });
     const pp = require('./planning-paths.cjs');
-    const logPath = pp.resolve(findProjectRoot(), 'token-usage');
+    const logPath = pp.resolve(findProjectRoot(spawnCwd), 'token-usage');
     fs.appendFileSync(logPath, record + '\n', 'utf8');
   } catch (_) {} // observational — never fails
 }
@@ -73,7 +73,7 @@ function recordTelemetry(slotName, round, verdict, latencyMs, provider, provider
       original_size_bytes: originalSizeBytes || null,
     });
     const pp = require('./planning-paths.cjs');
-    const logPath = pp.resolve(findProjectRoot(), 'quorum-rounds', { sessionId });
+    const logPath = pp.resolve(findProjectRoot(spawnCwd), 'quorum-rounds', { sessionId });
     fs.appendFileSync(logPath, record + '\n', 'utf8');
   } catch (_) {
     // Fail-open: telemetry errors never block or crash the dispatch
@@ -83,7 +83,11 @@ function recordTelemetry(slotName, round, verdict, latencyMs, provider, provider
 }
 
 // ─── Failure log ───────────────────────────────────────────────────────────────
-function findProjectRoot() {
+function findProjectRoot(cwd) {
+  // If cwd is provided and has .planning/, use it directly
+  // (avoids stale ~/.claude/.planning/ found via __dirname walk)
+  if (cwd && fs.existsSync(path.join(cwd, '.planning'))) return cwd;
+  // Fallback: walk up from __dirname (original behavior when no cwd)
   let dir = __dirname;
   for (let i = 0; i < 8; i++) {
     if (fs.existsSync(path.join(dir, '.planning'))) return dir;
@@ -91,7 +95,7 @@ function findProjectRoot() {
     if (parent === dir) break;
     dir = parent;
   }
-  return process.cwd();
+  return cwd || process.cwd();
 }
 
 function classifyErrorType(msg) {
@@ -109,7 +113,7 @@ function classifyErrorType(msg) {
 function writeFailureLog(slotName, errorMsg, stderrText) {
   try {
     const pp = require('./planning-paths.cjs');
-    const logPath = pp.resolve(findProjectRoot(), 'quorum-failures');
+    const logPath = pp.resolve(findProjectRoot(spawnCwd), 'quorum-failures');
 
     const error_type = classifyErrorType(errorMsg);
 
@@ -150,7 +154,7 @@ function writeFailureLog(slotName, errorMsg, stderrText) {
 function clearFailureOnSuccess(slotName) {
   try {
     const pp = require('./planning-paths.cjs');
-    const logPath = pp.resolve(findProjectRoot(), 'quorum-failures');
+    const logPath = pp.resolve(findProjectRoot(spawnCwd), 'quorum-failures');
     if (!fs.existsSync(logPath)) return;
     let records = JSON.parse(fs.readFileSync(logPath, 'utf8'));
     if (!Array.isArray(records)) return;
@@ -639,6 +643,27 @@ async function main() {
     // Pattern: "...\n[exit code N]" appended by runSubprocess on non-zero exit.
     const exitCodeMatch = result.match(/\[exit code (\d+)\]\s*$/);
     if (exitCodeMatch && exitCodeMatch[1] !== '0') {
+      // Check if output contains a valid verdict despite non-zero exit
+      // (common cause: Gemini SessionEnd hook exits non-zero, but response is fine)
+      const hasValidVerdict = /\b(APPROVE|BLOCK|FLAG)\b/.test(result);
+      const hasSubstantialOutput = result.length > 100;
+
+      if (hasValidVerdict || hasSubstantialOutput) {
+        // Valid output despite non-zero exit -- treat as success with warning
+        const latencyMs = Date.now() - startMs;
+        const providerName = provider.provider || provider.name;
+        const verdict = (/APPROVE|BLOCK|FLAG/.exec(result) || [])[0] || 'UNKNOWN';
+        const l1Detect = result.includes('[OUTPUT TRUNCATED at 10MB');
+        process.stderr.write('[call-quorum-slot] WARNING: ' + slot + ' CLI exited non-zero (code ' + exitCodeMatch[1] + ') but produced valid output -- treating as available\n');
+        recordTelemetry(slot, roundNum, verdict, latencyMs, providerName, 'available_with_warning', retryCount, null, l1Detect, l1Detect ? 'L1' : null, null);
+        clearFailureOnSuccess(slot);
+        process.stdout.write(result);
+        if (!result.endsWith('\n')) process.stdout.write('\n');
+        appendTokenSentinel(slot);
+        process.exit(0);
+      }
+
+      // No valid output -- original unavailable behavior
       const latencyMs = Date.now() - startMs;
       const providerName = provider.provider || provider.name;
       const errorType = classifyErrorType(result);
@@ -689,5 +714,5 @@ if (require.main === module) {
   });
 }
 
-// ─── Test exports (SHELL-ESCAPE-01, TRUNC-01) ──────────────────────────────────
-module.exports = { buildSpawnArgs, recordTelemetry };
+// ─── Test exports (SHELL-ESCAPE-01, TRUNC-01, INFRA-367) ───────────────────────
+module.exports = { buildSpawnArgs, recordTelemetry, findProjectRoot };
