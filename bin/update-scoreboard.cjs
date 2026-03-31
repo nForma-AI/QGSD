@@ -682,6 +682,16 @@ function parseAvailabilityHint(message) {
     return { available_at: new Date(Date.now() + mins * 60_000), reason: 'unavailable' };
   }
 
+  // Default cooldown for recognized failure patterns without explicit time hints.
+  // These error types indicate the slot should be skipped for a few minutes.
+  const DEFAULT_COOLDOWN_MS = 5 * 60_000; // 5 minutes
+  if (/TIMEOUT|STALL|RATE_LIMITED|429|Too Many Requests|exhausted|quota|rate.?limit/i.test(message)) {
+    const reason = /RATE_LIMITED|429|Too Many Requests|exhausted|quota|rate.?limit/i.test(message) ? 'rate limit'
+                 : /STALL/i.test(message) ? 'stall'
+                 : 'timeout';
+    return { available_at: new Date(Date.now() + DEFAULT_COOLDOWN_MS), reason };
+  }
+
   return null;
 }
 
