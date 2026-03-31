@@ -59,6 +59,7 @@ Recent decisions affecting current work:
 - Plan 51-02: Bug_fix routing threshold: confidence >= 0.7 (clear signals only; ambiguous cases skip debug, fail-open)
 - [Phase quick-356]: All 7 new diagnostic sweeps are informational (not automatable) with no-op LAYER_HANDLERS
 - [Phase quick-361]: Automation-first verification: Playwright/agent-browser > CLI > code inspection > manual user testing
+- [Phase 366]: Used awk next-based fall-through prevention for block-scalar YAML extraction
 
 ### Pending Todos
 
