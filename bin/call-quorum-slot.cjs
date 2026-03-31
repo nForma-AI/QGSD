@@ -54,7 +54,7 @@ function appendTokenSentinel(slotName) {
 }
 
 // ─── Telemetry logging for quorum slot dispatch (OBS-01) ─────────────────────
-function recordTelemetry(slotName, round, verdict, latencyMs, provider, providerStatus, retryCount, errorType, truncated, truncationLayer, originalSizeBytes) {
+function recordTelemetry(slotName, round, verdict, latencyMs, provider, providerStatus, retryCount, errorType, truncated, truncationLayer, originalSizeBytes, outputPreview, outputLength, exitCode) {
   try {
     const sessionId = process.env.CLAUDE_SESSION_ID || 'session-' + Date.now();
     const record = JSON.stringify({
@@ -71,6 +71,9 @@ function recordTelemetry(slotName, round, verdict, latencyMs, provider, provider
       truncated: truncated || false,
       truncation_layer: truncationLayer || null,
       original_size_bytes: originalSizeBytes || null,
+      output_preview: outputPreview || null,
+      output_length: outputLength || null,
+      exit_code: exitCode != null ? exitCode : null,
     });
     const pp = require('./planning-paths.cjs');
     const logPath = pp.resolve(findProjectRoot(spawnCwd), 'quorum-rounds', { sessionId });
@@ -635,7 +638,7 @@ async function main() {
       writeFailureLog(slot, `Unknown provider type: ${provider.type}`, '');
       appendTokenSentinel(slot);
       const latencyMs = Date.now() - startMs;
-      recordTelemetry(slot, roundNum, 'FLAG', latencyMs, provider.provider || provider.name, 'unavailable', 0, 'UNKNOWN_TYPE', false, null, null);
+      recordTelemetry(slot, roundNum, 'FLAG', latencyMs, provider.provider || provider.name, 'unavailable', 0, 'UNKNOWN_TYPE', false, null, null, null, 0, null);
       process.exit(1);
     }
 
@@ -643,6 +646,7 @@ async function main() {
     // Pattern: "...\n[exit code N]" appended by runSubprocess on non-zero exit.
     const exitCodeMatch = result.match(/\[exit code (\d+)\]\s*$/);
     if (exitCodeMatch && exitCodeMatch[1] !== '0') {
+      const cliExitCode = parseInt(exitCodeMatch[1], 10);
       // Check if output contains a valid verdict despite non-zero exit
       // (common cause: Gemini SessionEnd hook exits non-zero, but response is fine)
       const hasValidVerdict = /\b(APPROVE|BLOCK|FLAG)\b/.test(result);
@@ -654,8 +658,8 @@ async function main() {
         const providerName = provider.provider || provider.name;
         const verdict = (/APPROVE|BLOCK|FLAG/.exec(result) || [])[0] || 'UNKNOWN';
         const l1Detect = result.includes('[OUTPUT TRUNCATED at 10MB');
-        process.stderr.write('[call-quorum-slot] WARNING: ' + slot + ' CLI exited non-zero (code ' + exitCodeMatch[1] + ') but produced valid output -- treating as available\n');
-        recordTelemetry(slot, roundNum, verdict, latencyMs, providerName, 'available_with_warning', retryCount, null, l1Detect, l1Detect ? 'L1' : null, null);
+        process.stderr.write('[call-quorum-slot] WARNING: ' + slot + ' CLI exited non-zero (code ' + cliExitCode + ') but produced valid output -- treating as available\n');
+        recordTelemetry(slot, roundNum, verdict, latencyMs, providerName, 'available_with_warning', retryCount, null, l1Detect, l1Detect ? 'L1' : null, null, result.slice(0, 500), result.length, cliExitCode);
         clearFailureOnSuccess(slot);
         process.stdout.write(result);
         if (!result.endsWith('\n')) process.stdout.write('\n');
@@ -667,7 +671,7 @@ async function main() {
       const latencyMs = Date.now() - startMs;
       const providerName = provider.provider || provider.name;
       const errorType = classifyErrorType(result);
-      recordTelemetry(slot, roundNum, 'FLAG', latencyMs, providerName, 'unavailable', retryCount, errorType, false, null, null);
+      recordTelemetry(slot, roundNum, 'FLAG', latencyMs, providerName, 'unavailable', retryCount, errorType, false, null, null, result.slice(0, 500), result.length, cliExitCode);
       writeFailureLog(slot, result, '');
       // Still output the result so quorum-slot-dispatch can parse it
       process.stdout.write(result);
@@ -682,7 +686,7 @@ async function main() {
     const providerName = provider.provider || provider.name;
 
     const l1Detect = result.includes('[OUTPUT TRUNCATED at 10MB');
-    recordTelemetry(slot, roundNum, verdict, latencyMs, providerName, 'available', retryCount, null, l1Detect, l1Detect ? 'L1' : null, null);
+    recordTelemetry(slot, roundNum, verdict, latencyMs, providerName, 'available', retryCount, null, l1Detect, l1Detect ? 'L1' : null, null, result.slice(0, 500), result.length, 0);
 
     // Slot succeeded — clear any failure records so next quorum run doesn't skip it
     clearFailureOnSuccess(slot);
@@ -697,7 +701,7 @@ async function main() {
 
     const errorType = classifyErrorType(err.message);
 
-    recordTelemetry(slot, roundNum, 'FLAG', latencyMs, providerName, 'unavailable', 0, errorType, false, null, null);
+    recordTelemetry(slot, roundNum, 'FLAG', latencyMs, providerName, 'unavailable', 0, errorType, false, null, null, err.message.slice(0, 500), 0, null);
 
     process.stderr.write(`[call-quorum-slot] ${err.message}\n`);
     writeFailureLog(slot, err.message, '');
