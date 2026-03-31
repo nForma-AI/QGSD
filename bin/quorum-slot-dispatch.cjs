@@ -60,10 +60,11 @@ function loadNfConfig(cwd) {
  */
 function classifyDispatchError(output) {
   const s = String(output || '');
+  if (/RATE_LIMITED/i.test(s)) return 'RATE_LIMITED';
   if (/IDLE_TIMEOUT/i.test(s)) return 'IDLE_TIMEOUT';
   if (/HARD_TIMEOUT/i.test(s)) return 'HARD_TIMEOUT';
   if (/TIMEOUT/i.test(s)) return 'TIMEOUT'; // backward compat
-  if (/402|quota|rate.?limit|resource.?exhausted/i.test(s)) return 'QUOTA';
+  if (/402|quota|rate.?limit|resource.?exhausted|Too Many Requests|exhausted your capacity/i.test(s)) return 'QUOTA';
   if (/401|403|unauthorized|forbidden/i.test(s)) return 'AUTH';
   if (/service not running|service.?down|not.?started/i.test(s)) return 'SERVICE_DOWN';
   if (/spawn error/i.test(s)) return 'SPAWN_ERROR';

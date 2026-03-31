@@ -103,10 +103,11 @@ function findProjectRoot(cwd) {
 
 function classifyErrorType(msg) {
   if (/usage:|unknown flag|unknown option|invalid flag|unrecognized/i.test(msg)) return 'CLI_SYNTAX';
+  if (/RATE_LIMITED/i.test(msg)) return 'RATE_LIMITED';
   if (/IDLE_TIMEOUT/i.test(msg)) return 'IDLE_TIMEOUT';
   if (/HARD_TIMEOUT/i.test(msg)) return 'HARD_TIMEOUT';
   if (/TIMEOUT/i.test(msg)) return 'TIMEOUT'; // backward compat for old log entries
-  if (/402|quota|rate.?limit|resource.?exhausted/i.test(msg)) return 'QUOTA';
+  if (/402|quota|rate.?limit|resource.?exhausted|Too Many Requests|exhausted your capacity/i.test(msg)) return 'QUOTA';
   if (/401|403|unauthorized|forbidden/i.test(msg)) return 'AUTH';
   if (/service not running|service.?down|not.?started/i.test(msg)) return 'SERVICE_DOWN';
   if (/spawn error/i.test(msg)) return 'SPAWN_ERROR';
@@ -377,6 +378,14 @@ function runSubprocess(provider, prompt, idleTimeoutMs, hardTimeoutMs, allowedTo
       }
     }, hardTimeoutMs);
 
+    // Rate-limit / quota exhaustion early detection (RLIMIT-01)
+    // When a CLI keeps retrying with rate-limit errors, each retry resets the idle
+    // timer so we'd wait the full hard timeout (5+ min). Instead, detect the pattern
+    // and kill early after 2 consecutive rate-limit messages.
+    const RATE_LIMIT_PATTERNS = /Too Many Requests|exhausted your capacity|rate.limit|429|quota.exceeded|Attempt \d+ failed/i;
+    let rateLimitHits = 0;
+    const RATE_LIMIT_THRESHOLD = 2; // kill after 2 consecutive rate-limit messages
+
     child.stdout.on('data', d => {
       clearTimeout(idleTimer);
       idleTimer = setTimeout(() => { timedOut = true; timeoutType = 'IDLE'; killGroup(); }, idleTimeoutMs);
@@ -392,18 +401,41 @@ function runSubprocess(provider, prompt, idleTimeoutMs, hardTimeoutMs, allowedTo
       } else {
         l1Truncated = true;
       }
+      // Check stdout for rate-limit patterns
+      if (RATE_LIMIT_PATTERNS.test(chunk)) {
+        rateLimitHits++;
+        if (rateLimitHits >= RATE_LIMIT_THRESHOLD && !timedOut) {
+          timedOut = true;
+          timeoutType = 'RATE_LIMITED';
+          process.stderr.write('[call-quorum-slot] RATE_LIMITED: ' + rateLimitHits + ' rate-limit messages detected, killing early\n');
+          killGroup();
+        }
+      }
     });
     child.stderr.on('data', d => {
       clearTimeout(idleTimer);
       idleTimer = setTimeout(() => { timedOut = true; timeoutType = 'IDLE'; killGroup(); }, idleTimeoutMs);
-      stderr += d.toString().slice(0, 4096);
+      const chunk = d.toString().slice(0, 4096);
+      stderr += chunk;
+      // Check stderr for rate-limit patterns too (gemini logs to stderr)
+      if (RATE_LIMIT_PATTERNS.test(chunk)) {
+        rateLimitHits++;
+        if (rateLimitHits >= RATE_LIMIT_THRESHOLD && !timedOut) {
+          timedOut = true;
+          timeoutType = 'RATE_LIMITED';
+          process.stderr.write('[call-quorum-slot] RATE_LIMITED: ' + rateLimitHits + ' rate-limit messages detected in stderr, killing early\n');
+          killGroup();
+        }
+      }
     });
 
     child.on('close', (code) => {
       clearTimeout(idleTimer);
       clearTimeout(hardTimer);
       if (timedOut) {
-        const label = timeoutType === 'HARD'
+        const label = timeoutType === 'RATE_LIMITED'
+          ? `RATE_LIMITED after ${rateLimitHits} consecutive rate-limit errors (killed early)`
+          : timeoutType === 'HARD'
           ? `HARD_TIMEOUT after ${hardTimeoutMs}ms total`
           : `IDLE_TIMEOUT after ${idleTimeoutMs}ms of inactivity`;
         reject(new Error(label));
