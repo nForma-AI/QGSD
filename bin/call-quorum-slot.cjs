@@ -650,7 +650,9 @@ async function main() {
       // Check if output contains a valid verdict despite non-zero exit
       // (common cause: Gemini SessionEnd hook exits non-zero, but response is fine)
       const hasValidVerdict = /\b(APPROVE|BLOCK|FLAG)\b/.test(result);
-      const hasSubstantialOutput = result.length > 100;
+      // Substantial output must contain model content, not just hook/framework logs
+      const isFrameworkNoise = /^(Created execution plan|Hook execution|Expanding hook|Attempt \d+ failed|Keychain|AgentRegistry|\[ERROR\])/m.test(result) && !/\b(APPROVE|BLOCK|FLAG|verdict|reasoning)\b/i.test(result);
+      const hasSubstantialOutput = result.length > 100 && !isFrameworkNoise;
 
       if (hasValidVerdict || hasSubstantialOutput) {
         // Valid output despite non-zero exit -- treat as success with warning
