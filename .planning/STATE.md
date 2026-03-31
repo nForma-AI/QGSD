@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 Phase: 53 of 53 (Skill Deprecation) — COMPLETED
 Plan: 53-01 of 1 — COMPLETED
 Status: All phases complete — /nf:model-driven-fix deprecated, all consumers rewired to /nf:debug
-Last activity: 2026-03-31 - Completed quick task 367: Fix systemic quorum infrastructure issues
+Last activity: 2026-03-31 - Completed quick task 368: 3-layer robust quorum fail-fast
 
 Progress: [██████████] 100% (Phase 50 done; Phase 51 done; Phase 52 done; Phase 53 done)
 
@@ -60,6 +60,7 @@ Recent decisions affecting current work:
 - [Phase quick-356]: All 7 new diagnostic sweeps are informational (not automatable) with no-op LAYER_HANDLERS
 - [Phase quick-361]: Automation-first verification: Playwright/agent-browser > CLI > code inspection > manual user testing
 - [Phase 366]: Used awk next-based fall-through prevention for block-scalar YAML extraction
+- [Phase quick-368]: 3-layer fail-fast: idle timeout tuning, failure-to-scoreboard cooldown bridge via spawnSync, pre-dispatch cooldown check with zero-latency local file read
 
 ### Pending Todos
 
@@ -85,6 +86,7 @@ None yet.
 | 364 | Restore quorum convergence rewrite logic dropped from quick.md | 2026-03-28 | 9c21ab0a | Verified | [364-restore-quorum-convergence-rewrite-logic](./quick/364-restore-quorum-convergence-rewrite-logic/) |
 | 365 | Fix quorum output truncation integrity | 2026-03-31 | 8d4c12e9 | Verified | [365-fix-quorum-output-truncation-integrity](./quick/365-fix-quorum-output-truncation-integrity/) |
 | 367 | Fix systemic quorum infrastructure issues | 2026-03-31 | 45bac731 | Verified | [367-fix-systemic-quorum-infra-issues](./quick/367-fix-systemic-quorum-infra-issues/) |
+| 368 | 3-layer robust quorum fail-fast | 2026-03-31 | cd8f893f | Verified | [368-robust-quorum-fail-fast-3-layers](./quick/368-robust-quorum-fail-fast-3-layers/) |
 
 ### Blockers/Concerns
 
@@ -93,5 +95,5 @@ None currently.
 ## Session Continuity
 
 Last session: 2026-03-31
-Stopped at: Completed quick-367: Fix systemic quorum infrastructure issues
+Stopped at: Completed quick-368: 3-layer robust quorum fail-fast
 Resume file: None
