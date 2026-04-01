@@ -1320,7 +1320,13 @@ async function main() {
   // tools (~30K tokens overhead). If estimated total exceeds the model's
   // max_context_tokens, truncate enriched context or fail immediately with
   // CONTEXT_OVERFLOW rather than wasting a slow API call that will 400.
-  const CCR_OVERHEAD_TOKENS = 40000; // system prompt + tools + response budget
+  // CCR overhead is massive: system prompt + all tool definitions + conversation
+  // history + CLAUDE.md injection. Empirically measured from Together 400 errors:
+  //   claude-1 (DeepSeek): 101K input tokens from ~5K prompt → ~96K overhead
+  //   claude-5 (GPT-OSS): 73K input tokens from ~5K prompt → ~68K overhead
+  // Use conservative (higher) estimate to catch overflow before dispatch.
+  const CCR_OVERHEAD_TOKENS = 95000; // system prompt + tools + CLAUDE.md injected by CCR
+  const CCR_RESPONSE_BUDGET = 64000; // default max_tokens set by CCR — Together counts this against context window
   const CHARS_PER_TOKEN = 4; // conservative estimate (English ~4 chars/token)
   try {
     const pPath = path.join(__dirname, 'providers.json');
@@ -1328,7 +1334,7 @@ async function main() {
     const provider = providers.find(p => p.name === slot);
     if (provider && provider.max_context_tokens) {
       const isCcr = provider.display_type === 'claude-code-router';
-      const overhead = isCcr ? CCR_OVERHEAD_TOKENS : 0;
+      const overhead = isCcr ? CCR_OVERHEAD_TOKENS + CCR_RESPONSE_BUDGET : 0;
       const promptTokens = Math.ceil(prompt.length / CHARS_PER_TOKEN);
       const totalEstimate = promptTokens + overhead;
 
