@@ -289,60 +289,25 @@
     {
       "name": "claude-1",
       "provider": "together-xyz",
-      "type": "subprocess",
+      "type": "http",
       "auth_type": "api",
-      "has_file_access": true,
-      "description": "DeepSeek-V3.1 via Together.xyz — real Claude Code CLI via ccr",
+      "has_file_access": false,
+      "description": "DeepSeek-V3.1 via Together.xyz — direct HTTP API (no CCR overhead)",
       "mainTool": "claude",
       "model": "deepseek-ai/DeepSeek-V3.1",
       "max_context_tokens": 163840,
+      "max_output_tokens": 4096,
+      "baseUrl": "https://api.together.xyz/v1",
+      "apiKeyEnv": "TOGETHER_API_KEY",
       "display_provider": "Together.xyz",
-      "cli": "ccr",
-      "args_template": [
-        "claude-1",
-        "-p",
-        "{prompt}",
-        "--dangerously-skip-permissions"
-      ],
-      "health_check_args": [
-        "-v"
-      ],
-      "helpArgs": [
-        "--help"
-      ],
       "extraTools": [],
-      "timeout_ms": 300000,
-      "quorum_timeout_ms": 300000,
+      "timeout_ms": 120000,
+      "quorum_timeout_ms": 120000,
       "idle_timeout_ms": 90000,
-      "hard_timeout_ms": 600000,
+      "hard_timeout_ms": 300000,
       "latency_budget_ms": null,
       "env": {},
-      "display_type": "claude-code-router",
-      "auth_check": {
-        "args": [
-          "status"
-        ],
-        "success_pattern": "running|Running|Status: Running",
-        "login_args": [
-          "start"
-        ],
-        "login_hint": "Start the Claude Code Router service",
-        "timeout_ms": 5000
-      },
-      "service": {
-        "start": [
-          "ccr",
-          "start"
-        ],
-        "stop": [
-          "ccr",
-          "stop"
-        ],
-        "status": [
-          "ccr",
-          "status"
-        ]
-      },
+      "display_type": "http-api",
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
@@ -352,49 +317,25 @@
     {
       "name": "claude-2",
       "provider": "together-xyz",
-      "type": "subprocess",
+      "type": "http",
       "auth_type": "api",
-      "has_file_access": true,
-      "description": "Qwen3.5-397B via Together.xyz — real Claude Code CLI via ccr",
+      "has_file_access": false,
+      "description": "Qwen3.5-397B via Together.xyz — direct HTTP API (no CCR overhead)",
       "mainTool": "claude",
       "model": "Qwen/Qwen3.5-397B-A17B",
       "max_context_tokens": 131072,
+      "max_output_tokens": 4096,
+      "baseUrl": "https://api.together.xyz/v1",
+      "apiKeyEnv": "TOGETHER_API_KEY",
       "display_provider": "Together.xyz",
-      "cli": "ccr",
-      "args_template": [
-        "claude-2",
-        "-p",
-        "{prompt}",
-        "--dangerously-skip-permissions"
-      ],
-      "health_check_args": [
-        "-v"
-      ],
-      "helpArgs": [
-        "--help"
-      ],
       "extraTools": [],
-      "timeout_ms": 300000,
-      "quorum_timeout_ms": 300000,
+      "timeout_ms": 120000,
+      "quorum_timeout_ms": 120000,
       "idle_timeout_ms": 90000,
-      "hard_timeout_ms": 600000,
+      "hard_timeout_ms": 300000,
       "latency_budget_ms": null,
       "env": {},
-      "display_type": "claude-code-router",
-      "service": {
-        "start": [
-          "ccr",
-          "start"
-        ],
-        "stop": [
-          "ccr",
-          "stop"
-        ],
-        "status": [
-          "ccr",
-          "status"
-        ]
-      },
+      "display_type": "http-api",
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
@@ -404,49 +345,25 @@
     {
       "name": "claude-3",
       "provider": "together-xyz",
-      "type": "subprocess",
+      "type": "http",
       "auth_type": "api",
-      "has_file_access": true,
-      "description": "Qwen3-Coder-480B via Together.xyz — real Claude Code CLI via ccr",
+      "has_file_access": false,
+      "description": "Qwen3-Coder-480B via Together.xyz — direct HTTP API (no CCR overhead)",
       "mainTool": "claude",
       "model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
       "max_context_tokens": 131072,
+      "max_output_tokens": 4096,
+      "baseUrl": "https://api.together.xyz/v1",
+      "apiKeyEnv": "TOGETHER_API_KEY",
       "display_provider": "Together.xyz",
-      "cli": "ccr",
-      "args_template": [
-        "claude-3",
-        "-p",
-        "{prompt}",
-        "--dangerously-skip-permissions"
-      ],
-      "health_check_args": [
-        "-v"
-      ],
-      "helpArgs": [
-        "--help"
-      ],
       "extraTools": [],
-      "timeout_ms": 300000,
-      "quorum_timeout_ms": 300000,
+      "timeout_ms": 120000,
+      "quorum_timeout_ms": 120000,
       "idle_timeout_ms": 90000,
-      "hard_timeout_ms": 600000,
+      "hard_timeout_ms": 300000,
       "latency_budget_ms": null,
       "env": {},
-      "display_type": "claude-code-router",
-      "service": {
-        "start": [
-          "ccr",
-          "start"
-        ],
-        "stop": [
-          "ccr",
-          "stop"
-        ],
-        "status": [
-          "ccr",
-          "status"
-        ]
-      },
+      "display_type": "http-api",
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
@@ -456,49 +373,25 @@
     {
       "name": "claude-4",
       "provider": "together-xyz",
-      "type": "subprocess",
+      "type": "http",
       "auth_type": "api",
-      "has_file_access": true,
-      "description": "Kimi-K2.5 via Together.xyz — real Claude Code CLI via ccr",
+      "has_file_access": false,
+      "description": "Kimi-K2.5 via Together.xyz — direct HTTP API (no CCR overhead)",
       "mainTool": "claude",
       "model": "moonshotai/Kimi-K2.5",
       "max_context_tokens": 131072,
+      "max_output_tokens": 4096,
+      "baseUrl": "https://api.together.xyz/v1",
+      "apiKeyEnv": "TOGETHER_API_KEY",
       "display_provider": "Together.xyz",
-      "cli": "ccr",
-      "args_template": [
-        "claude-4",
-        "-p",
-        "{prompt}",
-        "--dangerously-skip-permissions"
-      ],
-      "health_check_args": [
-        "-v"
-      ],
-      "helpArgs": [
-        "--help"
-      ],
       "extraTools": [],
-      "timeout_ms": 300000,
-      "quorum_timeout_ms": 300000,
+      "timeout_ms": 120000,
+      "quorum_timeout_ms": 120000,
       "idle_timeout_ms": 90000,
-      "hard_timeout_ms": 600000,
+      "hard_timeout_ms": 300000,
       "latency_budget_ms": null,
       "env": {},
-      "display_type": "claude-code-router",
-      "service": {
-        "start": [
-          "ccr",
-          "start"
-        ],
-        "stop": [
-          "ccr",
-          "stop"
-        ],
-        "status": [
-          "ccr",
-          "status"
-        ]
-      },
+      "display_type": "http-api",
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
@@ -508,48 +401,24 @@
     {
       "name": "claude-5",
       "provider": "together-xyz",
-      "type": "subprocess",
+      "type": "http",
       "auth_type": "api",
-      "has_file_access": true,
-      "description": "GPT-OSS-120B via Together.xyz — real Claude Code CLI via ccr",
+      "has_file_access": false,
+      "description": "GPT-OSS-120B via Together.xyz — direct HTTP API (no CCR overhead)",
       "mainTool": "claude",
       "model": "openai/gpt-oss-120b",
       "max_context_tokens": 131072,
+      "max_output_tokens": 4096,
+      "baseUrl": "https://api.together.xyz/v1",
+      "apiKeyEnv": "TOGETHER_API_KEY",
       "display_provider": "Together.xyz",
-      "cli": "ccr",
-      "args_template": [
-        "claude-5",
-        "-p",
-        "{prompt}",
-        "--dangerously-skip-permissions"
-      ],
-      "health_check_args": [
-        "-v"
-      ],
-      "helpArgs": [
-        "--help"
-      ],
       "extraTools": [],
-      "timeout_ms": 300000,
-      "quorum_timeout_ms": 300000,
+      "timeout_ms": 120000,
+      "quorum_timeout_ms": 120000,
       "idle_timeout_ms": 90000,
-      "hard_timeout_ms": 600000,
+      "hard_timeout_ms": 300000,
       "env": {},
-      "display_type": "claude-code-router",
-      "service": {
-        "start": [
-          "ccr",
-          "start"
-        ],
-        "stop": [
-          "ccr",
-          "stop"
-        ],
-        "status": [
-          "ccr",
-          "status"
-        ]
-      },
+      "display_type": "http-api",
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
@@ -559,48 +428,24 @@
     {
       "name": "claude-6",
       "provider": "together-xyz",
-      "type": "subprocess",
+      "type": "http",
       "auth_type": "api",
-      "has_file_access": true,
-      "description": "GLM-5 via Together.xyz — real Claude Code CLI via ccr",
+      "has_file_access": false,
+      "description": "GLM-5 via Together.xyz — direct HTTP API (no CCR overhead)",
       "mainTool": "claude",
       "model": "zai-org/GLM-5",
       "max_context_tokens": 131072,
+      "max_output_tokens": 4096,
+      "baseUrl": "https://api.together.xyz/v1",
+      "apiKeyEnv": "TOGETHER_API_KEY",
       "display_provider": "Together.xyz",
-      "cli": "ccr",
-      "args_template": [
-        "claude-6",
-        "-p",
-        "{prompt}",
-        "--dangerously-skip-permissions"
-      ],
-      "health_check_args": [
-        "-v"
-      ],
-      "helpArgs": [
-        "--help"
-      ],
       "extraTools": [],
-      "timeout_ms": 300000,
-      "quorum_timeout_ms": 300000,
+      "timeout_ms": 120000,
+      "quorum_timeout_ms": 120000,
       "idle_timeout_ms": 90000,
-      "hard_timeout_ms": 600000,
+      "hard_timeout_ms": 300000,
       "env": {},
-      "display_type": "claude-code-router",
-      "service": {
-        "start": [
-          "ccr",
-          "start"
-        ],
-        "stop": [
-          "ccr",
-          "stop"
-        ],
-        "status": [
-          "ccr",
-          "status"
-        ]
-      },
+      "display_type": "http-api",
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",

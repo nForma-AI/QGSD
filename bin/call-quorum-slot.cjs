@@ -584,6 +584,7 @@ function runHttp(provider, prompt, timeoutMs) {
   const body   = JSON.stringify({
     model:    model,
     messages: [{ role: 'user', content: prompt }],
+    max_tokens: provider.max_output_tokens || 4096,
     stream:   false,
   });
 
