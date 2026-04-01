@@ -507,9 +507,9 @@
       "type": "subprocess",
       "auth_type": "api",
       "has_file_access": true,
-      "description": "Llama-4-Maverick-17B via Together.xyz — real Claude Code CLI via ccr",
+      "description": "GPT-OSS-120B via Together.xyz — real Claude Code CLI via ccr",
       "mainTool": "claude",
-      "model": "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8",
+      "model": "openai/gpt-oss-120b",
       "display_provider": "Together.xyz",
       "cli": "ccr",
       "args_template": [
@@ -529,7 +529,6 @@
       "quorum_timeout_ms": 300000,
       "idle_timeout_ms": 90000,
       "hard_timeout_ms": 600000,
-      "latency_budget_ms": 15000,
       "env": {},
       "display_type": "claude-code-router",
       "service": {
@@ -580,7 +579,6 @@
       "quorum_timeout_ms": 300000,
       "idle_timeout_ms": 90000,
       "hard_timeout_ms": 600000,
-      "latency_budget_ms": 15000,
       "env": {},
       "display_type": "claude-code-router",
       "service": {
