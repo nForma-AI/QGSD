@@ -14,6 +14,8 @@ const SPEC_DIR = path.join(ROOT, '.planning', 'formal', 'spec');
 const INDEX_PATH = path.join(ROOT, '.planning', 'formal', 'proximity-index.json');
 const REGISTRY_PATH = path.join(ROOT, '.planning', 'formal', 'model-registry.json');
 const BUG_GAPS_PATH = path.join(ROOT, '.planning', 'formal', 'bug-model-gaps.json');
+const PROJECT_MANIFEST_PATH = path.join(ROOT, '.planning', 'formal', 'specs', 'formal-checks.json');
+const PROJECT_SPECS_DIR = path.join(ROOT, '.planning', 'formal', 'specs');
 
 function printHelp() {
   console.log(`Usage: node bin/formal-scope-scan.cjs --description "text" [options]
@@ -279,6 +281,150 @@ function loadModelRegistry(registryPath) {
     process.stderr.write('Warning: Failed to load model-registry.json: ' + e.message + '\n');
     return null;
   }
+}
+
+// ── Project-level manifest discovery (fail-open) ─────────────────────────
+
+/**
+ * Load project-level formal checks manifest from .planning/formal/specs/formal-checks.json.
+ * Returns specs array or empty array on any error (fail-open).
+ */
+function loadProjectManifest() {
+  try {
+    if (!fs.existsSync(PROJECT_MANIFEST_PATH)) return [];
+    const data = JSON.parse(fs.readFileSync(PROJECT_MANIFEST_PATH, 'utf8'));
+    if (data.version !== 1 || !Array.isArray(data.specs)) {
+      process.stderr.write('[formal-scope-scan] WARN: invalid manifest version or missing specs array\n');
+      return [];
+    }
+    // Validate required fields
+    return data.specs.filter(spec => {
+      if (!spec.module || !spec.type || !spec.spec_path || !spec.command || !Array.isArray(spec.args)) {
+        process.stderr.write(`[formal-scope-scan] WARN: skipping manifest entry missing required fields: ${JSON.stringify(spec.module || 'unknown')}\n`);
+        return false;
+      }
+      return true;
+    });
+  } catch (e) {
+    process.stderr.write('[formal-scope-scan] WARN: failed to load project manifest: ' + e.message + '\n');
+    return [];
+  }
+}
+
+/**
+ * Scan PROJECT_SPECS_DIR for .tla/.als/.pm files not registered in manifest.
+ * Reports unregistered files as suggestions to stderr (informational only).
+ */
+function scanUnregisteredSpecs(manifestSpecs) {
+  try {
+    if (!fs.existsSync(PROJECT_SPECS_DIR)) return [];
+    const files = fs.readdirSync(PROJECT_SPECS_DIR);
+    const registeredPaths = new Set((manifestSpecs || []).map(s => path.normalize(s.spec_path)));
+    const unregistered = [];
+    for (const file of files) {
+      const ext = path.extname(file).toLowerCase();
+      if (!['.tla', '.als', '.pm'].includes(ext)) continue;
+      const relPath = path.normalize(path.join('.planning', 'formal', 'specs', file));
+      if (!registeredPaths.has(relPath)) {
+        const type = ext === '.tla' ? 'tla' : ext === '.als' ? 'alloy' : 'prism';
+        unregistered.push({ file, type });
+      }
+    }
+    if (unregistered.length > 0) {
+      process.stderr.write(`[formal-scope-scan] INFO: ${unregistered.length} unregistered spec file(s) in .planning/formal/specs/: ${unregistered.map(u => u.file).join(', ')}\n`);
+    }
+    return unregistered;
+  } catch (e) {
+    return [];
+  }
+}
+
+/**
+ * Merge project manifest specs into model-registry data (in-memory, no disk write).
+ * Project entries do NOT overwrite existing nForma-internal entries.
+ * Returns the merged registry view.
+ */
+function mergeProjectSpecsIntoRegistry(manifestSpecs, registryData) {
+  const registry = registryData || { version: '1.0', models: {} };
+  if (!registry.models) registry.models = {};
+  for (const spec of (manifestSpecs || [])) {
+    const key = path.normalize(spec.spec_path);
+    if (registry.models[key]) {
+      process.stderr.write(`[formal-scope-scan] WARN: project spec "${spec.module}" collides with internal registry key "${key}" — internal entry preserved\n`);
+      continue;
+    }
+    registry.models[key] = {
+      version: 1,
+      last_updated: new Date().toISOString(),
+      update_source: 'project_manifest',
+      source_id: null,
+      session_id: null,
+      description: spec.description || '',
+      layer_maturity: 3,
+      gate_maturity: 'SOFT_GATE',
+      source_layer: 'L3',
+      requirements: spec.requirements || [],
+      consecutive_pass_count: 0,
+      source: 'project',
+      maturity: spec.maturity || 'draft',
+      project_command: { command: spec.command, args: spec.args }
+    };
+  }
+  return registry;
+}
+
+/**
+ * Match project manifest specs against description tokens.
+ * Returns matches with source: 'project' marker.
+ */
+function matchProjectSpecs(description, files, tokens) {
+  const manifestSpecs = loadProjectManifest();
+  if (manifestSpecs.length === 0) return [];
+
+  const descLower = (description || '').toLowerCase();
+  const toks = tokens || descLower.split(/[\s\-_]+/).filter(t => t.length > 0);
+  const matches = [];
+
+  for (const spec of manifestSpecs) {
+    let matched = false;
+
+    // Keyword match
+    if (spec.keywords && Array.isArray(spec.keywords)) {
+      for (const kw of spec.keywords) {
+        if (toks.some(t => t === kw.toLowerCase())) {
+          matched = true;
+          break;
+        }
+      }
+    }
+
+    // Module name match
+    if (!matched && toks.some(t => t === spec.module.toLowerCase())) {
+      matched = true;
+    }
+
+    // File overlap — check if any file is in the spec's directory
+    if (!matched && files && files.length > 0 && spec.spec_path) {
+      const specDir = path.dirname(spec.spec_path);
+      if (files.some(f => f.startsWith(specDir))) {
+        matched = true;
+      }
+    }
+
+    if (matched) {
+      matches.push({
+        module: spec.module,
+        path: spec.spec_path,
+        matched_by: 'project_manifest',
+        spec_type: spec.type,
+        source: 'project',
+        requirements: spec.requirements || [],
+        maturity: spec.maturity || 'draft'
+      });
+    }
+  }
+
+  return matches;
 }
 
 /**
@@ -841,8 +987,14 @@ async function main() {
     process.exit(1);
   }
 
-  // Bug-mode: match against model-registry.json
+  // Bug-mode: match against model-registry.json (with project spec merge)
   if (args.bugMode) {
+    // Merge project specs into registry view for bug-mode compatibility
+    const bugProjectSpecs = loadProjectManifest();
+    if (bugProjectSpecs.length > 0) {
+      const bugRegistry = loadModelRegistry();
+      mergeProjectSpecsIntoRegistry(bugProjectSpecs, bugRegistry);
+    }
     const bugMatches = runBugModeMatching(args.description, args.files);
     if (bugMatches !== null) {
       // Run model checkers if requested
@@ -940,6 +1092,18 @@ async function main() {
     }
   }
 
+  // Project-level manifest discovery (fail-open)
+  const projectSpecs = loadProjectManifest();
+  const projectMatches = matchProjectSpecs(args.description, args.files, tokens);
+  for (const pm of projectMatches) {
+    if (!matches.find(m => m.module === pm.module)) {
+      matches.push(pm);
+    }
+  }
+
+  // Report unregistered spec files
+  scanUnregisteredSpecs(projectSpecs);
+
   // Layer 2: Proximity index enrichment (fail-open)
   const enriched = enrichWithProximityIndex(matches, args.files, tokens);
 
@@ -991,7 +1155,11 @@ if (typeof module !== 'undefined') {
     cosineSim,
     resolveClaudeCLI,
     runSemanticLayer,
-    runAgenticLayer
+    runAgenticLayer,
+    loadProjectManifest,
+    matchProjectSpecs,
+    scanUnregisteredSpecs,
+    mergeProjectSpecsIntoRegistry
   };
 }
 

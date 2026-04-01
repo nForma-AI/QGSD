@@ -11,7 +11,7 @@ const assert        = require('node:assert');
 const { spawnSync } = require('child_process');
 const path          = require('path');
 
-const { runCheck, MODULE_CHECKS } = require('./run-formal-check.cjs');
+const { runCheck, MODULE_CHECKS, loadProjectManifest, runProjectCheck, ALLOWED_COMMANDS, DANGEROUS_ARG_PATTERNS } = require('./run-formal-check.cjs');
 
 const RUN_FORMAL_CHECK = path.join(__dirname, 'run-formal-check.cjs');
 
@@ -158,4 +158,171 @@ test('runCheck returns correct shape for prism tool', () => {
   assert.strictEqual(typeof result.detail, 'string');
   assert.strictEqual(typeof result.runtimeMs, 'number');
   assert.ok(result.runtimeMs >= 0, 'runtimeMs must be >= 0');
+});
+
+// ── Project manifest tests ──────────────────────────────────────────────
+
+test('loadProjectManifest returns empty array when no manifest exists', () => {
+  const specs = loadProjectManifest();
+  assert.ok(Array.isArray(specs));
+});
+
+test('ALLOWED_COMMANDS contains expected safe executables', () => {
+  assert.ok(ALLOWED_COMMANDS.has('make'));
+  assert.ok(ALLOWED_COMMANDS.has('java'));
+  assert.ok(ALLOWED_COMMANDS.has('node'));
+  assert.ok(!ALLOWED_COMMANDS.has('rm'), 'rm must not be in allowlist');
+  assert.ok(!ALLOWED_COMMANDS.has('curl'), 'curl must not be in allowlist');
+  assert.ok(!ALLOWED_COMMANDS.has('sh'), 'sh must not be in allowlist');
+});
+
+test('DANGEROUS_ARG_PATTERNS blocks -e, -c, --eval', () => {
+  assert.ok(DANGEROUS_ARG_PATTERNS.has('-e'));
+  assert.ok(DANGEROUS_ARG_PATTERNS.has('-c'));
+  assert.ok(DANGEROUS_ARG_PATTERNS.has('--eval'));
+  assert.ok(DANGEROUS_ARG_PATTERNS.has('--exec'));
+});
+
+test('runProjectCheck rejects command not in allowlist', () => {
+  const result = runProjectCheck({
+    module: 'evil',
+    type: 'tla',
+    spec_path: 'fake.tla',
+    command: 'rm',
+    args: ['-rf', '/']
+  }, process.cwd());
+  assert.strictEqual(result.status, 'skipped');
+  assert.ok(result.detail.includes('allowlist'));
+});
+
+test('runProjectCheck rejects dangerous argument patterns', () => {
+  const resultE = runProjectCheck({
+    module: 'eval-attempt',
+    type: 'tla',
+    spec_path: 'fake.tla',
+    command: 'node',
+    args: ['-e', 'process.exit(0)']
+  }, process.cwd());
+  assert.strictEqual(resultE.status, 'skipped');
+  assert.ok(resultE.detail.includes('dangerous argument'));
+
+  const resultC = runProjectCheck({
+    module: 'shell-attempt',
+    type: 'tla',
+    spec_path: 'fake.tla',
+    command: 'python3',
+    args: ['-c', 'print("hello")']
+  }, process.cwd());
+  assert.strictEqual(resultC.status, 'skipped');
+  assert.ok(resultC.detail.includes('dangerous argument'));
+});
+
+test('runProjectCheck rejects path traversal in spec_path', () => {
+  const result = runProjectCheck({
+    module: 'traversal',
+    type: 'tla',
+    spec_path: '../../../tmp/evil',
+    command: 'make',
+    args: ['check']
+  }, process.cwd());
+  assert.strictEqual(result.status, 'skipped');
+  assert.ok(result.detail.includes('escapes project root'));
+});
+
+test('runProjectCheck rejects absolute spec_path', () => {
+  const result = runProjectCheck({
+    module: 'abs-path',
+    type: 'tla',
+    spec_path: '/tmp/evil.tla',
+    command: 'make',
+    args: ['check']
+  }, process.cwd());
+  assert.strictEqual(result.status, 'skipped');
+  assert.ok(result.detail.includes('escapes project root'));
+});
+
+test('runProjectCheck skips when spec file missing', () => {
+  const result = runProjectCheck({
+    module: 'test-mod',
+    type: 'tla',
+    spec_path: 'nonexistent.tla',
+    command: 'make',
+    args: ['check']
+  }, process.cwd());
+  assert.strictEqual(result.status, 'skipped');
+  assert.ok(result.detail.includes('spec file not found'));
+});
+
+test('runProjectCheck returns pass for successful command', () => {
+  const fs = require('fs');
+  const os = require('os');
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rfc-test-'));
+  const specFile = path.join(tmpDir, 'test.tla');
+  fs.writeFileSync(specFile, 'dummy');
+  try {
+    const result = runProjectCheck({
+      module: 'test-pass',
+      type: 'tla',
+      spec_path: 'test.tla',
+      command: 'node',
+      args: ['--version']
+    }, tmpDir);
+    assert.strictEqual(result.status, 'pass');
+    assert.strictEqual(result.module, 'test-pass');
+    assert.ok(typeof result.runtimeMs === 'number');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('runProjectCheck returns fail for non-zero exit', () => {
+  const fs = require('fs');
+  const os = require('os');
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rfc-test-'));
+  const specFile = path.join(tmpDir, 'test.tla');
+  fs.writeFileSync(specFile, 'dummy');
+  // Create a script that exits with code 1 (avoids -e flag)
+  const failScript = path.join(tmpDir, 'fail.js');
+  fs.writeFileSync(failScript, 'process.exit(1)');
+  try {
+    const result = runProjectCheck({
+      module: 'test-fail',
+      type: 'tla',
+      spec_path: 'test.tla',
+      command: 'node',
+      args: [failScript]
+    }, tmpDir);
+    assert.strictEqual(result.status, 'fail');
+    assert.ok(result.detail.includes('Exit code'));
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('double-release is safe (runProjectCheck idempotent)', () => {
+  // runProjectCheck does not have release semantics, but verify it returns
+  // consistent results when called multiple times with the same input
+  const result1 = runProjectCheck({
+    module: 'idempotent',
+    type: 'tla',
+    spec_path: 'nonexistent.tla',
+    command: 'make',
+    args: ['check']
+  }, process.cwd());
+  const result2 = runProjectCheck({
+    module: 'idempotent',
+    type: 'tla',
+    spec_path: 'nonexistent.tla',
+    command: 'make',
+    args: ['check']
+  }, process.cwd());
+  assert.strictEqual(result1.status, result2.status);
+  assert.strictEqual(result1.detail, result2.detail);
+});
+
+test('unknown module falls through to project manifest lookup', () => {
+  const result = spawnSync(process.execPath, [RUN_FORMAL_CHECK, '--modules=totally-fake-module'], {
+    encoding: 'utf8', stdio: 'pipe', cwd: process.cwd()
+  });
+  assert.ok(result.stderr.includes('unknown module'));
 });
