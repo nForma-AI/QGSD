@@ -491,7 +491,7 @@ function formatDiagnosticForPrompt(diagnosticJson) {
  * @param {Array}  [opts.requirements]     - array of requirement objects to inject
  * @returns {string}
  */
-function buildModeAPrompt({ round, repoDir, question, artifactPath, artifactContent, reviewContext, priorPositions, requestImprovements, requirements, precedents }) {
+function buildModeAPrompt({ round, repoDir, question, artifactPath, artifactContent, reviewContext, priorPositions, requestImprovements, requirements, precedents, hasFileAccess }) {
   const lines = [];
 
   // Header
@@ -613,7 +613,13 @@ function buildModeAPrompt({ round, repoDir, question, artifactPath, artifactCont
   } else {
     // ── Round 1 path ──────────────────────────────────────────────────────
     lines.push('');
-    if (artifactContent) {
+    if (hasFileAccess === false) {
+      // HTTP slots: no tools available — answer from provided context only
+      lines.push('You have NO file access or tools. Answer ONLY from the context provided in this');
+      lines.push('message (artifact content, requirements, retrieved context sections above).');
+      lines.push('Do NOT attempt tool calls, emit JSON blocks, or reference files you cannot see.');
+      lines.push('Your answer must be grounded in what is provided above.');
+    } else if (artifactContent) {
       lines.push('The artifact content is provided above. Use your available tools to read any other');
       lines.push('relevant files from the Repository directory if needed. Your answer must be grounded');
       lines.push('in the artifact content and what you actually find in the repo.');
@@ -670,7 +676,7 @@ function buildModeAPrompt({ round, repoDir, question, artifactPath, artifactCont
  * @param {boolean}[opts.reviewOnly]       - EXEC-01: inject read-only tool restriction
  * @returns {string}
  */
-function buildModeBPrompt({ round, repoDir, question, traces, artifactPath, artifactContent, reviewContext, priorPositions, requirements, precedents, reviewOnly }) {
+function buildModeBPrompt({ round, repoDir, question, traces, artifactPath, artifactContent, reviewContext, priorPositions, requirements, precedents, reviewOnly, hasFileAccess }) {
   const lines = [];
 
   // Header
@@ -767,7 +773,10 @@ function buildModeBPrompt({ round, repoDir, question, traces, artifactPath, arti
   }
 
   lines.push('');
-  if (artifactContent) {
+  if (hasFileAccess === false) {
+    lines.push('You have NO file access or tools. Evaluate ONLY from the execution traces and');
+    lines.push('context provided above. Do NOT attempt tool calls or emit JSON tool-use blocks.');
+  } else if (artifactContent) {
     lines.push('The artifact content is provided above. Use your tools to read any other relevant files');
     lines.push('from the Repository directory if needed.');
   } else {
@@ -1298,11 +1307,21 @@ async function main() {
   // EXEC-01: Determine review mode — Mode B or explicit --review-only flag
   const isReviewMode = mode === 'B' || reviewOnly;
 
+  // Determine if this slot has file access (subprocess CLIs do, HTTP APIs don't)
+  const hasFileAccess = (() => {
+    try {
+      const pPath = path.join(__dirname, 'providers.json');
+      const providers = JSON.parse(fs.readFileSync(pPath, 'utf8')).providers || [];
+      const provider = providers.find(p => p.name === slot);
+      return provider ? provider.has_file_access !== false : true; // default true for backward compat
+    } catch { return true; }
+  })();
+
   let prompt;
   if (mode === 'B') {
-    prompt = buildModeBPrompt({ round, repoDir, question, artifactPath, artifactContent, reviewContext, priorPositions, traces: traces || '', requirements: matchedRequirements, precedents: matchedPrecedents, reviewOnly: isReviewMode });
+    prompt = buildModeBPrompt({ round, repoDir, question, artifactPath, artifactContent, reviewContext, priorPositions, traces: traces || '', requirements: matchedRequirements, precedents: matchedPrecedents, reviewOnly: isReviewMode, hasFileAccess });
   } else {
-    prompt = buildModeAPrompt({ round, repoDir, question, artifactPath, artifactContent, reviewContext, priorPositions, requestImprovements, requirements: matchedRequirements, precedents: matchedPrecedents });
+    prompt = buildModeAPrompt({ round, repoDir, question, artifactPath, artifactContent, reviewContext, priorPositions, requestImprovements, requirements: matchedRequirements, precedents: matchedPrecedents, hasFileAccess });
   }
 
   // ── Context retrieval enrichment (ORCH-01) ──────────────────────────────────

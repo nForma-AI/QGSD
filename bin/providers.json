@@ -308,6 +308,8 @@
       "latency_budget_ms": null,
       "env": {},
       "display_type": "http-api",
+      "system_prompt": "You are one AI model in a multi-model quorum review. You have NO tools — no file access, no web search, no code execution. Answer ONLY from the context provided in the user message. Be concise (3-6 sentences). Do not attempt tool calls or emit JSON tool-use blocks. Give your honest assessment with reasoning.",
+      "temperature": 0.3,
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
@@ -336,6 +338,8 @@
       "latency_budget_ms": null,
       "env": {},
       "display_type": "http-api",
+      "system_prompt": "You are one AI model in a multi-model quorum review. You have NO tools — no file access, no web search, no code execution. Answer ONLY from the context provided in the user message. Be concise (3-6 sentences). Do not attempt tool calls or emit JSON tool-use blocks. Give your honest assessment with reasoning.",
+      "temperature": 0.3,
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
@@ -364,6 +368,8 @@
       "latency_budget_ms": null,
       "env": {},
       "display_type": "http-api",
+      "system_prompt": "You are one AI model in a multi-model quorum review. You have NO tools — no file access, no web search, no code execution. Answer ONLY from the context provided in the user message. Be concise (3-6 sentences). Do not attempt tool calls or emit JSON tool-use blocks. Give your honest assessment with reasoning.",
+      "temperature": 0.3,
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
@@ -392,6 +398,8 @@
       "latency_budget_ms": null,
       "env": {},
       "display_type": "http-api",
+      "system_prompt": "You are one AI model in a multi-model quorum review. You have NO tools — no file access, no web search, no code execution. Answer ONLY from the context provided in the user message. Be concise (3-6 sentences). Do not attempt tool calls or emit JSON tool-use blocks. Give your honest assessment with reasoning.",
+      "temperature": 0.3,
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
@@ -419,6 +427,8 @@
       "hard_timeout_ms": 300000,
       "env": {},
       "display_type": "http-api",
+      "system_prompt": "You are one AI model in a multi-model quorum review. You have NO tools — no file access, no web search, no code execution. Answer ONLY from the context provided in the user message. Be concise (3-6 sentences). Do not attempt tool calls or emit JSON tool-use blocks. Give your honest assessment with reasoning.",
+      "temperature": 0.3,
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
@@ -446,6 +456,8 @@
       "hard_timeout_ms": 300000,
       "env": {},
       "display_type": "http-api",
+      "system_prompt": "You are one AI model in a multi-model quorum review. You have NO tools — no file access, no web search, no code execution. Answer ONLY from the context provided in the user message. Be concise (3-6 sentences). Do not attempt tool calls or emit JSON tool-use blocks. Give your honest assessment with reasoning.",
+      "temperature": 0.3,
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",

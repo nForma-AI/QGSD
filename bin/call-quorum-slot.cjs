@@ -581,10 +581,18 @@ function runHttp(provider, prompt, timeoutMs) {
   const baseUrl = slotEnv['ANTHROPIC_BASE_URL'] ?? provider.baseUrl;
   const model   = slotEnv['CLAUDE_DEFAULT_MODEL'] ?? provider.model;
 
+  // Build messages array — include system message if provider defines one
+  const messages = [];
+  if (provider.system_prompt) {
+    messages.push({ role: 'system', content: provider.system_prompt });
+  }
+  messages.push({ role: 'user', content: prompt });
+
   const body   = JSON.stringify({
     model:    model,
-    messages: [{ role: 'user', content: prompt }],
+    messages,
     max_tokens: provider.max_output_tokens || 4096,
+    temperature: provider.temperature ?? 0.3,
     stream:   false,
   });
 
