@@ -137,3 +137,4 @@ bin/.planning/
 
 # Session artifacts from cycle2 simulations (route to os.tmpdir() instead)
 .planning/formal/cycle2-simulations/
+.planning/quorum/slot-results/
