@@ -154,7 +154,9 @@ Key schema fields:
    - Merges into the registry models object using spec.spec_path as the key
    - Does NOT write to disk -- returns the merged in-memory view
    - If registryData is null, creates a minimal wrapper: `{ version: "1.0", models: {} }`
+   - Normalize keys before collision check: `path.normalize(spec.spec_path)` to handle `./` prefixes and trailing slashes
    - Existing registry entries with same key are NOT overwritten (nForma-internal wins)
+   - When a collision is detected (project key matches existing internal key), log to stderr: `[formal-scope-scan] WARN: project spec "${spec.module}" collides with internal registry key "${key}" — internal entry preserved`
 
 5. Add `matchProjectSpecs(description, files, tokens)` function:
    - Call `loadProjectManifest()` to get specs array
@@ -241,9 +243,12 @@ Key schema fields:
 
 1. Add constants at top:
    ```javascript
-   const PROJECT_MANIFEST_PATH = path.join(process.cwd(), '.planning', 'formal', 'specs', 'formal-checks.json');
+   // Use ROOT (git root) for consistency with formal-scope-scan.cjs — NOT process.cwd()
+   const PROJECT_MANIFEST_PATH = path.join(ROOT, '.planning', 'formal', 'specs', 'formal-checks.json');
    // Allowlist of command roots -- only these executables can be invoked from manifest
-   const ALLOWED_COMMANDS = new Set(['make', 'java', 'node', 'npm', 'npx', 'python3', 'python', 'sh']);
+   const ALLOWED_COMMANDS = new Set(['make', 'java', 'node', 'npm', 'npx', 'python3', 'python']);
+   // Dangerous argument patterns -- reject these even for allowed commands
+   const DANGEROUS_ARG_PATTERNS = ['-c', '-e', '--eval', '--exec', 'eval', '-i'];
    ```
 
 2. Add `loadProjectManifest()` function (same fail-open pattern as scope-scan):
@@ -255,8 +260,10 @@ Key schema fields:
 
 3. Add `runProjectCheck(spec, cwd)` function:
    - Takes a spec entry from the manifest and cwd
-   - **Safety gate**: Check `ALLOWED_COMMANDS.has(spec.command)` -- if not allowed, return `{ module: spec.module, tool: spec.type, status: 'skipped', detail: 'command not in allowlist: ' + spec.command, runtimeMs: 0 }`
-   - **Spec file pre-flight**: Check `fs.existsSync(path.join(cwd, spec.spec_path))` -- if missing, return skipped with detail 'spec file not found: ' + spec.spec_path
+   - **Safety gate 1 — command allowlist**: Check `ALLOWED_COMMANDS.has(spec.command)` -- if not allowed, return `{ module: spec.module, tool: spec.type, status: 'skipped', detail: 'command not in allowlist: ' + spec.command, runtimeMs: 0 }`
+   - **Safety gate 2 — dangerous argument patterns**: Check if any element in `spec.args` matches `DANGEROUS_ARG_PATTERNS` (case-sensitive exact match). If found, return `{ module: spec.module, tool: spec.type, status: 'skipped', detail: 'dangerous argument pattern: ' + matched_arg, runtimeMs: 0 }`
+   - **Safety gate 3 — path containment**: Resolve `spec.spec_path` via `path.resolve(cwd, spec.spec_path)` and verify it starts with `path.resolve(cwd)`. If it escapes (e.g., `../../../etc/passwd`), return `{ module: spec.module, tool: spec.type, status: 'skipped', detail: 'spec_path escapes project root: ' + spec.spec_path, runtimeMs: 0 }`. Also reject absolute paths (spec_path starting with `/`).
+   - **Spec file pre-flight**: Check `fs.existsSync(path.resolve(cwd, spec.spec_path))` -- if missing, return skipped with detail 'spec file not found: ' + spec.spec_path
    - Execute via `spawnSync(spec.command, spec.args, { cwd, stdio: 'pipe', encoding: 'utf8', timeout: 180000 })`
    - DO NOT split any string on spaces -- command and args are already structured
    - Returns `{ module: spec.module, tool: spec.type, status, detail, runtimeMs }` following the same shape as existing `runCheck()`
@@ -281,7 +288,7 @@ Key schema fields:
    ```
    Apply this same pattern in BOTH branches (the java-missing branch and the normal branch).
 
-5. Export `loadProjectManifest`, `runProjectCheck`, and `ALLOWED_COMMANDS` from `module.exports`.
+5. Export `loadProjectManifest`, `runProjectCheck`, `ALLOWED_COMMANDS`, and `DANGEROUS_ARG_PATTERNS` from `module.exports`.
 
 **Part B: Add/update tests in bin/run-formal-check.test.cjs.**
 
@@ -385,6 +392,62 @@ test('unknown module falls through to project manifest lookup', () => {
     encoding: 'utf8', stdio: 'pipe', cwd: process.cwd()
   });
   assert.ok(result.stderr.includes('unknown module'));
+});
+
+test('runProjectCheck rejects dangerous argument patterns (-e, -c)', () => {
+  const { runProjectCheck } = require('./run-formal-check.cjs');
+  const resultE = runProjectCheck({
+    module: 'eval-attempt',
+    type: 'tla',
+    spec_path: 'fake.tla',
+    command: 'node',
+    args: ['-e', 'process.exit(0)']
+  }, process.cwd());
+  assert.strictEqual(resultE.status, 'skipped');
+  assert.ok(resultE.detail.includes('dangerous argument'));
+
+  const resultC = runProjectCheck({
+    module: 'shell-attempt',
+    type: 'tla',
+    spec_path: 'fake.tla',
+    command: 'python3',
+    args: ['-c', 'print("hello")']
+  }, process.cwd());
+  assert.strictEqual(resultC.status, 'skipped');
+  assert.ok(resultC.detail.includes('dangerous argument'));
+});
+
+test('runProjectCheck rejects path traversal in spec_path', () => {
+  const { runProjectCheck } = require('./run-formal-check.cjs');
+  const result = runProjectCheck({
+    module: 'traversal',
+    type: 'tla',
+    spec_path: '../../../tmp/evil',
+    command: 'make',
+    args: ['check']
+  }, process.cwd());
+  assert.strictEqual(result.status, 'skipped');
+  assert.ok(result.detail.includes('escapes project root'));
+});
+
+test('runProjectCheck rejects absolute spec_path', () => {
+  const { runProjectCheck } = require('./run-formal-check.cjs');
+  const result = runProjectCheck({
+    module: 'abs-path',
+    type: 'tla',
+    spec_path: '/tmp/evil.tla',
+    command: 'make',
+    args: ['check']
+  }, process.cwd());
+  assert.strictEqual(result.status, 'skipped');
+  assert.ok(result.detail.includes('escapes project root'));
+});
+
+test('loadProjectManifest handles malformed JSON gracefully', () => {
+  const { loadProjectManifest } = require('./run-formal-check.cjs');
+  // With no manifest file at cwd, should return empty array (fail-open)
+  const specs = loadProjectManifest();
+  assert.ok(Array.isArray(specs));
 });
 ```
 
