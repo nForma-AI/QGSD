@@ -1479,6 +1479,17 @@ async function main() {
     }
   }
 
+  // --output-file: write result to file before stdout (Option C — file is source of truth)
+  const outputFile = getArg('--output-file');
+  if (outputFile) {
+    try {
+      fs.mkdirSync(path.dirname(outputFile), { recursive: true });
+      fs.writeFileSync(outputFile, result.endsWith('\n') ? result : result + '\n', 'utf8');
+    } catch (e) {
+      process.stderr.write(`[quorum-slot-dispatch] output-file write failed: ${e.message}\n`);
+    }
+  }
+
   process.stdout.write(result);
   if (!result.endsWith('\n')) process.stdout.write('\n');
   process.exit(0);

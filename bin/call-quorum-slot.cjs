@@ -302,7 +302,13 @@ function buildSpawnArgs(provider, prompt, allowedToolsFlag) {
   // so there's no shell interpretation risk. Pass prompt via -p for ALL slots
   // including CCR. The original stdin-piping approach broke CCR because it
   // doesn't accept stdin input — only -p argument.
-  args = provider.args_template.map(a => (a === '{prompt}' ? prompt : a));
+  // CCR v2.0.0 internally re-spawns with shell:true, so backticks, $(), and
+  // ! in the prompt get interpreted as shell commands. Strip/neutralize these
+  // for CCR slots — backticks are just markdown formatting in quorum prompts.
+  const safePrompt = isCcr
+    ? prompt.replace(/`/g, "'").replace(/\$\(/g, '(').replace(/\$/g, '').replace(/!/g, '.')
+    : prompt;
+  args = provider.args_template.map(a => (a === '{prompt}' ? safePrompt : a));
   // Only use stdin for slots that explicitly require it (none currently do)
   useStdinPrompt = false;
 
