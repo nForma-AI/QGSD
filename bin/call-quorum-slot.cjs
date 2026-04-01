@@ -28,6 +28,7 @@ const fs        = require('fs');
 const path      = require('path');
 const os        = require('os');
 const { resolveCli } = require('./resolve-cli.cjs');
+const { acquireSlot, releaseSlot, providerKeyFromUrl } = require('./provider-concurrency.cjs');
 
 // ─── Utilities ──────────────────────────────────────────────────────────────
 function sleep(ms) {
@@ -570,7 +571,7 @@ function loadSlotEnv(slotName) {
 }
 
 // ─── HTTP dispatch ─────────────────────────────────────────────────────────────
-function runHttp(provider, prompt, timeoutMs) {
+function runHttp(provider, prompt, timeoutMs, slotName) {
   // HTTP slots use PROVIDER_SLOT mode: API keys live in ~/.claude.json server env,
   // not in process.env. Load them from there, falling back to process.env.
   const slotEnv = loadSlotEnv(provider.name);
@@ -581,72 +582,84 @@ function runHttp(provider, prompt, timeoutMs) {
   const baseUrl = slotEnv['ANTHROPIC_BASE_URL'] ?? provider.baseUrl;
   const model   = slotEnv['CLAUDE_DEFAULT_MODEL'] ?? provider.model;
 
-  // Build messages array — include system message if provider defines one
-  const messages = [];
-  if (provider.system_prompt) {
-    messages.push({ role: 'system', content: provider.system_prompt });
-  }
-  messages.push({ role: 'user', content: prompt });
-
-  const body   = JSON.stringify({
-    model:    model,
-    messages,
-    max_tokens: provider.max_output_tokens || 4096,
-    temperature: provider.temperature ?? 0.3,
-    stream:   false,
-  });
-
-  const url       = new URL(`${baseUrl}/chat/completions`);
-  const isHttps   = url.protocol === 'https:';
-  const transport = isHttps ? https : http;
-  const options   = {
-    hostname: url.hostname,
-    port:     url.port || (isHttps ? 443 : 80),
-    path:     url.pathname + url.search,
-    method:   'POST',
-    headers:  {
-      'Content-Type':   'application/json',
-      'Authorization':  `Bearer ${apiKey}`,
-      'Content-Length': Buffer.byteLength(body),
-    },
-  };
+  // Provider concurrency control: acquire a slot before dispatching HTTP request
+  const providerKey = providerKeyFromUrl(baseUrl);
+  const maxConcurrency = provider.max_concurrency || 3;
+  const lock = acquireSlot(providerKey, maxConcurrency, 30000);
 
   return new Promise((resolve, reject) => {
-    let timedOut = false;
+    try {
+      // Build messages array — include system message if provider defines one
+      const messages = [];
+      if (provider.system_prompt) {
+        messages.push({ role: 'system', content: provider.system_prompt });
+      }
+      messages.push({ role: 'user', content: prompt });
 
-    const req = transport.request(options, (res) => {
-      let data = '';
-      res.on('data', chunk => { data += chunk; });
-      res.on('end', () => {
-        if (timedOut) return;
-        clearTimeout(timer);
-        try {
-          const parsed  = JSON.parse(data);
-          const content = parsed?.choices?.[0]?.message?.content;
-          if (content) {
-            resolve(content);
-          } else {
-            reject(new Error(`[HTTP error: unexpected response] ${data.slice(0, 500)}`));
-          }
-        } catch (e) {
-          reject(new Error(`[HTTP error: JSON parse failed] ${data.slice(0, 500)}`));
-        }
+      const body   = JSON.stringify({
+        model:    model,
+        messages,
+        max_tokens: provider.max_output_tokens || 4096,
+        temperature: provider.temperature ?? 0.3,
+        stream:   false,
       });
-    });
 
-    const timer = setTimeout(() => {
-      timedOut = true;
-      req.destroy();
-      reject(new Error(`TIMEOUT after ${timeoutMs}ms`));
-    }, timeoutMs);
+      const url       = new URL(`${baseUrl}/chat/completions`);
+      const isHttps   = url.protocol === 'https:';
+      const transport = isHttps ? https : http;
+      const options   = {
+        hostname: url.hostname,
+        port:     url.port || (isHttps ? 443 : 80),
+        path:     url.pathname + url.search,
+        method:   'POST',
+        headers:  {
+          'Content-Type':   'application/json',
+          'Authorization':  `Bearer ${apiKey}`,
+          'Content-Length': Buffer.byteLength(body),
+        },
+      };
 
-    req.on('error', (err) => {
-      clearTimeout(timer);
-      if (!timedOut) reject(new Error(`[HTTP request error: ${err.message}]`));
-    });
+      let timedOut = false;
 
-    req.write(body);
-    req.end();
+      const req = transport.request(options, (res) => {
+        let data = '';
+        res.on('data', chunk => { data += chunk; });
+        res.on('end', () => {
+          if (timedOut) return;
+          clearTimeout(timer);
+          try {
+            const parsed  = JSON.parse(data);
+            const content = parsed?.choices?.[0]?.message?.content;
+            if (content) {
+              resolve(content);
+            } else {
+              reject(new Error(`[HTTP error: unexpected response] ${data.slice(0, 500)}`));
+            }
+          } catch (e) {
+            reject(new Error(`[HTTP error: JSON parse failed] ${data.slice(0, 500)}`));
+          }
+        });
+      });
+
+      const timer = setTimeout(() => {
+        timedOut = true;
+        req.destroy();
+        reject(new Error(`TIMEOUT after ${timeoutMs}ms`));
+      }, timeoutMs);
+
+      req.on('error', (err) => {
+        clearTimeout(timer);
+        if (!timedOut) reject(new Error(`[HTTP request error: ${err.message}]`));
+      });
+
+      req.write(body);
+      req.end();
+    } finally {
+      // Release the provider slot when done (both success and error paths)
+      if (lock && lock.release) {
+        lock.release();
+      }
+    }
   });
 }
 
@@ -747,7 +760,7 @@ async function main() {
         retryCount = retryResult.retryCount;
       }
     } else if (provider.type === 'http') {
-      const retryResult = await retryWithBackoff(() => runHttp(provider, prompt, effectiveIdleTimeout), slot);
+      const retryResult = await retryWithBackoff(() => runHttp(provider, prompt, effectiveIdleTimeout, slot), slot);
       result = retryResult.result;
       retryCount = retryResult.retryCount;
     } else {
