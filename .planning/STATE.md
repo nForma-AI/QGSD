@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 Phase: 53 of 53 (Skill Deprecation) — COMPLETED
 Plan: 53-01 of 1 — COMPLETED
 Status: All phases complete — /nf:model-driven-fix deprecated, all consumers rewired to /nf:debug
-Last activity: 2026-03-31 - Completed quick task 368: 3-layer robust quorum fail-fast
+Last activity: 2026-04-01 - Completed quick task 369: Add provider-level concurrency control to quorum dispatch
 
 Progress: [██████████] 100% (Phase 50 done; Phase 51 done; Phase 52 done; Phase 53 done)
 
@@ -87,6 +87,7 @@ None yet.
 | 365 | Fix quorum output truncation integrity | 2026-03-31 | 8d4c12e9 | Verified | [365-fix-quorum-output-truncation-integrity](./quick/365-fix-quorum-output-truncation-integrity/) |
 | 367 | Fix systemic quorum infrastructure issues | 2026-03-31 | 45bac731 | Verified | [367-fix-systemic-quorum-infra-issues](./quick/367-fix-systemic-quorum-infra-issues/) |
 | 368 | 3-layer robust quorum fail-fast | 2026-03-31 | cd8f893f | Verified | [368-robust-quorum-fail-fast-3-layers](./quick/368-robust-quorum-fail-fast-3-layers/) |
+| 369 | Add provider-level concurrency control to quorum dispatch | 2026-04-01 | 2b5bf887 | Verified | [369-add-provider-level-concurrency-control-t](./quick/369-add-provider-level-concurrency-control-t/) |
 
 ### Blockers/Concerns
 
@@ -94,6 +95,6 @@ None currently.
 
 ## Session Continuity
 
-Last session: 2026-03-31
-Stopped at: Completed quick-368: 3-layer robust quorum fail-fast
+Last session: 2026-04-01
+Stopped at: Completed quick-369: Add provider-level concurrency control to quorum dispatch
 Resume file: None
