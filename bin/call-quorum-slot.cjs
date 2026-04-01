@@ -103,6 +103,7 @@ function findProjectRoot(cwd) {
 
 function classifyErrorType(msg) {
   if (/usage:|unknown flag|unknown option|invalid flag|unrecognized/i.test(msg)) return 'CLI_SYNTAX';
+  if (/CONTEXT_OVERFLOW/i.test(msg) || /exceeds.*maximum context length|token count exceeds|too many tokens/i.test(msg)) return 'CONTEXT_OVERFLOW';
   if (/RATE_LIMITED/i.test(msg)) return 'RATE_LIMITED';
   if (/STALL/i.test(msg)) return 'STALL';
   if (/IDLE_TIMEOUT/i.test(msg)) return 'IDLE_TIMEOUT';
@@ -192,6 +193,9 @@ function isRetryable(error) {
     return false;
   }
   if (/usage:|unknown flag|unknown option|invalid flag|unrecognized/i.test(msg)) {
+    return false;
+  }
+  if (/CONTEXT_OVERFLOW|exceeds.*maximum context length|token count exceeds/i.test(msg)) {
     return false;
   }
 
@@ -458,10 +462,32 @@ function runSubprocess(provider, prompt, idleTimeoutMs, hardTimeoutMs, allowedTo
       clearTimeout(idleTimer);
       clearTimeout(hardTimer);
       if (timedOut) {
+        // Content-based reclassification: when STALL fires, inspect the partial
+        // stdout/stderr for known error patterns before using the generic label.
+        // This distinguishes rate-limits, context overflow, and auth errors from
+        // true stalls (provider hung with no meaningful output).
+        if (timeoutType === 'STALL') {
+          const partial = (stdout + stderr).slice(0, 2000);
+          if (/exceeds.*maximum context length|token count exceeds|too many tokens/i.test(partial)) {
+            timeoutType = 'CONTEXT_OVERFLOW';
+          } else if (RATE_LIMIT_PATTERNS.test(partial)) {
+            timeoutType = 'RATE_LIMITED';
+          } else if (/401|403|unauthorized|forbidden|invalid.*api.?key/i.test(partial)) {
+            timeoutType = 'AUTH';
+          } else if (/402|quota|resource.?exhausted|billing/i.test(partial)) {
+            timeoutType = 'QUOTA';
+          }
+        }
         const label = timeoutType === 'RATE_LIMITED'
-          ? `RATE_LIMITED after ${rateLimitHits} consecutive rate-limit errors (killed early)`
+          ? `RATE_LIMITED after ${rateLimitHits > 0 ? rateLimitHits + ' consecutive rate-limit errors' : 'partial output analysis'} (killed early)`
+          : timeoutType === 'CONTEXT_OVERFLOW'
+          ? `CONTEXT_OVERFLOW: model rejected prompt as too large (${totalBytesReceived} bytes partial response)`
+          : timeoutType === 'AUTH'
+          ? `AUTH: provider returned authentication error (${totalBytesReceived} bytes partial response)`
+          : timeoutType === 'QUOTA'
+          ? `QUOTA: provider returned quota/billing error (${totalBytesReceived} bytes partial response)`
           : timeoutType === 'STALL'
-          ? `STALL: only ${totalBytesReceived} bytes received then silence for ${STALL_TIMEOUT_MS}ms — provider likely rate-limited or hung`
+          ? `STALL: only ${totalBytesReceived} bytes received then silence for ${STALL_TIMEOUT_MS}ms — no recognizable error pattern in partial output`
           : timeoutType === 'HARD'
           ? `HARD_TIMEOUT after ${hardTimeoutMs}ms total`
           : `IDLE_TIMEOUT after ${idleTimeoutMs}ms of inactivity`;

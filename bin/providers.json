@@ -295,6 +295,7 @@
       "description": "DeepSeek-V3.1 via Together.xyz — real Claude Code CLI via ccr",
       "mainTool": "claude",
       "model": "deepseek-ai/DeepSeek-V3.1",
+      "max_context_tokens": 163840,
       "display_provider": "Together.xyz",
       "cli": "ccr",
       "args_template": [
@@ -357,6 +358,7 @@
       "description": "Qwen3.5-397B via Together.xyz — real Claude Code CLI via ccr",
       "mainTool": "claude",
       "model": "Qwen/Qwen3.5-397B-A17B",
+      "max_context_tokens": 131072,
       "display_provider": "Together.xyz",
       "cli": "ccr",
       "args_template": [
@@ -408,6 +410,7 @@
       "description": "Qwen3-Coder-480B via Together.xyz — real Claude Code CLI via ccr",
       "mainTool": "claude",
       "model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
+      "max_context_tokens": 131072,
       "display_provider": "Together.xyz",
       "cli": "ccr",
       "args_template": [
@@ -459,6 +462,7 @@
       "description": "Kimi-K2.5 via Together.xyz — real Claude Code CLI via ccr",
       "mainTool": "claude",
       "model": "moonshotai/Kimi-K2.5",
+      "max_context_tokens": 131072,
       "display_provider": "Together.xyz",
       "cli": "ccr",
       "args_template": [
@@ -510,6 +514,7 @@
       "description": "GPT-OSS-120B via Together.xyz — real Claude Code CLI via ccr",
       "mainTool": "claude",
       "model": "openai/gpt-oss-120b",
+      "max_context_tokens": 131072,
       "display_provider": "Together.xyz",
       "cli": "ccr",
       "args_template": [
@@ -560,6 +565,7 @@
       "description": "GLM-5 via Together.xyz — real Claude Code CLI via ccr",
       "mainTool": "claude",
       "model": "zai-org/GLM-5",
+      "max_context_tokens": 131072,
       "display_provider": "Together.xyz",
       "cli": "ccr",
       "args_template": [

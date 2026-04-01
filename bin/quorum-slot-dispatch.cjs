@@ -60,6 +60,7 @@ function loadNfConfig(cwd) {
  */
 function classifyDispatchError(output) {
   const s = String(output || '');
+  if (/CONTEXT_OVERFLOW/i.test(s) || /exceeds.*maximum context length|token count exceeds|too many tokens/i.test(s)) return 'CONTEXT_OVERFLOW';
   if (/RATE_LIMITED/i.test(s)) return 'RATE_LIMITED';
   if (/STALL/i.test(s)) return 'STALL';
   if (/IDLE_TIMEOUT/i.test(s)) return 'IDLE_TIMEOUT';
@@ -1313,6 +1314,66 @@ async function main() {
   if (retrievalEnabled) {
     prompt = enrichPromptWithRetrieval(prompt, question, artifactPath, cwd);
   }
+
+  // ── Pre-flight context window check (CTXWIN-01) ─────────────────────────────
+  // Estimate token count from prompt length. CCR slots prepend system prompt +
+  // tools (~30K tokens overhead). If estimated total exceeds the model's
+  // max_context_tokens, truncate enriched context or fail immediately with
+  // CONTEXT_OVERFLOW rather than wasting a slow API call that will 400.
+  const CCR_OVERHEAD_TOKENS = 40000; // system prompt + tools + response budget
+  const CHARS_PER_TOKEN = 4; // conservative estimate (English ~4 chars/token)
+  try {
+    const pPath = path.join(__dirname, 'providers.json');
+    const providers = JSON.parse(fs.readFileSync(pPath, 'utf8')).providers || [];
+    const provider = providers.find(p => p.name === slot);
+    if (provider && provider.max_context_tokens) {
+      const isCcr = provider.display_type === 'claude-code-router';
+      const overhead = isCcr ? CCR_OVERHEAD_TOKENS : 0;
+      const promptTokens = Math.ceil(prompt.length / CHARS_PER_TOKEN);
+      const totalEstimate = promptTokens + overhead;
+
+      if (totalEstimate > provider.max_context_tokens) {
+        // Try to salvage by stripping retrieved context (biggest variable-size section)
+        const retrievedIdx = prompt.indexOf('\n\n=== RETRIEVED CONTEXT ===\n');
+        if (retrievedIdx !== -1) {
+          const endIdx = prompt.indexOf('\n=========================\n', retrievedIdx);
+          if (endIdx !== -1) {
+            prompt = prompt.slice(0, retrievedIdx) + prompt.slice(endIdx + '\n=========================\n'.length);
+            process.stderr.write(`[quorum-slot-dispatch] CTXWIN-01: stripped retrieved context for ${slot} (${totalEstimate} > ${provider.max_context_tokens} tokens)\n`);
+          }
+        }
+
+        // Re-check after stripping
+        const newTokens = Math.ceil(prompt.length / CHARS_PER_TOKEN) + overhead;
+        if (newTokens > provider.max_context_tokens) {
+          // Still too large — emit CONTEXT_OVERFLOW immediately
+          const result = emitResultBlock({
+            slot,
+            round,
+            verdict: 'UNAVAIL',
+            reasoning: `CONTEXT_OVERFLOW: estimated ${newTokens} tokens exceeds ${slot} limit of ${provider.max_context_tokens} (prompt: ${Math.ceil(prompt.length / CHARS_PER_TOKEN)}, overhead: ${overhead})`,
+            rawOutput: `Prompt too large for ${slot} (${provider.model}): ~${newTokens} tokens > ${provider.max_context_tokens} max`,
+            isUnavail: true,
+            error_type: 'CONTEXT_OVERFLOW',
+            dispatch_nonce: dispatchNonce,
+            unavailMessage: `Prompt size: ${prompt.length} chars (~${Math.ceil(prompt.length / CHARS_PER_TOKEN)} tokens). Model limit: ${provider.max_context_tokens}. CCR overhead: ${overhead}.`
+          });
+          const outputFile = getArg('--output-file');
+          if (outputFile) {
+            try {
+              fs.mkdirSync(path.dirname(outputFile), { recursive: true });
+              fs.writeFileSync(outputFile, result.endsWith('\n') ? result : result + '\n', 'utf8');
+            } catch (e) {
+              process.stderr.write(`[quorum-slot-dispatch] output-file write failed: ${e.message}\n`);
+            }
+          }
+          process.stdout.write(result);
+          if (!result.endsWith('\n')) process.stdout.write('\n');
+          process.exit(0);
+        }
+      }
+    }
+  } catch (_) { /* fail-open: context check errors never block dispatch */ }
 
   // Locate call-quorum-slot.cjs relative to this script
   const cqsPath = path.join(__dirname, 'call-quorum-slot.cjs');
