@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 Phase: 53 of 53 (Skill Deprecation) — COMPLETED
 Plan: 53-01 of 1 — COMPLETED
 Status: All phases complete — /nf:model-driven-fix deprecated, all consumers rewired to /nf:debug
-Last activity: 2026-04-02 - Completed quick task 370: Add per-layer timing telemetry to nf-solve.cjs
+Last activity: 2026-04-02 - Completed quick task 371: Add timing summary section to solve-report.md
 
 Progress: [██████████] 100% (Phase 50 done; Phase 51 done; Phase 52 done; Phase 53 done)
 
@@ -90,6 +90,7 @@ None yet.
 | 369 | Add provider-level concurrency control to quorum dispatch | 2026-04-01 | 2b5bf887 | Verified | [369-add-provider-level-concurrency-control-t](./quick/369-add-provider-level-concurrency-control-t/) |
 | 370 | Implement project-level formal spec discovery with security hardening | 2026-04-01 | bc538273 | Pending | [369-implement-project-level-formal-spec-disc](./quick/369-implement-project-level-formal-spec-disc/) |
 | 371 | Add per-layer timing telemetry to nf-solve.cjs | 2026-04-02 | 286ad404 | Verified | [370-add-per-layer-timing-telemetry-to-nf-sol](./quick/370-add-per-layer-timing-telemetry-to-nf-sol/) |
+| 372 | Add timing summary section to solve-report.md | 2026-04-02 | 749472c8 | Verified | [370-add-per-layer-timing-telemetry-to-nf-sol](./quick/370-add-per-layer-timing-telemetry-to-nf-sol/) |
 
 ### Blockers/Concerns
 
