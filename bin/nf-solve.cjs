@@ -36,6 +36,8 @@
 //   node bin/nf-solve.cjs --verbose        # pipe child stderr to parent stderr
 //   node bin/nf-solve.cjs --fast           # skip F->C and T->C layers for sub-second iteration
 //   node bin/nf-solve.cjs --skip-proximity  # skip proximity index rebuild (faster re-diagnostic)
+//   node bin/nf-solve.cjs --global-timeout=300000  # override global timeout (default: 180s)
+//   node bin/nf-solve.cjs --no-timeout      # disable global timeout (for debugging/tests)
 //
 // Requirements: QUICK-140
 
@@ -130,6 +132,41 @@ const verboseMode = args.includes('--verbose');
 const fastMode = args.includes('--fast');
 const skipProximity = args.includes('--skip-proximity');
 const skipTests = args.includes('--skip-tests');
+
+// Global deadline: abort after N ms to prevent indefinite hangs.
+// Uses wall-clock checks between sync operations (setTimeout won't fire during
+// heavy sync I/O like proximity index rebuilds or test runner spawns).
+// Default: 180s (3 min). Override with --global-timeout=<ms>.
+// Disable with --no-timeout (for test suite or manual debugging).
+const DEFAULT_GLOBAL_TIMEOUT_MS = 180000;
+let globalTimeoutMs = DEFAULT_GLOBAL_TIMEOUT_MS;
+for (const arg of args) {
+  if (arg.startsWith('--global-timeout=')) {
+    const val = parseInt(arg.slice('--global-timeout='.length), 10);
+    if (!isNaN(val) && val > 0) globalTimeoutMs = val;
+  }
+}
+const _deadlineEnabled = !args.includes('--no-timeout');
+const _deadlineMs = _deadlineEnabled ? Date.now() + globalTimeoutMs : Infinity;
+let _deadlineTriggered = false;
+
+/**
+ * Check if the global deadline has been exceeded. Call this between expensive
+ * sync operations. Returns true if past deadline (caller should skip remaining work).
+ */
+function pastDeadline() {
+  if (!_deadlineEnabled || _deadlineTriggered) return _deadlineTriggered;
+  if (Date.now() > _deadlineMs) {
+    _deadlineTriggered = true;
+    process.stderr.write(TAG + ' TIMEOUT: global deadline reached (' + globalTimeoutMs + 'ms) — skipping remaining layers\n');
+  }
+  return _deadlineTriggered;
+}
+
+/** Return a skip sentinel for layers skipped due to deadline. */
+function deadlineSkip() {
+  return { residual: -1, detail: { skipped: true, reason: 'global_timeout' } };
+}
 
 // QUICK-344: Parse --skip-layers=r_to_f,f_to_t,... for incremental diagnostics
 let skipLayerSet = new Set();
@@ -3877,6 +3914,10 @@ function checkLayerSkip(layerKey) {
  * Returns residual object with forward layers + reverse discovery layers + layer alignment.
  */
 function computeResidual() {
+  // QUICK-370: Per-layer timing telemetry
+  const _diagStart = Date.now();
+  const _timing = {};
+
   // QUICK-343: Pre-run F→C (formal verification) via background child process.
   // run-formal-verify.cjs is the most expensive sweep (~30-40s). It writes
   // check-results.ndjson to disk, which sweepFtoC() then reads.
@@ -3903,32 +3944,65 @@ function computeResidual() {
   }
 
   // QUICK-344: checkLayerSkip returns skip sentinel for --skip-layers layers
-  const r_to_f = checkLayerSkip('r_to_f') || sweepRtoF();
-  const f_to_t = checkLayerSkip('f_to_t') || sweepFtoT();
-  const c_to_f = checkLayerSkip('c_to_f') || sweepCtoF();
+  // Deadline checks between layers: if past global timeout, skip remaining sweeps
+  const _t_r_to_f = Date.now();
+  const r_to_f = checkLayerSkip('r_to_f') || (pastDeadline() ? deadlineSkip() : sweepRtoF());
+  _timing.r_to_f = { duration_ms: Date.now() - _t_r_to_f, skipped: !!(r_to_f.detail && r_to_f.detail.skipped) };
+
+  const _t_f_to_t = Date.now();
+  const f_to_t = checkLayerSkip('f_to_t') || (pastDeadline() ? deadlineSkip() : sweepFtoT());
+  _timing.f_to_t = { duration_ms: Date.now() - _t_f_to_t, skipped: !!(f_to_t.detail && f_to_t.detail.skipped) };
+
+  const _t_c_to_f = Date.now();
+  const c_to_f = checkLayerSkip('c_to_f') || (pastDeadline() ? deadlineSkip() : sweepCtoF());
+  _timing.c_to_f = { duration_ms: Date.now() - _t_c_to_f, skipped: !!(c_to_f.detail && c_to_f.detail.skipped) };
+
+  const _t_t_to_c = Date.now();
   const t_to_c = checkLayerSkip('t_to_c') || ((fastMode || skipTests)
     ? { residual: -1, detail: { skipped: true, reason: skipTests ? 'skip-tests' : 'fast mode' } }
-    : sweepTtoC());
+    : (pastDeadline() ? deadlineSkip() : sweepTtoC()));
+  _timing.t_to_c = { duration_ms: Date.now() - _t_t_to_c, skipped: !!(t_to_c.detail && t_to_c.detail.skipped) };
 
   // Cross-reference V8 coverage against formal-test-sync recipe source_files
   if (t_to_c.detail && t_to_c.detail.v8_coverage) {
     t_to_c.detail.formal_coverage = crossReferenceFormalCoverage(t_to_c.detail.v8_coverage);
   }
 
+  const _t_f_to_c = Date.now();
   const f_to_c = checkLayerSkip('f_to_c') || (fastMode
     ? { residual: -1, detail: { skipped: true, reason: 'fast mode' } }
-    : sweepFtoC());
-  const r_to_d = checkLayerSkip('r_to_d') || sweepRtoD();
-  const d_to_c = checkLayerSkip('d_to_c') || sweepDtoC();
-  const p_to_f = checkLayerSkip('p_to_f') || sweepPtoF({ root: ROOT, focusSet });
+    : (pastDeadline() ? deadlineSkip() : sweepFtoC()));
+  _timing.f_to_c = { duration_ms: Date.now() - _t_f_to_c, skipped: !!(f_to_c.detail && f_to_c.detail.skipped) };
 
-  // Rebuild code-trace index for reverse sweeps
-  rebuildCodeTraceIndex();
+  const _t_r_to_d = Date.now();
+  const r_to_d = checkLayerSkip('r_to_d') || (pastDeadline() ? deadlineSkip() : sweepRtoD());
+  _timing.r_to_d = { duration_ms: Date.now() - _t_r_to_d, skipped: !!(r_to_d.detail && r_to_d.detail.skipped) };
+
+  const _t_d_to_c = Date.now();
+  const d_to_c = checkLayerSkip('d_to_c') || (pastDeadline() ? deadlineSkip() : sweepDtoC());
+  _timing.d_to_c = { duration_ms: Date.now() - _t_d_to_c, skipped: !!(d_to_c.detail && d_to_c.detail.skipped) };
+
+  const _t_p_to_f = Date.now();
+  const p_to_f = checkLayerSkip('p_to_f') || (pastDeadline() ? deadlineSkip() : sweepPtoF({ root: ROOT, focusSet }));
+  _timing.p_to_f = { duration_ms: Date.now() - _t_p_to_f, skipped: !!(p_to_f.detail && p_to_f.detail.skipped) };
+
+  // Rebuild code-trace index for reverse sweeps (skip if past deadline)
+  const _t_code_trace_rebuild = Date.now();
+  if (!pastDeadline()) rebuildCodeTraceIndex();
+  _timing.code_trace_rebuild = { duration_ms: Date.now() - _t_code_trace_rebuild, skipped: pastDeadline() };
 
   // Reverse traceability discovery (do NOT add to automatable total)
-  const c_to_r = checkLayerSkip('c_to_r') || sweepCtoR();
-  const t_to_r = checkLayerSkip('t_to_r') || sweepTtoR();
-  const d_to_r = checkLayerSkip('d_to_r') || sweepDtoR();
+  const _t_c_to_r = Date.now();
+  const c_to_r = checkLayerSkip('c_to_r') || (pastDeadline() ? deadlineSkip() : sweepCtoR());
+  _timing.c_to_r = { duration_ms: Date.now() - _t_c_to_r, skipped: !!(c_to_r.detail && c_to_r.detail.skipped) };
+
+  const _t_t_to_r = Date.now();
+  const t_to_r = checkLayerSkip('t_to_r') || (pastDeadline() ? deadlineSkip() : sweepTtoR());
+  _timing.t_to_r = { duration_ms: Date.now() - _t_t_to_r, skipped: !!(t_to_r.detail && t_to_r.detail.skipped) };
+
+  const _t_d_to_r = Date.now();
+  const d_to_r = checkLayerSkip('d_to_r') || (pastDeadline() ? deadlineSkip() : sweepDtoR());
+  _timing.d_to_r = { duration_ms: Date.now() - _t_d_to_r, skipped: !!(d_to_r.detail && d_to_r.detail.skipped) };
 
   const total =
     (r_to_f.residual >= 0 ? r_to_f.residual : 0) +
@@ -3950,11 +4024,19 @@ function computeResidual() {
 
   // Layer alignment sweeps (cross-layer gate checks) — skip in fast mode
   const skipLayer = { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
-  const l1_to_l3 = checkLayerSkip('l1_to_l3') || (fastMode ? skipLayer : sweepL1toL3());
-  const l3_to_tc = checkLayerSkip('l3_to_tc') || (fastMode ? skipLayer : sweepL3toTC());
+
+  const _t_l1_to_l3 = Date.now();
+  const l1_to_l3 = checkLayerSkip('l1_to_l3') || (fastMode || pastDeadline() ? skipLayer : sweepL1toL3());
+  _timing.l1_to_l3 = { duration_ms: Date.now() - _t_l1_to_l3, skipped: !!(l1_to_l3.detail && l1_to_l3.detail.skipped) };
+
+  const _t_l3_to_tc = Date.now();
+  const l3_to_tc = checkLayerSkip('l3_to_tc') || (fastMode || pastDeadline() ? skipLayer : sweepL3toTC());
+  _timing.l3_to_tc = { duration_ms: Date.now() - _t_l3_to_tc, skipped: !!(l3_to_tc.detail && l3_to_tc.detail.skipped) };
 
   // Per-model gate maturity (informational — not added to layer_total)
-  const per_model_gates = fastMode ? skipLayer : sweepPerModelGates();
+  const _t_per_model_gates = Date.now();
+  const per_model_gates = (fastMode || pastDeadline()) ? skipLayer : sweepPerModelGates();
+  _timing.per_model_gates = { duration_ms: Date.now() - _t_per_model_gates, skipped: !!(per_model_gates.detail && per_model_gates.detail.skipped) };
 
   // PERF-02: Clear aggregate cache after per_model_gates writes new files
   if (!fastMode) _aggregateCache = null;
@@ -3973,35 +4055,69 @@ function computeResidual() {
     (l3_to_tc.residual >= 0 ? l3_to_tc.residual : 0);
 
   // Git heatmap sweep (informational — not added to forward total)
+  const _t_git_heatmap = Date.now();
   const git_heatmap = sweepGitHeatmap();
+  _timing.git_heatmap = { duration_ms: Date.now() - _t_git_heatmap, skipped: false };
   const heatmap_total = git_heatmap.residual >= 0 ? git_heatmap.residual : 0;
 
   // Git history evidence sweep (informational — not added to forward total)
+  const _t_git_history = Date.now();
   const git_history = sweepGitHistoryEvidence();
+  _timing.git_history = { duration_ms: Date.now() - _t_git_history, skipped: false };
 
   // Formal model lint sweep (informational — not added to forward total)
+  const _t_formal_lint = Date.now();
   const formal_lint = sweepFormalLint();
+  _timing.formal_lint = { duration_ms: Date.now() - _t_formal_lint, skipped: false };
 
   // Hazard model sweep (informational — not added to forward total)
+  const _t_hazard_model = Date.now();
   const hazard_model = sweepHazardModel();
+  _timing.hazard_model = { duration_ms: Date.now() - _t_hazard_model, skipped: false };
 
   // Hypothesis measurement sweep (informational — not added to forward total)
+  const _t_h_to_m = Date.now();
   const h_to_m = sweepHtoM();
+  _timing.h_to_m = { duration_ms: Date.now() - _t_h_to_m, skipped: false };
 
   // B->F sweep: Bug-to-Formal model gap analysis (automatable — dispatches remediation)
+  const _t_b_to_f = Date.now();
   const b_to_f = sweepBtoF(t_to_c);
+  _timing.b_to_f = { duration_ms: Date.now() - _t_b_to_f, skipped: false };
 
   // Requirement quality sweep: non-invariants + low-value (automatable — archive/rephrase)
+  const _t_req_quality = Date.now();
   const req_quality = checkLayerSkip('req_quality') || sweepReqQuality();
+  _timing.req_quality = { duration_ms: Date.now() - _t_req_quality, skipped: !!(req_quality.detail && req_quality.detail.skipped) };
 
   // Diagnostic health sweeps (informational — not added to automatable total)
+  const _t_config_health = Date.now();
   const config_health = checkLayerSkip('config_health') || sweepConfigHealth();
+  _timing.config_health = { duration_ms: Date.now() - _t_config_health, skipped: !!(config_health.detail && config_health.detail.skipped) };
+
+  const _t_security = Date.now();
   const security = checkLayerSkip('security') || sweepSecurity();
+  _timing.security = { duration_ms: Date.now() - _t_security, skipped: !!(security.detail && security.detail.skipped) };
+
+  const _t_trace_health = Date.now();
   const trace_health = checkLayerSkip('trace_health') || sweepTraceHealth();
+  _timing.trace_health = { duration_ms: Date.now() - _t_trace_health, skipped: !!(trace_health.detail && trace_health.detail.skipped) };
+
+  const _t_asset_stale = Date.now();
   const asset_stale = checkLayerSkip('asset_stale') || sweepAssetStaleness();
+  _timing.asset_stale = { duration_ms: Date.now() - _t_asset_stale, skipped: !!(asset_stale.detail && asset_stale.detail.skipped) };
+
+  const _t_arch_constraints = Date.now();
   const arch_constraints = checkLayerSkip('arch_constraints') || sweepArchConstraints();
+  _timing.arch_constraints = { duration_ms: Date.now() - _t_arch_constraints, skipped: !!(arch_constraints.detail && arch_constraints.detail.skipped) };
+
+  const _t_debt_health = Date.now();
   const debt_health = checkLayerSkip('debt_health') || sweepDebtHealth();
+  _timing.debt_health = { duration_ms: Date.now() - _t_debt_health, skipped: !!(debt_health.detail && debt_health.detail.skipped) };
+
+  const _t_memory_health = Date.now();
   const memory_health = checkLayerSkip('memory_health') || sweepMemoryHealth();
+  _timing.memory_health = { duration_ms: Date.now() - _t_memory_health, skipped: !!(memory_health.detail && memory_health.detail.skipped) };
 
   // CONV-02: Split residual into three distinct buckets
   const automatable =
@@ -4077,6 +4193,9 @@ function computeResidual() {
     heatmap_total,
     focus: focusPhrase ? { phrase: focusPhrase, matched: focusSet ? focusSet.size : 0 } : null,
     timestamp: new Date().toISOString(),
+    // QUICK-370: Per-layer timing telemetry
+    timing: _timing,
+    total_diagnostic_ms: Date.now() - _diagStart,
   };
 }
 
@@ -5179,6 +5298,12 @@ function formatJSON(iterations, finalResidual, converged) {
     health: health,
     complexity_profile: complexityProfile,
     oscillation: oscillation,
+    // QUICK-370: Per-layer timing telemetry
+    timing: (function () {
+      const t = finalResidual.timing || {};
+      t.total_diagnostic_ms = finalResidual.total_diagnostic_ms || 0;
+      return t;
+    })(),
     capped_layers: [],
     baseline_drift: { detected: false, layers: [], warning: null },
   };
@@ -5869,6 +5994,8 @@ module.exports = {
   computeFPRates,
   applyFPTuning,
   formatFPRateTable,
+  pastDeadline,
+  deadlineSkip,
 };
 
 // ── Entry point ──────────────────────────────────────────────────────────────

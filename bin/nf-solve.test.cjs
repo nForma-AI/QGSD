@@ -1724,8 +1724,9 @@ test('TC-CODE-TRACE-7: computeResidual rebuilds code-trace index before sweeps',
 
   // Find computeResidual and verify rebuildCodeTraceIndex is called before c_to_r
   // QUICK-344: c_to_r now uses checkLayerSkip wrapper, so match the broader pattern
-  const computeMatch = src.match(/function computeResidual\(\)[\s\S]*?const c_to_r = (?:checkLayerSkip.*\|\| )?sweepCtoR/);
-  assert.ok(computeMatch, 'computeResidual should call sweepCtoR (possibly via checkLayerSkip)');
+  // Deadline guard adds pastDeadline() ? deadlineSkip() : sweepCtoR pattern
+  const computeMatch = src.match(/function computeResidual\(\)[\s\S]*?const c_to_r = (?:checkLayerSkip.*\|\| )?(?:\(pastDeadline\(\) \? deadlineSkip\(\) : )?sweepCtoR/);
+  assert.ok(computeMatch, 'computeResidual should call sweepCtoR (possibly via checkLayerSkip and/or deadline guard)');
 
   const computeFn = computeMatch[0];
   assert.ok(computeFn.includes('rebuildCodeTraceIndex()'),
