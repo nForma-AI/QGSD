@@ -1,0 +1,15 @@
+{
+  "nf/quick-370-add-per-layer-timing-telemetry-to-nf-sol": {
+    "task_id": 370,
+    "task_description": "Add per-layer timing telemetry to nf-solve.cjs",
+    "approach": "Wrap each sweepX() call in computeResidual() with Date.now() deltas and emit a timing object in JSON output with layer-level duration_ms and skipped flags plus total_diagnostic_ms.",
+    "out_of_scope": ["Modifying sweep function implementations", "Creating dashboard or visualization", "Persisting timing data to disk", "Comparing timing against historical baselines"],
+    "classification": {"type": "feature", "confidence": 0.95, "routed_through_debug": false},
+    "risk_level": "low",
+    "risk_reason": "Single file touched with <80-line diff, no requirements or system components affected.",
+    "branches_affected": ["nf/quick-370-add-per-layer-timing-telemetry-to-nf-sol"],
+    "created_at": "2026-04-02T13:15:14.224Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}
