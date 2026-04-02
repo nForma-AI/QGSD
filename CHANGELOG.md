@@ -6,6 +6,23 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.41.7] - 2026-04-02 — Solve Telemetry & Robustness
+
+Comprehensive observability for the `/nf:solve` pipeline: per-layer timing, global deadline, session-aware token tracking, and convergence analysis tooling. Fixes diagnostic hang caused by unbounded test suite execution.
+
+### Added
+- `feat(solve)`: per-layer timing telemetry — 29 sweep calls timed with `Date.now()` deltas, `timing` object in JSON output with `{ layer_key: { duration_ms, skipped } }` and `total_diagnostic_ms`
+- `feat(solve)`: diagnostic timing summary in solve-report (Step 6.3) — top-5 slowest layers, total wall-clock, skipped count
+- `feat(solve)`: session-aware token tracking via `NF_SOLVE_SESSION_ID` env var propagated through Agent subprocesses
+- `feat(solve)`: convergence timeline analysis tool (`bin/analyze-solve-convergence.cjs`) — sparklines, per-layer trends, requirement growth, timing bottlenecks
+- `feat(solve)`: global deadline mechanism (`--global-timeout=<ms>`, default 180s) — wall-clock checks between sync operations prevent indefinite hangs
+- `feat(solve)`: `--fast` default for initial diagnostic — skips T→C test execution and F→C formal verification layers, reducing diagnostic from ~30min to ~2.5s
+- `feat(solve)`: `--full` flag to opt in to expensive T→C/F→C layers
+- `feat(solve)`: `--no-timeout` flag to disable global deadline (for debugging/tests)
+
+### Fixed
+- `fix(resolve)`: use `nf-bin` path resolution for `solve-tui.cjs` instead of `PROJECT_ROOT` — fixes `/nf:resolve` failing in user projects where nForma bin/ tools aren't in the project directory
+
 ## [0.41.6] - 2026-04-02 — Quorum Infrastructure Overhaul & Project-Level Formal Specs
 
 Major quorum infrastructure overhaul: HTTP API dispatch for claude-1..6, Option C file-based slot output, slot-worker hardening, truncation integrity pipeline, and file write reliability (25% → 100%). New project-level formal spec discovery with security-hardened execution.
