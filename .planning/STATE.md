@@ -89,7 +89,7 @@ None yet.
 | 368 | 3-layer robust quorum fail-fast | 2026-03-31 | cd8f893f | Verified | [368-robust-quorum-fail-fast-3-layers](./quick/368-robust-quorum-fail-fast-3-layers/) |
 | 369 | Add provider-level concurrency control to quorum dispatch | 2026-04-01 | 2b5bf887 | Verified | [369-add-provider-level-concurrency-control-t](./quick/369-add-provider-level-concurrency-control-t/) |
 | 370 | Implement project-level formal spec discovery with security hardening | 2026-04-01 | bc538273 | Pending | [369-implement-project-level-formal-spec-disc](./quick/369-implement-project-level-formal-spec-disc/) |
-| 371 | Add per-layer timing telemetry to nf-solve.cjs | 2026-04-02 | 286ad404 | Pending | [370-add-per-layer-timing-telemetry-to-nf-sol](./quick/370-add-per-layer-timing-telemetry-to-nf-sol/) |
+| 371 | Add per-layer timing telemetry to nf-solve.cjs | 2026-04-02 | 286ad404 | Verified | [370-add-per-layer-timing-telemetry-to-nf-sol](./quick/370-add-per-layer-timing-telemetry-to-nf-sol/) |
 
 ### Blockers/Concerns
 
