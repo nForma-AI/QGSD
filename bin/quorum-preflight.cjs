@@ -290,50 +290,58 @@ async function probeHealth(providers) {
 
   await Promise.all(providers.map(async (p) => {
     const isCcr = p.display_type === 'claude-code-router';
+    const isHttp = p.type === 'http';
 
-    // Layer 1: binary probe (all slots)
-    const layer1Promise = probeBinary(p.cli, p.health_check_args || []);
+    // Layer 1: binary probe (CLI slots only — HTTP slots have no binary)
+    const layer1Promise = isHttp
+      ? Promise.resolve({ ok: true, skipped: true, reason: 'HTTP slot — no CLI binary' })
+      : probeBinary(p.cli, p.health_check_args || []);
 
-    // Layer 2: upstream API probe (ccr slots only)
+    // Layer 2: upstream API probe (ccr slots AND http slots)
     let layer2Promise;
-    if (!isCcr) {
-      layer2Promise = Promise.resolve({ ok: true, skipped: true, reason: 'no upstream API' });
-    } else {
-      // Extract ANTHROPIC_BASE_URL from mcpServers env
+    let baseUrl, apiKey;
+    if (isHttp) {
+      // HTTP slots have baseUrl and apiKeyEnv directly in providers.json
+      baseUrl = p.baseUrl;
+      apiKey = p.apiKeyEnv ? process.env[p.apiKeyEnv] : undefined;
+    } else if (isCcr) {
+      // CCR slots: extract from mcpServers env in ~/.claude.json
       const mcpEntry = mcpServers[p.name];
       const env = mcpEntry?.env ?? {};
-      const baseUrl = env.ANTHROPIC_BASE_URL;
-      const apiKey = env.ANTHROPIC_API_KEY;
+      baseUrl = env.ANTHROPIC_BASE_URL;
+      apiKey = env.ANTHROPIC_API_KEY;
+    }
 
-      if (!baseUrl) {
-        layer2Promise = Promise.resolve({ ok: true, skipped: true, reason: 'ANTHROPIC_BASE_URL not configured' });
+    if (!isCcr && !isHttp) {
+      layer2Promise = Promise.resolve({ ok: true, skipped: true, reason: 'no upstream API' });
+    } else if (!baseUrl) {
+      layer2Promise = Promise.resolve({ ok: true, skipped: true, reason: isHttp ? 'baseUrl not configured' : 'ANTHROPIC_BASE_URL not configured' });
+    } else {
+      const normalizedUrl = normalizeBaseUrl(baseUrl);
+      // Check cache first
+      const cached = getCachedResult(cache, normalizedUrl);
+      if (cached) {
+        const remaining = Math.round(cached.remainingMs / 1000);
+        layer2Promise = Promise.resolve({
+          ok: cached.healthy,
+          reason: cached.healthy ? `HTTP ${cached.statusCode}` : (cached.error || 'cached DOWN'),
+          latencyMs: cached.latencyMs,
+          cacheAge: `cached`,
+        });
       } else {
-        const normalizedUrl = normalizeBaseUrl(baseUrl);
-        // Check cache first
-        const cached = getCachedResult(cache, normalizedUrl);
-        if (cached) {
-          const remaining = Math.round(cached.remainingMs / 1000);
-          layer2Promise = Promise.resolve({
-            ok: cached.healthy,
-            reason: cached.healthy ? `HTTP ${cached.statusCode}` : (cached.error || 'cached DOWN'),
-            latencyMs: cached.latencyMs,
-            cacheAge: `cached`,
-          });
-        } else {
-          // Run live probe
-          layer2Promise = probeUpstreamApi(baseUrl, apiKey).then((result) => {
-            // Write to cache
-            cache.entries[normalizedUrl] = {
-              healthy:    result.ok,
-              statusCode: result.statusCode ?? null,
-              error:      result.ok ? null : result.reason,
-              latencyMs:  result.latencyMs,
-              cachedAt:   Date.now(),
-            };
-            saveCache(cache);
-            return { ...result, cacheAge: 'fresh' };
-          });
-        }
+        // Run live probe
+        layer2Promise = probeUpstreamApi(baseUrl, apiKey).then((result) => {
+          // Write to cache
+          cache.entries[normalizedUrl] = {
+            healthy:    result.ok,
+            statusCode: result.statusCode ?? null,
+            error:      result.ok ? null : result.reason,
+            latencyMs:  result.latencyMs,
+            cachedAt:   Date.now(),
+          };
+          saveCache(cache);
+          return { ...result, cacheAge: 'fresh' };
+        });
       }
     }
 
