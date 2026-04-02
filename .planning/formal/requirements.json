@@ -6039,7 +6039,8 @@
       "provenance": {
         "source_file": "bin/quorum-slot-dispatch.cjs",
         "source_line": "1296-1320"
-      }
+      },
+      "status": "Complete"
     },
     {
       "id": "TRUNC-02",
@@ -6050,7 +6051,8 @@
       "provenance": {
         "source_file": "bin/quorum-slot-dispatch.cjs",
         "source_line": "800-816, 1033, 1344-1346"
-      }
+      },
+      "status": "Complete"
     },
     {
       "id": "TRUNC-03",
@@ -6061,7 +6063,8 @@
       "provenance": {
         "source_file": "hooks/nf-stop.js",
         "source_line": "494-496"
-      }
+      },
+      "status": "Complete"
     },
     {
       "id": "TRUNC-04",
@@ -6072,7 +6075,8 @@
       "provenance": {
         "source_file": "bin/call-quorum-slot.cjs",
         "source_line": "57-80"
-      }
+      },
+      "status": "Complete"
     },
     {
       "id": "TRUNC-05",
@@ -6083,7 +6087,8 @@
       "provenance": {
         "source_file": "bin/quorum-slot-dispatch.cjs",
         "source_line": "1032-1037"
-      }
+      },
+      "status": "Complete"
     }
   ],
   "schema_version": "1",
