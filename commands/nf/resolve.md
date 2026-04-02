@@ -42,7 +42,8 @@ When batching similar items, still use AskUserQuestion to confirm the batch acti
 
 Write this to /private/tmp/nf-resolve-load.cjs and run it:
 ```javascript
-const st = require("<PROJECT_ROOT>/bin/solve-tui.cjs");
+const _nfBin = (n) => { const p = require('path').join(require('os').homedir(), '.claude/nf-bin', n); return require('fs').existsSync(p) ? p : './bin/' + n; };
+const st = require(_nfBin('solve-tui.cjs'));
 const path = require('path');
 const fs = require('fs');
 const data = st.loadSweepData();

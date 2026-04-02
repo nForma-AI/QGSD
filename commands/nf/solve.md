@@ -28,10 +28,10 @@ RAM BUDGET: Never exceed 3 concurrent subagent Tasks at any point during
 execution. Sub-skill Agent calls are sequential (diagnose -> remediate -> report).
 
 Sub-skill files (do NOT @-include — they are loaded by Agent subprocesses):
-- ~/.claude/commands/nf/solve-diagnose.md (Steps 0-1)
-- ~/.claude/commands/nf/solve-classify.md (Haiku pre-classification)
-- ~/.claude/commands/nf/solve-remediate.md (Steps 3a-3m)
-- ~/.claude/commands/nf/solve-report.md (Steps 6-8)
+- /Users/jonathanborduas/.claude/commands/nf/solve-diagnose.md (Steps 0-1)
+- /Users/jonathanborduas/.claude/commands/nf/solve-classify.md (Haiku pre-classification)
+- /Users/jonathanborduas/.claude/commands/nf/solve-remediate.md (Steps 3a-3m)
+- /Users/jonathanborduas/.claude/commands/nf/solve-report.md (Steps 6-8)
 
 Path resolution: Always use $HOME/.claude/commands/nf/ paths in Agent prompts.
 Falls back to commands/nf/ (CWD-relative) only if the home path doesn't exist.
@@ -51,6 +51,8 @@ Initialize at the very start of the process block:
   - If args contain `--plan-only`, set `planOnly = true`. Otherwise, set `planOnly = false`.
   - If args contain `--execute`, set `executeMode = true`. Otherwise, set `executeMode = false`.
   - If args contain `--resume`, set `resumeMode = true`. Otherwise, set `resumeMode = false`.
+  - Generate `solveSessionId = Date.now().toString(36)` — unique ID for this solve run.
+  - Export it: run `export NF_SOLVE_SESSION_ID={solveSessionId}` in the shell so all Bash commands and Agent subprocesses inherit it. The token collector hook reads this env var to tag token records with the solve session.
 Use `focusPhrase` in Phase 3b bash command and Phase 4 Agent call.
 
 **Two-phase solve (QUICK-345):**
@@ -64,10 +66,10 @@ Use `focusPhrase` in Phase 3b bash command and Phase 4 Agent call.
 If `executeMode` or `resumeMode` is true, load the saved solve session instead of running Phase 1:
 
 ```bash
-SESSION=$(node ~/.claude/nf-bin/solve-session.cjs read --project-root=$(pwd) 2>/dev/null)
+SESSION=$(node /Users/jonathanborduas/.claude/nf-bin/solve-session.cjs read --project-root=$(pwd) 2>/dev/null)
 ```
 
-If `~/.claude/nf-bin/solve-session.cjs` does not exist, fall back to `bin/solve-session.cjs`.
+If `/Users/jonathanborduas/.claude/nf-bin/solve-session.cjs` does not exist, fall back to `bin/solve-session.cjs`.
 
 Parse the JSON output:
 - If session is null: log `"No saved solve session found — running fresh diagnostic"` and proceed to Phase 1 normally.
@@ -83,15 +85,15 @@ When `verboseMode` is false, run the diagnostic sweep directly via Bash instead 
 
 **Step 1a: Load open debt** (needed for convergence debt checks in Phase 3):
 ```bash
-DEBT_JSON=$(node ~/.claude/nf-bin/solve-debt-bridge.cjs --read-open --project-root=$(pwd) 2>/dev/null || echo '{"entries":[]}')
+DEBT_JSON=$(node /Users/jonathanborduas/.claude/nf-bin/solve-debt-bridge.cjs --read-open --project-root=$(pwd) 2>/dev/null || echo '{"entries":[]}')
 ```
-If `~/.claude/nf-bin/solve-debt-bridge.cjs` does not exist or fails, set `open_debt = []` (fail-open).
+If `/Users/jonathanborduas/.claude/nf-bin/solve-debt-bridge.cjs` does not exist or fails, set `open_debt = []` (fail-open).
 
 **Step 1b: Run diagnostic sweep:**
 ```bash
-BASELINE_RAW=$(node ~/.claude/nf-bin/nf-solve.cjs --json --report-only --project-root=$(pwd)${focusPhrase:+ --focus="$focusPhrase"} 2>/dev/null)
+BASELINE_RAW=$(node /Users/jonathanborduas/.claude/nf-bin/nf-solve.cjs --json --report-only --project-root=$(pwd)${focusPhrase:+ --focus="$focusPhrase"} 2>/dev/null)
 ```
-If `~/.claude/nf-bin/nf-solve.cjs` does not exist, fall back to `bin/nf-solve.cjs` (CWD-relative).
+If `/Users/jonathanborduas/.claude/nf-bin/nf-solve.cjs` does not exist, fall back to `bin/nf-solve.cjs` (CWD-relative).
 
 **IMPORTANT:** nf-solve.cjs may emit non-JSON diagnostic lines to stdout before the JSON object (e.g., `[nf-solve] Rebuilding proximity index`). Always extract the JSON by finding the first `{` character in the output. Write the raw output to a temp file, then parse:
 ```bash
@@ -250,10 +252,10 @@ Before dispatching the remediation Agent, run trivial layers directly to save Ag
 ```bash
 # Write residual_vector to temp file for the inline dispatch script
 echo '$RESIDUAL_VECTOR_JSON' > /tmp/nf-solve-residual.json
-INLINE=$(node ~/.claude/nf-bin/solve-inline-dispatch.cjs --input=/tmp/nf-solve-residual.json --project-root=$(pwd) 2>/dev/null)
+INLINE=$(node /Users/jonathanborduas/.claude/nf-bin/solve-inline-dispatch.cjs --input=/tmp/nf-solve-residual.json --project-root=$(pwd) 2>/dev/null)
 ```
 
-If `~/.claude/nf-bin/solve-inline-dispatch.cjs` does not exist, fall back to `bin/solve-inline-dispatch.cjs`.
+If `/Users/jonathanborduas/.claude/nf-bin/solve-inline-dispatch.cjs` does not exist, fall back to `bin/solve-inline-dispatch.cjs`.
 If the script fails or returns invalid JSON, default to: `{"inline_results":{},"skip_layers":[],"preflight_data":{}}`
 
 Parse the JSON output:
@@ -303,16 +305,16 @@ If the remediation Agent returned `files_touched` in its output JSON (array of f
 # Compute which layers to skip based on files touched by remediation
 SKIP_LAYERS=""
 if [ -n "$FILES_TOUCHED_JSON" ]; then
-  FILTER=$(echo "$FILES_TOUCHED_JSON" | node ~/.claude/nf-bin/solve-incremental-filter.cjs 2>/dev/null)
+  FILTER=$(echo "$FILES_TOUCHED_JSON" | node /Users/jonathanborduas/.claude/nf-bin/solve-incremental-filter.cjs 2>/dev/null)
   if [ $? -eq 0 ]; then
     SKIP_LAYERS=$(echo "$FILTER" | node -p "JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')).skip_layers.join(',')" 2>/dev/null)
   fi
 fi
 
-POST=$(node ~/.claude/nf-bin/nf-solve.cjs --json --report-only --fast --project-root=$(pwd)${focusPhrase:+ --focus="$focusPhrase"}${SKIP_LAYERS:+ --skip-layers="$SKIP_LAYERS"})
+POST=$(node /Users/jonathanborduas/.claude/nf-bin/nf-solve.cjs --json --report-only --fast --project-root=$(pwd)${focusPhrase:+ --focus="$focusPhrase"}${SKIP_LAYERS:+ --skip-layers="$SKIP_LAYERS"})
 ```
 
-If `~/.claude/nf-bin/solve-incremental-filter.cjs` or `nf-solve.cjs` does not exist, fall back to CWD-relative paths.
+If `/Users/jonathanborduas/.claude/nf-bin/solve-incremental-filter.cjs` or `nf-solve.cjs` does not exist, fall back to CWD-relative paths.
 If incremental filtering fails (script error, no files_touched in output), run the full diagnostic with no --skip-layers (fail-open).
 Parse `post_residual` from the JSON output.
 
@@ -370,7 +372,7 @@ Agent(
   description="solve: final report",
   prompt="First resolve the sub-skill path: try $HOME/.claude/commands/nf/solve-report.md, fall back to commands/nf/solve-report.md if not found. Read and follow it end-to-end.
 Input context (JSON):
-{\"baseline_residual\": ..., \"post_residual\": ..., \"iteration_count\": N, \"flags\": {\"verbose\": bool, \"json\": bool}, \"focus\": focusPhrase ? {\"phrase\": focusPhrase} : null}
+{\"baseline_residual\": ..., \"post_residual\": ..., \"iteration_count\": N, \"flags\": {\"verbose\": bool, \"json\": bool}, \"focus\": focusPhrase ? {\"phrase\": focusPhrase} : null, \"timing\": post_residual.timing || null}
 Note: baseline_residual is the session-start snapshot. The report sub-skill independently re-snapshots at report time for baseline drift detection (CONV-04) via Step 6.2.
 Display all tables and reports as described in the process section."
 )

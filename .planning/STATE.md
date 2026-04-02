@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 Phase: 53 of 53 (Skill Deprecation) — COMPLETED
 Plan: 53-01 of 1 — COMPLETED
 Status: All phases complete — /nf:model-driven-fix deprecated, all consumers rewired to /nf:debug
-Last activity: 2026-04-01 - Completed quick task 370: Implement project-level formal spec discovery with security hardening
+Last activity: 2026-04-02 - Completed quick task 373: Create convergence timeline analysis tool
 
 Progress: [██████████] 100% (Phase 50 done; Phase 51 done; Phase 52 done; Phase 53 done)
 
@@ -89,6 +89,10 @@ None yet.
 | 368 | 3-layer robust quorum fail-fast | 2026-03-31 | cd8f893f | Verified | [368-robust-quorum-fail-fast-3-layers](./quick/368-robust-quorum-fail-fast-3-layers/) |
 | 369 | Add provider-level concurrency control to quorum dispatch | 2026-04-01 | 2b5bf887 | Verified | [369-add-provider-level-concurrency-control-t](./quick/369-add-provider-level-concurrency-control-t/) |
 | 370 | Implement project-level formal spec discovery with security hardening | 2026-04-01 | bc538273 | Pending | [369-implement-project-level-formal-spec-disc](./quick/369-implement-project-level-formal-spec-disc/) |
+| 371 | Add per-layer timing telemetry to nf-solve.cjs | 2026-04-02 | 286ad404 | Verified | [370-add-per-layer-timing-telemetry-to-nf-sol](./quick/370-add-per-layer-timing-telemetry-to-nf-sol/) |
+| 372 | Add timing summary section to solve-report.md | 2026-04-02 | 749472c8 | Verified | [371-add-timing-summary-section-to-solve-repo](./quick/371-add-timing-summary-section-to-solve-repo/) |
+| 373 | Add session-aware token tracking to solve pipeline | 2026-04-02 | ef011ca5 | Verified | [371-add-timing-summary-section-to-solve-repo](./quick/371-add-timing-summary-section-to-solve-repo/) |
+| 374 | Create convergence timeline analysis tool | 2026-04-02 | af6c7e72 | Verified | [372-create-convergence-timeline-analysis-tool](./quick/372-create-convergence-timeline-analysis-tool/) | [370-add-per-layer-timing-telemetry-to-nf-sol](./quick/370-add-per-layer-timing-telemetry-to-nf-sol/) |
 
 ### Blockers/Concerns
 

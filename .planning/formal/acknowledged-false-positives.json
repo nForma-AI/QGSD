@@ -476,6 +476,24 @@
       "value": "7ab1ed566fb26e59",
       "reason": "Acknowledged via TUI",
       "acknowledged_at": "2026-03-27T08:37:11.900Z"
+    },
+    {
+      "source": "D->R",
+      "value": "3c74f0da38caae95",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-04-02T12:23:57.680Z"
+    },
+    {
+      "source": "D->R",
+      "value": "83ee0d11c4c07f65",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-04-02T12:23:57.682Z"
+    },
+    {
+      "source": "T->R",
+      "value": "bin/provider-concurrency.test.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-04-02T12:25:36.405Z"
     }
   ],
   "patterns": [

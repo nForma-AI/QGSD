@@ -746,6 +746,41 @@
       "id": "QPREC-03",
       "reason": "implementation_structure",
       "acknowledged_at": "2026-03-26T11:13:19.780Z"
+    },
+    {
+      "file_or_claim": "bin/diagnostic-diff-generator.cjs",
+      "category": "C",
+      "reason": "quorum-no-consensus (external slots unavailable/stalled during solve iteration 1)",
+      "acknowledged_at": "2026-04-02T12:16:27.479Z",
+      "scanner": "c_to_r"
+    },
+    {
+      "file_or_claim": "bin/provider-concurrency.cjs",
+      "category": "C",
+      "reason": "quorum-no-consensus (external slots unavailable/stalled during solve iteration 1)",
+      "acknowledged_at": "2026-04-02T12:16:27.479Z",
+      "scanner": "c_to_r"
+    },
+    {
+      "file_or_claim": "bin/provider-concurrency.test.cjs",
+      "category": "T",
+      "reason": "quorum-no-consensus (external slots unavailable/stalled during solve iteration 1)",
+      "acknowledged_at": "2026-04-02T12:16:27.479Z",
+      "scanner": "t_to_r"
+    },
+    {
+      "file_or_claim": "README.md:702 — /nf:solve pipeline handles it end-to-end",
+      "category": "D",
+      "reason": "quorum-no-consensus (external slots unavailable/stalled during solve iteration 1)",
+      "acknowledged_at": "2026-04-02T12:16:27.479Z",
+      "scanner": "d_to_r"
+    },
+    {
+      "file_or_claim": "docs/USER-GUIDE.md:291 — nForma provides commands for the full project lifecycle",
+      "category": "D",
+      "reason": "quorum-no-consensus (external slots unavailable/stalled during solve iteration 1)",
+      "acknowledged_at": "2026-04-02T12:16:27.479Z",
+      "scanner": "d_to_r"
     }
   ]
 }

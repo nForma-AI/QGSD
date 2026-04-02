@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-26T18:42:33.792Z",
-  "content_hash": "d7d45ef6d3f96bb7f7b2ef465ac8ba5dbaa0e6dc40372e97a887d80eed54863b",
+  "aggregated_at": "2026-04-02T12:25:14.847Z",
+  "content_hash": "2d204be9c12fe019",
   "requirements": [
     {
       "id": "ACT-01",
@@ -6089,6 +6089,16 @@
         "source_line": "1032-1037"
       },
       "status": "Complete"
+    },
+    {
+      "id": "SOLVE-10",
+      "text": "Quorum dispatch MUST enforce per-provider concurrency limits via file-based semaphores to prevent rate-limit cascades when multiple slots share an API provider",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "bin/provider-concurrency.cjs",
+        "milestone": "solver-tui"
+      }
     }
   ],
   "schema_version": "1",
