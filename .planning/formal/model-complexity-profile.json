@@ -1,10 +1,82 @@
 {
   "metadata": {
-    "generated_at": "2026-04-01T16:32:32.286Z",
+    "generated_at": "2026-04-02T11:59:51.411Z",
     "generator": "model-complexity-profile",
     "version": "1.0"
   },
   "profiles": {
+    "alloy:semantics-layer": {
+      "formalism": "alloy",
+      "runtime_ms": 4971,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "prism:quorum": {
+      "formalism": "prism",
+      "runtime_ms": 4213,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:event-vocabulary": {
+      "formalism": "alloy",
+      "runtime_ms": 4916,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:config-audit": {
+      "formalism": "alloy",
+      "runtime_ms": 5184,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mcconfigloader": {
+      "formalism": "tla",
+      "runtime_ms": 3034,
+      "estimated_states": 24,
+      "risk_level": "MINIMAL",
+      "variable_count": 4,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:reliability-patterns": {
+      "formalism": "alloy",
+      "runtime_ms": 5258,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:config-two-layer": {
+      "formalism": "alloy",
+      "runtime_ms": 5210,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:provider-configuration": {
+      "formalism": "alloy",
+      "runtime_ms": 4761,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mcqgsdquorum": {
+      "formalism": "tla",
+      "runtime_ms": 2927,
+      "estimated_states": 160,
+      "risk_level": "MINIMAL",
+      "variable_count": 3,
+      "runtime_class": "MODERATE"
+    },
     "petri:account-manager-petri-net": {
       "formalism": "petri",
       "runtime_ms": 0,
@@ -21,144 +93,24 @@
       "variable_count": null,
       "runtime_class": "FAST"
     },
-    "ci:trace-redaction": {
-      "formalism": "redaction",
-      "runtime_ms": 1,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "ci:trace-schema-drift": {
-      "formalism": "trace",
-      "runtime_ms": 35,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "ci:liveness-fairness-lint": {
-      "formalism": "tla",
-      "runtime_ms": 2,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "ci:conformance-traces": {
-      "formalism": "trace",
-      "runtime_ms": 556,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "tla:mcagentloop": {
-      "formalism": "tla",
-      "runtime_ms": 0,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "tla:mcbugmodellookup": {
-      "formalism": "tla",
-      "runtime_ms": 0,
-      "estimated_states": null,
-      "risk_level": "HIGH",
-      "variable_count": 6,
-      "runtime_class": "FAST"
-    },
-    "tla:mcconvergencetest": {
-      "formalism": "tla",
-      "runtime_ms": 0,
-      "estimated_states": null,
-      "risk_level": "MODERATE",
-      "variable_count": 3,
-      "runtime_class": "FAST"
-    },
-    "tla:mcdeliberationrevision": {
-      "formalism": "tla",
-      "runtime_ms": 0,
-      "estimated_states": null,
-      "risk_level": "MODERATE",
-      "variable_count": 3,
-      "runtime_class": "FAST"
-    },
-    "tla:mcgatepromotion": {
-      "formalism": "tla",
-      "runtime_ms": 0,
-      "estimated_states": null,
-      "risk_level": "HIGH",
-      "variable_count": 7,
-      "runtime_class": "FAST"
-    },
-    "tla:mcp-environment": {
-      "formalism": "tla",
-      "runtime_ms": 0,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "tla:mcnfdispatch": {
-      "formalism": "tla",
-      "runtime_ms": 686,
-      "estimated_states": null,
-      "risk_level": "HIGH",
-      "variable_count": 4,
-      "runtime_class": "FAST"
-    },
-    "tla:mcnfhazardmodelmerge": {
-      "formalism": "tla",
-      "runtime_ms": 1587,
-      "estimated_states": null,
-      "risk_level": "HIGH",
-      "variable_count": 5,
-      "runtime_class": "MODERATE"
-    },
-    "tla:mcnfoutputintegrity": {
-      "formalism": "tla",
-      "runtime_ms": 934,
-      "estimated_states": null,
-      "risk_level": "HIGH",
-      "variable_count": 8,
-      "runtime_class": "FAST"
-    },
-    "tla:mcnfquorum": {
-      "formalism": "tla",
-      "runtime_ms": 324,
-      "estimated_states": 160,
-      "risk_level": "MINIMAL",
-      "variable_count": 3,
-      "runtime_class": "FAST"
-    },
-    "tla:mcnfscopeguard": {
-      "formalism": "tla",
-      "runtime_ms": 326,
-      "estimated_states": null,
-      "risk_level": "HIGH",
-      "variable_count": 6,
-      "runtime_class": "FAST"
-    },
-    "tla:mcnfsimulationloop": {
-      "formalism": "tla",
-      "runtime_ms": 312,
-      "estimated_states": null,
-      "risk_level": "HIGH",
-      "variable_count": 8,
-      "runtime_class": "FAST"
-    },
-    "tla:mcqgsdquorum": {
-      "formalism": "tla",
-      "runtime_ms": 306,
-      "estimated_states": 160,
-      "risk_level": "MINIMAL",
-      "variable_count": 3,
-      "runtime_class": "FAST"
-    },
     "tla:mcsessionpersistence": {
       "formalism": "tla",
+      "runtime_ms": 0,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "alloy:quorum-improvements": {
+      "formalism": "alloy",
+      "runtime_ms": 4790,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "ci:trace-redaction": {
+      "formalism": "redaction",
       "runtime_ms": 0,
       "estimated_states": null,
       "risk_level": null,
@@ -173,12 +125,92 @@
       "variable_count": 4,
       "runtime_class": "FAST"
     },
+    "tla:convergence": {
+      "formalism": "tla",
+      "runtime_ms": 2358,
+      "estimated_states": null,
+      "risk_level": "MODERATE",
+      "variable_count": 3,
+      "runtime_class": "MODERATE"
+    },
+    "ci:trace-schema-drift": {
+      "formalism": "trace",
+      "runtime_ms": 85,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:mcnfoutputintegrity": {
+      "formalism": "tla",
+      "runtime_ms": 8338,
+      "estimated_states": null,
+      "risk_level": "HIGH",
+      "variable_count": 8,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mcdashboard": {
+      "formalism": "tla",
+      "runtime_ms": 0,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "alloy:multi-slot-structure": {
+      "formalism": "alloy",
+      "runtime_ms": 5118,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
     "tla:mcsessiontracking": {
       "formalism": "tla",
       "runtime_ms": 0,
       "estimated_states": null,
       "risk_level": "HIGH",
       "variable_count": 8,
+      "runtime_class": "FAST"
+    },
+    "alloy:solve-legacy-merge": {
+      "formalism": "alloy",
+      "runtime_ms": 5185,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:focus-topic-filter": {
+      "formalism": "alloy",
+      "runtime_ms": 5054,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "ci:liveness-fairness-lint": {
+      "formalism": "tla",
+      "runtime_ms": 15,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "alloy:semantics-operational": {
+      "formalism": "alloy",
+      "runtime_ms": 5007,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mcdebtledger": {
+      "formalism": "tla",
+      "runtime_ms": 0,
+      "estimated_states": null,
+      "risk_level": "HIGH",
+      "variable_count": 3,
       "runtime_class": "FAST"
     },
     "tla:mcsolveconvergencev2": {
@@ -189,6 +221,14 @@
       "variable_count": 3,
       "runtime_class": "FAST"
     },
+    "alloy:evidence-layer": {
+      "formalism": "alloy",
+      "runtime_ms": 4958,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
     "tla:mcsolvefastpath": {
       "formalism": "tla",
       "runtime_ms": 0,
@@ -197,141 +237,45 @@
       "variable_count": 5,
       "runtime_class": "FAST"
     },
-    "tla:stop-hook": {
+    "alloy:rename-migration": {
+      "formalism": "alloy",
+      "runtime_ms": 5087,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:config-zero-providers": {
+      "formalism": "alloy",
+      "runtime_ms": 5100,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mcnfquorum": {
       "formalism": "tla",
-      "runtime_ms": 296,
-      "estimated_states": 24,
+      "runtime_ms": 3513,
+      "estimated_states": 160,
       "risk_level": "MINIMAL",
-      "variable_count": 4,
-      "runtime_class": "FAST"
-    },
-    "tla:mctuimodules": {
-      "formalism": "tla",
-      "runtime_ms": 289,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "tla:mctuinavigation": {
-      "formalism": "tla",
-      "runtime_ms": 290,
-      "estimated_states": 8,
-      "risk_level": "MINIMAL",
-      "variable_count": 2,
-      "runtime_class": "FAST"
-    },
-    "tla:mctuisessions": {
-      "formalism": "tla",
-      "runtime_ms": 0,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "tla:mctaskclassification": {
-      "formalism": "tla",
-      "runtime_ms": 324,
-      "estimated_states": null,
-      "risk_level": "MODERATE",
-      "variable_count": 4,
-      "runtime_class": "FAST"
-    },
-    "tla:account-manager": {
-      "formalism": "tla",
-      "runtime_ms": 339,
-      "estimated_states": null,
-      "risk_level": "HIGH",
-      "variable_count": 2,
-      "runtime_class": "FAST"
-    },
-    "tla:mcactivity": {
-      "formalism": "tla",
-      "runtime_ms": 0,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "tla:mcagent-prov": {
-      "formalism": "tla",
-      "runtime_ms": 0,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "tla:mcbreaker-state": {
-      "formalism": "tla",
-      "runtime_ms": 0,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "tla:breaker": {
-      "formalism": "tla",
-      "runtime_ms": 293,
-      "estimated_states": 4,
-      "risk_level": "MINIMAL",
-      "variable_count": 2,
-      "runtime_class": "FAST"
-    },
-    "tla:mccheckpointgate": {
-      "formalism": "tla",
-      "runtime_ms": 303,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "tla:mcci-checks": {
-      "formalism": "tla",
-      "runtime_ms": 0,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "tla:mcconfigloader": {
-      "formalism": "tla",
-      "runtime_ms": 288,
-      "estimated_states": 24,
-      "risk_level": "MINIMAL",
-      "variable_count": 4,
-      "runtime_class": "FAST"
-    },
-    "tla:convergence": {
-      "formalism": "tla",
-      "runtime_ms": 294,
-      "estimated_states": null,
-      "risk_level": "MODERATE",
       "variable_count": 3,
-      "runtime_class": "FAST"
-    },
-    "tla:mcdashboard": {
-      "formalism": "tla",
-      "runtime_ms": 0,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "tla:mcdebtledger": {
-      "formalism": "tla",
-      "runtime_ms": 0,
-      "estimated_states": null,
-      "risk_level": "HIGH",
-      "variable_count": 3,
-      "runtime_class": "FAST"
+      "runtime_class": "MODERATE"
     },
     "tla:deliberation": {
       "formalism": "tla",
-      "runtime_ms": 321,
+      "runtime_ms": 2510,
       "estimated_states": null,
       "risk_level": "MODERATE",
       "variable_count": 3,
-      "runtime_class": "FAST"
+      "runtime_class": "MODERATE"
+    },
+    "alloy:provider-failure": {
+      "formalism": "alloy",
+      "runtime_ms": 4737,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
     },
     "tla:mcdispatch": {
       "formalism": "tla",
@@ -341,13 +285,101 @@
       "variable_count": 4,
       "runtime_class": "FAST"
     },
-    "tla:mcenforcement": {
+    "tla:stop-hook": {
       "formalism": "tla",
-      "runtime_ms": 291,
+      "runtime_ms": 2278,
+      "estimated_states": 24,
+      "risk_level": "MINIMAL",
+      "variable_count": 4,
+      "runtime_class": "MODERATE"
+    },
+    "ci:conformance-traces": {
+      "formalism": "trace",
+      "runtime_ms": 11471,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "SLOW"
+    },
+    "alloy:quorum-policy": {
+      "formalism": "alloy",
+      "runtime_ms": 5111,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mcnfscopeguard": {
+      "formalism": "tla",
+      "runtime_ms": 3026,
+      "estimated_states": null,
+      "risk_level": "HIGH",
+      "variable_count": 6,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:multi-slot": {
+      "formalism": "alloy",
+      "runtime_ms": 5101,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:formal-test-trace": {
+      "formalism": "alloy",
+      "runtime_ms": 4994,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mcagentloop": {
+      "formalism": "tla",
+      "runtime_ms": 0,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
       "runtime_class": "FAST"
+    },
+    "alloy:solve-net-residual": {
+      "formalism": "alloy",
+      "runtime_ms": 5244,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mcenforcement": {
+      "formalism": "tla",
+      "runtime_ms": 2661,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mcbugmodellookup": {
+      "formalism": "tla",
+      "runtime_ms": 0,
+      "estimated_states": null,
+      "risk_level": "HIGH",
+      "variable_count": 6,
+      "runtime_class": "FAST"
+    },
+    "alloy:session-counter-tracking": {
+      "formalism": "alloy",
+      "runtime_ms": 4973,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mctuimodules": {
+      "formalism": "tla",
+      "runtime_ms": 2436,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
     },
     "tla:mcimprovement": {
       "formalism": "tla",
@@ -357,7 +389,127 @@
       "variable_count": 2,
       "runtime_class": "FAST"
     },
+    "tla:mcconvergencetest": {
+      "formalism": "tla",
+      "runtime_ms": 0,
+      "estimated_states": null,
+      "risk_level": "MODERATE",
+      "variable_count": 3,
+      "runtime_class": "FAST"
+    },
+    "alloy:evidence-scope-scan": {
+      "formalism": "alloy",
+      "runtime_ms": 5005,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
     "tla:mcinstaller": {
+      "formalism": "tla",
+      "runtime_ms": 0,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:mcdeliberationrevision": {
+      "formalism": "tla",
+      "runtime_ms": 0,
+      "estimated_states": null,
+      "risk_level": "MODERATE",
+      "variable_count": 3,
+      "runtime_class": "FAST"
+    },
+    "tla:mcnfsimulationloop": {
+      "formalism": "tla",
+      "runtime_ms": 2993,
+      "estimated_states": null,
+      "risk_level": "HIGH",
+      "variable_count": 8,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mcgatepromotion": {
+      "formalism": "tla",
+      "runtime_ms": 0,
+      "estimated_states": null,
+      "risk_level": "HIGH",
+      "variable_count": 7,
+      "runtime_class": "FAST"
+    },
+    "alloy:provider-wizard": {
+      "formalism": "alloy",
+      "runtime_ms": 5033,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:requirements-aggregation": {
+      "formalism": "alloy",
+      "runtime_ms": 5786,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:quorum-safety": {
+      "formalism": "tla",
+      "runtime_ms": 3042,
+      "estimated_states": 160,
+      "risk_level": "MINIMAL",
+      "variable_count": 3,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:constraint-extraction": {
+      "formalism": "alloy",
+      "runtime_ms": 5155,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mcp-environment": {
+      "formalism": "tla",
+      "runtime_ms": 0,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "alloy:quorum-precedents": {
+      "formalism": "alloy",
+      "runtime_ms": 5089,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mctuinavigation": {
+      "formalism": "tla",
+      "runtime_ms": 2697,
+      "estimated_states": 8,
+      "risk_level": "MINIMAL",
+      "variable_count": 2,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:formalism-selection": {
+      "formalism": "alloy",
+      "runtime_ms": 4972,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:nn-pairing-lifecycle": {
+      "formalism": "alloy",
+      "runtime_ms": 5254,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mctuisessions": {
       "formalism": "tla",
       "runtime_ms": 0,
       "estimated_states": null,
@@ -367,11 +519,19 @@
     },
     "tla:mckey-mgmt": {
       "formalism": "tla",
-      "runtime_ms": 322,
+      "runtime_ms": 2467,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
-      "runtime_class": "FAST"
+      "runtime_class": "MODERATE"
+    },
+    "alloy:settings-hub": {
+      "formalism": "alloy",
+      "runtime_ms": 5430,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
     },
     "tla:mclearning": {
       "formalism": "tla",
@@ -381,13 +541,77 @@
       "variable_count": 2,
       "runtime_class": "FAST"
     },
+    "tla:mcnfdispatch": {
+      "formalism": "tla",
+      "runtime_ms": 2710,
+      "estimated_states": null,
+      "risk_level": "HIGH",
+      "variable_count": 4,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:solve-performance-structure": {
+      "formalism": "alloy",
+      "runtime_ms": 6139,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:proximity-index": {
+      "formalism": "alloy",
+      "runtime_ms": 4854,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:evidence-triage": {
+      "formalism": "alloy",
+      "runtime_ms": 4860,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mctaskclassification": {
+      "formalism": "tla",
+      "runtime_ms": 2984,
+      "estimated_states": null,
+      "risk_level": "MODERATE",
+      "variable_count": 4,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:quorum-votes": {
+      "formalism": "alloy",
+      "runtime_ms": 4904,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:result-classification": {
+      "formalism": "alloy",
+      "runtime_ms": 5120,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
     "tla:quorum-liveness": {
       "formalism": "tla",
-      "runtime_ms": 339,
+      "runtime_ms": 3002,
       "estimated_states": 160,
       "risk_level": "MINIMAL",
       "variable_count": 3,
-      "runtime_class": "FAST"
+      "runtime_class": "MODERATE"
+    },
+    "alloy:coverage-link-suppression": {
+      "formalism": "alloy",
+      "runtime_ms": 5359,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
     },
     "tla:mcmemorypersist": {
       "formalism": "tla",
@@ -405,12 +629,92 @@
       "variable_count": 2,
       "runtime_class": "FAST"
     },
+    "alloy:fp-rate-tuning": {
+      "formalism": "alloy",
+      "runtime_ms": 5114,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:observability-analysis": {
+      "formalism": "alloy",
+      "runtime_ms": 5210,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:account-manager": {
+      "formalism": "tla",
+      "runtime_ms": 2724,
+      "estimated_states": null,
+      "risk_level": "HIGH",
+      "variable_count": 2,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mcactivity": {
+      "formalism": "tla",
+      "runtime_ms": 0,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "alloy:fingerprinting-dedup": {
+      "formalism": "alloy",
+      "runtime_ms": 4916,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mcagent-prov": {
+      "formalism": "tla",
+      "runtime_ms": 0,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "alloy:signal-analysis-tools": {
+      "formalism": "alloy",
+      "runtime_ms": 6574,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:solve-pf-layer": {
+      "formalism": "alloy",
+      "runtime_ms": 5275,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mcbreaker-state": {
+      "formalism": "tla",
+      "runtime_ms": 0,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
     "tla:oscillation": {
       "formalism": "tla",
-      "runtime_ms": 1374,
+      "runtime_ms": 2449,
       "estimated_states": null,
       "risk_level": "HIGH",
       "variable_count": 6,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:root-cause-enforcement": {
+      "formalism": "alloy",
+      "runtime_ms": 5094,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
       "runtime_class": "MODERATE"
     },
     "tla:mcpolicy": {
@@ -421,21 +725,157 @@
       "variable_count": 2,
       "runtime_class": "FAST"
     },
+    "alloy:debate-trace-persistence": {
+      "formalism": "alloy",
+      "runtime_ms": 4952,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:readme-structure": {
+      "formalism": "alloy",
+      "runtime_ms": 4929,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:proximity-pipeline": {
+      "formalism": "alloy",
+      "runtime_ms": 5991,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:fv-cicd-invariant": {
+      "formalism": "alloy",
+      "runtime_ms": 5136,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:observability-handler-arch": {
+      "formalism": "alloy",
+      "runtime_ms": 5070,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:breaker": {
+      "formalism": "tla",
+      "runtime_ms": 2566,
+      "estimated_states": 4,
+      "risk_level": "MINIMAL",
+      "variable_count": 2,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:fingerprinting": {
+      "formalism": "alloy",
+      "runtime_ms": 5020,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
     "tla:mcportability": {
       "formalism": "tla",
-      "runtime_ms": 294,
+      "runtime_ms": 2841,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mcnfhazardmodelmerge": {
+      "formalism": "tla",
+      "runtime_ms": 13128,
+      "estimated_states": null,
+      "risk_level": "HIGH",
+      "variable_count": 5,
+      "runtime_class": "SLOW"
+    },
+    "alloy:solve-result-schema": {
+      "formalism": "alloy",
+      "runtime_ms": 5058,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:solve-automation-features": {
+      "formalism": "alloy",
+      "runtime_ms": 5790,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:root-cause-quorum": {
+      "formalism": "alloy",
+      "runtime_ms": 5139,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mccheckpointgate": {
+      "formalism": "tla",
+      "runtime_ms": 2758,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:debt-lifecycle": {
+      "formalism": "alloy",
+      "runtime_ms": 5410,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:reasoning-fmea": {
+      "formalism": "alloy",
+      "runtime_ms": 5236,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:quality-hardening": {
+      "formalism": "alloy",
+      "runtime_ms": 5392,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mcci-checks": {
+      "formalism": "tla",
+      "runtime_ms": 0,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
       "runtime_class": "FAST"
     },
+    "alloy:gate-a-scoping": {
+      "formalism": "alloy",
+      "runtime_ms": 5678,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
     "tla:prefilter": {
       "formalism": "tla",
-      "runtime_ms": 322,
+      "runtime_ms": 3482,
       "estimated_states": null,
       "risk_level": "MODERATE",
       "variable_count": 4,
-      "runtime_class": "FAST"
+      "runtime_class": "MODERATE"
     },
     "tla:mcprompt-hook": {
       "formalism": "tla",
@@ -445,6 +885,14 @@
       "variable_count": null,
       "runtime_class": "FAST"
     },
+    "alloy:observability-handlers": {
+      "formalism": "alloy",
+      "runtime_ms": 6397,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
     "tla:mcreasoning": {
       "formalism": "tla",
       "runtime_ms": 0,
@@ -453,29 +901,157 @@
       "variable_count": 2,
       "runtime_class": "FAST"
     },
+    "alloy:solve-consistency": {
+      "formalism": "alloy",
+      "runtime_ms": 5087,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:solve-session-persistence": {
+      "formalism": "alloy",
+      "runtime_ms": 6004,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:schema-extensions": {
+      "formalism": "alloy",
+      "runtime_ms": 5350,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:decomp-cross-model": {
+      "formalism": "alloy",
+      "runtime_ms": 4828,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:gate-architecture": {
+      "formalism": "alloy",
+      "runtime_ms": 4906,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:regression-verification": {
+      "formalism": "alloy",
+      "runtime_ms": 5700,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:quorum-composition": {
+      "formalism": "alloy",
+      "runtime_ms": 5187,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
     "tla:mcrecruiting-liveness": {
       "formalism": "tla",
-      "runtime_ms": 299,
+      "runtime_ms": 3013,
       "estimated_states": null,
       "risk_level": "HIGH",
       "variable_count": 3,
-      "runtime_class": "FAST"
+      "runtime_class": "MODERATE"
+    },
+    "alloy:parallel-exec": {
+      "formalism": "alloy",
+      "runtime_ms": 4775,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:solve-decomposition": {
+      "formalism": "alloy",
+      "runtime_ms": 5049,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:solve-tc-coverage": {
+      "formalism": "alloy",
+      "runtime_ms": 5046,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:deprecation-routing": {
+      "formalism": "alloy",
+      "runtime_ms": 4759,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
     },
     "tla:mcrecruiting-safety": {
       "formalism": "tla",
-      "runtime_ms": 290,
+      "runtime_ms": 2772,
       "estimated_states": null,
       "risk_level": "HIGH",
       "variable_count": 3,
-      "runtime_class": "FAST"
+      "runtime_class": "MODERATE"
     },
-    "tla:quorum-safety": {
-      "formalism": "tla",
-      "runtime_ms": 344,
-      "estimated_states": 160,
-      "risk_level": "MINIMAL",
-      "variable_count": 3,
-      "runtime_class": "FAST"
+    "alloy:gate-auto-promotion": {
+      "formalism": "alloy",
+      "runtime_ms": 5399,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:reliability-hardening": {
+      "formalism": "alloy",
+      "runtime_ms": 5005,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:parallel-execution": {
+      "formalism": "alloy",
+      "runtime_ms": 4705,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:scoreboard": {
+      "formalism": "alloy",
+      "runtime_ms": 6674,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:solve-diagnostics-tui": {
+      "formalism": "alloy",
+      "runtime_ms": 5122,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:diagnostics-verification": {
+      "formalism": "alloy",
+      "runtime_ms": 4634,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
     },
     "tla:mcsensitivity": {
       "formalism": "tla",
@@ -485,6 +1061,22 @@
       "variable_count": null,
       "runtime_class": "FAST"
     },
+    "alloy:solve-triage-display": {
+      "formalism": "alloy",
+      "runtime_ms": 5449,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:gate-naming-migration": {
+      "formalism": "alloy",
+      "runtime_ms": 5224,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
     "tla:mcsolve-convergence": {
       "formalism": "tla",
       "runtime_ms": 0,
@@ -492,6 +1084,14 @@
       "risk_level": "MODERATE",
       "variable_count": 3,
       "runtime_class": "FAST"
+    },
+    "alloy:platform-install-compat": {
+      "formalism": "alloy",
+      "runtime_ms": 4793,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
     },
     "tla:mcsolve-orchestrator": {
       "formalism": "tla",
@@ -501,13 +1101,45 @@
       "variable_count": 8,
       "runtime_class": "FAST"
     },
-    "tla:mcsolve-report-only": {
-      "formalism": "tla",
-      "runtime_ms": 337,
+    "alloy:security-hardening": {
+      "formalism": "alloy",
+      "runtime_ms": 5289,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
-      "runtime_class": "FAST"
+      "runtime_class": "MODERATE"
+    },
+    "alloy:solve-ft-recipe": {
+      "formalism": "alloy",
+      "runtime_ms": 5180,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:diagnostics": {
+      "formalism": "alloy",
+      "runtime_ms": 4755,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mcsolve-report-only": {
+      "formalism": "tla",
+      "runtime_ms": 3185,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:solve-tui-features": {
+      "formalism": "alloy",
+      "runtime_ms": 5157,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
     },
     "tla:mcsolvep2f": {
       "formalism": "tla",
@@ -524,6 +1156,22 @@
       "risk_level": null,
       "variable_count": null,
       "runtime_class": "FAST"
+    },
+    "alloy:gate-promotion-lifecycle": {
+      "formalism": "alloy",
+      "runtime_ms": 5364,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:polyrepo-config": {
+      "formalism": "alloy",
+      "runtime_ms": 4704,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
     },
     "tla:mctokenopt": {
       "formalism": "tla",
@@ -549,1073 +1197,49 @@
       "variable_count": null,
       "runtime_class": "FAST"
     },
+    "alloy:security-scanning": {
+      "formalism": "alloy",
+      "runtime_ms": 5067,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
     "alloy:account-pool": {
       "formalism": "alloy",
-      "runtime_ms": 2424,
+      "runtime_ms": 4898,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
       "runtime_class": "MODERATE"
-    },
-    "alloy:agent-context-payload": {
-      "formalism": "alloy",
-      "runtime_ms": 1011,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:agent-fsm-detection": {
-      "formalism": "alloy",
-      "runtime_ms": 950,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:annotation-extraction": {
-      "formalism": "alloy",
-      "runtime_ms": 827,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:architecture-registry": {
-      "formalism": "alloy",
-      "runtime_ms": 1063,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:autoclose-signals": {
-      "formalism": "alloy",
-      "runtime_ms": 729,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:availability": {
-      "formalism": "alloy",
-      "runtime_ms": 869,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:baseline-merge-idempotent": {
-      "formalism": "alloy",
-      "runtime_ms": 825,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:baseline-requirements-filter": {
-      "formalism": "alloy",
-      "runtime_ms": 801,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:bin-path-resolution": {
-      "formalism": "alloy",
-      "runtime_ms": 1260,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:btf-layer-integration": {
-      "formalism": "alloy",
-      "runtime_ms": 861,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:build-test-quality": {
-      "formalism": "alloy",
-      "runtime_ms": 828,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:ccr-binary-resolution": {
-      "formalism": "alloy",
-      "runtime_ms": 875,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:changelog-release": {
-      "formalism": "alloy",
-      "runtime_ms": 832,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:ci-matrix": {
-      "formalism": "alloy",
-      "runtime_ms": 866,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:ci-pipeline-gates": {
-      "formalism": "alloy",
-      "runtime_ms": 791,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:ci-quality-gates": {
-      "formalism": "alloy",
-      "runtime_ms": 942,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:ci-test-fallback": {
-      "formalism": "alloy",
-      "runtime_ms": 972,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:classification-retry-patterns": {
-      "formalism": "alloy",
-      "runtime_ms": 937,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:classification-schema": {
-      "formalism": "alloy",
-      "runtime_ms": 918,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:cli-exit-conventions": {
-      "formalism": "alloy",
-      "runtime_ms": 811,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:code-quality-guardrails": {
-      "formalism": "alloy",
-      "runtime_ms": 811,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:codebase-arch-constraints": {
-      "formalism": "alloy",
-      "runtime_ms": 867,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:config-audit": {
-      "formalism": "alloy",
-      "runtime_ms": 896,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:config-two-layer": {
-      "formalism": "alloy",
-      "runtime_ms": 1219,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:config-zero-providers": {
-      "formalism": "alloy",
-      "runtime_ms": 801,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:constraint-extraction": {
-      "formalism": "alloy",
-      "runtime_ms": 864,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:coverage-link-suppression": {
-      "formalism": "alloy",
-      "runtime_ms": 893,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:debate-trace-persistence": {
-      "formalism": "alloy",
-      "runtime_ms": 863,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:debt-lifecycle": {
-      "formalism": "alloy",
-      "runtime_ms": 796,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:decomp-cross-model": {
-      "formalism": "alloy",
-      "runtime_ms": 1033,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:deprecation-routing": {
-      "formalism": "alloy",
-      "runtime_ms": 815,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:diagnostics-verification": {
-      "formalism": "alloy",
-      "runtime_ms": 862,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:diagnostics": {
-      "formalism": "alloy",
-      "runtime_ms": 764,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
     },
     "alloy:dispatch-formal-context": {
       "formalism": "alloy",
-      "runtime_ms": 901,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:doc-claims-backing": {
-      "formalism": "alloy",
-      "runtime_ms": 1026,
+      "runtime_ms": 5081,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
       "runtime_class": "MODERATE"
-    },
-    "alloy:doc-presentation": {
-      "formalism": "alloy",
-      "runtime_ms": 1253,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:doc-public-boundary": {
-      "formalism": "alloy",
-      "runtime_ms": 1264,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:event-vocabulary": {
-      "formalism": "alloy",
-      "runtime_ms": 803,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:evidence-layer": {
-      "formalism": "alloy",
-      "runtime_ms": 779,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:evidence-scope-scan": {
-      "formalism": "alloy",
-      "runtime_ms": 922,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:evidence-triage": {
-      "formalism": "alloy",
-      "runtime_ms": 1487,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:fingerprinting-dedup": {
-      "formalism": "alloy",
-      "runtime_ms": 938,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:fingerprinting": {
-      "formalism": "alloy",
-      "runtime_ms": 807,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:focus-topic-filter": {
-      "formalism": "alloy",
-      "runtime_ms": 824,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:formal-test-trace": {
-      "formalism": "alloy",
-      "runtime_ms": 747,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:formalism-selection": {
-      "formalism": "alloy",
-      "runtime_ms": 778,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:fp-rate-tuning": {
-      "formalism": "alloy",
-      "runtime_ms": 800,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:fv-cicd-invariant": {
-      "formalism": "alloy",
-      "runtime_ms": 807,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:gate-a-scoping": {
-      "formalism": "alloy",
-      "runtime_ms": 815,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:gate-architecture": {
-      "formalism": "alloy",
-      "runtime_ms": 760,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:gate-auto-promotion": {
-      "formalism": "alloy",
-      "runtime_ms": 817,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:gate-naming-migration": {
-      "formalism": "alloy",
-      "runtime_ms": 814,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:gate-promotion-lifecycle": {
-      "formalism": "alloy",
-      "runtime_ms": 843,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:gate-scoring-traces": {
-      "formalism": "alloy",
-      "runtime_ms": 847,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:git-history-evidence": {
-      "formalism": "alloy",
-      "runtime_ms": 753,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:governance-dx": {
-      "formalism": "alloy",
-      "runtime_ms": 1165,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:gsd-sync-invariants": {
-      "formalism": "alloy",
-      "runtime_ms": 860,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:headless-execution": {
-      "formalism": "alloy",
-      "runtime_ms": 1744,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:health-diagnostic-routing": {
-      "formalism": "alloy",
-      "runtime_ms": 801,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:health-validation": {
-      "formalism": "alloy",
-      "runtime_ms": 838,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:hook-module-existence": {
-      "formalism": "alloy",
-      "runtime_ms": 767,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:hook-portability-guard": {
-      "formalism": "alloy",
-      "runtime_ms": 797,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:hypothesis-measurement": {
-      "formalism": "alloy",
-      "runtime_ms": 1016,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:hypothesis-targeting": {
-      "formalism": "alloy",
-      "runtime_ms": 855,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
     },
     "alloy:install-scope": {
       "formalism": "alloy",
-      "runtime_ms": 806,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:installer-path-validation": {
-      "formalism": "alloy",
-      "runtime_ms": 835,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:installer-sync": {
-      "formalism": "alloy",
-      "runtime_ms": 845,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:integration-layers": {
-      "formalism": "alloy",
-      "runtime_ms": 806,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:intent-approach-block": {
-      "formalism": "alloy",
-      "runtime_ms": 986,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:jvm-heap-sequential": {
-      "formalism": "alloy",
-      "runtime_ms": 957,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:mcp-detection": {
-      "formalism": "alloy",
-      "runtime_ms": 924,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:mcp-repair-lifecycle": {
-      "formalism": "alloy",
-      "runtime_ms": 1030,
+      "runtime_ms": 4929,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
       "runtime_class": "MODERATE"
     },
-    "alloy:memory-persistence": {
+    "alloy:gate-scoring-traces": {
       "formalism": "alloy",
-      "runtime_ms": 1588,
+      "runtime_ms": 5584,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
       "runtime_class": "MODERATE"
     },
-    "alloy:meta-resolve": {
+    "alloy:transcript": {
       "formalism": "alloy",
-      "runtime_ms": 2589,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:misc-behavioral": {
-      "formalism": "alloy",
-      "runtime_ms": 1447,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:model-registry-parity": {
-      "formalism": "alloy",
-      "runtime_ms": 1240,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:multi-slot-structure": {
-      "formalism": "alloy",
-      "runtime_ms": 1025,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:multi-slot": {
-      "formalism": "alloy",
-      "runtime_ms": 959,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:nn-pairing-lifecycle": {
-      "formalism": "alloy",
-      "runtime_ms": 1004,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:observability-analysis": {
-      "formalism": "alloy",
-      "runtime_ms": 1026,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:observability-handler-arch": {
-      "formalism": "alloy",
-      "runtime_ms": 1412,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:observability-handlers": {
-      "formalism": "alloy",
-      "runtime_ms": 1175,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:parallel-exec": {
-      "formalism": "alloy",
-      "runtime_ms": 1031,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:parallel-execution": {
-      "formalism": "alloy",
-      "runtime_ms": 1671,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:platform-install-compat": {
-      "formalism": "alloy",
-      "runtime_ms": 957,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:polyrepo-config": {
-      "formalism": "alloy",
-      "runtime_ms": 1059,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:predictive-power": {
-      "formalism": "alloy",
-      "runtime_ms": 1011,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:prism-delegation": {
-      "formalism": "alloy",
-      "runtime_ms": 1578,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:project-identity": {
-      "formalism": "alloy",
-      "runtime_ms": 1101,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:provider-configuration": {
-      "formalism": "alloy",
-      "runtime_ms": 1069,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:provider-failure": {
-      "formalism": "alloy",
-      "runtime_ms": 1015,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:provider-wizard": {
-      "formalism": "alloy",
-      "runtime_ms": 1911,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:proximity-index": {
-      "formalism": "alloy",
-      "runtime_ms": 1185,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:proximity-pipeline": {
-      "formalism": "alloy",
-      "runtime_ms": 1277,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:quality-hardening": {
-      "formalism": "alloy",
-      "runtime_ms": 2426,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:quorum-composition": {
-      "formalism": "alloy",
-      "runtime_ms": 1524,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:quorum-improvements": {
-      "formalism": "alloy",
-      "runtime_ms": 1353,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:quorum-policy": {
-      "formalism": "alloy",
-      "runtime_ms": 1167,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:quorum-precedents": {
-      "formalism": "alloy",
-      "runtime_ms": 1111,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:quorum-votes": {
-      "formalism": "alloy",
-      "runtime_ms": 958,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:readme-structure": {
-      "formalism": "alloy",
-      "runtime_ms": 978,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:reasoning-fmea": {
-      "formalism": "alloy",
-      "runtime_ms": 915,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:regression-verification": {
-      "formalism": "alloy",
-      "runtime_ms": 997,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:reliability-hardening": {
-      "formalism": "alloy",
-      "runtime_ms": 1125,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:reliability-patterns": {
-      "formalism": "alloy",
-      "runtime_ms": 900,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:rename-migration": {
-      "formalism": "alloy",
-      "runtime_ms": 2416,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:requirements-aggregation": {
-      "formalism": "alloy",
-      "runtime_ms": 1151,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:result-classification": {
-      "formalism": "alloy",
-      "runtime_ms": 991,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:root-cause-enforcement": {
-      "formalism": "alloy",
-      "runtime_ms": 1833,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:root-cause-quorum": {
-      "formalism": "alloy",
-      "runtime_ms": 1022,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:schema-extensions": {
-      "formalism": "alloy",
-      "runtime_ms": 1060,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:scoreboard": {
-      "formalism": "alloy",
-      "runtime_ms": 1350,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:security-hardening": {
-      "formalism": "alloy",
-      "runtime_ms": 1257,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:security-scanning": {
-      "formalism": "alloy",
-      "runtime_ms": 1313,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:semantics-layer": {
-      "formalism": "alloy",
-      "runtime_ms": 1132,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:semantics-operational": {
-      "formalism": "alloy",
-      "runtime_ms": 1743,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:session-counter-tracking": {
-      "formalism": "alloy",
-      "runtime_ms": 1599,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:settings-hub": {
-      "formalism": "alloy",
-      "runtime_ms": 1550,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:signal-analysis-tools": {
-      "formalism": "alloy",
-      "runtime_ms": 2124,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:solve-automation-features": {
-      "formalism": "alloy",
-      "runtime_ms": 1283,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:solve-consistency": {
-      "formalism": "alloy",
-      "runtime_ms": 933,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:solve-decomposition": {
-      "formalism": "alloy",
-      "runtime_ms": 1029,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:solve-diagnostics-tui": {
-      "formalism": "alloy",
-      "runtime_ms": 1174,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:solve-ft-recipe": {
-      "formalism": "alloy",
-      "runtime_ms": 1039,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:solve-legacy-merge": {
-      "formalism": "alloy",
-      "runtime_ms": 1236,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:solve-net-residual": {
-      "formalism": "alloy",
-      "runtime_ms": 3830,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:solve-performance-structure": {
-      "formalism": "alloy",
-      "runtime_ms": 1318,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:solve-pf-layer": {
-      "formalism": "alloy",
-      "runtime_ms": 1253,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:solve-result-schema": {
-      "formalism": "alloy",
-      "runtime_ms": 965,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "alloy:solve-session-persistence": {
-      "formalism": "alloy",
-      "runtime_ms": 1793,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:solve-tc-coverage": {
-      "formalism": "alloy",
-      "runtime_ms": 1226,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:solve-triage-display": {
-      "formalism": "alloy",
-      "runtime_ms": 1182,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "alloy:solve-tui-features": {
-      "formalism": "alloy",
-      "runtime_ms": 1578,
+      "runtime_ms": 5049,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -1623,7 +1247,39 @@
     },
     "alloy:solver-doc-layers": {
       "formalism": "alloy",
-      "runtime_ms": 1183,
+      "runtime_ms": 5428,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:predictive-power": {
+      "formalism": "alloy",
+      "runtime_ms": 4720,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:doc-claims-backing": {
+      "formalism": "alloy",
+      "runtime_ms": 4604,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:git-history-evidence": {
+      "formalism": "alloy",
+      "runtime_ms": 5580,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:prism-delegation": {
+      "formalism": "alloy",
+      "runtime_ms": 4626,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -1631,7 +1287,31 @@
     },
     "alloy:solver-portability": {
       "formalism": "alloy",
-      "runtime_ms": 2093,
+      "runtime_ms": 5545,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:agent-context-payload": {
+      "formalism": "alloy",
+      "runtime_ms": 5205,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:doc-presentation": {
+      "formalism": "alloy",
+      "runtime_ms": 5099,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:governance-dx": {
+      "formalism": "alloy",
+      "runtime_ms": 5166,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -1639,7 +1319,31 @@
     },
     "alloy:spec-audit": {
       "formalism": "alloy",
-      "runtime_ms": 3807,
+      "runtime_ms": 5041,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:project-identity": {
+      "formalism": "alloy",
+      "runtime_ms": 4901,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:agent-fsm-detection": {
+      "formalism": "alloy",
+      "runtime_ms": 4980,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:doc-public-boundary": {
+      "formalism": "alloy",
+      "runtime_ms": 4926,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -1647,23 +1351,79 @@
     },
     "alloy:spec-quality-guardrails": {
       "formalism": "alloy",
-      "runtime_ms": 792,
+      "runtime_ms": 5121,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
-      "runtime_class": "FAST"
+      "runtime_class": "MODERATE"
+    },
+    "alloy:gsd-sync-invariants": {
+      "formalism": "alloy",
+      "runtime_ms": 5354,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:annotation-extraction": {
+      "formalism": "alloy",
+      "runtime_ms": 4883,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:headless-execution": {
+      "formalism": "alloy",
+      "runtime_ms": 5117,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
     },
     "alloy:state-space-analysis": {
       "formalism": "alloy",
-      "runtime_ms": 931,
+      "runtime_ms": 5129,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
-      "runtime_class": "FAST"
+      "runtime_class": "MODERATE"
+    },
+    "alloy:architecture-registry": {
+      "formalism": "alloy",
+      "runtime_ms": 5155,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:health-diagnostic-routing": {
+      "formalism": "alloy",
+      "runtime_ms": 5268,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
     },
     "alloy:statusline-context-tiers": {
       "formalism": "alloy",
-      "runtime_ms": 1166,
+      "runtime_ms": 5184,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:autoclose-signals": {
+      "formalism": "alloy",
+      "runtime_ms": 5002,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:health-validation": {
+      "formalism": "alloy",
+      "runtime_ms": 5202,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -1671,15 +1431,47 @@
     },
     "alloy:subagent-orchestration": {
       "formalism": "alloy",
-      "runtime_ms": 975,
+      "runtime_ms": 5188,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
-      "runtime_class": "FAST"
+      "runtime_class": "MODERATE"
+    },
+    "alloy:availability": {
+      "formalism": "alloy",
+      "runtime_ms": 5094,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:hook-module-existence": {
+      "formalism": "alloy",
+      "runtime_ms": 5052,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
     },
     "alloy:taxonomy-safety": {
       "formalism": "alloy",
-      "runtime_ms": 1014,
+      "runtime_ms": 4932,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:baseline-merge-idempotent": {
+      "formalism": "alloy",
+      "runtime_ms": 5202,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:hook-portability-guard": {
+      "formalism": "alloy",
+      "runtime_ms": 5110,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -1687,7 +1479,23 @@
     },
     "alloy:terminal-emulation-purity": {
       "formalism": "alloy",
-      "runtime_ms": 1041,
+      "runtime_ms": 5075,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:baseline-requirements-filter": {
+      "formalism": "alloy",
+      "runtime_ms": 5119,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:hypothesis-measurement": {
+      "formalism": "alloy",
+      "runtime_ms": 5241,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -1695,7 +1503,23 @@
     },
     "alloy:test-infrastructure": {
       "formalism": "alloy",
-      "runtime_ms": 1416,
+      "runtime_ms": 5636,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:bin-path-resolution": {
+      "formalism": "alloy",
+      "runtime_ms": 5038,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:hypothesis-targeting": {
+      "formalism": "alloy",
+      "runtime_ms": 5144,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -1703,7 +1527,15 @@
     },
     "alloy:test-link-annotations": {
       "formalism": "alloy",
-      "runtime_ms": 1021,
+      "runtime_ms": 4885,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:btf-layer-integration": {
+      "formalism": "alloy",
+      "runtime_ms": 5328,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -1711,15 +1543,47 @@
     },
     "alloy:token-optimization": {
       "formalism": "alloy",
-      "runtime_ms": 912,
+      "runtime_ms": 5451,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
-      "runtime_class": "FAST"
+      "runtime_class": "MODERATE"
+    },
+    "alloy:build-test-quality": {
+      "formalism": "alloy",
+      "runtime_ms": 5110,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:installer-path-validation": {
+      "formalism": "alloy",
+      "runtime_ms": 4966,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
     },
     "alloy:trace-coverage-matrix": {
       "formalism": "alloy",
-      "runtime_ms": 1067,
+      "runtime_ms": 5270,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:ccr-binary-resolution": {
+      "formalism": "alloy",
+      "runtime_ms": 5638,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:installer-sync": {
+      "formalism": "alloy",
+      "runtime_ms": 5399,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -1727,15 +1591,47 @@
     },
     "alloy:trace-event-normalization": {
       "formalism": "alloy",
-      "runtime_ms": 992,
+      "runtime_ms": 5034,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
-      "runtime_class": "FAST"
+      "runtime_class": "MODERATE"
+    },
+    "alloy:changelog-release": {
+      "formalism": "alloy",
+      "runtime_ms": 5239,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:integration-layers": {
+      "formalism": "alloy",
+      "runtime_ms": 5050,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
     },
     "alloy:traceability-annotations": {
       "formalism": "alloy",
-      "runtime_ms": 1241,
+      "runtime_ms": 5521,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:ci-matrix": {
+      "formalism": "alloy",
+      "runtime_ms": 5155,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:intent-approach-block": {
+      "formalism": "alloy",
+      "runtime_ms": 5689,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -1743,23 +1639,63 @@
     },
     "alloy:traceability-obligations": {
       "formalism": "alloy",
-      "runtime_ms": 991,
+      "runtime_ms": 5017,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
-      "runtime_class": "FAST"
+      "runtime_class": "MODERATE"
+    },
+    "alloy:ci-pipeline-gates": {
+      "formalism": "alloy",
+      "runtime_ms": 5527,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:jvm-heap-sequential": {
+      "formalism": "alloy",
+      "runtime_ms": 5096,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
     },
     "alloy:traceability": {
       "formalism": "alloy",
-      "runtime_ms": 933,
+      "runtime_ms": 5002,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
-      "runtime_class": "FAST"
+      "runtime_class": "MODERATE"
     },
-    "alloy:transcript": {
+    "alloy:ci-quality-gates": {
       "formalism": "alloy",
-      "runtime_ms": 1099,
+      "runtime_ms": 5228,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:mcp-detection": {
+      "formalism": "alloy",
+      "runtime_ms": 5056,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:ci-test-fallback": {
+      "formalism": "alloy",
+      "runtime_ms": 5256,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:mcp-repair-lifecycle": {
+      "formalism": "alloy",
+      "runtime_ms": 5154,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -1767,7 +1703,23 @@
     },
     "alloy:unified-check-results": {
       "formalism": "alloy",
-      "runtime_ms": 1054,
+      "runtime_ms": 5284,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:classification-retry-patterns": {
+      "formalism": "alloy",
+      "runtime_ms": 5482,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:memory-persistence": {
+      "formalism": "alloy",
+      "runtime_ms": 5083,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -1775,7 +1727,23 @@
     },
     "alloy:uppaal-race-modeling": {
       "formalism": "alloy",
-      "runtime_ms": 1002,
+      "runtime_ms": 4967,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:classification-schema": {
+      "formalism": "alloy",
+      "runtime_ms": 5295,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:meta-resolve": {
+      "formalism": "alloy",
+      "runtime_ms": 5626,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -1783,31 +1751,71 @@
     },
     "alloy:user-guide": {
       "formalism": "alloy",
-      "runtime_ms": 991,
+      "runtime_ms": 5722,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
-      "runtime_class": "FAST"
+      "runtime_class": "MODERATE"
+    },
+    "alloy:cli-exit-conventions": {
+      "formalism": "alloy",
+      "runtime_ms": 5587,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:misc-behavioral": {
+      "formalism": "alloy",
+      "runtime_ms": 5196,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
     },
     "alloy:ux-feedback-safety": {
       "formalism": "alloy",
-      "runtime_ms": 931,
+      "runtime_ms": 5236,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
-      "runtime_class": "FAST"
+      "runtime_class": "MODERATE"
+    },
+    "alloy:code-quality-guardrails": {
+      "formalism": "alloy",
+      "runtime_ms": 5331,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
+    },
+    "alloy:model-registry-parity": {
+      "formalism": "alloy",
+      "runtime_ms": 5183,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
     },
     "alloy:ux-interaction-safety": {
       "formalism": "alloy",
-      "runtime_ms": 955,
+      "runtime_ms": 5089,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
-      "runtime_class": "FAST"
+      "runtime_class": "MODERATE"
+    },
+    "alloy:codebase-arch-constraints": {
+      "formalism": "alloy",
+      "runtime_ms": 5079,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "MODERATE"
     },
     "alloy:v8-coverage-digest": {
       "formalism": "alloy",
-      "runtime_ms": 1240,
+      "runtime_ms": 5288,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -1815,15 +1823,15 @@
     },
     "alloy:verification-execution": {
       "formalism": "alloy",
-      "runtime_ms": 969,
+      "runtime_ms": 4757,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
-      "runtime_class": "FAST"
+      "runtime_class": "MODERATE"
     },
     "alloy:verification-foundations": {
       "formalism": "alloy",
-      "runtime_ms": 1229,
+      "runtime_ms": 5308,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -1831,7 +1839,7 @@
     },
     "alloy:verification-integration": {
       "formalism": "alloy",
-      "runtime_ms": 1201,
+      "runtime_ms": 5197,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -1839,15 +1847,15 @@
     },
     "alloy:verify-path-normalization": {
       "formalism": "alloy",
-      "runtime_ms": 968,
+      "runtime_ms": 4929,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
-      "runtime_class": "FAST"
+      "runtime_class": "MODERATE"
     },
     "alloy:vhs-ci-hardening": {
       "formalism": "alloy",
-      "runtime_ms": 1032,
+      "runtime_ms": 5009,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -1855,15 +1863,23 @@
     },
     "alloy:wiring-awareness": {
       "formalism": "alloy",
-      "runtime_ms": 1025,
+      "runtime_ms": 4785,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
       "runtime_class": "MODERATE"
     },
+    "prism:oauth-rotation": {
+      "formalism": "prism",
+      "runtime_ms": 583,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
     "prism:deliberation-healing": {
       "formalism": "prism",
-      "runtime_ms": 681,
+      "runtime_ms": 421,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -1871,15 +1887,7 @@
     },
     "prism:mcp-availability": {
       "formalism": "prism",
-      "runtime_ms": 580,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "prism:oauth-rotation": {
-      "formalism": "prism",
-      "runtime_ms": 537,
+      "runtime_ms": 438,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -1887,15 +1895,7 @@
     },
     "prism:observability-delivery": {
       "formalism": "prism",
-      "runtime_ms": 596,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "prism:quorum": {
-      "formalism": "prism",
-      "runtime_ms": 543,
+      "runtime_ms": 548,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -2071,18 +2071,27 @@
     }
   },
   "recommendations": {
-    "split_candidates": [],
+    "split_candidates": [
+      {
+        "check_id": "ci:conformance-traces",
+        "reason": "SLOW runtime (11471ms) — consider splitting if complexity grows"
+      },
+      {
+        "check_id": "tla:mcnfhazardmodelmerge",
+        "reason": "SLOW runtime (13128ms) with 5 variables"
+      }
+    ],
     "merge_candidates": []
   },
   "summary": {
     "total_profiled": 258,
     "by_runtime_class": {
-      "FAST": 173,
-      "MODERATE": 85,
-      "SLOW": 0,
+      "FAST": 65,
+      "MODERATE": 191,
+      "SLOW": 2,
       "HEAVY": 0
     },
-    "split_candidates": 0,
+    "split_candidates": 2,
     "merge_candidates": 0
   }
 }

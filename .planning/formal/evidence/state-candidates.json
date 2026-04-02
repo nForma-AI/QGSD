@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-01T15:39:12.593Z",
+  "generated": "2026-04-02T12:19:06.765Z",
   "total_unmapped_events": 0,
   "candidates": [],
   "missing_transitions": [
@@ -73,37 +73,37 @@
     {
       "from_action": "quorum_block",
       "to_action": "security_sweep",
-      "count": 176,
+      "count": 177,
       "note": "XState mapping missing: from=[object Object], to=null"
     },
     {
       "from_action": "security_sweep",
       "to_action": "security_sweep",
-      "count": 433,
+      "count": 472,
       "note": "XState mapping missing: from=null, to=null"
     },
     {
       "from_action": "security_sweep",
       "to_action": "circuit_break",
-      "count": 342,
+      "count": 351,
       "note": "XState mapping missing: from=null, to=[object Object]"
     },
     {
       "from_action": "security_sweep",
       "to_action": "quorum_start",
-      "count": 106,
+      "count": 113,
       "note": "XState mapping missing: from=null, to=[object Object]"
     },
     {
       "from_action": "quorum_start",
       "to_action": "security_sweep",
-      "count": 169,
+      "count": 181,
       "note": "XState mapping missing: from=[object Object], to=null"
     },
     {
       "from_action": "circuit_break",
       "to_action": "security_sweep",
-      "count": 129,
+      "count": 133,
       "note": "XState mapping missing: from=[object Object], to=null"
     },
     {
@@ -115,7 +115,7 @@
     {
       "from_action": "security_sweep",
       "to_action": "quorum_block",
-      "count": 22,
+      "count": 23,
       "note": "XState mapping missing: from=null, to=[object Object]"
     },
     {

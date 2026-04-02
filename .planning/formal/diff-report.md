@@ -1,13 +1,25 @@
 # Formal Verification Diff Report
 
-**Generated:** 2026-04-01T16:22:32.757Z
+**Generated:** 2026-04-02T12:20:38.604Z
 **Current Run:** 5 pass, 0 fail, 1 warn/inconclusive
-**Previous Run:** 0 transitions, 0 new, 0 removed
+**Previous Run:** 1 transitions, 1 new, 0 removed
 **Overall Status:** inconclusive
+
+## Transitioned Checks
+
+| Check | Previous | Current | Summary |
+|-------|----------|---------|---------|
+| ci:liveness-fairness-lint | pass | inconclusive | inconclusive: fairness declarations missing — MCBugModelLook |
+
+## New Checks
+
+| Check | Result | Summary |
+|-------|--------|---------|
+| ci:trace-redaction | pass | pass: ci:trace-redaction in 0ms |
 
 ## Unchanged Checks
 
-6 check(s) unchanged from previous run — no action needed.
+4 check(s) unchanged from previous run — no action needed.
 
 ## Previous Run (for next comparison)
 
