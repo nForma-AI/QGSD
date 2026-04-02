@@ -485,8 +485,8 @@ function scoreConceptMatch(bugDescription, modelKey, modelMetadata) {
  * Run bug-mode matching: scan model-registry.json entries, score by concept match,
  * enrich with formalism type and requirement coverage.
  */
-function runBugModeMatching(description, files, registryPath) {
-  const registry = loadModelRegistry(registryPath);
+function runBugModeMatching(description, files, registryPath, preloadedRegistry) {
+  const registry = preloadedRegistry || loadModelRegistry(registryPath);
   if (!registry || !registry.models) {
     process.stderr.write('Warning: model-registry.json not available, falling back to standard mode\n');
     return null; // signal caller to fall back
@@ -991,11 +991,12 @@ async function main() {
   if (args.bugMode) {
     // Merge project specs into registry view for bug-mode compatibility
     const bugProjectSpecs = loadProjectManifest();
+    let mergedRegistry = null;
     if (bugProjectSpecs.length > 0) {
       const bugRegistry = loadModelRegistry();
-      mergeProjectSpecsIntoRegistry(bugProjectSpecs, bugRegistry);
+      mergedRegistry = mergeProjectSpecsIntoRegistry(bugProjectSpecs, bugRegistry);
     }
-    const bugMatches = runBugModeMatching(args.description, args.files);
+    const bugMatches = runBugModeMatching(args.description, args.files, undefined, mergedRegistry);
     if (bugMatches !== null) {
       // Run model checkers if requested
       if (args.runCheckers && bugMatches.length > 0) {
