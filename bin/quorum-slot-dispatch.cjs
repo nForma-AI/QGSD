@@ -1431,6 +1431,11 @@ async function main() {
   if (isReviewMode && isCcrSlot) {
     spawnArgs.push('--allowed-tools', 'Read,Grep,Glob');
   }
+  // Pass --output-file and --dispatch-nonce to child so it can write the result file
+  // even if the outer script's argv was modified by Haiku (defense-in-depth)
+  if (outputFile) {
+    spawnArgs.push('--output-file', outputFile, '--dispatch-nonce', dispatchNonce);
+  }
 
   // Spawn call-quorum-slot.cjs as child process with stdin pipe
   const rawOutput = await new Promise((resolve) => {

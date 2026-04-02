@@ -251,6 +251,24 @@ if (timeoutMs !== null && (isNaN(timeoutMs) || timeoutMs <= 0)) timeoutMs = null
 const roundNum  = getArg('--round');
 const spawnCwd  = getArg('--cwd') ?? process.cwd();
 const allowedTools = getArg('--allowed-tools'); // EXEC-01: e.g. "Read,Grep,Glob" for review-only slots
+const innerOutputFile = getArg('--output-file');  // Defense-in-depth: write result file from child process
+const innerDispatchNonce = getArg('--dispatch-nonce');  // Nonce from parent for file authenticity
+
+// Defense-in-depth: write result file from child process (Haiku can't modify child argv)
+function writeInnerOutputFile(result) {
+  if (!innerOutputFile) return;
+  try {
+    fs.mkdirSync(path.dirname(innerOutputFile), { recursive: true });
+    // Append dispatch_nonce if present in parent args but not already in result
+    let content = result;
+    if (innerDispatchNonce && !result.includes('dispatch_nonce:')) {
+      content += `\ndispatch_nonce: ${innerDispatchNonce}\n`;
+    }
+    fs.writeFileSync(innerOutputFile, content.endsWith('\n') ? content : content + '\n', 'utf8');
+  } catch (e) {
+    process.stderr.write(`[call-quorum-slot] inner output-file write failed: ${e.message}\n`);
+  }
+}
 
 if (!slot && require.main === module) {
   process.stderr.write('Usage: echo "<prompt>" | node call-quorum-slot.cjs --slot <name> [--timeout <ms>] [--cwd <dir>]\n');
@@ -794,6 +812,7 @@ async function main() {
         process.stderr.write('[call-quorum-slot] WARNING: ' + slot + ' CLI exited non-zero (code ' + cliExitCode + ') but produced valid output -- treating as available\n');
         recordTelemetry(slot, roundNum, verdict, latencyMs, providerName, 'available_with_warning', retryCount, null, l1Detect, l1Detect ? 'L1' : null, null, result.slice(0, 500), result.length, cliExitCode);
         clearFailureOnSuccess(slot);
+        writeInnerOutputFile(result);
         process.stdout.write(result);
         if (!result.endsWith('\n')) process.stdout.write('\n');
         appendTokenSentinel(slot);
@@ -825,6 +844,7 @@ async function main() {
     // Slot succeeded — clear any failure records so next quorum run doesn't skip it
     clearFailureOnSuccess(slot);
 
+    writeInnerOutputFile(result);
     process.stdout.write(result);
     if (!result.endsWith('\n')) process.stdout.write('\n');
     appendTokenSentinel(slot);
