@@ -76,7 +76,7 @@ function appendRecord(input, inputTokens, outputTokens, cacheCreate, cacheRead) 
     const slot = resolveSlot(input);
     const record = JSON.stringify({
       ts:                            new Date().toISOString(),
-      session_id:                    input.session_id   || null,
+      session_id:                    input.session_id   || process.env.NF_SOLVE_SESSION_ID || null,
       agent_id:                      input.agent_id     || null,
       slot,
       input_tokens:                  inputTokens,

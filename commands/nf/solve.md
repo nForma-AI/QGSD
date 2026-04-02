@@ -51,6 +51,8 @@ Initialize at the very start of the process block:
   - If args contain `--plan-only`, set `planOnly = true`. Otherwise, set `planOnly = false`.
   - If args contain `--execute`, set `executeMode = true`. Otherwise, set `executeMode = false`.
   - If args contain `--resume`, set `resumeMode = true`. Otherwise, set `resumeMode = false`.
+  - Generate `solveSessionId = Date.now().toString(36)` — unique ID for this solve run.
+  - Export it: run `export NF_SOLVE_SESSION_ID={solveSessionId}` in the shell so all Bash commands and Agent subprocesses inherit it. The token collector hook reads this env var to tag token records with the solve session.
 Use `focusPhrase` in Phase 3b bash command and Phase 4 Agent call.
 
 **Two-phase solve (QUICK-345):**
