@@ -10,6 +10,13 @@ const resolveBin = require('./nf-resolve-bin');
 const HARD_TIMEOUT = setTimeout(() => process.exit(0), 5000);
 HARD_TIMEOUT.unref(); // do not keep process alive
 
+// Belt-and-suspenders: catch any uncaught exception that escapes the try/catch
+// (e.g., errors in require() at top level). Session-end hooks must NEVER exit non-zero.
+process.on('uncaughtException', (err) => {
+  process.stderr.write('[nf-session-end] Uncaught exception (non-fatal): ' + err.message + '\n');
+  process.exit(0);
+});
+
 /**
  * Locate learning-extractor.cjs — try installed global path first, then local dev path.
  */

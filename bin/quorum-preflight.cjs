@@ -290,50 +290,58 @@ async function probeHealth(providers) {
 
   await Promise.all(providers.map(async (p) => {
     const isCcr = p.display_type === 'claude-code-router';
+    const isHttp = p.type === 'http';
 
-    // Layer 1: binary probe (all slots)
-    const layer1Promise = probeBinary(p.cli, p.health_check_args || []);
+    // Layer 1: binary probe (CLI slots only — HTTP slots have no binary)
+    const layer1Promise = isHttp
+      ? Promise.resolve({ ok: true, skipped: true, reason: 'HTTP slot — no CLI binary' })
+      : probeBinary(p.cli, p.health_check_args || []);
 
-    // Layer 2: upstream API probe (ccr slots only)
+    // Layer 2: upstream API probe (ccr slots AND http slots)
     let layer2Promise;
-    if (!isCcr) {
-      layer2Promise = Promise.resolve({ ok: true, skipped: true, reason: 'no upstream API' });
-    } else {
-      // Extract ANTHROPIC_BASE_URL from mcpServers env
+    let baseUrl, apiKey;
+    if (isHttp) {
+      // HTTP slots have baseUrl and apiKeyEnv directly in providers.json
+      baseUrl = p.baseUrl;
+      apiKey = p.apiKeyEnv ? process.env[p.apiKeyEnv] : undefined;
+    } else if (isCcr) {
+      // CCR slots: extract from mcpServers env in ~/.claude.json
       const mcpEntry = mcpServers[p.name];
       const env = mcpEntry?.env ?? {};
-      const baseUrl = env.ANTHROPIC_BASE_URL;
-      const apiKey = env.ANTHROPIC_API_KEY;
+      baseUrl = env.ANTHROPIC_BASE_URL;
+      apiKey = env.ANTHROPIC_API_KEY;
+    }
 
-      if (!baseUrl) {
-        layer2Promise = Promise.resolve({ ok: true, skipped: true, reason: 'ANTHROPIC_BASE_URL not configured' });
+    if (!isCcr && !isHttp) {
+      layer2Promise = Promise.resolve({ ok: true, skipped: true, reason: 'no upstream API' });
+    } else if (!baseUrl) {
+      layer2Promise = Promise.resolve({ ok: true, skipped: true, reason: isHttp ? 'baseUrl not configured' : 'ANTHROPIC_BASE_URL not configured' });
+    } else {
+      const normalizedUrl = normalizeBaseUrl(baseUrl);
+      // Check cache first
+      const cached = getCachedResult(cache, normalizedUrl);
+      if (cached) {
+        const remaining = Math.round(cached.remainingMs / 1000);
+        layer2Promise = Promise.resolve({
+          ok: cached.healthy,
+          reason: cached.healthy ? `HTTP ${cached.statusCode}` : (cached.error || 'cached DOWN'),
+          latencyMs: cached.latencyMs,
+          cacheAge: `cached`,
+        });
       } else {
-        const normalizedUrl = normalizeBaseUrl(baseUrl);
-        // Check cache first
-        const cached = getCachedResult(cache, normalizedUrl);
-        if (cached) {
-          const remaining = Math.round(cached.remainingMs / 1000);
-          layer2Promise = Promise.resolve({
-            ok: cached.healthy,
-            reason: cached.healthy ? `HTTP ${cached.statusCode}` : (cached.error || 'cached DOWN'),
-            latencyMs: cached.latencyMs,
-            cacheAge: `cached`,
-          });
-        } else {
-          // Run live probe
-          layer2Promise = probeUpstreamApi(baseUrl, apiKey).then((result) => {
-            // Write to cache
-            cache.entries[normalizedUrl] = {
-              healthy:    result.ok,
-              statusCode: result.statusCode ?? null,
-              error:      result.ok ? null : result.reason,
-              latencyMs:  result.latencyMs,
-              cachedAt:   Date.now(),
-            };
-            saveCache(cache);
-            return { ...result, cacheAge: 'fresh' };
-          });
-        }
+        // Run live probe
+        layer2Promise = probeUpstreamApi(baseUrl, apiKey).then((result) => {
+          // Write to cache
+          cache.entries[normalizedUrl] = {
+            healthy:    result.ok,
+            statusCode: result.statusCode ?? null,
+            error:      result.ok ? null : result.reason,
+            latencyMs:  result.latencyMs,
+            cachedAt:   Date.now(),
+          };
+          saveCache(cache);
+          return { ...result, cacheAge: 'fresh' };
+        });
       }
     }
 
@@ -386,12 +394,17 @@ function ensureServices(providers) {
 
     if (!needsStart) continue;
 
-    // Auto-start the service
+    // Auto-start the service (fire-and-forget, then poll for readiness)
     process.stderr.write(`[preflight] Service ${startCmd} ${startArgs.join(' ')} is down, starting...\n`);
     try {
-      execFileSync(startCmd, startArgs, { encoding: 'utf8', timeout: 10000 });
+      // Spawn as detached background process — don't wait for it to exit.
+      // The poll loop below will detect when the service is ready.
+      const child = require('child_process').spawn(startCmd, startArgs, {
+        detached: true, stdio: 'ignore'
+      });
+      child.unref();
     } catch (e) {
-      process.stderr.write(`[preflight] Service ${startCmd} ${startArgs.join(' ')} start command failed: ${e.message}\n`);
+      process.stderr.write(`[preflight] Service ${startCmd} ${startArgs.join(' ')} spawn failed: ${e.message}\n`);
       continue;
     }
 
@@ -435,6 +448,14 @@ async function main() {
     const providers = findProviders();
     const active    = cfg.quorum_active || [];
     console.log(JSON.stringify(buildTeam(providers, active)));
+  } else if (mode === '--ensure-services') {
+    const providers = findProviders();
+    const active    = cfg.quorum_active || [];
+    const activeProviders = active.length > 0
+      ? providers.filter(p => active.includes(p.name))
+      : providers;
+    ensureServices(activeProviders);
+    console.log('OK');
   } else if (mode === '--all') {
     const providers    = findProviders();
     const active       = cfg.quorum_active || [];

@@ -60,10 +60,13 @@ function loadNfConfig(cwd) {
  */
 function classifyDispatchError(output) {
   const s = String(output || '');
+  if (/CONTEXT_OVERFLOW/i.test(s) || /exceeds.*maximum context length|token count exceeds|too many tokens/i.test(s)) return 'CONTEXT_OVERFLOW';
+  if (/RATE_LIMITED/i.test(s)) return 'RATE_LIMITED';
+  if (/STALL/i.test(s)) return 'STALL';
   if (/IDLE_TIMEOUT/i.test(s)) return 'IDLE_TIMEOUT';
   if (/HARD_TIMEOUT/i.test(s)) return 'HARD_TIMEOUT';
   if (/TIMEOUT/i.test(s)) return 'TIMEOUT'; // backward compat
-  if (/402|quota|rate.?limit|resource.?exhausted/i.test(s)) return 'QUOTA';
+  if (/402|quota|rate.?limit|resource.?exhausted|Too Many Requests|exhausted your capacity/i.test(s)) return 'QUOTA';
   if (/401|403|unauthorized|forbidden/i.test(s)) return 'AUTH';
   if (/service not running|service.?down|not.?started/i.test(s)) return 'SERVICE_DOWN';
   if (/spawn error/i.test(s)) return 'SPAWN_ERROR';
@@ -488,7 +491,7 @@ function formatDiagnosticForPrompt(diagnosticJson) {
  * @param {Array}  [opts.requirements]     - array of requirement objects to inject
  * @returns {string}
  */
-function buildModeAPrompt({ round, repoDir, question, artifactPath, artifactContent, reviewContext, priorPositions, requestImprovements, requirements, precedents }) {
+function buildModeAPrompt({ round, repoDir, question, artifactPath, artifactContent, reviewContext, priorPositions, requestImprovements, requirements, precedents, hasFileAccess }) {
   const lines = [];
 
   // Header
@@ -610,7 +613,13 @@ function buildModeAPrompt({ round, repoDir, question, artifactPath, artifactCont
   } else {
     // ── Round 1 path ──────────────────────────────────────────────────────
     lines.push('');
-    if (artifactContent) {
+    if (hasFileAccess === false) {
+      // HTTP slots: no tools available — answer from provided context only
+      lines.push('You have NO file access or tools. Answer ONLY from the context provided in this');
+      lines.push('message (artifact content, requirements, retrieved context sections above).');
+      lines.push('Do NOT attempt tool calls, emit JSON blocks, or reference files you cannot see.');
+      lines.push('Your answer must be grounded in what is provided above.');
+    } else if (artifactContent) {
       lines.push('The artifact content is provided above. Use your available tools to read any other');
       lines.push('relevant files from the Repository directory if needed. Your answer must be grounded');
       lines.push('in the artifact content and what you actually find in the repo.');
@@ -667,7 +676,7 @@ function buildModeAPrompt({ round, repoDir, question, artifactPath, artifactCont
  * @param {boolean}[opts.reviewOnly]       - EXEC-01: inject read-only tool restriction
  * @returns {string}
  */
-function buildModeBPrompt({ round, repoDir, question, traces, artifactPath, artifactContent, reviewContext, priorPositions, requirements, precedents, reviewOnly }) {
+function buildModeBPrompt({ round, repoDir, question, traces, artifactPath, artifactContent, reviewContext, priorPositions, requirements, precedents, reviewOnly, hasFileAccess }) {
   const lines = [];
 
   // Header
@@ -764,7 +773,10 @@ function buildModeBPrompt({ round, repoDir, question, traces, artifactPath, arti
   }
 
   lines.push('');
-  if (artifactContent) {
+  if (hasFileAccess === false) {
+    lines.push('You have NO file access or tools. Evaluate ONLY from the execution traces and');
+    lines.push('context provided above. Do NOT attempt tool calls or emit JSON tool-use blocks.');
+  } else if (artifactContent) {
     lines.push('The artifact content is provided above. Use your tools to read any other relevant files');
     lines.push('from the Repository directory if needed.');
   } else {
@@ -807,11 +819,17 @@ function buildModeBPrompt({ round, repoDir, question, traces, artifactPath, arti
  * @returns {string}
  */
 function parseVerdict(rawOutput, mode) {
+  const hasTruncationMarker = (rawOutput || '').includes('[OUTPUT TRUNCATED');
   if (mode === 'A') {
+    // Side-channel: in Mode A, verdict is free-form (first 500 chars), never FLAG_TRUNCATED
+    parseVerdict.lastTruncationNote = false;
     return (rawOutput || '').slice(0, 500);
   }
   // Mode B: extract APPROVE|REJECT|FLAG
   const match = (rawOutput || '').match(/verdict:\s*(APPROVE|REJECT|FLAG)/i);
+  // Side-channel: only flag truncation when verdict was DEFAULT (no verdict: line found)
+  // AND truncation marker is present. A genuine "verdict: FLAG" survives truncation — it's real.
+  parseVerdict.lastTruncationNote = hasTruncationMarker && !match;
   return match ? match[1].toUpperCase() : 'FLAG';
 }
 
@@ -982,7 +1000,7 @@ function parseImprovements(rawOutput) {
  * @param {string} [opts.dispatch_nonce] — 32-char hex nonce proving the dispatch script ran
  * @returns {string}
  */
-function emitResultBlock({ slot, round, verdict, reasoning, citations, improvements, matched_requirement_ids, rawOutput, isUnavail, error_type, dispatch_nonce, unavailMessage }) {
+function emitResultBlock({ slot, round, verdict, reasoning, citations, improvements, matched_requirement_ids, rawOutput, isUnavail, error_type, dispatch_nonce, unavailMessage, truncated, truncationLayer, originalSizeBytes }) {
   const lines = [];
 
   lines.push(`slot: ${slot}`);
@@ -1029,14 +1047,64 @@ function emitResultBlock({ slot, round, verdict, reasoning, citations, improveme
     }
   }
 
+  // L6: raw field truncation with marker (TRUNC-05)
   lines.push('raw: |');
-  const rawTruncated = (rawOutput || '').slice(0, 5000);
+  const rawStr = rawOutput || '';
+  const l6Truncated = rawStr.length > 5000;
+  let rawTruncated = rawStr.slice(0, 5000);
+  if (l6Truncated) {
+    rawTruncated += '\n[RAW TRUNCATED at 5KB]';
+  }
   const rawLines = rawTruncated.split('\n');
   for (const rl of rawLines) {
     lines.push(`  ${rl}`);
   }
 
+  // Verdict integrity tagging (TRUNC-04, TRUNC-05)
+  const effectiveTruncated = truncated || l6Truncated;
+  const effectiveLayer = truncationLayer || (l6Truncated ? 'L6' : null);
+  if (effectiveTruncated) {
+    lines.push('verdict_integrity: truncated');
+    lines.push('truncation:');
+    lines.push('  truncated: true');
+    lines.push(`  layer: ${effectiveLayer}`);
+    if (originalSizeBytes) {
+      lines.push(`  original_size_bytes: ${originalSizeBytes}`);
+    }
+  }
+
   return lines.join('\n') + '\n';
+}
+
+// ─── L3/L6 supplementary telemetry (TRUNC-04) ────────────────────────────────
+
+/**
+ * appendTelemetryUpdate — writes a supplementary telemetry record for L3/L6 truncation.
+ * The primary record (from call-quorum-slot.cjs) only captures L1.
+ * This closes the TLA+ TelemetryRecordsTruncation gap for L3/L6.
+ * @param {Object} opts
+ */
+function appendTelemetryUpdate({ slot, round, l3Truncated, l6Truncated, effectiveLayer, originalSizeBytes, verdictIntegrity, cwd }) {
+  try {
+    const sessionId = process.env.CLAUDE_SESSION_ID || 'session-' + Date.now();
+    const record = JSON.stringify({
+      ts: new Date().toISOString(),
+      session_id: sessionId,
+      slot,
+      round: parseInt(round, 10) || 0,
+      truncation_update: true,
+      l3_truncated: l3Truncated || false,
+      l6_truncated: l6Truncated || false,
+      effective_layer: effectiveLayer || null,
+      original_size_bytes: originalSizeBytes || null,
+      verdict_integrity: verdictIntegrity || null,
+    });
+    const pp = require('./planning-paths.cjs');
+    const logPath = pp.resolve(cwd || process.cwd(), 'quorum-rounds', { sessionId });
+    require('fs').appendFileSync(logPath, record + '\n', 'utf8');
+  } catch (_) {
+    // Fail-open: telemetry errors never block dispatch
+  }
 }
 
 // ─── Pre-dispatch context enrichment (ORCH-01) ───────────────────────────────
@@ -1189,6 +1257,20 @@ async function main() {
     }
   }
 
+  // Early output-file write: proves script was actually invoked (not Haiku fabrication).
+  // Written immediately with nonce + PENDING marker. Overwritten with final result at end.
+  // If file contains PENDING after Task returns → script ran but didn't finish (timeout/crash).
+  // If file is missing → script was never invoked (Haiku didn't run Bash).
+  const outputFile = getArg('--output-file');
+  if (outputFile) {
+    try {
+      fs.mkdirSync(path.dirname(outputFile), { recursive: true });
+      fs.writeFileSync(outputFile, `slot: ${slot}\nround: ${round}\nverdict: PENDING\ndispatch_nonce: ${dispatchNonce}\nreasoning: dispatch started, awaiting CLI response\n`, 'utf8');
+    } catch (e) {
+      process.stderr.write(`[quorum-slot-dispatch] early output-file write failed: ${e.message}\n`);
+    }
+  }
+
   // Read optional temp files
   let priorPositions = null;
   if (priorPositionsFile) {
@@ -1239,11 +1321,21 @@ async function main() {
   // EXEC-01: Determine review mode — Mode B or explicit --review-only flag
   const isReviewMode = mode === 'B' || reviewOnly;
 
+  // Determine if this slot has file access (subprocess CLIs do, HTTP APIs don't)
+  const hasFileAccess = (() => {
+    try {
+      const pPath = path.join(__dirname, 'providers.json');
+      const providers = JSON.parse(fs.readFileSync(pPath, 'utf8')).providers || [];
+      const provider = providers.find(p => p.name === slot);
+      return provider ? provider.has_file_access !== false : true; // default true for backward compat
+    } catch { return true; }
+  })();
+
   let prompt;
   if (mode === 'B') {
-    prompt = buildModeBPrompt({ round, repoDir, question, artifactPath, artifactContent, reviewContext, priorPositions, traces: traces || '', requirements: matchedRequirements, precedents: matchedPrecedents, reviewOnly: isReviewMode });
+    prompt = buildModeBPrompt({ round, repoDir, question, artifactPath, artifactContent, reviewContext, priorPositions, traces: traces || '', requirements: matchedRequirements, precedents: matchedPrecedents, reviewOnly: isReviewMode, hasFileAccess });
   } else {
-    prompt = buildModeAPrompt({ round, repoDir, question, artifactPath, artifactContent, reviewContext, priorPositions, requestImprovements, requirements: matchedRequirements, precedents: matchedPrecedents });
+    prompt = buildModeAPrompt({ round, repoDir, question, artifactPath, artifactContent, reviewContext, priorPositions, requestImprovements, requirements: matchedRequirements, precedents: matchedPrecedents, hasFileAccess });
   }
 
   // ── Context retrieval enrichment (ORCH-01) ──────────────────────────────────
@@ -1255,6 +1347,71 @@ async function main() {
   if (retrievalEnabled) {
     prompt = enrichPromptWithRetrieval(prompt, question, artifactPath, cwd);
   }
+
+  // ── Pre-flight context window check (CTXWIN-01) ─────────────────────────────
+  // Estimate token count from prompt length. CCR slots prepend system prompt +
+  // tools (~30K tokens overhead). If estimated total exceeds the model's
+  // max_context_tokens, truncate enriched context or fail immediately with
+  // CONTEXT_OVERFLOW rather than wasting a slow API call that will 400.
+  // CCR overhead is massive: system prompt + all tool definitions + conversation
+  // history + CLAUDE.md injection. Empirically measured from Together 400 errors:
+  //   claude-1 (DeepSeek): 101K input tokens from ~5K prompt → ~96K overhead
+  //   claude-5 (GPT-OSS): 73K input tokens from ~5K prompt → ~68K overhead
+  // Use conservative (higher) estimate to catch overflow before dispatch.
+  const CCR_OVERHEAD_TOKENS = 95000; // system prompt + tools + CLAUDE.md injected by CCR
+  const CCR_RESPONSE_BUDGET = 64000; // default max_tokens set by CCR — Together counts this against context window
+  const CHARS_PER_TOKEN = 4; // conservative estimate (English ~4 chars/token)
+  try {
+    const pPath = path.join(__dirname, 'providers.json');
+    const providers = JSON.parse(fs.readFileSync(pPath, 'utf8')).providers || [];
+    const provider = providers.find(p => p.name === slot);
+    if (provider && provider.max_context_tokens) {
+      const isCcr = provider.display_type === 'claude-code-router';
+      const overhead = isCcr ? CCR_OVERHEAD_TOKENS + CCR_RESPONSE_BUDGET : 0;
+      const promptTokens = Math.ceil(prompt.length / CHARS_PER_TOKEN);
+      const totalEstimate = promptTokens + overhead;
+
+      if (totalEstimate > provider.max_context_tokens) {
+        // Try to salvage by stripping retrieved context (biggest variable-size section)
+        const retrievedIdx = prompt.indexOf('\n\n=== RETRIEVED CONTEXT ===\n');
+        if (retrievedIdx !== -1) {
+          const endIdx = prompt.indexOf('\n=========================\n', retrievedIdx);
+          if (endIdx !== -1) {
+            prompt = prompt.slice(0, retrievedIdx) + prompt.slice(endIdx + '\n=========================\n'.length);
+            process.stderr.write(`[quorum-slot-dispatch] CTXWIN-01: stripped retrieved context for ${slot} (${totalEstimate} > ${provider.max_context_tokens} tokens)\n`);
+          }
+        }
+
+        // Re-check after stripping
+        const newTokens = Math.ceil(prompt.length / CHARS_PER_TOKEN) + overhead;
+        if (newTokens > provider.max_context_tokens) {
+          // Still too large — emit CONTEXT_OVERFLOW immediately
+          const result = emitResultBlock({
+            slot,
+            round,
+            verdict: 'UNAVAIL',
+            reasoning: `CONTEXT_OVERFLOW: estimated ${newTokens} tokens exceeds ${slot} limit of ${provider.max_context_tokens} (prompt: ${Math.ceil(prompt.length / CHARS_PER_TOKEN)}, overhead: ${overhead})`,
+            rawOutput: `Prompt too large for ${slot} (${provider.model}): ~${newTokens} tokens > ${provider.max_context_tokens} max`,
+            isUnavail: true,
+            error_type: 'CONTEXT_OVERFLOW',
+            dispatch_nonce: dispatchNonce,
+            unavailMessage: `Prompt size: ${prompt.length} chars (~${Math.ceil(prompt.length / CHARS_PER_TOKEN)} tokens). Model limit: ${provider.max_context_tokens}. CCR overhead: ${overhead}.`
+          });
+          if (outputFile) {
+            try {
+              fs.mkdirSync(path.dirname(outputFile), { recursive: true });
+              fs.writeFileSync(outputFile, result.endsWith('\n') ? result : result + '\n', 'utf8');
+            } catch (e) {
+              process.stderr.write(`[quorum-slot-dispatch] output-file write failed: ${e.message}\n`);
+            }
+          }
+          process.stdout.write(result);
+          if (!result.endsWith('\n')) process.stdout.write('\n');
+          process.exit(0);
+        }
+      }
+    }
+  } catch (_) { /* fail-open: context check errors never block dispatch */ }
 
   // Locate call-quorum-slot.cjs relative to this script
   const cqsPath = path.join(__dirname, 'call-quorum-slot.cjs');
@@ -1273,6 +1430,11 @@ async function main() {
   const spawnArgs = [cqsPath, '--slot', slot, '--timeout', String(timeout), '--cwd', cwd];
   if (isReviewMode && isCcrSlot) {
     spawnArgs.push('--allowed-tools', 'Read,Grep,Glob');
+  }
+  // Pass --output-file and --dispatch-nonce to child so it can write the result file
+  // even if the outer script's argv was modified by Haiku (defense-in-depth)
+  if (outputFile) {
+    spawnArgs.push('--output-file', outputFile, '--dispatch-nonce', dispatchNonce);
   }
 
   // Spawn call-quorum-slot.cjs as child process with stdin pipe
@@ -1317,7 +1479,7 @@ async function main() {
 
     child.on('close', (code) => {
       const suffix = truncated ? '\n\n[OUTPUT TRUNCATED at 50KB by quorum-slot-dispatch]' : '';
-      resolve({ exitCode: code, output: (stdout || stderr || '(no output)') + suffix });
+      resolve({ exitCode: code, output: (stdout || stderr || '(no output)') + suffix, truncated, originalSize: stdout.length });
     });
 
     child.on('error', (err) => {
@@ -1325,8 +1487,13 @@ async function main() {
     });
   });
 
-  const { exitCode, output } = rawOutput;
-  const isUnavail = exitCode !== 0 || output.includes('TIMEOUT');
+  const { exitCode, output, truncated: l3Truncated, originalSize: l3OriginalSize } = rawOutput;
+  const l1Truncated = output.includes('[OUTPUT TRUNCATED at 10MB');
+  // Non-zero exit with valid output = available_with_warning (quick-367)
+  // CLI may exit non-zero due to post-processing hooks (e.g., Gemini SessionEnd)
+  // while still producing a valid response. Check for verdict or substantial output.
+  const hasValidOutput = output.length > 100 || /verdict:\s*(APPROVE|REJECT|FLAG)/i.test(output);
+  const isUnavail = (exitCode !== 0 && !hasValidOutput) || output.includes('TIMEOUT');
 
   let result;
   if (isUnavail) {
@@ -1342,7 +1509,11 @@ async function main() {
       unavailMessage: output.slice(0, 500)
     });
   } else {
-    const verdict      = parseVerdict(output, mode);
+    let verdict        = parseVerdict(output, mode);
+    // TRUNC-03: distinguish truncation-derived FLAG from genuine FLAG
+    if (verdict === 'FLAG' && parseVerdict.lastTruncationNote) {
+      verdict = 'FLAG_TRUNCATED';
+    }
     const reasoning    = parseReasoning(output) || output.slice(0, 400);
     const citations    = parseCitations(output);
     const improvements = requestImprovements ? parseImprovements(output) : [];
@@ -1357,8 +1528,26 @@ async function main() {
       improvements: improvements.length > 0 ? improvements : undefined,
       matched_requirement_ids: matchedReqIds,
       dispatch_nonce: dispatchNonce,
-      rawOutput: output
+      rawOutput: output,
+      truncated: l3Truncated || l1Truncated,
+      truncationLayer: l1Truncated ? 'L1' : (l3Truncated ? 'L3' : null),
+      originalSizeBytes: l3OriginalSize || null,
     });
+
+    // L3/L6 supplementary telemetry (TRUNC-04 gap closure)
+    if (l3Truncated || (output || '').length > 5000) {
+      const l6Truncated_flag = (output || '').length > 5000;
+      appendTelemetryUpdate({
+        slot,
+        round,
+        l3Truncated: l3Truncated || false,
+        l6Truncated: l6Truncated_flag,
+        effectiveLayer: l1Truncated ? 'L1' : (l3Truncated ? 'L3' : (l6Truncated_flag ? 'L6' : null)),
+        originalSizeBytes: l3OriginalSize || null,
+        verdictIntegrity: (l3Truncated || l1Truncated || l6Truncated_flag) ? 'truncated' : null,
+        cwd,
+      });
+    }
 
     // Auto-persist debate trace file (fail-open)
     try {
@@ -1394,6 +1583,16 @@ async function main() {
     }
   }
 
+  // --output-file: overwrite early PENDING marker with final result (Option C — file is source of truth)
+  if (outputFile) {
+    try {
+      fs.mkdirSync(path.dirname(outputFile), { recursive: true });
+      fs.writeFileSync(outputFile, result.endsWith('\n') ? result : result + '\n', 'utf8');
+    } catch (e) {
+      process.stderr.write(`[quorum-slot-dispatch] output-file write failed: ${e.message}\n`);
+    }
+  }
+
   process.stdout.write(result);
   if (!result.endsWith('\n')) process.stdout.write('\n');
   process.exit(0);
@@ -1418,6 +1617,7 @@ module.exports = {
     formatPrecedentsSection,
     enrichPromptWithRetrieval,
     classifyDispatchError,
+    appendTelemetryUpdate,
   };
 
 // ─── Entry point guard ────────────────────────────────────────────────────────

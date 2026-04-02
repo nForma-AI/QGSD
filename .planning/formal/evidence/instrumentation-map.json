@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-26T15:20:04.195Z",
+  "generated": "2026-04-01T15:38:43.595Z",
   "emission_points": [
     {
       "file": "hooks/nf-prompt.js",
@@ -30,7 +30,7 @@
     },
     {
       "file": "hooks/nf-stop.js",
-      "line_number": 708,
+      "line_number": 718,
       "action": "quorum_complete",
       "state_variables": [
         "quorum_size"
@@ -40,7 +40,7 @@
     },
     {
       "file": "hooks/nf-stop.js",
-      "line_number": 724,
+      "line_number": 734,
       "action": "quorum_complete",
       "state_variables": [],
       "vocabulary_match": true,
@@ -48,7 +48,7 @@
     },
     {
       "file": "hooks/nf-stop.js",
-      "line_number": 750,
+      "line_number": 760,
       "action": "fallback_01_block",
       "state_variables": [
         "verdict"
@@ -58,7 +58,7 @@
     },
     {
       "file": "hooks/nf-stop.js",
-      "line_number": 803,
+      "line_number": 813,
       "action": "quorum_block",
       "state_variables": [
         "verdict"
@@ -68,7 +68,7 @@
     },
     {
       "file": "hooks/nf-stop.js",
-      "line_number": 842,
+      "line_number": 852,
       "action": "quorum_complete",
       "state_variables": [],
       "vocabulary_match": true,

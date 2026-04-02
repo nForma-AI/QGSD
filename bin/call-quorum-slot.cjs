@@ -21,13 +21,14 @@
  * Exit codes: 0 = success, 1 = error (message on stderr)
  */
 
-const { spawn } = require('child_process');
+const { spawn, spawnSync } = require('child_process');
 const https     = require('https');
 const http      = require('http');
 const fs        = require('fs');
 const path      = require('path');
 const os        = require('os');
 const { resolveCli } = require('./resolve-cli.cjs');
+const { acquireSlot, releaseSlot, providerKeyFromUrl } = require('./provider-concurrency.cjs');
 
 // ─── Utilities ──────────────────────────────────────────────────────────────
 function sleep(ms) {
@@ -48,13 +49,13 @@ function appendTokenSentinel(slotName) {
       cache_read_input_tokens:     null,
     });
     const pp = require('./planning-paths.cjs');
-    const logPath = pp.resolve(findProjectRoot(), 'token-usage');
+    const logPath = pp.resolve(findProjectRoot(spawnCwd), 'token-usage');
     fs.appendFileSync(logPath, record + '\n', 'utf8');
   } catch (_) {} // observational — never fails
 }
 
 // ─── Telemetry logging for quorum slot dispatch (OBS-01) ─────────────────────
-function recordTelemetry(slotName, round, verdict, latencyMs, provider, providerStatus, retryCount, errorType) {
+function recordTelemetry(slotName, round, verdict, latencyMs, provider, providerStatus, retryCount, errorType, truncated, truncationLayer, originalSizeBytes, outputPreview, outputLength, exitCode) {
   try {
     const sessionId = process.env.CLAUDE_SESSION_ID || 'session-' + Date.now();
     const record = JSON.stringify({
@@ -68,9 +69,15 @@ function recordTelemetry(slotName, round, verdict, latencyMs, provider, provider
       provider_status: providerStatus,
       retry_count: retryCount,
       error_type: errorType,
+      truncated: truncated || false,
+      truncation_layer: truncationLayer || null,
+      original_size_bytes: originalSizeBytes || null,
+      output_preview: outputPreview || null,
+      output_length: outputLength || null,
+      exit_code: exitCode != null ? exitCode : null,
     });
     const pp = require('./planning-paths.cjs');
-    const logPath = pp.resolve(findProjectRoot(), 'quorum-rounds', { sessionId });
+    const logPath = pp.resolve(findProjectRoot(spawnCwd), 'quorum-rounds', { sessionId });
     fs.appendFileSync(logPath, record + '\n', 'utf8');
   } catch (_) {
     // Fail-open: telemetry errors never block or crash the dispatch
@@ -80,7 +87,11 @@ function recordTelemetry(slotName, round, verdict, latencyMs, provider, provider
 }
 
 // ─── Failure log ───────────────────────────────────────────────────────────────
-function findProjectRoot() {
+function findProjectRoot(cwd) {
+  // If cwd is provided and has .planning/, use it directly
+  // (avoids stale ~/.claude/.planning/ found via __dirname walk)
+  if (cwd && fs.existsSync(path.join(cwd, '.planning'))) return cwd;
+  // Fallback: walk up from __dirname (original behavior when no cwd)
   let dir = __dirname;
   for (let i = 0; i < 8; i++) {
     if (fs.existsSync(path.join(dir, '.planning'))) return dir;
@@ -88,15 +99,18 @@ function findProjectRoot() {
     if (parent === dir) break;
     dir = parent;
   }
-  return process.cwd();
+  return cwd || process.cwd();
 }
 
 function classifyErrorType(msg) {
   if (/usage:|unknown flag|unknown option|invalid flag|unrecognized/i.test(msg)) return 'CLI_SYNTAX';
+  if (/CONTEXT_OVERFLOW/i.test(msg) || /exceeds.*maximum context length|token count exceeds|too many tokens/i.test(msg)) return 'CONTEXT_OVERFLOW';
+  if (/RATE_LIMITED/i.test(msg)) return 'RATE_LIMITED';
+  if (/STALL/i.test(msg)) return 'STALL';
   if (/IDLE_TIMEOUT/i.test(msg)) return 'IDLE_TIMEOUT';
   if (/HARD_TIMEOUT/i.test(msg)) return 'HARD_TIMEOUT';
   if (/TIMEOUT/i.test(msg)) return 'TIMEOUT'; // backward compat for old log entries
-  if (/402|quota|rate.?limit|resource.?exhausted/i.test(msg)) return 'QUOTA';
+  if (/402|quota|rate.?limit|resource.?exhausted|Too Many Requests|exhausted your capacity/i.test(msg)) return 'QUOTA';
   if (/401|403|unauthorized|forbidden/i.test(msg)) return 'AUTH';
   if (/service not running|service.?down|not.?started/i.test(msg)) return 'SERVICE_DOWN';
   if (/spawn error/i.test(msg)) return 'SPAWN_ERROR';
@@ -106,7 +120,7 @@ function classifyErrorType(msg) {
 function writeFailureLog(slotName, errorMsg, stderrText) {
   try {
     const pp = require('./planning-paths.cjs');
-    const logPath = pp.resolve(findProjectRoot(), 'quorum-failures');
+    const logPath = pp.resolve(findProjectRoot(spawnCwd), 'quorum-failures');
 
     const error_type = classifyErrorType(errorMsg);
 
@@ -147,7 +161,7 @@ function writeFailureLog(slotName, errorMsg, stderrText) {
 function clearFailureOnSuccess(slotName) {
   try {
     const pp = require('./planning-paths.cjs');
-    const logPath = pp.resolve(findProjectRoot(), 'quorum-failures');
+    const logPath = pp.resolve(findProjectRoot(spawnCwd), 'quorum-failures');
     if (!fs.existsSync(logPath)) return;
     let records = JSON.parse(fs.readFileSync(logPath, 'utf8'));
     if (!Array.isArray(records)) return;
@@ -159,6 +173,18 @@ function clearFailureOnSuccess(slotName) {
   } catch (_) { /* recovery logging must never interrupt the primary flow */ }
 }
 
+// ─── Layer 2: Bridge failure log to scoreboard cooldown ──────────────────────
+// After a slot fails, set a cooldown entry in the scoreboard so future dispatches
+// skip it immediately. Uses spawnSync for synchronous hook context. Fail-open:
+// scoreboard update must never block or crash the dispatch flow.
+function setScoreboardCooldown(slotName, errorMsg) {
+  try {
+    const scoreboardScript = path.join(__dirname, 'update-scoreboard.cjs');
+    spawnSync('node', [scoreboardScript, 'set-availability', '--slot', slotName, '--message', errorMsg], { timeout: 3000, stdio: 'pipe' });
+    process.stderr.write(`[call-quorum-slot] Set cooldown for ${slotName} via set-availability\n`);
+  } catch (_) { /* fail-open: scoreboard update must never block dispatch */ }
+}
+
 // ─── Retry with exponential backoff (FAIL-01) ───────────────────────────────
 function isRetryable(error) {
   const msg = (error && error.message) ? error.message : String(error);
@@ -168,6 +194,9 @@ function isRetryable(error) {
     return false;
   }
   if (/usage:|unknown flag|unknown option|invalid flag|unrecognized/i.test(msg)) {
+    return false;
+  }
+  if (/CONTEXT_OVERFLOW|exceeds.*maximum context length|token count exceeds/i.test(msg)) {
     return false;
   }
 
@@ -222,6 +251,24 @@ if (timeoutMs !== null && (isNaN(timeoutMs) || timeoutMs <= 0)) timeoutMs = null
 const roundNum  = getArg('--round');
 const spawnCwd  = getArg('--cwd') ?? process.cwd();
 const allowedTools = getArg('--allowed-tools'); // EXEC-01: e.g. "Read,Grep,Glob" for review-only slots
+const innerOutputFile = getArg('--output-file');  // Defense-in-depth: write result file from child process
+const innerDispatchNonce = getArg('--dispatch-nonce');  // Nonce from parent for file authenticity
+
+// Defense-in-depth: write result file from child process (Haiku can't modify child argv)
+function writeInnerOutputFile(result) {
+  if (!innerOutputFile) return;
+  try {
+    fs.mkdirSync(path.dirname(innerOutputFile), { recursive: true });
+    // Append dispatch_nonce if present in parent args but not already in result
+    let content = result;
+    if (innerDispatchNonce && !result.includes('dispatch_nonce:')) {
+      content += `\ndispatch_nonce: ${innerDispatchNonce}\n`;
+    }
+    fs.writeFileSync(innerOutputFile, content.endsWith('\n') ? content : content + '\n', 'utf8');
+  } catch (e) {
+    process.stderr.write(`[call-quorum-slot] inner output-file write failed: ${e.message}\n`);
+  }
+}
 
 if (!slot && require.main === module) {
   process.stderr.write('Usage: echo "<prompt>" | node call-quorum-slot.cjs --slot <name> [--timeout <ms>] [--cwd <dir>]\n');
@@ -274,18 +321,19 @@ function buildSpawnArgs(provider, prompt, allowedToolsFlag) {
 
   let args;
   let useStdinPrompt = false;
-  if (isCcr) {
-    // Strip -p and {prompt} from args — prompt will be piped via stdin
-    // to avoid shell interpretation of backticks/$ by ccr's internal shell:true
-    args = provider.args_template.filter((a, i, arr) => {
-      if (a === '{prompt}') return false;
-      if (a === '-p' && arr[i + 1] === '{prompt}') return false;
-      return true;
-    });
-    useStdinPrompt = true;
-  } else {
-    args = provider.args_template.map(a => (a === '{prompt}' ? prompt : a));
-  }
+  // SHELL-ESCAPE-01 (revised): spawn() uses args array without shell:true,
+  // so there's no shell interpretation risk. Pass prompt via -p for ALL slots
+  // including CCR. The original stdin-piping approach broke CCR because it
+  // doesn't accept stdin input — only -p argument.
+  // CCR v2.0.0 internally re-spawns with shell:true, so backticks, $(), and
+  // ! in the prompt get interpreted as shell commands. Strip/neutralize these
+  // for CCR slots — backticks are just markdown formatting in quorum prompts.
+  const safePrompt = isCcr
+    ? prompt.replace(/`/g, "'").replace(/\$\(/g, '(').replace(/\$/g, '').replace(/!/g, '.')
+    : prompt;
+  args = provider.args_template.map(a => (a === '{prompt}' ? safePrompt : a));
+  // Only use stdin for slots that explicitly require it (none currently do)
+  useStdinPrompt = false;
 
   // EXEC-01: Inject --allowedTools for ccr-based slots when review-only
   if (allowedToolsFlag && isCcr) {
@@ -337,6 +385,8 @@ function runSubprocess(provider, prompt, idleTimeoutMs, hardTimeoutMs, allowedTo
     let timedOut  = false;
     let timeoutType = ''; // 'IDLE' or 'HARD'
     const MAX_BUF = 10 * 1024 * 1024;
+    let l1Truncated = false;
+    let l1OriginalSize = 0;
 
     // Kill entire process group, then destroy streams to force 'close' even if
     // grandchildren keep the pipes open (the common case with ccr/opencode).
@@ -365,28 +415,106 @@ function runSubprocess(provider, prompt, idleTimeoutMs, hardTimeoutMs, allowedTo
       }
     }, hardTimeoutMs);
 
+    // Rate-limit / quota exhaustion early detection (RLIMIT-01)
+    // Two detection modes:
+    // A) Stream-based: CLI emits rate-limit messages (Gemini "Attempt N failed", etc.)
+    //    → kill after 2 consecutive matches
+    // B) Silent-hang: CLI produces zero bytes for 30s (OpenCode buffers internally)
+    //    → the idle timer already handles this at 90s, but we add a tighter
+    //    "no first byte" timer: if zero bytes received after 30s, kill early
+    const RATE_LIMIT_PATTERNS = /Too Many Requests|exhausted your capacity|rate.limit|429|quota.exceeded|Attempt \d+ failed/i;
+    let rateLimitHits = 0;
+    const RATE_LIMIT_THRESHOLD = 2; // kill after 2 consecutive rate-limit messages
+    let totalBytesReceived = 0;
+    const STALL_TIMEOUT_MS = 30000; // tighter idle timeout when CLI has produced < 500 bytes
+    const STALL_BYTE_THRESHOLD = 500; // below this = "just a header, probably stalled"
+
     child.stdout.on('data', d => {
+      totalBytesReceived += d.length;
       clearTimeout(idleTimer);
-      idleTimer = setTimeout(() => { timedOut = true; timeoutType = 'IDLE'; killGroup(); }, idleTimeoutMs);
-      if (stdout.length < MAX_BUF) stdout += d.toString().slice(0, MAX_BUF - stdout.length);
+      // Adaptive idle: use tighter 30s timeout when CLI has barely produced output (header-only stall)
+      const effectiveIdle = totalBytesReceived < STALL_BYTE_THRESHOLD ? STALL_TIMEOUT_MS : idleTimeoutMs;
+      idleTimer = setTimeout(() => { timedOut = true; timeoutType = totalBytesReceived < STALL_BYTE_THRESHOLD ? 'STALL' : 'IDLE'; killGroup(); }, effectiveIdle);
+      const chunk = d.toString();
+      l1OriginalSize += chunk.length;
+      if (stdout.length < MAX_BUF) {
+        if (stdout.length + chunk.length > MAX_BUF) {
+          stdout += chunk.slice(0, MAX_BUF - stdout.length);
+          l1Truncated = true;
+        } else {
+          stdout += chunk;
+        }
+      } else {
+        l1Truncated = true;
+      }
+      // Check stdout for rate-limit patterns
+      if (RATE_LIMIT_PATTERNS.test(chunk)) {
+        rateLimitHits++;
+        if (rateLimitHits >= RATE_LIMIT_THRESHOLD && !timedOut) {
+          timedOut = true;
+          timeoutType = 'RATE_LIMITED';
+          process.stderr.write('[call-quorum-slot] RATE_LIMITED: ' + rateLimitHits + ' rate-limit messages detected, killing early\n');
+          killGroup();
+        }
+      }
     });
     child.stderr.on('data', d => {
+      totalBytesReceived += d.length;
       clearTimeout(idleTimer);
-      idleTimer = setTimeout(() => { timedOut = true; timeoutType = 'IDLE'; killGroup(); }, idleTimeoutMs);
-      stderr += d.toString().slice(0, 4096);
+      const effectiveIdle = totalBytesReceived < STALL_BYTE_THRESHOLD ? STALL_TIMEOUT_MS : idleTimeoutMs;
+      idleTimer = setTimeout(() => { timedOut = true; timeoutType = totalBytesReceived < STALL_BYTE_THRESHOLD ? 'STALL' : 'IDLE'; killGroup(); }, effectiveIdle);
+      const chunk = d.toString().slice(0, 4096);
+      stderr += chunk;
+      // Check stderr for rate-limit patterns too (gemini logs to stderr)
+      if (RATE_LIMIT_PATTERNS.test(chunk)) {
+        rateLimitHits++;
+        if (rateLimitHits >= RATE_LIMIT_THRESHOLD && !timedOut) {
+          timedOut = true;
+          timeoutType = 'RATE_LIMITED';
+          process.stderr.write('[call-quorum-slot] RATE_LIMITED: ' + rateLimitHits + ' rate-limit messages detected in stderr, killing early\n');
+          killGroup();
+        }
+      }
     });
 
     child.on('close', (code) => {
       clearTimeout(idleTimer);
       clearTimeout(hardTimer);
       if (timedOut) {
-        const label = timeoutType === 'HARD'
+        // Content-based reclassification: when STALL fires, inspect the partial
+        // stdout/stderr for known error patterns before using the generic label.
+        // This distinguishes rate-limits, context overflow, and auth errors from
+        // true stalls (provider hung with no meaningful output).
+        if (timeoutType === 'STALL') {
+          const partial = (stdout + stderr).slice(0, 2000);
+          if (/exceeds.*maximum context length|token count exceeds|too many tokens/i.test(partial)) {
+            timeoutType = 'CONTEXT_OVERFLOW';
+          } else if (RATE_LIMIT_PATTERNS.test(partial)) {
+            timeoutType = 'RATE_LIMITED';
+          } else if (/401|403|unauthorized|forbidden|invalid.*api.?key/i.test(partial)) {
+            timeoutType = 'AUTH';
+          } else if (/402|quota|resource.?exhausted|billing/i.test(partial)) {
+            timeoutType = 'QUOTA';
+          }
+        }
+        const label = timeoutType === 'RATE_LIMITED'
+          ? `RATE_LIMITED after ${rateLimitHits > 0 ? rateLimitHits + ' consecutive rate-limit errors' : 'partial output analysis'} (killed early)`
+          : timeoutType === 'CONTEXT_OVERFLOW'
+          ? `CONTEXT_OVERFLOW: model rejected prompt as too large (${totalBytesReceived} bytes partial response)`
+          : timeoutType === 'AUTH'
+          ? `AUTH: provider returned authentication error (${totalBytesReceived} bytes partial response)`
+          : timeoutType === 'QUOTA'
+          ? `QUOTA: provider returned quota/billing error (${totalBytesReceived} bytes partial response)`
+          : timeoutType === 'STALL'
+          ? `STALL: only ${totalBytesReceived} bytes received then silence for ${STALL_TIMEOUT_MS}ms — no recognizable error pattern in partial output`
+          : timeoutType === 'HARD'
           ? `HARD_TIMEOUT after ${hardTimeoutMs}ms total`
           : `IDLE_TIMEOUT after ${idleTimeoutMs}ms of inactivity`;
         reject(new Error(label));
         return;
       }
-      const output = stdout || stderr || '(no output)';
+      const l1Suffix = l1Truncated ? '\n\n[OUTPUT TRUNCATED at 10MB by call-quorum-slot]' : '';
+      const output = (stdout || stderr || '(no output)') + l1Suffix;
       resolve(code !== 0 ? `${output}\n[exit code ${code}]` : output);
     });
 
@@ -461,7 +589,7 @@ function loadSlotEnv(slotName) {
 }
 
 // ─── HTTP dispatch ─────────────────────────────────────────────────────────────
-function runHttp(provider, prompt, timeoutMs) {
+function runHttp(provider, prompt, timeoutMs, slotName) {
   // HTTP slots use PROVIDER_SLOT mode: API keys live in ~/.claude.json server env,
   // not in process.env. Load them from there, falling back to process.env.
   const slotEnv = loadSlotEnv(provider.name);
@@ -472,63 +600,84 @@ function runHttp(provider, prompt, timeoutMs) {
   const baseUrl = slotEnv['ANTHROPIC_BASE_URL'] ?? provider.baseUrl;
   const model   = slotEnv['CLAUDE_DEFAULT_MODEL'] ?? provider.model;
 
-  const body   = JSON.stringify({
-    model:    model,
-    messages: [{ role: 'user', content: prompt }],
-    stream:   false,
-  });
-
-  const url       = new URL(`${baseUrl}/chat/completions`);
-  const isHttps   = url.protocol === 'https:';
-  const transport = isHttps ? https : http;
-  const options   = {
-    hostname: url.hostname,
-    port:     url.port || (isHttps ? 443 : 80),
-    path:     url.pathname + url.search,
-    method:   'POST',
-    headers:  {
-      'Content-Type':   'application/json',
-      'Authorization':  `Bearer ${apiKey}`,
-      'Content-Length': Buffer.byteLength(body),
-    },
-  };
+  // Provider concurrency control: acquire a slot before dispatching HTTP request
+  const providerKey = providerKeyFromUrl(baseUrl);
+  const maxConcurrency = provider.max_concurrency || 3;
+  const lock = acquireSlot(providerKey, maxConcurrency, 30000);
 
   return new Promise((resolve, reject) => {
-    let timedOut = false;
+    try {
+      // Build messages array — include system message if provider defines one
+      const messages = [];
+      if (provider.system_prompt) {
+        messages.push({ role: 'system', content: provider.system_prompt });
+      }
+      messages.push({ role: 'user', content: prompt });
 
-    const req = transport.request(options, (res) => {
-      let data = '';
-      res.on('data', chunk => { data += chunk; });
-      res.on('end', () => {
-        if (timedOut) return;
-        clearTimeout(timer);
-        try {
-          const parsed  = JSON.parse(data);
-          const content = parsed?.choices?.[0]?.message?.content;
-          if (content) {
-            resolve(content);
-          } else {
-            reject(new Error(`[HTTP error: unexpected response] ${data.slice(0, 500)}`));
-          }
-        } catch (e) {
-          reject(new Error(`[HTTP error: JSON parse failed] ${data.slice(0, 500)}`));
-        }
+      const body   = JSON.stringify({
+        model:    model,
+        messages,
+        max_tokens: provider.max_output_tokens || 4096,
+        temperature: provider.temperature ?? 0.3,
+        stream:   false,
       });
-    });
 
-    const timer = setTimeout(() => {
-      timedOut = true;
-      req.destroy();
-      reject(new Error(`TIMEOUT after ${timeoutMs}ms`));
-    }, timeoutMs);
+      const url       = new URL(`${baseUrl}/chat/completions`);
+      const isHttps   = url.protocol === 'https:';
+      const transport = isHttps ? https : http;
+      const options   = {
+        hostname: url.hostname,
+        port:     url.port || (isHttps ? 443 : 80),
+        path:     url.pathname + url.search,
+        method:   'POST',
+        headers:  {
+          'Content-Type':   'application/json',
+          'Authorization':  `Bearer ${apiKey}`,
+          'Content-Length': Buffer.byteLength(body),
+        },
+      };
 
-    req.on('error', (err) => {
-      clearTimeout(timer);
-      if (!timedOut) reject(new Error(`[HTTP request error: ${err.message}]`));
-    });
+      let timedOut = false;
 
-    req.write(body);
-    req.end();
+      const req = transport.request(options, (res) => {
+        let data = '';
+        res.on('data', chunk => { data += chunk; });
+        res.on('end', () => {
+          if (timedOut) return;
+          clearTimeout(timer);
+          try {
+            const parsed  = JSON.parse(data);
+            const content = parsed?.choices?.[0]?.message?.content;
+            if (content) {
+              resolve(content);
+            } else {
+              reject(new Error(`[HTTP error: unexpected response] ${data.slice(0, 500)}`));
+            }
+          } catch (e) {
+            reject(new Error(`[HTTP error: JSON parse failed] ${data.slice(0, 500)}`));
+          }
+        });
+      });
+
+      const timer = setTimeout(() => {
+        timedOut = true;
+        req.destroy();
+        reject(new Error(`TIMEOUT after ${timeoutMs}ms`));
+      }, timeoutMs);
+
+      req.on('error', (err) => {
+        clearTimeout(timer);
+        if (!timedOut) reject(new Error(`[HTTP request error: ${err.message}]`));
+      });
+
+      req.write(body);
+      req.end();
+    } finally {
+      // Release the provider slot when done (both success and error paths)
+      if (lock && lock.release) {
+        lock.release();
+      }
+    }
   });
 }
 
@@ -557,6 +706,29 @@ async function main() {
     process.stderr.write('[call-quorum-slot] No prompt received on stdin\n');
     process.exit(1);
   }
+
+  // ─── Layer 3: Pre-dispatch scoreboard cooldown check ────────────────────────
+  // If this slot has an active cooldown from a recent failure, skip immediately.
+  // Zero-latency: local file read, not an API call. Fail-open on any error.
+  try {
+    const pp = require('./planning-paths.cjs');
+    const sbPath = pp.resolveWithFallback(findProjectRoot(spawnCwd), 'quorum-scoreboard');
+    if (fs.existsSync(sbPath)) {
+      const sb = JSON.parse(fs.readFileSync(sbPath, 'utf8'));
+      const avail = sb?.availability?.[slot];
+      if (avail?.available_at_iso) {
+        const cooldownEnd = new Date(avail.available_at_iso).getTime();
+        if (!isNaN(cooldownEnd) && cooldownEnd > Date.now()) {
+          const remainingMs = cooldownEnd - Date.now();
+          process.stderr.write(`[call-quorum-slot] COOLDOWN: ${slot} is cooling down for ${Math.ceil(remainingMs / 1000)}s more (until ${avail.available_at_iso})\n`);
+          recordTelemetry(slot, roundNum, 'FLAG', 0, provider.provider || provider.name, 'cooldown', 0, 'COOLDOWN_ACTIVE', false, null, null, `Cooldown: ${Math.ceil(remainingMs / 1000)}s remaining`, 0, null);
+          writeFailureLog(slot, `COOLDOWN_ACTIVE: ${Math.ceil(remainingMs / 1000)}s remaining`, '');
+          appendTokenSentinel(slot);
+          process.exit(1);
+        }
+      }
+    }
+  } catch (_) { /* fail-open: missing/malformed scoreboard = no cooldown check */ }
 
   // Dual timeout resolution:
   // - idle_timeout_ms: inactivity timer that resets on stdout/stderr, defaults to 90s
@@ -606,15 +778,16 @@ async function main() {
         retryCount = retryResult.retryCount;
       }
     } else if (provider.type === 'http') {
-      const retryResult = await retryWithBackoff(() => runHttp(provider, prompt, effectiveIdleTimeout), slot);
+      const retryResult = await retryWithBackoff(() => runHttp(provider, prompt, effectiveIdleTimeout, slot), slot);
       result = retryResult.result;
       retryCount = retryResult.retryCount;
     } else {
       process.stderr.write(`[call-quorum-slot] Unknown provider type: ${provider.type}\n`);
       writeFailureLog(slot, `Unknown provider type: ${provider.type}`, '');
+      setScoreboardCooldown(slot, 'Unknown provider type: ' + provider.type);
       appendTokenSentinel(slot);
       const latencyMs = Date.now() - startMs;
-      recordTelemetry(slot, roundNum, 'FLAG', latencyMs, provider.provider || provider.name, 'unavailable', 0, 'UNKNOWN_TYPE');
+      recordTelemetry(slot, roundNum, 'FLAG', latencyMs, provider.provider || provider.name, 'unavailable', 0, 'UNKNOWN_TYPE', false, null, null, null, 0, null);
       process.exit(1);
     }
 
@@ -622,11 +795,37 @@ async function main() {
     // Pattern: "...\n[exit code N]" appended by runSubprocess on non-zero exit.
     const exitCodeMatch = result.match(/\[exit code (\d+)\]\s*$/);
     if (exitCodeMatch && exitCodeMatch[1] !== '0') {
+      const cliExitCode = parseInt(exitCodeMatch[1], 10);
+      // Check if output contains a valid verdict despite non-zero exit
+      // (common cause: Gemini SessionEnd hook exits non-zero, but response is fine)
+      const hasValidVerdict = /\b(APPROVE|BLOCK|FLAG)\b/.test(result);
+      // Substantial output must contain model content, not just hook/framework logs
+      const isFrameworkNoise = /^(Created execution plan|Hook execution|Expanding hook|Attempt \d+ failed|Keychain|AgentRegistry|\[ERROR\])/m.test(result) && !/\b(APPROVE|BLOCK|FLAG|verdict|reasoning)\b/i.test(result);
+      const hasSubstantialOutput = result.length > 100 && !isFrameworkNoise;
+
+      if (hasValidVerdict || hasSubstantialOutput) {
+        // Valid output despite non-zero exit -- treat as success with warning
+        const latencyMs = Date.now() - startMs;
+        const providerName = provider.provider || provider.name;
+        const verdict = (/APPROVE|BLOCK|FLAG/.exec(result) || [])[0] || 'UNKNOWN';
+        const l1Detect = result.includes('[OUTPUT TRUNCATED at 10MB');
+        process.stderr.write('[call-quorum-slot] WARNING: ' + slot + ' CLI exited non-zero (code ' + cliExitCode + ') but produced valid output -- treating as available\n');
+        recordTelemetry(slot, roundNum, verdict, latencyMs, providerName, 'available_with_warning', retryCount, null, l1Detect, l1Detect ? 'L1' : null, null, result.slice(0, 500), result.length, cliExitCode);
+        clearFailureOnSuccess(slot);
+        writeInnerOutputFile(result);
+        process.stdout.write(result);
+        if (!result.endsWith('\n')) process.stdout.write('\n');
+        appendTokenSentinel(slot);
+        process.exit(0);
+      }
+
+      // No valid output -- original unavailable behavior
       const latencyMs = Date.now() - startMs;
       const providerName = provider.provider || provider.name;
       const errorType = classifyErrorType(result);
-      recordTelemetry(slot, roundNum, 'FLAG', latencyMs, providerName, 'unavailable', retryCount, errorType);
+      recordTelemetry(slot, roundNum, 'FLAG', latencyMs, providerName, 'unavailable', retryCount, errorType, false, null, null, result.slice(0, 500), result.length, cliExitCode);
       writeFailureLog(slot, result, '');
+      setScoreboardCooldown(slot, result);
       // Still output the result so quorum-slot-dispatch can parse it
       process.stdout.write(result);
       if (!result.endsWith('\n')) process.stdout.write('\n');
@@ -639,11 +838,13 @@ async function main() {
     const latencyMs = Date.now() - startMs;
     const providerName = provider.provider || provider.name;
 
-    recordTelemetry(slot, roundNum, verdict, latencyMs, providerName, 'available', retryCount, null);
+    const l1Detect = result.includes('[OUTPUT TRUNCATED at 10MB');
+    recordTelemetry(slot, roundNum, verdict, latencyMs, providerName, 'available', retryCount, null, l1Detect, l1Detect ? 'L1' : null, null, result.slice(0, 500), result.length, 0);
 
     // Slot succeeded — clear any failure records so next quorum run doesn't skip it
     clearFailureOnSuccess(slot);
 
+    writeInnerOutputFile(result);
     process.stdout.write(result);
     if (!result.endsWith('\n')) process.stdout.write('\n');
     appendTokenSentinel(slot);
@@ -654,10 +855,11 @@ async function main() {
 
     const errorType = classifyErrorType(err.message);
 
-    recordTelemetry(slot, roundNum, 'FLAG', latencyMs, providerName, 'unavailable', 0, errorType);
+    recordTelemetry(slot, roundNum, 'FLAG', latencyMs, providerName, 'unavailable', 0, errorType, false, null, null, err.message.slice(0, 500), 0, null);
 
     process.stderr.write(`[call-quorum-slot] ${err.message}\n`);
     writeFailureLog(slot, err.message, '');
+    setScoreboardCooldown(slot, err.message);
     appendTokenSentinel(slot);
     process.exit(1);
   }
@@ -671,5 +873,5 @@ if (require.main === module) {
   });
 }
 
-// ─── Test exports (SHELL-ESCAPE-01) ──────────────────────────────────────────
-module.exports = { buildSpawnArgs };
+// ─── Test exports (SHELL-ESCAPE-01, TRUNC-01, INFRA-367) ───────────────────────
+module.exports = { buildSpawnArgs, recordTelemetry, findProjectRoot };

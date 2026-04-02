@@ -380,7 +380,7 @@ When executor returns a checkpoint AND `AUTO_CFG` is `"true"`:
      - Build `$DISPATCH_LIST` (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Dispatch as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100`
      - Synthesize results inline, deliberate up to 10 rounds per R3.3
      - **Unanimous gate (CE-3): 100% of valid external voters must vote APPROVE. Claude's advisory analysis is excluded from the tally. A BLOCK from any external voter is absolute (CE-2) — escalate to user.**
-     - **FALLBACK-01 required:** If ANY dispatched slot returns UNAVAIL, follow the tiered fallback protocol from @core/references/quorum-dispatch.md §6 before evaluating consensus. Dispatch T1 (same `auth_type=sub`) then T2 (cross-subscription) unused slots from the preflight `available_slots` list. Complete the FALLBACK_CHECKPOINT before proceeding.
+     - **FALLBACK-01 required:** If ANY dispatched slot returns UNAVAIL, follow the tiered fallback protocol from @core/references/quorum-dispatch.md §6 before evaluating consensus. Dispatch T1 (flat-rate CLI, `auth_type=sub`) then T2 (pay-per-use API) unused slots from the preflight `available_slots` list. Complete the FALLBACK_CHECKPOINT before proceeding.
 
      Fail-open: if all slots AND all fallback tiers are exhausted (UNAVAIL), treat as BLOCK (escalate to user).
   4. Route on quorum_result:
@@ -657,7 +657,7 @@ Before escalating to the user, run a quorum resolution loop to attempt automated
      ```
    - Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Then dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100` — do NOT dispatch slots outside `$DISPATCH_LIST`
    - Synthesize results inline, deliberate up to 10 rounds per R3.3
-   - **FALLBACK-01 required:** If ANY dispatched slot returns UNAVAIL, follow the tiered fallback protocol from @core/references/quorum-dispatch.md §6 before evaluating consensus. Dispatch T1 (same `auth_type=sub`) then T2 (cross-subscription) unused slots from the preflight `available_slots` list. Complete the FALLBACK_CHECKPOINT before proceeding.
+   - **FALLBACK-01 required:** If ANY dispatched slot returns UNAVAIL, follow the tiered fallback protocol from @core/references/quorum-dispatch.md §6 before evaluating consensus. Dispatch T1 (flat-rate CLI, `auth_type=sub`) then T2 (pay-per-use API) unused slots from the preflight `available_slots` list. Complete the FALLBACK_CHECKPOINT before proceeding.
 
    Fail-open: if all slots AND all fallback tiers are exhausted (UNAVAIL), treat as BLOCK (escalate to user).
 

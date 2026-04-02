@@ -1,89 +1,865 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-26T15:20:04.093Z",
-  "total_failures": 3,
+  "generated": "2026-04-01T15:38:42.390Z",
+  "total_failures": 36,
   "categories": {
     "crash": [
       {
-        "tool": "run-tlc",
-        "formalism": "tla",
+        "tool": "run-audit-alloy",
+        "formalism": "alloy",
         "result": "error",
-        "timestamp": "2026-03-26T15:20:03.628Z",
-        "check_id": "tla:mcsensitivity",
-        "surface": "tla",
-        "property": "MCsensitivity",
+        "timestamp": "2026-04-01T15:38:30.742Z",
+        "check_id": "alloy:bogus",
+        "surface": "alloy",
+        "property": "bogus",
         "runtime_ms": 0,
-        "summary": "error: state-space guard blocked MCsensitivity (HIGH risk, ~null states)",
-        "triage_tags": [
-          "state-space-blocked"
-        ],
+        "summary": "error: alloy:bogus (invalid spec)",
+        "triage_tags": [],
         "requirement_ids": [],
         "metadata": {
-          "config": "MCsensitivity",
-          "estimated_states": null,
-          "risk": "HIGH"
+          "spec": "bogus"
         },
         "category": "crash",
-        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCsensitivity (HIGH risk, ~null states)"
+        "classification_reason": "Error pattern in summary: error: alloy:bogus (invalid spec)"
+      },
+      {
+        "tool": "run-audit-alloy",
+        "formalism": "alloy",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:31.065Z",
+        "check_id": "alloy:invalid",
+        "surface": "alloy",
+        "property": "invalid",
+        "runtime_ms": 0,
+        "summary": "error: alloy:invalid (invalid spec)",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "spec": "invalid"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: alloy:invalid (invalid spec)"
       },
       {
         "tool": "run-tlc",
         "formalism": "tla",
         "result": "error",
-        "timestamp": "2026-03-26T15:20:03.844Z",
-        "check_id": "tla:mcsolve-convergence",
-        "surface": "tla",
-        "property": "MCsolve-convergence",
+        "timestamp": "2026-04-01T15:38:31.407Z",
+        "check_id": "tla:mcagentloop",
+        "surface": "agent-loop",
+        "property": "MCAgentLoop",
         "runtime_ms": 0,
-        "summary": "error: state-space guard blocked MCsolve-convergence (HIGH risk, ~null states)",
+        "summary": "error: state-space guard blocked MCAgentLoop (HIGH risk, ~null states)",
         "triage_tags": [
           "state-space-blocked"
         ],
         "requirement_ids": [],
         "metadata": {
-          "config": "MCsolve-convergence",
+          "config": "MCAgentLoop",
           "estimated_states": null,
           "risk": "HIGH"
         },
         "category": "crash",
-        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCsolve-convergence (HIGH risk, ~null states)"
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCAgentLoop (HIGH risk, ~null states)"
       },
       {
         "tool": "run-tlc",
         "formalism": "tla",
         "result": "error",
-        "timestamp": "2026-03-26T15:20:04.088Z",
-        "check_id": "tla:mcsolve-orchestrator",
+        "timestamp": "2026-04-01T15:38:32.470Z",
+        "check_id": "tla:mcbugmodellookup",
         "surface": "tla",
-        "property": "MCsolve-orchestrator",
+        "property": "MCBugModelLookup",
         "runtime_ms": 0,
-        "summary": "error: state-space guard blocked MCsolve-orchestrator (HIGH risk, ~null states)",
+        "summary": "error: state-space guard blocked MCBugModelLookup (HIGH risk, ~null states)",
         "triage_tags": [
           "state-space-blocked"
         ],
         "requirement_ids": [],
         "metadata": {
-          "config": "MCsolve-orchestrator",
+          "config": "MCBugModelLookup",
           "estimated_states": null,
           "risk": "HIGH"
         },
         "category": "crash",
-        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCsolve-orchestrator (HIGH risk, ~null states)"
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCBugModelLookup (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:33.289Z",
+        "check_id": "tla:mcconvergencetest",
+        "surface": "convergence",
+        "property": "MCConvergenceTest",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCConvergenceTest (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCConvergenceTest",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCConvergenceTest (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-oscillation-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:34.174Z",
+        "check_id": "tla:bogus",
+        "surface": "tla",
+        "property": "bogus",
+        "runtime_ms": 0,
+        "summary": "error: unknown config in 0ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "bogus"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: unknown config in 0ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:34.321Z",
+        "check_id": "tla:mcdeliberationrevision",
+        "surface": "deliberation-revision",
+        "property": "MCDeliberationRevision",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCDeliberationRevision (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCDeliberationRevision",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCDeliberationRevision (HIGH risk, ~null states"
+      },
+      {
+        "tool": "run-oscillation-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:34.529Z",
+        "check_id": "tla:invalid",
+        "surface": "tla",
+        "property": "invalid",
+        "runtime_ms": 0,
+        "summary": "error: unknown config in 0ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "invalid"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: unknown config in 0ms"
+      },
+      {
+        "tool": "run-prism",
+        "formalism": "prism",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:35.018Z",
+        "check_id": "prism:quorum",
+        "surface": "prism",
+        "property": "Quorum consensus probability under agent availability rates",
+        "runtime_ms": 0,
+        "summary": "error: prism:quorum (binary not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "PRM-01",
+          "QUORUM-04",
+          "LOOP-01"
+        ],
+        "metadata": {},
+        "observation_window": {
+          "window_start": "2026-04-01T15:38:35.007Z",
+          "window_end": "2026-04-01T15:38:35.018Z",
+          "n_traces": 0,
+          "n_events": 0,
+          "window_days": 0
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
+      },
+      {
+        "tool": "run-oscillation-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:35.100Z",
+        "check_id": "tla:solve-convergence",
+        "surface": "tla",
+        "property": "Outer solve loop convergence under Option C",
+        "runtime_ms": 0,
+        "summary": "error: Java not found in 0ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "FV-01",
+          "FV-02",
+          "FV-03"
+        ],
+        "metadata": {
+          "config": "MCsolve-convergence"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: Java not found in 0ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:35.145Z",
+        "check_id": "tla:mcgatepromotion",
+        "surface": "tla",
+        "property": "MCGatePromotion",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCGatePromotion (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCGatePromotion",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCGatePromotion (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-installer-alloy",
+        "formalism": "alloy",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:35.238Z",
+        "check_id": "alloy:bogus",
+        "surface": "alloy",
+        "property": "bogus",
+        "runtime_ms": 0,
+        "summary": "error: alloy:bogus (invalid spec)",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "spec": "bogus"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: alloy:bogus (invalid spec)"
+      },
+      {
+        "tool": "run-prism",
+        "formalism": "prism",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:35.528Z",
+        "check_id": "prism:quorum",
+        "surface": "prism",
+        "property": "Quorum consensus probability under agent availability rates",
+        "runtime_ms": 0,
+        "summary": "error: prism:quorum (binary not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "PRM-01",
+          "QUORUM-04",
+          "LOOP-01"
+        ],
+        "metadata": {},
+        "observation_window": {
+          "window_start": "2026-04-01T15:38:35.527Z",
+          "window_end": "2026-04-01T15:38:35.528Z",
+          "n_traces": 0,
+          "n_events": 0,
+          "window_days": 0
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
+      },
+      {
+        "tool": "run-installer-alloy",
+        "formalism": "alloy",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:35.737Z",
+        "check_id": "alloy:invalid",
+        "surface": "alloy",
+        "property": "invalid",
+        "runtime_ms": 0,
+        "summary": "error: alloy:invalid (invalid spec)",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "spec": "invalid"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: alloy:invalid (invalid spec)"
+      },
+      {
+        "tool": "run-prism",
+        "formalism": "prism",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:36.043Z",
+        "check_id": "prism:quorum",
+        "surface": "prism",
+        "property": "Quorum consensus probability under agent availability rates",
+        "runtime_ms": 0,
+        "summary": "error: prism:quorum (binary not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "PRM-01",
+          "QUORUM-04",
+          "LOOP-01"
+        ],
+        "metadata": {},
+        "observation_window": {
+          "window_start": "2026-04-01T15:38:36.041Z",
+          "window_end": "2026-04-01T15:38:36.043Z",
+          "n_traces": 0,
+          "n_events": 0,
+          "window_days": 0
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:36.082Z",
+        "check_id": "tla:mcp-environment",
+        "surface": "mcp-calls",
+        "property": "MCP environment — MCPEnvSafety, MCPEnvLiveness",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCMCPEnv (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [
+          "MCPENV-01",
+          "MCPENV-02",
+          "MCPENV-03"
+        ],
+        "metadata": {
+          "config": "MCMCPEnv",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCMCPEnv (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-protocol-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:36.262Z",
+        "check_id": "tla:deliberation",
+        "surface": "tla",
+        "property": "R3 deliberation loop — max 10 rounds + 10 improvement iterations",
+        "runtime_ms": 0,
+        "summary": "error: Java not found in 0ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "PLAN-01",
+          "PLAN-02",
+          "SAFE-03",
+          "IMPR-01",
+          "LOOP-02"
+        ],
+        "metadata": {
+          "config": "MCdeliberation"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: Java not found in 0ms"
+      },
+      {
+        "tool": "run-prism",
+        "formalism": "prism",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:36.398Z",
+        "check_id": "prism:quorum",
+        "surface": "prism",
+        "property": "Quorum consensus probability under agent availability rates",
+        "runtime_ms": 0,
+        "summary": "error: prism:quorum (binary not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "PRM-01",
+          "QUORUM-04",
+          "LOOP-01"
+        ],
+        "metadata": {},
+        "observation_window": {
+          "window_start": "2026-04-01T15:38:36.397Z",
+          "window_end": "2026-04-01T15:38:36.398Z",
+          "n_traces": 0,
+          "n_events": 0,
+          "window_days": 0
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
+      },
+      {
+        "tool": "run-prism",
+        "formalism": "prism",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:36.696Z",
+        "check_id": "prism:quorum",
+        "surface": "prism",
+        "property": "Quorum consensus probability under agent availability rates",
+        "runtime_ms": 0,
+        "summary": "error: prism:quorum (binary not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "PRM-01",
+          "QUORUM-04",
+          "LOOP-01"
+        ],
+        "metadata": {},
+        "observation_window": {
+          "window_start": "2026-04-01T15:38:36.695Z",
+          "window_end": "2026-04-01T15:38:36.696Z",
+          "n_traces": 0,
+          "n_events": 0,
+          "window_days": 0
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
+      },
+      {
+        "tool": "run-prism",
+        "formalism": "prism",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:36.788Z",
+        "check_id": "prism:quorum",
+        "surface": "prism",
+        "property": "Quorum consensus probability under agent availability rates",
+        "runtime_ms": 0,
+        "summary": "error: prism:quorum (binary not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "PRM-01",
+          "QUORUM-04",
+          "LOOP-01"
+        ],
+        "metadata": {},
+        "observation_window": {
+          "window_start": "2026-04-01T15:38:36.785Z",
+          "window_end": "2026-04-01T15:38:36.788Z",
+          "n_traces": 0,
+          "n_events": 0,
+          "window_days": 0
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:36.902Z",
+        "check_id": "tla:quorum-safety",
+        "surface": "tla",
+        "property": "Safety invariants — TypeInvariant, SafetyInvariant, no deadlock",
+        "runtime_ms": 0,
+        "summary": "error: Java not found in 0ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "QUORUM-01",
+          "QUORUM-02",
+          "QUORUM-03",
+          "SAFE-01",
+          "SAFE-02",
+          "SAFE-03",
+          "LOOP-01"
+        ],
+        "metadata": {
+          "config": "MCsafety",
+          "verification_mode": "validation"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: Java not found in 0ms"
+      },
+      {
+        "tool": "run-prism",
+        "formalism": "prism",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:36.918Z",
+        "check_id": "prism:quorum",
+        "surface": "prism",
+        "property": "Quorum consensus probability under agent availability rates",
+        "runtime_ms": 0,
+        "summary": "error: prism:quorum (binary not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "PRM-01",
+          "QUORUM-04",
+          "LOOP-01"
+        ],
+        "metadata": {},
+        "observation_window": {
+          "window_start": "2026-04-01T15:38:36.901Z",
+          "window_end": "2026-04-01T15:38:36.918Z",
+          "n_traces": 0,
+          "n_events": 0,
+          "window_days": 0
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
+      },
+      {
+        "tool": "run-prism",
+        "formalism": "prism",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:37.242Z",
+        "check_id": "prism:quorum",
+        "surface": "prism",
+        "property": "Quorum consensus probability under agent availability rates",
+        "runtime_ms": 0,
+        "summary": "error: prism:quorum (binary not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "PRM-01",
+          "QUORUM-04",
+          "LOOP-01"
+        ],
+        "metadata": {},
+        "observation_window": {
+          "window_start": "2026-04-01T15:38:37.206Z",
+          "window_end": "2026-04-01T15:38:37.242Z",
+          "n_traces": 0,
+          "n_events": 0,
+          "window_days": 0
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
+      },
+      {
+        "tool": "run-prism",
+        "formalism": "prism",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:37.367Z",
+        "check_id": "prism:quorum",
+        "surface": "prism",
+        "property": "Quorum consensus probability under agent availability rates",
+        "runtime_ms": 0,
+        "summary": "error: prism:quorum (binary not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "PRM-01",
+          "QUORUM-04",
+          "LOOP-01"
+        ],
+        "metadata": {},
+        "observation_window": {
+          "window_start": "2026-04-01T15:38:37.362Z",
+          "window_end": "2026-04-01T15:38:37.366Z",
+          "n_traces": 0,
+          "n_events": 0,
+          "window_days": 0
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
+      },
+      {
+        "tool": "run-prism",
+        "formalism": "prism",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:37.628Z",
+        "check_id": "prism:quorum",
+        "surface": "prism",
+        "property": "Quorum consensus probability under agent availability rates",
+        "runtime_ms": 0,
+        "summary": "error: prism:quorum (binary not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "PRM-01",
+          "QUORUM-04",
+          "LOOP-01"
+        ],
+        "metadata": {},
+        "observation_window": {
+          "window_start": "2026-04-01T15:38:37.618Z",
+          "window_end": "2026-04-01T15:38:37.628Z",
+          "n_traces": 0,
+          "n_events": 0,
+          "window_days": 0
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
+      },
+      {
+        "tool": "run-prism",
+        "formalism": "prism",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:38.024Z",
+        "check_id": "prism:quorum",
+        "surface": "prism",
+        "property": "Quorum consensus probability under agent availability rates",
+        "runtime_ms": 0,
+        "summary": "error: prism:quorum (binary not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "PRM-01",
+          "QUORUM-04",
+          "LOOP-01"
+        ],
+        "metadata": {},
+        "observation_window": {
+          "window_start": "2026-04-01T15:38:38.009Z",
+          "window_end": "2026-04-01T15:38:38.024Z",
+          "n_traces": 0,
+          "n_events": 0,
+          "window_days": 0
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
+      },
+      {
+        "tool": "run-prism",
+        "formalism": "prism",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:38.339Z",
+        "check_id": "prism:quorum",
+        "surface": "prism",
+        "property": "Quorum consensus probability under agent availability rates",
+        "runtime_ms": 0,
+        "summary": "error: prism:quorum (binary not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "PRM-01",
+          "QUORUM-04",
+          "LOOP-01"
+        ],
+        "metadata": {},
+        "observation_window": {
+          "window_start": "2026-04-01T15:38:38.327Z",
+          "window_end": "2026-04-01T15:38:38.336Z",
+          "n_traces": 0,
+          "n_events": 0,
+          "window_days": 0
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
+      },
+      {
+        "tool": "run-prism",
+        "formalism": "prism",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:38.649Z",
+        "check_id": "prism:quorum",
+        "surface": "prism",
+        "property": "Quorum consensus probability under agent availability rates",
+        "runtime_ms": 0,
+        "summary": "error: prism:quorum (binary not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "PRM-01",
+          "QUORUM-04",
+          "LOOP-01"
+        ],
+        "metadata": {},
+        "observation_window": {
+          "window_start": "2026-04-01T15:38:38.647Z",
+          "window_end": "2026-04-01T15:38:38.648Z",
+          "n_traces": 0,
+          "n_events": 0,
+          "window_days": 0
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
+      },
+      {
+        "tool": "run-prism",
+        "formalism": "prism",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:38.836Z",
+        "check_id": "prism:quorum",
+        "surface": "prism",
+        "property": "Quorum consensus probability under agent availability rates",
+        "runtime_ms": 0,
+        "summary": "error: prism:quorum (binary not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "PRM-01",
+          "QUORUM-04",
+          "LOOP-01"
+        ],
+        "metadata": {},
+        "observation_window": {
+          "window_start": "2026-04-01T15:38:38.818Z",
+          "window_end": "2026-04-01T15:38:38.835Z",
+          "n_traces": 0,
+          "n_events": 0,
+          "window_days": 0
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
+      },
+      {
+        "tool": "run-protocol-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:38.934Z",
+        "check_id": "tla:bogus",
+        "surface": "tla",
+        "property": "bogus",
+        "runtime_ms": 0,
+        "summary": "error: unknown config in 0ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "bogus"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: unknown config in 0ms"
+      },
+      {
+        "tool": "run-prism",
+        "formalism": "prism",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:39.010Z",
+        "check_id": "prism:quorum",
+        "surface": "prism",
+        "property": "Quorum consensus probability under agent availability rates",
+        "runtime_ms": 0,
+        "summary": "error: prism:quorum (binary not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "PRM-01",
+          "QUORUM-04",
+          "LOOP-01"
+        ],
+        "metadata": {},
+        "observation_window": {
+          "window_start": "2026-04-01T15:38:39.009Z",
+          "window_end": "2026-04-01T15:38:39.010Z",
+          "n_traces": 0,
+          "n_events": 0,
+          "window_days": 0
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
+      },
+      {
+        "tool": "run-protocol-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:39.261Z",
+        "check_id": "tla:invalid",
+        "surface": "tla",
+        "property": "invalid",
+        "runtime_ms": 0,
+        "summary": "error: unknown config in 0ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "invalid"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: unknown config in 0ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:39.350Z",
+        "check_id": "tla:bogus",
+        "surface": "tla",
+        "property": "Config not found: bogus",
+        "runtime_ms": 0,
+        "summary": "error: config file not found in 0ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "bogus",
+          "verification_mode": "validation"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: config file not found in 0ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:39.613Z",
+        "check_id": "tla:invalid",
+        "surface": "tla",
+        "property": "Config not found: invalid",
+        "runtime_ms": 0,
+        "summary": "error: config file not found in 0ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "invalid",
+          "verification_mode": "validation"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: config file not found in 0ms"
+      },
+      {
+        "tool": "run-transcript-alloy",
+        "formalism": "alloy",
+        "result": "error",
+        "timestamp": "2026-04-01T15:38:39.915Z",
+        "check_id": "alloy:transcript",
+        "surface": "alloy",
+        "property": "Hook transcript scanning — boundary detection, tool_use/tool_result pairing uniqueness, ceiling enforcement",
+        "runtime_ms": 0,
+        "summary": "error: alloy:transcript (Java not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "STOP-08",
+          "STOP-09",
+          "STOP-10",
+          "STOP-11"
+        ],
+        "metadata": {
+          "spec": "transcript-scan"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: alloy:transcript (Java not found)"
       }
     ],
     "timeout": [],
-    "logic_violation": [],
+    "logic_violation": [
+      {
+        "tool": "run-oscillation-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-04-01T15:38:33.597Z",
+        "check_id": "tla:oscillation",
+        "surface": "tla",
+        "property": "Run-collapse oscillation detection algorithm correctness",
+        "runtime_ms": 3207,
+        "summary": "fail: MCoscillation in 3207ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "DETECT-04",
+          "DETECT-05",
+          "DETECT-06"
+        ],
+        "metadata": {
+          "config": "MCoscillation"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCoscillation in 3207ms"
+      }
+    ],
     "drift": [],
     "degradation": []
   },
   "category_counts": {
-    "crash": 3,
+    "crash": 35,
     "timeout": 0,
-    "logic_violation": 0,
+    "logic_violation": 1,
     "drift": 0,
     "degradation": 0
   },
   "degradation_fallback_note": "When no baseline exists, potential degradation entries are classified as logic_violation",
   "unclassified": [],
-  "summary": "3 failures classified: crash=3, timeout=0, logic_violation=0, drift=0, degradation=0. 0 unclassified."
+  "summary": "36 failures classified: crash=35, timeout=0, logic_violation=1, drift=0, degradation=0. 0 unclassified."
 }

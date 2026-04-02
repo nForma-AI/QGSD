@@ -152,18 +152,9 @@ describe('providers.json latency_budget_ms field presence', () => {
     }
   });
 
-  it('claude-5 and claude-6 have non-null latency_budget_ms', () => {
+  it('all providers have null latency_budget_ms (no active budgets)', () => {
     const data = JSON.parse(fs.readFileSync(providersPath, 'utf8'));
-    const claude5 = data.providers.find(p => p.name === 'claude-5');
-    const claude6 = data.providers.find(p => p.name === 'claude-6');
-    assert.equal(claude5.latency_budget_ms, 15000, 'claude-5 should have latency_budget_ms=15000');
-    assert.equal(claude6.latency_budget_ms, 15000, 'claude-6 should have latency_budget_ms=15000');
-  });
-
-  it('non-example providers have null latency_budget_ms', () => {
-    const data = JSON.parse(fs.readFileSync(providersPath, 'utf8'));
-    const nonExamples = data.providers.filter(p => !['claude-5', 'claude-6'].includes(p.name));
-    for (const p of nonExamples) {
+    for (const p of data.providers) {
       assert.equal(
         p.latency_budget_ms, null,
         `Provider "${p.name}" should have latency_budget_ms=null`

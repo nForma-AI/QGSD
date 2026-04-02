@@ -1868,7 +1868,9 @@ function generateManifest(dir, baseDir) {
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
     const relPath = path.relative(baseDir, fullPath).replace(/\\/g, '/');
-    if (entry.isDirectory()) {
+    if (entry.isSymbolicLink()) {
+      continue; // skip symlinks (e.g. nf/bin → nf-bin)
+    } else if (entry.isDirectory()) {
       Object.assign(manifest, generateManifest(fullPath, baseDir));
     } else {
       manifest[relPath] = fileHash(fullPath);
@@ -2204,6 +2206,63 @@ function install(isGlobal, runtime = 'claude') {
       }
       console.log(`  ${green}✓${reset} Installed XState machine bundle`);
     }
+
+    // Mirror nf-bin/ scripts into nf/bin/ so both paths resolve
+    // (LLMs often guess ~/.claude/nf/bin/ instead of ~/.claude/nf-bin/)
+    // nf/bin/ already has core/bin/ files (gsd-tools.cjs); we add nf-bin/ scripts alongside them
+    const nfBinDir = path.join(targetDir, 'nf', 'bin');
+    if (fs.existsSync(nfBinDir) && !fs.lstatSync(nfBinDir).isSymbolicLink()) {
+      let mirrored = 0;
+      for (const entry of fs.readdirSync(binDest)) {
+        const srcFile = path.join(binDest, entry);
+        if (fs.statSync(srcFile).isFile()) {
+          const destFile = path.join(nfBinDir, entry);
+          if (!fs.existsSync(destFile)) {
+            fs.copyFileSync(srcFile, destFile);
+            mirrored++;
+          }
+        }
+      }
+      // Also mirror adapters/ subdirectory
+      const adaptersSrcMirror = path.join(binDest, 'adapters');
+      const adaptersDstMirror = path.join(nfBinDir, 'adapters');
+      if (fs.existsSync(adaptersSrcMirror)) {
+        fs.mkdirSync(adaptersDstMirror, { recursive: true });
+        for (const entry of fs.readdirSync(adaptersSrcMirror)) {
+          const srcFile = path.join(adaptersSrcMirror, entry);
+          const destFile = path.join(adaptersDstMirror, entry);
+          if (fs.statSync(srcFile).isFile() && !fs.existsSync(destFile)) {
+            fs.copyFileSync(srcFile, destFile);
+            mirrored++;
+          }
+        }
+      }
+      if (mirrored > 0) {
+        console.log(`  ${green}✓${reset} Mirrored ${mirrored} nf-bin scripts into nf/bin`);
+      }
+    } else if (fs.existsSync(nfBinDir) && fs.lstatSync(nfBinDir).isSymbolicLink()) {
+      // Previous install created a symlink — restore as real dir with merged contents
+      fs.unlinkSync(nfBinDir);
+      fs.mkdirSync(nfBinDir, { recursive: true });
+      // Re-copy core/bin/ files
+      const coreBinSrc = path.join(src, 'core', 'bin');
+      if (fs.existsSync(coreBinSrc)) {
+        for (const entry of fs.readdirSync(coreBinSrc)) {
+          fs.copyFileSync(path.join(coreBinSrc, entry), path.join(nfBinDir, entry));
+        }
+      }
+      // Copy nf-bin/ files
+      for (const entry of fs.readdirSync(binDest)) {
+        const srcFile = path.join(binDest, entry);
+        if (fs.statSync(srcFile).isFile()) {
+          const destFile = path.join(nfBinDir, entry);
+          if (!fs.existsSync(destFile)) {
+            fs.copyFileSync(srcFile, destFile);
+          }
+        }
+      }
+      console.log(`  ${green}✓${reset} Restored nf/bin (was symlink) with merged contents`);
+    }
   }
 
   // Validate hook path references point to real targets
@@ -2237,6 +2296,25 @@ function install(isGlobal, runtime = 'claude') {
       settings.experimental.enableAgents = true;
       console.log(`  ${green}✓${reset} Enabled experimental agents`);
     }
+  }
+
+  // Gemini CLI only supports SessionStart and SessionEnd hook events.
+  // All other events (UserPromptSubmit, Stop, PreToolUse, PostToolUse, etc.) cause
+  // "Invalid hook event name" warnings and are silently ignored.
+  const GEMINI_SUPPORTED_EVENTS = new Set(['SessionStart', 'SessionEnd']);
+
+  // Clean up invalid Gemini hook events from prior installs
+  if (isGemini && settings.hooks) {
+    for (const event of Object.keys(settings.hooks)) {
+      if (!GEMINI_SUPPORTED_EVENTS.has(event)) {
+        delete settings.hooks[event];
+        console.log(`  ${green}!${reset} Removed unsupported Gemini hook event: ${event}`);
+      }
+    }
+  }
+
+  if (isGemini) {
+    console.log(`  ${cyan}i${reset} Gemini CLI: only registering SessionStart + SessionEnd hooks (other events unsupported)`);
   }
 
   // Configure SessionStart hook for update checking (skip for opencode)
@@ -2308,6 +2386,9 @@ function install(isGlobal, runtime = 'claude') {
         if (settings.hooks[event].length === 0) delete settings.hooks[event];
       }
     }
+
+    // ── Non-Session hooks: skip for Gemini (only supports SessionStart + SessionEnd) ──
+    if (!isGemini) {
 
     // Register nForma UserPromptSubmit hook (quorum injection)
     // MUST be in settings.json — plugin hooks.json silently discards UserPromptSubmit output (GitHub #10225)
@@ -2475,6 +2556,8 @@ function install(isGlobal, runtime = 'claude') {
       });
       console.log(`  ${green}✓${reset} Configured nForma slot correlator hook (SubagentStart)`);
     }
+
+    } // end if (!isGemini) — non-Session hooks
 
     // Register nForma session-end hook (SessionEnd — learning extraction + skill candidates)
     if (!settings.hooks.SessionEnd) settings.hooks.SessionEnd = [];

@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 Phase: 53 of 53 (Skill Deprecation) — COMPLETED
 Plan: 53-01 of 1 — COMPLETED
 Status: All phases complete — /nf:model-driven-fix deprecated, all consumers rewired to /nf:debug
-Last activity: 2026-03-28 - Completed quick task 364: Restore quorum convergence rewrite logic
+Last activity: 2026-04-01 - Completed quick task 370: Implement project-level formal spec discovery with security hardening
 
 Progress: [██████████] 100% (Phase 50 done; Phase 51 done; Phase 52 done; Phase 53 done)
 
@@ -59,6 +59,8 @@ Recent decisions affecting current work:
 - Plan 51-02: Bug_fix routing threshold: confidence >= 0.7 (clear signals only; ambiguous cases skip debug, fail-open)
 - [Phase quick-356]: All 7 new diagnostic sweeps are informational (not automatable) with no-op LAYER_HANDLERS
 - [Phase quick-361]: Automation-first verification: Playwright/agent-browser > CLI > code inspection > manual user testing
+- [Phase 366]: Used awk next-based fall-through prevention for block-scalar YAML extraction
+- [Phase quick-368]: 3-layer fail-fast: idle timeout tuning, failure-to-scoreboard cooldown bridge via spawnSync, pre-dispatch cooldown check with zero-latency local file read
 
 ### Pending Todos
 
@@ -82,6 +84,11 @@ None yet.
 | 362 | Wire debug routing (Loop 1 + task classification + debug_context injection) into execute-phase.md | 2026-03-27 | 813c1d77 | Verified | [362-wire-debug-routing-into-execute-phase-md](./quick/362-wire-debug-routing-into-execute-phase-md/) |
 | 363 | Push Loop 2 + debug_context into execute-plan.md Pattern A spawn prompt | 2026-03-27 | 72bbe22d | Verified | [363-push-loop-2-and-debug-context-into-execu](./quick/363-push-loop-2-and-debug-context-into-execu/) |
 | 364 | Restore quorum convergence rewrite logic dropped from quick.md | 2026-03-28 | 9c21ab0a | Verified | [364-restore-quorum-convergence-rewrite-logic](./quick/364-restore-quorum-convergence-rewrite-logic/) |
+| 365 | Fix quorum output truncation integrity | 2026-03-31 | 8d4c12e9 | Verified | [365-fix-quorum-output-truncation-integrity](./quick/365-fix-quorum-output-truncation-integrity/) |
+| 367 | Fix systemic quorum infrastructure issues | 2026-03-31 | 45bac731 | Verified | [367-fix-systemic-quorum-infra-issues](./quick/367-fix-systemic-quorum-infra-issues/) |
+| 368 | 3-layer robust quorum fail-fast | 2026-03-31 | cd8f893f | Verified | [368-robust-quorum-fail-fast-3-layers](./quick/368-robust-quorum-fail-fast-3-layers/) |
+| 369 | Add provider-level concurrency control to quorum dispatch | 2026-04-01 | 2b5bf887 | Verified | [369-add-provider-level-concurrency-control-t](./quick/369-add-provider-level-concurrency-control-t/) |
+| 370 | Implement project-level formal spec discovery with security hardening | 2026-04-01 | bc538273 | Pending | [369-implement-project-level-formal-spec-disc](./quick/369-implement-project-level-formal-spec-disc/) |
 
 ### Blockers/Concerns
 
@@ -89,6 +96,6 @@ None currently.
 
 ## Session Continuity
 
-Last session: 2026-03-26
-Stopped at: Completed quick-361: Add automation-first bias to verify-work and execute-phase workflows
+Last session: 2026-04-01
+Stopped at: Completed quick-369: Add provider-level concurrency control to quorum dispatch
 Resume file: None

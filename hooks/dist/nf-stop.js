@@ -499,6 +499,16 @@ function detectUnavailWithoutFallback(currentTurnLines) {
       }
     }
 
+    // TRUNC-03: FLAG_TRUNCATED verdicts are non-votes (like UNAVAIL) for consensus
+    for (const taskId of round.taskIds) {
+      const result = taskResults.get(taskId) || '';
+      if (/verdict:\s*FLAG_TRUNCATED/i.test(result)) {
+        process.stderr.write('[nf-stop] WARNING: Slot returned FLAG_TRUNCATED (verdict from truncated output) -- excluding from consensus\n');
+        hasUnavail = true;
+        break;
+      }
+    }
+
     if (!hasUnavail) continue;
 
     // UNAVAIL detected in round r — check for fallback evidence

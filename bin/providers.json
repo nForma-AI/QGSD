@@ -37,15 +37,20 @@
       ],
       "timeout_ms": 300000,
       "quorum_timeout_ms": 300000,
-      "idle_timeout_ms": 90000,
+      "idle_timeout_ms": 30000,
       "hard_timeout_ms": 600000,
       "latency_budget_ms": null,
       "env": {},
       "display_type": "codex-cli",
       "auth_check": {
-        "args": ["login", "status"],
+        "args": [
+          "login",
+          "status"
+        ],
         "success_pattern": "Logged in",
-        "login_args": ["login"],
+        "login_args": [
+          "login"
+        ],
         "login_hint": "Opens browser for OpenAI authentication",
         "timeout_ms": 5000
       },
@@ -54,8 +59,23 @@
         "creds_dir": "~/.codex/accounts",
         "active_file": "~/.codex/auth.json",
         "max_retries": 3,
-        "retry_on_patterns": ["quota", "rate_limit", "unauthorized", "401", "429", "refresh_token_reused", "token_expired"],
-        "rotate_cmd": ["node", "bin/account-manager.cjs", "switch", "next", "--provider", "codex-1"]
+        "retry_on_patterns": [
+          "quota",
+          "rate_limit",
+          "unauthorized",
+          "401",
+          "429",
+          "refresh_token_reused",
+          "token_expired"
+        ],
+        "rotate_cmd": [
+          "node",
+          "bin/account-manager.cjs",
+          "switch",
+          "next",
+          "--provider",
+          "codex-1"
+        ]
       },
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
@@ -71,7 +91,7 @@
       "has_file_access": true,
       "description": "Query Gemini CLI agent non-interactively (slot 1)",
       "mainTool": "gemini",
-      "model": "gemini-3-pro-preview",
+      "model": "gemini-3-flash-preview",
       "health_check_args": [
         "--version"
       ],
@@ -79,7 +99,7 @@
       "cli": "/opt/homebrew/bin/gemini",
       "args_template": [
         "-m",
-        "gemini-3-pro-preview",
+        "gemini-3-flash-preview",
         "-p",
         "{prompt}"
       ],
@@ -89,15 +109,21 @@
       "extraTools": [],
       "timeout_ms": 300000,
       "quorum_timeout_ms": 300000,
-      "idle_timeout_ms": 90000,
+      "idle_timeout_ms": 45000,
       "hard_timeout_ms": 600000,
       "latency_budget_ms": null,
       "env": {},
       "display_type": "gemini-cli",
       "auth_check": {
-        "args": ["auth", "print-access-token"],
+        "args": [
+          "auth",
+          "print-access-token"
+        ],
         "success_pattern": "Loaded cached credentials|ya29\\.",
-        "login_args": ["auth", "login"],
+        "login_args": [
+          "auth",
+          "login"
+        ],
         "login_hint": "Opens browser for Google authentication",
         "timeout_ms": 5000
       },
@@ -106,8 +132,22 @@
         "creds_dir": "~/.gemini/accounts",
         "active_file": "~/.gemini/oauth_creds.json",
         "max_retries": 3,
-        "retry_on_patterns": ["quota", "resource_exhausted", "unauthorized", "401", "403", "429"],
-        "rotate_cmd": ["node", "bin/account-manager.cjs", "switch", "next", "--provider", "gemini-1"]
+        "retry_on_patterns": [
+          "quota",
+          "resource_exhausted",
+          "unauthorized",
+          "401",
+          "403",
+          "429"
+        ],
+        "rotate_cmd": [
+          "node",
+          "bin/account-manager.cjs",
+          "switch",
+          "next",
+          "--provider",
+          "gemini-1"
+        ]
       },
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
@@ -152,15 +192,21 @@
       ],
       "timeout_ms": 300000,
       "quorum_timeout_ms": 300000,
-      "idle_timeout_ms": 90000,
+      "idle_timeout_ms": 20000,
       "hard_timeout_ms": 600000,
       "latency_budget_ms": null,
       "env": {},
       "display_type": "opencode-cli",
       "auth_check": {
-        "args": ["auth", "list"],
+        "args": [
+          "auth",
+          "list"
+        ],
         "success_pattern": "api|oauth",
-        "login_args": ["auth", "login"],
+        "login_args": [
+          "auth",
+          "login"
+        ],
         "login_hint": "Configure provider credentials for OpenCode",
         "timeout_ms": 5000
       },
@@ -220,13 +266,15 @@
       ],
       "timeout_ms": 300000,
       "quorum_timeout_ms": 300000,
-      "idle_timeout_ms": 90000,
+      "idle_timeout_ms": 30000,
       "hard_timeout_ms": 600000,
       "latency_budget_ms": null,
       "env": {},
       "display_type": "copilot-cli",
       "auth_check": {
-        "args": ["--version"],
+        "args": [
+          "--version"
+        ],
         "success_pattern": "\\d+\\.\\d+",
         "login_args": null,
         "login_hint": "Copilot authenticates via GitHub CLI (gh auth login). No separate login command.",
@@ -240,47 +288,29 @@
     },
     {
       "name": "claude-1",
-      "provider": "akashml",
-      "type": "subprocess",
+      "provider": "together-xyz",
+      "type": "http",
       "auth_type": "api",
-      "has_file_access": true,
-      "description": "DeepSeek-V3.2 via AkashML — real Claude Code CLI via ccr",
+      "has_file_access": false,
+      "description": "DeepSeek-V3.1 via Together.xyz — direct HTTP API (no CCR overhead)",
       "mainTool": "claude",
-      "model": "deepseek-ai/DeepSeek-V3.2",
-      "display_provider": "AkashML",
-      "cli": "ccr",
-      "args_template": [
-        "claude-1",
-        "-p",
-        "{prompt}",
-        "--dangerously-skip-permissions"
-      ],
-      "health_check_args": [
-        "-v"
-      ],
-      "helpArgs": [
-        "--help"
-      ],
+      "model": "deepseek-ai/DeepSeek-V3.1",
+      "max_context_tokens": 163840,
+      "max_output_tokens": 4096,
+      "baseUrl": "https://api.together.xyz/v1",
+      "apiKeyEnv": "TOGETHER_API_KEY",
+      "display_provider": "Together.xyz",
       "extraTools": [],
-      "timeout_ms": 300000,
-      "quorum_timeout_ms": 300000,
+      "timeout_ms": 120000,
+      "quorum_timeout_ms": 120000,
       "idle_timeout_ms": 90000,
-      "hard_timeout_ms": 600000,
+      "hard_timeout_ms": 300000,
       "latency_budget_ms": null,
+      "max_concurrency": 3,
       "env": {},
-      "display_type": "claude-code-router",
-      "auth_check": {
-        "args": ["status"],
-        "success_pattern": "running|Running|Status: Running",
-        "login_args": ["start"],
-        "login_hint": "Start the Claude Code Router service",
-        "timeout_ms": 5000
-      },
-      "service": {
-        "start": ["ccr", "start"],
-        "stop": ["ccr", "stop"],
-        "status": ["ccr", "status"]
-      },
+      "display_type": "http-api",
+      "system_prompt": "You are one AI model in a multi-model quorum review. You have NO tools — no file access, no web search, no code execution. Answer ONLY from the context provided in the user message. Be concise (3-6 sentences). Do not attempt tool calls or emit JSON tool-use blocks. Give your honest assessment with reasoning.",
+      "temperature": 0.3,
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
@@ -289,40 +319,29 @@
     },
     {
       "name": "claude-2",
-      "provider": "akashml",
-      "type": "subprocess",
+      "provider": "together-xyz",
+      "type": "http",
       "auth_type": "api",
-      "has_file_access": true,
-      "description": "MiniMax-M2.5 via AkashML — real Claude Code CLI via ccr",
+      "has_file_access": false,
+      "description": "Qwen3.5-397B via Together.xyz — direct HTTP API (no CCR overhead)",
       "mainTool": "claude",
-      "model": "MiniMaxAI/MiniMax-M2.5",
-      "display_provider": "AkashML",
-      "cli": "ccr",
-      "args_template": [
-        "claude-2",
-        "-p",
-        "{prompt}",
-        "--dangerously-skip-permissions"
-      ],
-      "health_check_args": [
-        "-v"
-      ],
-      "helpArgs": [
-        "--help"
-      ],
+      "model": "Qwen/Qwen3.5-397B-A17B",
+      "max_context_tokens": 131072,
+      "max_output_tokens": 4096,
+      "baseUrl": "https://api.together.xyz/v1",
+      "apiKeyEnv": "TOGETHER_API_KEY",
+      "display_provider": "Together.xyz",
       "extraTools": [],
-      "timeout_ms": 300000,
-      "quorum_timeout_ms": 300000,
+      "timeout_ms": 120000,
+      "quorum_timeout_ms": 120000,
       "idle_timeout_ms": 90000,
-      "hard_timeout_ms": 600000,
+      "hard_timeout_ms": 300000,
       "latency_budget_ms": null,
+      "max_concurrency": 3,
       "env": {},
-      "display_type": "claude-code-router",
-      "service": {
-        "start": ["ccr", "start"],
-        "stop": ["ccr", "stop"],
-        "status": ["ccr", "status"]
-      },
+      "display_type": "http-api",
+      "system_prompt": "You are one AI model in a multi-model quorum review. You have NO tools — no file access, no web search, no code execution. Answer ONLY from the context provided in the user message. Be concise (3-6 sentences). Do not attempt tool calls or emit JSON tool-use blocks. Give your honest assessment with reasoning.",
+      "temperature": 0.3,
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
@@ -332,39 +351,28 @@
     {
       "name": "claude-3",
       "provider": "together-xyz",
-      "type": "subprocess",
+      "type": "http",
       "auth_type": "api",
-      "has_file_access": true,
-      "description": "Qwen3-Coder-480B via Together.xyz — real Claude Code CLI via ccr",
+      "has_file_access": false,
+      "description": "Qwen3-Coder-480B via Together.xyz — direct HTTP API (no CCR overhead)",
       "mainTool": "claude",
       "model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
+      "max_context_tokens": 131072,
+      "max_output_tokens": 4096,
+      "baseUrl": "https://api.together.xyz/v1",
+      "apiKeyEnv": "TOGETHER_API_KEY",
       "display_provider": "Together.xyz",
-      "cli": "ccr",
-      "args_template": [
-        "claude-3",
-        "-p",
-        "{prompt}",
-        "--dangerously-skip-permissions"
-      ],
-      "health_check_args": [
-        "-v"
-      ],
-      "helpArgs": [
-        "--help"
-      ],
       "extraTools": [],
-      "timeout_ms": 300000,
-      "quorum_timeout_ms": 300000,
+      "timeout_ms": 120000,
+      "quorum_timeout_ms": 120000,
       "idle_timeout_ms": 90000,
-      "hard_timeout_ms": 600000,
+      "hard_timeout_ms": 300000,
       "latency_budget_ms": null,
+      "max_concurrency": 3,
       "env": {},
-      "display_type": "claude-code-router",
-      "service": {
-        "start": ["ccr", "start"],
-        "stop": ["ccr", "stop"],
-        "status": ["ccr", "status"]
-      },
+      "display_type": "http-api",
+      "system_prompt": "You are one AI model in a multi-model quorum review. You have NO tools — no file access, no web search, no code execution. Answer ONLY from the context provided in the user message. Be concise (3-6 sentences). Do not attempt tool calls or emit JSON tool-use blocks. Give your honest assessment with reasoning.",
+      "temperature": 0.3,
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
@@ -374,39 +382,28 @@
     {
       "name": "claude-4",
       "provider": "together-xyz",
-      "type": "subprocess",
+      "type": "http",
       "auth_type": "api",
-      "has_file_access": true,
-      "description": "Kimi-K2.5 via Together.xyz — real Claude Code CLI via ccr",
+      "has_file_access": false,
+      "description": "Kimi-K2.5 via Together.xyz — direct HTTP API (no CCR overhead)",
       "mainTool": "claude",
       "model": "moonshotai/Kimi-K2.5",
+      "max_context_tokens": 131072,
+      "max_output_tokens": 4096,
+      "baseUrl": "https://api.together.xyz/v1",
+      "apiKeyEnv": "TOGETHER_API_KEY",
       "display_provider": "Together.xyz",
-      "cli": "ccr",
-      "args_template": [
-        "claude-4",
-        "-p",
-        "{prompt}",
-        "--dangerously-skip-permissions"
-      ],
-      "health_check_args": [
-        "-v"
-      ],
-      "helpArgs": [
-        "--help"
-      ],
       "extraTools": [],
-      "timeout_ms": 300000,
-      "quorum_timeout_ms": 300000,
+      "timeout_ms": 120000,
+      "quorum_timeout_ms": 120000,
       "idle_timeout_ms": 90000,
-      "hard_timeout_ms": 600000,
+      "hard_timeout_ms": 300000,
       "latency_budget_ms": null,
+      "max_concurrency": 3,
       "env": {},
-      "display_type": "claude-code-router",
-      "service": {
-        "start": ["ccr", "start"],
-        "stop": ["ccr", "stop"],
-        "status": ["ccr", "status"]
-      },
+      "display_type": "http-api",
+      "system_prompt": "You are one AI model in a multi-model quorum review. You have NO tools — no file access, no web search, no code execution. Answer ONLY from the context provided in the user message. Be concise (3-6 sentences). Do not attempt tool calls or emit JSON tool-use blocks. Give your honest assessment with reasoning.",
+      "temperature": 0.3,
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
@@ -416,39 +413,28 @@
     {
       "name": "claude-5",
       "provider": "together-xyz",
-      "type": "subprocess",
+      "type": "http",
       "auth_type": "api",
-      "has_file_access": true,
-      "description": "Llama-4-Maverick-17B via Together.xyz — real Claude Code CLI via ccr",
+      "has_file_access": false,
+      "description": "GPT-OSS-120B via Together.xyz — direct HTTP API (no CCR overhead)",
       "mainTool": "claude",
-      "model": "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8",
+      "model": "openai/gpt-oss-120b",
+      "max_context_tokens": 131072,
+      "max_output_tokens": 4096,
+      "baseUrl": "https://api.together.xyz/v1",
+      "apiKeyEnv": "TOGETHER_API_KEY",
       "display_provider": "Together.xyz",
-      "cli": "ccr",
-      "args_template": [
-        "claude-5",
-        "-p",
-        "{prompt}",
-        "--dangerously-skip-permissions"
-      ],
-      "health_check_args": [
-        "-v"
-      ],
-      "helpArgs": [
-        "--help"
-      ],
       "extraTools": [],
-      "timeout_ms": 300000,
-      "quorum_timeout_ms": 300000,
+      "timeout_ms": 120000,
+      "quorum_timeout_ms": 120000,
       "idle_timeout_ms": 90000,
-      "hard_timeout_ms": 600000,
-      "latency_budget_ms": 15000,
+      "hard_timeout_ms": 300000,
+      "latency_budget_ms": null,
+      "max_concurrency": 3,
       "env": {},
-      "display_type": "claude-code-router",
-      "service": {
-        "start": ["ccr", "start"],
-        "stop": ["ccr", "stop"],
-        "status": ["ccr", "status"]
-      },
+      "display_type": "http-api",
+      "system_prompt": "You are one AI model in a multi-model quorum review. You have NO tools — no file access, no web search, no code execution. Answer ONLY from the context provided in the user message. Be concise (3-6 sentences). Do not attempt tool calls or emit JSON tool-use blocks. Give your honest assessment with reasoning.",
+      "temperature": 0.3,
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
@@ -458,39 +444,28 @@
     {
       "name": "claude-6",
       "provider": "together-xyz",
-      "type": "subprocess",
+      "type": "http",
       "auth_type": "api",
-      "has_file_access": true,
-      "description": "GLM-5 via Together.xyz — real Claude Code CLI via ccr",
+      "has_file_access": false,
+      "description": "GLM-5 via Together.xyz — direct HTTP API (no CCR overhead)",
       "mainTool": "claude",
       "model": "zai-org/GLM-5",
+      "max_context_tokens": 131072,
+      "max_output_tokens": 4096,
+      "baseUrl": "https://api.together.xyz/v1",
+      "apiKeyEnv": "TOGETHER_API_KEY",
       "display_provider": "Together.xyz",
-      "cli": "ccr",
-      "args_template": [
-        "claude-6",
-        "-p",
-        "{prompt}",
-        "--dangerously-skip-permissions"
-      ],
-      "health_check_args": [
-        "-v"
-      ],
-      "helpArgs": [
-        "--help"
-      ],
       "extraTools": [],
-      "timeout_ms": 300000,
-      "quorum_timeout_ms": 300000,
+      "timeout_ms": 120000,
+      "quorum_timeout_ms": 120000,
       "idle_timeout_ms": 90000,
-      "hard_timeout_ms": 600000,
-      "latency_budget_ms": 15000,
+      "hard_timeout_ms": 300000,
+      "latency_budget_ms": null,
+      "max_concurrency": 3,
       "env": {},
-      "display_type": "claude-code-router",
-      "service": {
-        "start": ["ccr", "start"],
-        "stop": ["ccr", "stop"],
-        "status": ["ccr", "status"]
-      },
+      "display_type": "http-api",
+      "system_prompt": "You are one AI model in a multi-model quorum review. You have NO tools — no file access, no web search, no code execution. Answer ONLY from the context provided in the user message. Be concise (3-6 sentences). Do not attempt tool calls or emit JSON tool-use blocks. Give your honest assessment with reasoning.",
+      "temperature": 0.3,
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",

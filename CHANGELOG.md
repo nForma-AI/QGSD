@@ -6,6 +6,24 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.41.6] - 2026-04-02 — Quorum Reliability & Project-Level Formal Specs
+
+Major quorum infrastructure reliability improvements (file write rate: 25% → 100%) and new project-level formal spec discovery with security-hardened execution.
+
+### Added
+- `feat(quick-369)`: provider-level concurrency control — file-based semaphore limits Together.xyz to 3 concurrent HTTP requests, preventing rate-limit cascades
+- `feat(quick-369)`: project-level formal spec discovery — `formal-scope-scan.cjs` discovers specs from `.planning/formal/specs/formal-checks.json` manifest, merges into model-registry view
+- `feat(quick-369)`: structured command execution in `run-formal-check.cjs` — 3-gate security: command allowlist, dangerous arg pattern guard (`-e`/`-c`/`--eval`), path containment
+- `test`: 15 new tests for `formal-scope-scan.test.cjs` (manifest discovery, keyword/module matching, registry merge, E2E bug-mode)
+- `test`: 12 new tests for `run-formal-check.test.cjs` (allowlist, arg guards, path traversal, pass/fail commands)
+
+### Fixed
+- `fix(quorum)`: HTTP slot health check — skip layer1 binary probe for `type:http` slots, add layer2 API probe (0/6 → 6/6 HTTP slots available)
+- `fix(quorum)`: bug-mode integration — `runBugModeMatching` now accepts preloaded registry parameter, merged project specs actually used in bug-mode matching
+- `fix(quorum)`: prohibit background Bash in slot-worker agent — prevents file-write race from `run_in_background`
+- `fix(quorum)`: early output-file PENDING marker — 3-state diagnostic (missing/PENDING/complete) for result file provenance
+- `fix(quorum)`: defense-in-depth file write from `call-quorum-slot.cjs` child process — bypasses Haiku arg-stripping of `--output-file`
+
 ## [0.41.5] - 2026-03-28 — Quorum Convergence Rewrite Restoration
 
 Restores quorum convergence rewrite logic that was previously removed. When 3+ BLOCK verdicts accumulate, the workflow now triggers a fresh rewrite instead of continuing to iterate on a blocked approach.

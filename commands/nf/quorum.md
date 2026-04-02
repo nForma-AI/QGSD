@@ -239,8 +239,8 @@ After computing `$DISPATCH_LIST` and before first dispatch, emit the QUORUM SLOT
    ${DISPATCH_LIST entries with model names}
 
  Fallback order:
-   T1 (same-sub): ${T1_UNUSED slots, or "none"}
-   T2 (cross-sub): ${T2_FALLBACK slots, or "none"}
+   T1 (flat-rate CLI): ${T1_UNUSED slots, or "none"}
+   T2 (pay-per-use API): ${T2_FALLBACK slots, or "none"}
 
  Total available: ${available_slots count}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -294,21 +294,26 @@ This position is ADVISORY per CE-1. It is shared with external voters as context
 
 ### Query models (parallel — one Task per slot)
 
-Dispatch one `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, ...)` per slot in **`$DISPATCH_LIST`** (capped to `FAN_OUT_COUNT - 1` external slots) as **parallel sibling calls** in one message turn. Do NOT dispatch slots outside `$DISPATCH_LIST`. Build a YAML prompt block per the slot-worker argument spec:
+Dispatch one `Task(subagent_type="nf-quorum-slot-worker", model="haiku", ...)` per slot in **`$DISPATCH_LIST`** (capped to `FAN_OUT_COUNT - 1` external slots) as **parallel sibling calls** in one message turn. Do NOT dispatch slots outside `$DISPATCH_LIST`.
 
+**Pre-built command dispatch (Option C):** The orchestrator builds the complete bash command. The slot-worker just runs it — zero interpretation needed. The Node script writes the result file directly via `--output-file`, making Haiku's relay behavior irrelevant.
+
+Build the command per slot:
 ```
-slot: <slotName>
-round: <round_number>
-timeout_ms: <slot_timeout from $SLOT_TIMEOUTS>
-repo_dir: <absolute path to working directory>
-mode: A
-question: <question text>
-[artifact_path: <path to artifact file>]
-[review_context: <one-sentence framing for how to evaluate the artifact>]
-[request_improvements: true]    — when set by calling context (plan-phase, quick)
+node "$HOME/.claude/nf-bin/quorum-slot-dispatch.cjs" \
+  --slot <slotName> \
+  --mode A \
+  --round <round_number> \
+  --question "<question text — shell-escape single quotes>" \
+  --cwd <absolute path to working directory> \
+  --timeout <slot_timeout from $SLOT_TIMEOUTS> \
+  --output-file "<repo_dir>/.planning/quorum/slot-results/<slotName>-round-<round_number>.txt" \
+  [--artifact-path "<path to artifact file>"] \
+  [--review-context "<one-sentence framing>"] \
+  [--request-improvements]
 ```
 
-`review_context` is optional but strongly recommended when `artifact_path` is present.
+`--review-context` is optional but strongly recommended when `--artifact-path` is present.
 Set it to the evaluation criteria appropriate for the artifact type, e.g.:
 - Plan:     "This is a pre-execution plan. Evaluate approach and completeness — not whether code already exists."
 - Roadmap:  "This is a strategic roadmap. Evaluate phase sequencing and requirements coverage."
@@ -316,18 +321,21 @@ Set it to the evaluation criteria appropriate for the artifact type, e.g.:
 - Audit:    "This is a milestone audit. Evaluate whether the work achieves the stated milestone goals."
 
 Example dispatch (all Tasks in one message turn):
-- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, description="gemini-1 [gemini-cli · gemini-3-pro-preview] quorum R1", prompt=<YAML block>)`
-- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, description="codex-1 [codex-cli · gpt-5.3-codex] quorum R1", prompt=<YAML block>)`
-- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, description="opencode-1 [opencode-cli · grok-code-fast-1] quorum R1", prompt=<YAML block>)`
-- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, description="copilot-1 [copilot-cli · gpt-4.1] quorum R1", prompt=<YAML block>)`
-- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, description="claude-1 [claude-code-router · deepseek-ai/DeepSeek-V3.2] quorum R1", prompt=<YAML block>)` ← one per claude-mcp server with `available: true`
-(model="haiku" — slot-workers are orchestrators (read files, build prompt, run Bash subprocess), NOT reasoners. The actual reasoning is done by the external CLI. Haiku is faster with zero quality loss.)
+- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", description="gemini-1 [gemini-cli · gemini-3-pro-preview] quorum R1", prompt='node "$HOME/.claude/nf-bin/quorum-slot-dispatch.cjs" --slot gemini-1 --mode A --round 1 --question "..." --cwd /path/to/repo --timeout 300000 --output-file "/path/to/repo/.planning/quorum/slot-results/gemini-1-round-1.txt"')`
+- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", description="codex-1 [codex-cli · gpt-5.3-codex] quorum R1", prompt='...')`
+- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", description="claude-1 [claude-code-router · deepseek-ai/DeepSeek-V3.2] quorum R1", prompt='...')` ← one per claude-mcp server with `available: true`
 
-The slot-worker reads repo context, builds its own prompt from the YAML arguments, calls the slot via `call-quorum-slot.cjs`, and returns a structured result block.
+(model="haiku" — slot-workers just run one Bash command. The actual reasoning is done by the external CLI via quorum-slot-dispatch.cjs. Haiku is fastest for this relay role.)
 
-**Slot-worker result blocks are final.** When a slot-worker Task completes, parse its output for the `verdict:` field. `verdict: UNAVAIL` means the slot is unavailable — treat the Task result as definitive. **Never call `resume` on a completed slot-worker Task to extract more information.** The structured result block is the complete output.
+**Reading results (file-first, Option C):** After all Tasks in a round complete, read each result from its file:
+1. Read `.planning/quorum/slot-results/<slotName>-round-<round_number>.txt`
+2. If the file exists and has content → use it as the authoritative result (parse `verdict:`, `reasoning:`, `dispatch_nonce:`, `citations:`, `improvements:`)
+3. If the file is empty or missing → check the Task's returned output as fallback
+4. If both are empty → mark slot as UNAVAIL for this round
 
-**Nonce authenticity check:** Genuine slot-worker results contain a `dispatch_nonce:` field -- a 32-character hex string generated by quorum-slot-dispatch.cjs. If a result block is missing `dispatch_nonce:`, flag it as SUSPECT and treat as UNAVAIL. This guards against the slot-worker (Haiku) fabricating a result block instead of running the dispatch script.
+**Nonce authenticity check:** Genuine results contain a `dispatch_nonce:` field — a 32-character hex string generated by quorum-slot-dispatch.cjs. The nonce MUST come from the result **file** (written by Node directly), NOT from the Task's returned output. Haiku can fabricate nonce-like strings in its output, but it cannot write to `--output-file` — only the Node script does that. If the file is missing or has no `dispatch_nonce:`, treat the slot as UNAVAIL regardless of what the Task output says.
+
+**Clean up before each round:** Delete old result files for the round before dispatching: `rm -f .planning/quorum/slot-results/*-round-<N>.txt`
 
 Handle UNAVAILABLE per R6: note unavailability, then apply the **tiered fallback rule** below before continuing.
 
@@ -400,31 +408,32 @@ If all valid (non-UNAVAIL) external voters agree (CE-3 unanimity) → skip to **
 
 Run up to 9 deliberation rounds (max 10 total rounds including Round 1).
 
-For each round, dispatch one `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, ...)` per slot in **`$DISPATCH_LIST`** as **parallel sibling calls**. Append `prior_positions` to the YAML block for Round 2+ dispatch:
+For each round, dispatch one `Task(subagent_type="nf-quorum-slot-worker", model="haiku", ...)` per slot in **`$DISPATCH_LIST`** as **parallel sibling calls**. For Round 2+, write a prior-positions file and pass it via `--prior-positions-file`:
 
+1. Write prior positions to `.planning/quorum/slot-results/prior-positions-round-<N>.txt`:
 ```
-slot: <slotName>
-round: <round_number>
-timeout_ms: <slot_timeout from $SLOT_TIMEOUTS>
-repo_dir: <absolute path to working directory>
-mode: A
-question: <question text>
-[artifact_path: <same artifact_path as Round 1, if present>]
-[review_context: <same review_context as Round 1, if present>]
-[request_improvements: true]    — carry through from Round 1 if set
-prior_positions: |
-  • Claude:
-    position: [position from $CLAUDE_POSITION]
-    citations: [citations from Claude's analysis, or "(none)"]
-  • <slotName>:
-    position: [position from slot result block, or UNAVAIL]
-    citations: [citations field from slot result block, or "(none)"]
-  [one entry per active slot in the same format]
+• Claude:
+  position: [position from $CLAUDE_POSITION]
+  citations: [citations from Claude's analysis, or "(none)"]
+• <slotName>:
+  position: [position from slot result block, or UNAVAIL]
+  citations: [citations field from slot result block, or "(none)"]
+[one entry per active slot in the same format]
 ```
 
-Always carry `artifact_path` and `review_context` through to deliberation rounds unchanged — the worker needs them to inject the correct evaluation framing alongside prior positions.
+2. Build the command with `--prior-positions-file` added:
+```
+node "$HOME/.claude/nf-bin/quorum-slot-dispatch.cjs" \
+  --slot <slotName> --mode A --round <N> \
+  --question "<question>" --cwd <repo_dir> --timeout <ms> \
+  --output-file "<repo_dir>/.planning/quorum/slot-results/<slotName>-round-<N>.txt" \
+  --prior-positions-file "<repo_dir>/.planning/quorum/slot-results/prior-positions-round-<N>.txt" \
+  [--artifact-path "..."] [--review-context "..."] [--request-improvements]
+```
 
-Populate `citations:` from the `citations:` field in each model's slot-worker result block. If the result block had no `citations:` field or it was empty, write `(none)`. For Claude's own position, include any file paths or line numbers Claude cited in its reasoning.
+Always carry `--artifact-path` and `--review-context` through to deliberation rounds unchanged.
+
+Populate `citations:` from the `citations:` field in each model's result file. If the result had no `citations:` field or it was empty, write `(none)`. For Claude's own position, include any file paths or line numbers Claude cited in its reasoning.
 
 Workers are dispatched as **parallel sibling Tasks** per round. Between rounds (Bash scoreboard calls, set-availability) remain sequential.
 
@@ -648,42 +657,28 @@ $TRACES
 
 ### Dispatch quorum workers via Task (parallel per round)
 
-Dispatch one `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, ...)` per slot in **`$DISPATCH_LIST`** (capped to `FAN_OUT_COUNT - 1` external slots) as **parallel sibling calls** in one message turn. Do NOT dispatch slots outside `$DISPATCH_LIST`. Build a YAML prompt block per the slot-worker argument spec:
+Dispatch one `Task(subagent_type="nf-quorum-slot-worker", model="haiku", ...)` per slot in **`$DISPATCH_LIST`** (capped to `FAN_OUT_COUNT - 1` external slots) as **parallel sibling calls** in one message turn. Do NOT dispatch slots outside `$DISPATCH_LIST`.
 
-```
-slot: <slotName>
-round: <round_number>
-timeout_ms: <slot_timeout from $SLOT_TIMEOUTS>
-repo_dir: <absolute path to working directory>
-mode: B
-question: <question text>
-traces: |
-  <full $TRACES content verbatim>
-```
+For Mode B, write the traces to a temp file first, then pass via `--traces-file`:
 
-For Round 2+ deliberation, also append:
+1. Write `$TRACES` to `.planning/quorum/slot-results/traces-round-<N>.txt`
+2. Build the command per slot:
 ```
-prior_positions: |
-  • Claude:
-    position: [Claude's verdict and reasoning]
-    citations: [citations from Claude's analysis, or "(none)"]
-  • <slotName>:
-    position: [verdict from slot result block, or UNAVAIL]
-    citations: [citations field from slot result block, or "(none)"]
-  [one entry per active slot in the same format]
+node "$HOME/.claude/nf-bin/quorum-slot-dispatch.cjs" \
+  --slot <slotName> --mode B --round <N> \
+  --question "<question>" --cwd <repo_dir> --timeout <ms> \
+  --output-file "<repo_dir>/.planning/quorum/slot-results/<slotName>-round-<N>.txt" \
+  --traces-file "<repo_dir>/.planning/quorum/slot-results/traces-round-<N>.txt" \
+  [--prior-positions-file "<repo_dir>/.planning/quorum/slot-results/prior-positions-round-<N>.txt"]
 ```
 
-Populate `citations:` from the `citations:` field in each model's slot-worker result block. If the result block had no `citations:` field or it was empty, write `(none)`. For Claude's own position, include any file paths or line numbers Claude cited in its reasoning.
+For Round 2+ deliberation, also write prior positions to file and add `--prior-positions-file` (same as Mode A deliberation pattern above).
 
 Example dispatch (all Tasks in one message turn):
-- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, description="gemini-1 [gemini-cli · gemini-3-pro-preview] quorum R1", prompt=<YAML block>)`
-- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, description="codex-1 [codex-cli · gpt-5.3-codex] quorum R1", prompt=<YAML block>)`
-- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, description="opencode-1 [opencode-cli · grok-code-fast-1] quorum R1", prompt=<YAML block>)`
-- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, description="copilot-1 [copilot-cli · gpt-4.1] quorum R1", prompt=<YAML block>)`
-- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, description="claude-1 [claude-code-router · deepseek-ai/DeepSeek-V3.2] quorum R1", prompt=<YAML block>)` ← one per claude-mcp server with `available: true`
-(model="haiku" — slot-workers are orchestrators (read files, build prompt, run Bash subprocess), NOT reasoners. The actual reasoning is done by the external CLI. Haiku is faster with zero quality loss.)
+- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", description="gemini-1 [gemini-cli · gemini-3-pro-preview] quorum R1", prompt='node "$HOME/.claude/nf-bin/quorum-slot-dispatch.cjs" --slot gemini-1 --mode B --round 1 --question "..." --cwd /path --timeout 300000 --output-file ".planning/quorum/slot-results/gemini-1-round-1.txt" --traces-file ".planning/quorum/slot-results/traces-round-1.txt"')`
+- (one per slot in `$DISPATCH_LIST`)
 
-The slot-worker reads repo context, builds the Mode B prompt (with execution traces) from the YAML arguments, calls the slot via `call-quorum-slot.cjs`, and returns a structured result block with a `verdict: APPROVE | REJECT | FLAG` field.
+**Reading results:** Same file-first approach as Mode A — read `.planning/quorum/slot-results/<slotName>-round-<N>.txt`. Parse `verdict: APPROVE | REJECT | FLAG` field.
 
 ### Collect verdicts
 

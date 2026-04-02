@@ -1,6 +1,6 @@
 {
   "aggregated_at": "2026-03-26T18:42:33.792Z",
-  "content_hash": "2e0d6298ed4dc05c",
+  "content_hash": "d7d45ef6d3f96bb7f7b2ef465ac8ba5dbaa0e6dc40372e97a887d80eed54863b",
   "requirements": [
     {
       "id": "ACT-01",
@@ -6029,8 +6029,69 @@
         "source_file": "README.md",
         "milestone": "solver-tui"
       }
+    },
+    {
+      "id": "TRUNC-01",
+      "text": "Quorum slot subprocess output buffers (stdout/stderr) SHALL have explicit size caps, and when a cap is hit the truncation event MUST be recorded in the YAML result block with a machine-readable marker (truncated: true, original_size_bytes: N).",
+      "category": "Quorum & Dispatch",
+      "priority": "must",
+      "background": "bin/call-quorum-slot.cjs caps stdout at 10MB and stderr at 4KB; bin/quorum-slot-dispatch.cjs caps at 50KB. The 50KB cap appends [OUTPUT TRUNCATED] but the 10MB cap is silent. Neither records structured truncation metadata.",
+      "provenance": {
+        "source_file": "bin/quorum-slot-dispatch.cjs",
+        "source_line": "1296-1320"
+      },
+      "status": "Complete"
+    },
+    {
+      "id": "TRUNC-02",
+      "text": "The verdict extraction pipeline (parseVerdict, parseReasoning, parseCitations) MUST operate on the FULL subprocess output buffer, not on a pre-truncated subset. If the buffer was truncated before verdict extraction, the verdict MUST be tagged as potentially incomplete (verdict_integrity: 'truncated').",
+      "category": "Quorum & Dispatch",
+      "priority": "must",
+      "background": "Currently parseVerdict runs on the full 50KB buffer (L3), but the raw field in emitResultBlock is independently truncated to 5KB (L6). If L1 (10MB) fires before L3, verdict extraction operates on truncated data. The verdict defaults to FLAG when no verdict: line is found, but a FLAG-from-truncation is indistinguishable from a genuine FLAG.",
+      "provenance": {
+        "source_file": "bin/quorum-slot-dispatch.cjs",
+        "source_line": "800-816, 1033, 1344-1346"
+      },
+      "status": "Complete"
+    },
+    {
+      "id": "TRUNC-03",
+      "text": "The consensus gate (nf-stop.js) MUST distinguish between a genuine verdict (APPROVE/REJECT/FLAG from complete output) and a default verdict (FLAG from missing verdict: line due to truncation or malformed output). Truncation-derived verdicts MUST NOT count toward quorum consensus without explicit acknowledgment.",
+      "category": "Hooks & Enforcement",
+      "priority": "must",
+      "background": "nf-stop.js validates verdicts via regex /verdict:\\s*UNAVAIL/i but does not check whether the verdict was extracted from complete output. A slot whose verbose response was truncated at 50KB, losing the verdict: line, silently becomes FLAG — which may break or distort consensus.",
+      "provenance": {
+        "source_file": "hooks/nf-stop.js",
+        "source_line": "494-496"
+      },
+      "status": "Complete"
+    },
+    {
+      "id": "TRUNC-04",
+      "text": "Quorum telemetry (quorum-rounds JSONL) MUST record per-slot truncation metadata: whether truncation occurred, which layer triggered it (L1/L2/L3), original output size, and whether the verdict was extracted from complete or truncated data.",
+      "category": "Observability & Diagnostics",
+      "priority": "must",
+      "background": "recordTelemetry() in call-quorum-slot.cjs records slot, round, verdict, latency, provider, error_type — but has no fields for truncation state. The truncated boolean in quorum-slot-dispatch.cjs exists locally but never propagates to telemetry.",
+      "provenance": {
+        "source_file": "bin/call-quorum-slot.cjs",
+        "source_line": "57-80"
+      },
+      "status": "Complete"
+    },
+    {
+      "id": "TRUNC-05",
+      "text": "The emitResultBlock raw field truncation (5KB cap) MUST append a machine-readable truncation suffix and MUST NOT destroy structured verdict/reasoning/citations lines if they appear within the raw output.",
+      "category": "Quorum & Dispatch",
+      "priority": "should",
+      "background": "emitResultBlock truncates rawOutput to 5000 chars for the YAML raw: field (line 1033) without any marker. Since verdict/reasoning are extracted separately before this truncation, this primarily affects debugging — but if raw is used downstream for re-parsing or audit, the silent truncation creates integrity gaps.",
+      "provenance": {
+        "source_file": "bin/quorum-slot-dispatch.cjs",
+        "source_line": "1032-1037"
+      },
+      "status": "Complete"
     }
   ],
   "schema_version": "1",
-  "source": ".planning/REQUIREMENTS.md"
+  "source": ".planning/REQUIREMENTS.md",
+  "last_sync": "2026-03-31T09:45:23.686Z"
 }

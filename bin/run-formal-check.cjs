@@ -23,6 +23,109 @@ const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
+// ── Project-level manifest support ──────────────────────────────────────
+// ROOT uses git root detection for consistency with formal-scope-scan.cjs
+const ROOT = (() => {
+  try {
+    const result = spawnSync('git', ['rev-parse', '--show-toplevel'], {
+      encoding: 'utf8', stdio: 'pipe'
+    });
+    if (result.status === 0) return result.stdout.trim();
+  } catch (_) {}
+  return process.cwd();
+})();
+
+const PROJECT_MANIFEST_PATH = path.join(ROOT, '.planning', 'formal', 'specs', 'formal-checks.json');
+
+// Allowlist of command executables permitted from manifest
+const ALLOWED_COMMANDS = new Set(['make', 'java', 'node', 'npm', 'npx', 'python3', 'python']);
+
+// Dangerous argument patterns — reject these even for allowed commands
+const DANGEROUS_ARG_PATTERNS = new Set(['-c', '-e', '--eval', '--exec', 'eval', '-i']);
+
+/**
+ * Load project-level formal checks manifest. Fail-open: returns [] on any error.
+ */
+function loadProjectManifest() {
+  try {
+    if (!fs.existsSync(PROJECT_MANIFEST_PATH)) return [];
+    const data = JSON.parse(fs.readFileSync(PROJECT_MANIFEST_PATH, 'utf8'));
+    if (data.version !== 1 || !Array.isArray(data.specs)) {
+      process.stderr.write('[run-formal-check] WARN: invalid manifest version or missing specs array\n');
+      return [];
+    }
+    return data.specs.filter(spec => {
+      if (!spec.command || !Array.isArray(spec.args)) {
+        process.stderr.write(`[run-formal-check] WARN: skipping manifest entry "${spec.module || 'unknown'}" — missing command or args\n`);
+        return false;
+      }
+      return true;
+    });
+  } catch (e) {
+    process.stderr.write('[run-formal-check] WARN: failed to load project manifest: ' + e.message + '\n');
+    return [];
+  }
+}
+
+/**
+ * Execute a project-level formal check via structured command/args.
+ * Safety gates: command allowlist, dangerous arg patterns, path containment.
+ * Fail-open: spawn errors produce 'skipped', never crash.
+ */
+function runProjectCheck(spec, cwd) {
+  const startMs = Date.now();
+  const base = { module: spec.module, tool: spec.type || 'unknown' };
+
+  // Safety gate 1 — command allowlist
+  if (!ALLOWED_COMMANDS.has(spec.command)) {
+    return { ...base, status: 'skipped', detail: 'command not in allowlist: ' + spec.command, runtimeMs: 0 };
+  }
+
+  // Safety gate 2 — dangerous argument patterns
+  for (const arg of spec.args) {
+    if (DANGEROUS_ARG_PATTERNS.has(arg)) {
+      return { ...base, status: 'skipped', detail: 'dangerous argument pattern: ' + arg, runtimeMs: 0 };
+    }
+  }
+
+  // Safety gate 3 — path containment
+  if (path.isAbsolute(spec.spec_path)) {
+    return { ...base, status: 'skipped', detail: 'spec_path escapes project root: ' + spec.spec_path, runtimeMs: 0 };
+  }
+  const resolved = path.resolve(cwd, spec.spec_path);
+  const cwdResolved = path.resolve(cwd);
+  if (!resolved.startsWith(cwdResolved + path.sep) && resolved !== cwdResolved) {
+    return { ...base, status: 'skipped', detail: 'spec_path escapes project root: ' + spec.spec_path, runtimeMs: 0 };
+  }
+
+  // Spec file pre-flight
+  if (!fs.existsSync(resolved)) {
+    return { ...base, status: 'skipped', detail: 'spec file not found: ' + spec.spec_path, runtimeMs: 0 };
+  }
+
+  // Execute structured command
+  try {
+    const result = spawnSync(spec.command, spec.args, {
+      cwd,
+      stdio: 'pipe',
+      encoding: 'utf8',
+      timeout: 180000
+    });
+
+    const runtimeMs = Date.now() - startMs;
+
+    if (result.error) {
+      return { ...base, status: 'skipped', detail: result.error.message, runtimeMs };
+    }
+    if (result.status !== 0) {
+      return { ...base, status: 'fail', detail: `Exit code ${result.status}`, runtimeMs };
+    }
+    return { ...base, status: 'pass', detail: '', runtimeMs };
+  } catch (e) {
+    return { ...base, status: 'skipped', detail: 'spawn error: ' + e.message, runtimeMs: Date.now() - startMs };
+  }
+}
+
 // ── Module to check mapping (hardcoded) ──────────────────────────────────
 const MODULE_CHECKS = {
   quorum: [
@@ -402,6 +505,14 @@ if (require.main === module) {
     const unknownModules = [];
     for (const module of modules) {
       if (!MODULE_CHECKS[module]) {
+        // Fall through to project manifest
+        const projectSpecs = loadProjectManifest();
+        const projectSpec = projectSpecs.find(s => s.module === module);
+        if (projectSpec) {
+          const result = runProjectCheck(projectSpec, cwd);
+          allResults.push(result);
+          continue;
+        }
         process.stderr.write(`[run-formal-check] ERROR: unknown module "${module}" — no checks registered\n`);
         unknownModules.push(module);
         continue;
@@ -444,6 +555,14 @@ if (require.main === module) {
 
   for (const module of modules) {
     if (!MODULE_CHECKS[module]) {
+      // Fall through to project manifest
+      const projectSpecs = loadProjectManifest();
+      const projectSpec = projectSpecs.find(s => s.module === module);
+      if (projectSpec) {
+        const result = runProjectCheck(projectSpec, cwd);
+        allResults.push(result);
+        continue;
+      }
       process.stderr.write(`[run-formal-check] ERROR: unknown module "${module}" — no checks registered\n`);
       unknownModules.push(module);
       continue;
@@ -501,5 +620,9 @@ module.exports = {
   detectJava,
   checkJarExists,
   runCheck,
-  MODULE_CHECKS
+  MODULE_CHECKS,
+  loadProjectManifest,
+  runProjectCheck,
+  ALLOWED_COMMANDS,
+  DANGEROUS_ARG_PATTERNS
 };
