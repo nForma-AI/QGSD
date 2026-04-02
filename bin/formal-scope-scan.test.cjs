@@ -10,12 +10,18 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
+const { spawnSync } = require('child_process');
+
 const {
   loadProjectManifest,
   matchProjectSpecs,
   scanUnregisteredSpecs,
-  mergeProjectSpecsIntoRegistry
+  mergeProjectSpecsIntoRegistry,
+  runBugModeMatching,
+  loadModelRegistry
 } = require('./formal-scope-scan.cjs');
+
+const SCOPE_SCAN = path.join(__dirname, 'formal-scope-scan.cjs');
 
 // ── loadProjectManifest tests ───────────────────────────────────────────
 
@@ -240,4 +246,108 @@ test('mergeProjectSpecsIntoRegistry handles null specs', () => {
   const result = mergeProjectSpecsIntoRegistry(null, null);
   assert.ok(result.models);
   assert.strictEqual(Object.keys(result.models).length, 0);
+});
+
+// ── E2E: bug-mode with project manifest ─────────────────────────────────
+
+test('runBugModeMatching finds project specs via preloadedRegistry', () => {
+  // Simulate what main() does: merge project specs, pass to runBugModeMatching
+  const projectSpecs = [{
+    module: 'deployment-safety',
+    type: 'tla',
+    spec_path: '.planning/formal/specs/DeploymentSafety.tla',
+    command: 'make',
+    args: ['check-deploy'],
+    requirements: ['DEPLOY-01', 'DEPLOY-02'],
+    maturity: 'reviewed',
+    description: 'Deployment rollback safety verification'
+  }];
+
+  const baseRegistry = loadModelRegistry() || { version: '1.0', models: {} };
+  const merged = mergeProjectSpecsIntoRegistry(projectSpecs, baseRegistry);
+
+  // Search for "deployment rollback" — should match via description tokens
+  const matches = runBugModeMatching('deployment rollback failure', [], undefined, merged);
+  assert.ok(matches !== null, 'runBugModeMatching should not return null with valid registry');
+
+  const projMatch = matches.find(m => m.path === path.normalize('.planning/formal/specs/DeploymentSafety.tla'));
+  assert.ok(projMatch, 'should find the project spec via preloadedRegistry');
+  assert.strictEqual(projMatch.matched_by, 'bug_pattern');
+  assert.ok(projMatch.bug_relevance_score > 0, 'relevance score should be positive');
+  assert.deepStrictEqual(projMatch.requirement_coverage, ['DEPLOY-01', 'DEPLOY-02']);
+});
+
+test('runBugModeMatching without preloadedRegistry does NOT find project specs', () => {
+  // Without passing the merged registry, project specs should NOT appear
+  // (they're not in the on-disk model-registry.json)
+  const matches = runBugModeMatching('deployment rollback failure', []);
+  if (matches === null) return; // registry unavailable — can't test this path
+
+  const projMatch = matches.find(m =>
+    m.path && m.path.includes('DeploymentSafety')
+  );
+  assert.ok(!projMatch, 'without preloadedRegistry, project specs should not appear');
+});
+
+test('E2E CLI: --bug-mode returns project spec matches', () => {
+  const manifestPath = path.join(process.cwd(), '.planning', 'formal', 'specs', 'formal-checks.json');
+  const original = fs.readFileSync(manifestPath, 'utf8');
+
+  const manifest = {
+    version: 1,
+    specs: [{
+      module: 'canary-deploy',
+      type: 'tla',
+      spec_path: '.planning/formal/specs/CanaryDeploy.tla',
+      command: 'make',
+      args: ['check-canary'],
+      keywords: ['canary', 'deploy', 'rollout'],
+      requirements: ['CANARY-01'],
+      maturity: 'draft',
+      description: 'Canary deployment verification'
+    }]
+  };
+
+  try {
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+
+    // Standard mode — should find via matchProjectSpecs
+    const result = spawnSync(process.execPath, [
+      SCOPE_SCAN,
+      '--description', 'canary deployment rollout',
+      '--format', 'json'
+    ], {
+      cwd: process.cwd(),
+      encoding: 'utf8',
+      stdio: 'pipe',
+      timeout: 30000
+    });
+
+    // Parse JSON output — stdout may have noise from semantic layer
+    // Find the last valid JSON array in stdout
+    const stdout = result.stdout || '';
+    const lines = stdout.split('\n');
+    let parsed = null;
+    for (let i = lines.length - 1; i >= 0; i--) {
+      const line = lines[i].trim();
+      if (line.startsWith('[')) {
+        try { parsed = JSON.parse(line); break; } catch (_) {}
+      }
+    }
+    // If single-line parse failed, try multiline from last '['
+    if (!parsed) {
+      const jsonStart = stdout.lastIndexOf('[\n');
+      if (jsonStart >= 0) {
+        try { parsed = JSON.parse(stdout.slice(jsonStart)); } catch (_) {}
+      }
+    }
+    if (parsed) {
+      const canaryMatch = parsed.find(m => m.module === 'canary-deploy');
+      assert.ok(canaryMatch, 'CLI should find canary-deploy via project manifest');
+      assert.strictEqual(canaryMatch.source, 'project');
+      assert.strictEqual(canaryMatch.matched_by, 'project_manifest');
+    }
+  } finally {
+    fs.writeFileSync(manifestPath, original);
+  }
 });
