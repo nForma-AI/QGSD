@@ -1257,6 +1257,20 @@ async function main() {
     }
   }
 
+  // Early output-file write: proves script was actually invoked (not Haiku fabrication).
+  // Written immediately with nonce + PENDING marker. Overwritten with final result at end.
+  // If file contains PENDING after Task returns → script ran but didn't finish (timeout/crash).
+  // If file is missing → script was never invoked (Haiku didn't run Bash).
+  const outputFile = getArg('--output-file');
+  if (outputFile) {
+    try {
+      fs.mkdirSync(path.dirname(outputFile), { recursive: true });
+      fs.writeFileSync(outputFile, `slot: ${slot}\nround: ${round}\nverdict: PENDING\ndispatch_nonce: ${dispatchNonce}\nreasoning: dispatch started, awaiting CLI response\n`, 'utf8');
+    } catch (e) {
+      process.stderr.write(`[quorum-slot-dispatch] early output-file write failed: ${e.message}\n`);
+    }
+  }
+
   // Read optional temp files
   let priorPositions = null;
   if (priorPositionsFile) {
@@ -1383,7 +1397,6 @@ async function main() {
             dispatch_nonce: dispatchNonce,
             unavailMessage: `Prompt size: ${prompt.length} chars (~${Math.ceil(prompt.length / CHARS_PER_TOKEN)} tokens). Model limit: ${provider.max_context_tokens}. CCR overhead: ${overhead}.`
           });
-          const outputFile = getArg('--output-file');
           if (outputFile) {
             try {
               fs.mkdirSync(path.dirname(outputFile), { recursive: true });
@@ -1565,8 +1578,7 @@ async function main() {
     }
   }
 
-  // --output-file: write result to file before stdout (Option C — file is source of truth)
-  const outputFile = getArg('--output-file');
+  // --output-file: overwrite early PENDING marker with final result (Option C — file is source of truth)
   if (outputFile) {
     try {
       fs.mkdirSync(path.dirname(outputFile), { recursive: true });
