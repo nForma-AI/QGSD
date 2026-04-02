@@ -1,0 +1,25 @@
+{
+  "nf/quick-369-implement-project-level-formal-spec-disc": {
+    "task_id": 369,
+    "task_description": "Implement project-level formal spec discovery via convention-based manifest",
+    "approach": "Implement convention-based manifest discovery that auto-detects and registers formal specification files in .planning/formal/ directory without requiring manual configuration.",
+    "out_of_scope": [
+      "Migrating existing formal specification files to new directory structure",
+      "Creating validation rules or enforcement gates for discovered specs",
+      "Implementing spec file synchronization across multiple projects",
+      "Building a UI dashboard for spec manifest visualization",
+      "Generating formal specifications from code analysis"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.95,
+      "routed_through_debug": false
+    },
+    "risk_level": "high",
+    "risk_reason": "Task involves creating and modifying formal verification files and updating formal scope discovery/execution scripts",
+    "branches_affected": ["nf/quick-369-implement-project-level-formal-spec-disc"],
+    "created_at": "2026-04-01T17:10:34.300Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

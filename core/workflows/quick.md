@@ -630,7 +630,7 @@ Run quorum inline — follow the canonical protocol in @core/references/quorum-d
   ```
 - Dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100`
 - Deliberate up to 10 rounds per R3.3
-- **FALLBACK-01 required:** If ANY dispatched slot returns UNAVAIL, follow the tiered fallback protocol from @core/references/quorum-dispatch.md §6 before evaluating consensus. Dispatch T1 (same `auth_type=sub`) then T2 (cross-subscription) unused slots from the preflight `available_slots` list. Complete the FALLBACK_CHECKPOINT before proceeding.
+- **FALLBACK-01 required:** If ANY dispatched slot returns UNAVAIL, follow the tiered fallback protocol from @core/references/quorum-dispatch.md §6 before evaluating consensus. Dispatch T1 (flat-rate CLI, `auth_type=sub`) then T2 (pay-per-use API) unused slots from the preflight `available_slots` list. Complete the FALLBACK_CHECKPOINT before proceeding.
 
 Fail-open: if all slots AND all fallback tiers are exhausted (UNAVAIL), note it and proceed — same as R6 policy.
 
@@ -1118,7 +1118,7 @@ Run quorum inline — follow the canonical protocol in @core/references/quorum-d
     [included from Round 2 onward]
   ```
 - Dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100`
-- **FALLBACK-01 required:** If ANY dispatched slot returns UNAVAIL, follow the tiered fallback protocol from @core/references/quorum-dispatch.md §6 before evaluating consensus. Dispatch T1 (same `auth_type=sub`) then T2 (cross-subscription) unused slots from the preflight `available_slots` list. Complete the FALLBACK_CHECKPOINT before proceeding.
+- **FALLBACK-01 required:** If ANY dispatched slot returns UNAVAIL, follow the tiered fallback protocol from @core/references/quorum-dispatch.md §6 before evaluating consensus. Dispatch T1 (flat-rate CLI, `auth_type=sub`) then T2 (pay-per-use API) unused slots from the preflight `available_slots` list. Complete the FALLBACK_CHECKPOINT before proceeding.
 
 Fail-open: if all slots AND all fallback tiers are exhausted (UNAVAIL), keep `$VERIFICATION_STATUS = "Verified"` and note: "Quorum unavailable — verification result uncontested."
 
@@ -1154,7 +1154,7 @@ Route on quorum result:
      ```
    - Reuse `$DISPATCH_LIST` from step 5.7 preflight (or re-run `node "$HOME/.claude/nf-bin/quorum-preflight.cjs" --all` if not in scope). Then dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100` — do NOT dispatch slots outside `$DISPATCH_LIST`
    - Synthesize results inline, deliberate up to 10 rounds per R3.3
-   - **FALLBACK-01 required:** If ANY dispatched slot returns UNAVAIL, follow the tiered fallback protocol from @core/references/quorum-dispatch.md §6 before evaluating consensus. Dispatch T1 (same `auth_type=sub`) then T2 (cross-subscription) unused slots from the preflight `available_slots` list. Complete the FALLBACK_CHECKPOINT before proceeding.
+   - **FALLBACK-01 required:** If ANY dispatched slot returns UNAVAIL, follow the tiered fallback protocol from @core/references/quorum-dispatch.md §6 before evaluating consensus. Dispatch T1 (flat-rate CLI, `auth_type=sub`) then T2 (pay-per-use API) unused slots from the preflight `available_slots` list. Complete the FALLBACK_CHECKPOINT before proceeding.
 
    Fail-open: if all slots AND all fallback tiers are exhausted (UNAVAIL), treat as BLOCK (escalate to user).
 

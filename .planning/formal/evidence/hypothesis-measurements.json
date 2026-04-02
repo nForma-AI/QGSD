@@ -1,11 +1,11 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-26T15:31:04.289Z",
-  "total_measured": 110,
+  "generated": "2026-04-01T16:33:25.714Z",
+  "total_measured": 115,
   "verdicts": {
     "CONFIRMED": 0,
     "VIOLATED": 0,
-    "UNMEASURABLE": 110
+    "UNMEASURABLE": 115
   },
   "measurements": [
     {
@@ -452,6 +452,51 @@
     {
       "assumption_name": "MaxModels",
       "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCNFDispatch.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSlots",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCNFOutputIntegrity.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxOutputSize",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCNFOutputIntegrity.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "L1Cap",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCNFOutputIntegrity.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "L3Cap",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCNFOutputIntegrity.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "L6Cap",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCNFOutputIntegrity.cfg",
       "formal_value": null,
       "actual_value": null,
       "actual_source": null,

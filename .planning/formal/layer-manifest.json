@@ -1,6 +1,6 @@
 {
   "schema_version": "2",
-  "generated": "2026-03-26T15:18:52.332Z",
+  "generated": "2026-04-01T15:37:54.846Z",
   "layers": {
     "L1": [
       {
@@ -1075,6 +1075,81 @@
         "path": ".planning/formal/alloy/uppaal-race-modeling.als",
         "description": "UPPAAL timed race modeling: model structure, runner integration, measurements",
         "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/btf-layer-integration.als",
+        "description": "B->F layer integration in the solve pipeline: layer key, wave DAG dependency, residual classification, and dispatch cap",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/coverage-link-suppression.als",
+        "description": "C->R scanner proximity-based suppression and @requirement annotation parsing",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/deprecation-routing.als",
+        "description": "Deprecation of /nf:model-driven-fix and routing to /nf:debug",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/verification-foundations.als",
+        "description": "Verification mode tagging, trace comparison infrastructure, and configurable iteration limits",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/fp-rate-tuning.als",
+        "description": "False-positive rate tracking and auto-tuning of scanner suppression thresholds",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/gate-auto-promotion.als",
+        "description": "Gate auto-promotion lifecycle from SOFT_GATE to HARD_GATE with consecutive pass tracking",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/hypothesis-targeting.als",
+        "description": "Hypothesis-driven wave priority adjustment in the solver",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/intent-approach-block.als",
+        "description": "APPROACH block derivation and persistence for quick tasks",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/quorum-precedents.als",
+        "description": "Quorum precedent extraction, keyword matching, and TTL pruning",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/alloy/regression-verification.als",
+        "description": "Regression verification with scoped model checking and proximity neighbors",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/root-cause-quorum.als",
+        "description": "Quorum vote on root cause diagnosis in solve-diagnose",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/tla/NFScopeGuard.tla",
+        "description": "Scope guard PreToolUse hook: fires on Edit/Write, checks scope contract, emits warnings for out-of-scope edits, no-op without contract",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFSimulationLoop.tla",
+        "description": "Solution simulation cycle: fix intent normalization, consequence model generation, three-gate convergence loop",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/test-link-annotations.als",
+        "description": "Test @requirement annotations, annotate-tests.cjs suggestions, and T->R scanner coverage reporting",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFOutputIntegrity.tla",
+        "description": "Quorum output truncation pipeline — models 6 truncation layers (L1-L6) and verifies verdict integrity, truncation detection, telemetry recording, and consensus gate awareness. Confirmed 2 violations: TRUNC-04 (telemetry gap) and TRUNC-05 (raw field silent truncation).",
+        "grounding_status": "ungrounded"
       }
     ]
   },
@@ -1098,17 +1173,17 @@
   "collapsed_layers": {
     "L2": {
       "reason": "Empty layer — zero entries permanently blocked Gate B (STRUCT-01)",
-      "collapsed_at": "2026-03-26T15:18:52.332Z"
+      "collapsed_at": "2026-04-01T15:37:54.846Z"
     }
   },
   "summary": {
-    "total_models": 214,
+    "total_models": 229,
     "L1_count": 2,
     "L2_count": 0,
-    "L3_count": 212,
+    "L3_count": 227,
     "maturity_distribution": {
-      "0": 179,
-      "1": 35
+      "0": 192,
+      "1": 37
     },
     "spec_modules_with_invariants": 18
   }

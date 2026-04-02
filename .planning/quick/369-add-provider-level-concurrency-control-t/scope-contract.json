@@ -1,0 +1,26 @@
+{
+  "nf/quick-369-implement-project-level-formal-spec-disc": {
+    "task_id": 369,
+    "task_description": "Add provider-level concurrency control to quorum dispatch — group slots by provider, limit concurrent HTTP requests per provider (e.g., max 2-3 to Together.xyz), stagger remaining slots with backoff.",
+    "approach": "Implement provider-level concurrency control in quorum dispatch by grouping HTTP requests by baseUrl, limiting concurrent requests per provider, and staggering remaining slots with exponential backoff to prevent rate-limit cascades.",
+    "out_of_scope": [
+      "Modifying providers.json configuration structure — provider grouping derived from existing baseUrl fields",
+      "Changes to individual slot timeout values — concurrency control operates at dispatch layer",
+      "Retrofitting CLI-backed subprocess slots with HTTP-style queueing",
+      "Adaptive rate-limit detection and dynamic limits — initial implementation uses fixed caps",
+      "Cross-provider load balancing or request prioritization",
+      "Persisting provider state across sessions"
+    ],
+    "classification": {
+      "type": "bug_fix",
+      "confidence": 0.85,
+      "routed_through_debug": false
+    },
+    "risk_level": "medium",
+    "risk_reason": "Feature task touching 2 core dispatch files with new concurrency logic, but no formal model or requirement changes.",
+    "branches_affected": ["nf/quick-369-implement-project-level-formal-spec-disc"],
+    "created_at": "2026-04-01T17:09:42.447Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

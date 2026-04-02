@@ -1868,7 +1868,9 @@ function generateManifest(dir, baseDir) {
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
     const relPath = path.relative(baseDir, fullPath).replace(/\\/g, '/');
-    if (entry.isDirectory()) {
+    if (entry.isSymbolicLink()) {
+      continue; // skip symlinks (e.g. nf/bin → nf-bin)
+    } else if (entry.isDirectory()) {
       Object.assign(manifest, generateManifest(fullPath, baseDir));
     } else {
       manifest[relPath] = fileHash(fullPath);
@@ -2203,6 +2205,63 @@ function install(isGlobal, runtime = 'claude') {
         }
       }
       console.log(`  ${green}✓${reset} Installed XState machine bundle`);
+    }
+
+    // Mirror nf-bin/ scripts into nf/bin/ so both paths resolve
+    // (LLMs often guess ~/.claude/nf/bin/ instead of ~/.claude/nf-bin/)
+    // nf/bin/ already has core/bin/ files (gsd-tools.cjs); we add nf-bin/ scripts alongside them
+    const nfBinDir = path.join(targetDir, 'nf', 'bin');
+    if (fs.existsSync(nfBinDir) && !fs.lstatSync(nfBinDir).isSymbolicLink()) {
+      let mirrored = 0;
+      for (const entry of fs.readdirSync(binDest)) {
+        const srcFile = path.join(binDest, entry);
+        if (fs.statSync(srcFile).isFile()) {
+          const destFile = path.join(nfBinDir, entry);
+          if (!fs.existsSync(destFile)) {
+            fs.copyFileSync(srcFile, destFile);
+            mirrored++;
+          }
+        }
+      }
+      // Also mirror adapters/ subdirectory
+      const adaptersSrcMirror = path.join(binDest, 'adapters');
+      const adaptersDstMirror = path.join(nfBinDir, 'adapters');
+      if (fs.existsSync(adaptersSrcMirror)) {
+        fs.mkdirSync(adaptersDstMirror, { recursive: true });
+        for (const entry of fs.readdirSync(adaptersSrcMirror)) {
+          const srcFile = path.join(adaptersSrcMirror, entry);
+          const destFile = path.join(adaptersDstMirror, entry);
+          if (fs.statSync(srcFile).isFile() && !fs.existsSync(destFile)) {
+            fs.copyFileSync(srcFile, destFile);
+            mirrored++;
+          }
+        }
+      }
+      if (mirrored > 0) {
+        console.log(`  ${green}✓${reset} Mirrored ${mirrored} nf-bin scripts into nf/bin`);
+      }
+    } else if (fs.existsSync(nfBinDir) && fs.lstatSync(nfBinDir).isSymbolicLink()) {
+      // Previous install created a symlink — restore as real dir with merged contents
+      fs.unlinkSync(nfBinDir);
+      fs.mkdirSync(nfBinDir, { recursive: true });
+      // Re-copy core/bin/ files
+      const coreBinSrc = path.join(src, 'core', 'bin');
+      if (fs.existsSync(coreBinSrc)) {
+        for (const entry of fs.readdirSync(coreBinSrc)) {
+          fs.copyFileSync(path.join(coreBinSrc, entry), path.join(nfBinDir, entry));
+        }
+      }
+      // Copy nf-bin/ files
+      for (const entry of fs.readdirSync(binDest)) {
+        const srcFile = path.join(binDest, entry);
+        if (fs.statSync(srcFile).isFile()) {
+          const destFile = path.join(nfBinDir, entry);
+          if (!fs.existsSync(destFile)) {
+            fs.copyFileSync(srcFile, destFile);
+          }
+        }
+      }
+      console.log(`  ${green}✓${reset} Restored nf/bin (was symlink) with merged contents`);
     }
   }
 

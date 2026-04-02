@@ -1,12 +1,11 @@
 name: Release & Publish
 
 # Fully automated: merge to main = release.
-# Also supports manual tag pushes (backward compat with release.sh).
+# Tag trigger removed — the `tag` job below creates the git tag,
+# which was re-triggering this workflow and racing the npm publish.
 on:
   push:
     branches: [main]
-    tags:
-      - 'v[0-9]+.[0-9]+*'
 
 jobs:
   # ── Gate: skip if this version is already published ──
@@ -17,7 +16,6 @@ jobs:
       should_release: ${{ steps.check.outputs.should_release }}
       version: ${{ steps.check.outputs.version }}
       tag_name: ${{ steps.check.outputs.tag_name }}
-      is_tag_push: ${{ steps.check.outputs.is_tag_push }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,26 +32,6 @@ jobs:
         run: |
           VERSION=$(node -p "require('./package.json').version")
           TAG_NAME="v${VERSION}"
-          IS_TAG_PUSH="false"
-
-          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
-            IS_TAG_PUSH="true"
-            TAG_VERSION="${GITHUB_REF#refs/tags/v}"
-            # Skip prerelease tags (e.g. v0.39.0-rc.1) — they don't produce a release
-            if echo "$TAG_VERSION" | grep -qE '\-'; then
-              echo "Skipping: prerelease tag $GITHUB_REF"
-              echo "should_release=false" >> "$GITHUB_OUTPUT"
-              echo "version=$TAG_VERSION" >> "$GITHUB_OUTPUT"
-              echo "tag_name=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
-              echo "is_tag_push=true" >> "$GITHUB_OUTPUT"
-              exit 0
-            fi
-            # For stable tag pushes, verify tag matches package.json
-            if [ "$TAG_VERSION" != "$VERSION" ]; then
-              echo "ERROR: Tag version ($TAG_VERSION) != package.json ($VERSION)"
-              exit 1
-            fi
-          fi
 
           # Skip prerelease versions (staging versions on main)
           if echo "$VERSION" | grep -qE '\-'; then
@@ -61,7 +39,6 @@ jobs:
             echo "should_release=false" >> "$GITHUB_OUTPUT"
             echo "version=$VERSION" >> "$GITHUB_OUTPUT"
             echo "tag_name=$TAG_NAME" >> "$GITHUB_OUTPUT"
-            echo "is_tag_push=$IS_TAG_PUSH" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -84,7 +61,6 @@ jobs:
 
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "tag_name=$TAG_NAME" >> "$GITHUB_OUTPUT"
-          echo "is_tag_push=$IS_TAG_PUSH" >> "$GITHUB_OUTPUT"
 
   # ── Tests ──
   test:
@@ -133,11 +109,11 @@ jobs:
           fi
           echo "OK: 0 test files in package"
 
-  # ── Create git tag (only for main-push, not tag-push) ──
+  # ── Create git tag ──
   tag:
     name: Create git tag
     needs: [check, test]
-    if: needs.check.outputs.should_release == 'true' && needs.check.outputs.is_tag_push == 'false'
+    if: needs.check.outputs.should_release == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write

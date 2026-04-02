@@ -112,8 +112,8 @@ Reason: risk_level=${RISK_LEVEL}. Reduced fan-out — task risk does not warrant
    ${DISPATCH_LIST entries with model names}
 
  Fallback order:
-   T1 (same-sub): ${T1_UNUSED slots, or "none"}
-   T2 (cross-sub): ${T2_FALLBACK slots, or "none"}
+   T1 (flat-rate CLI): ${T1_UNUSED slots, or "none"}
+   T2 (pay-per-use API): ${T2_FALLBACK slots, or "none"}
 
  Total available: ${available_slots count}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -191,10 +191,10 @@ Task(
 
 **Rules:**
 1. **Collect all UNAVAIL results** from current round's parallel Tasks before proceeding
-2. **T1 — sub-CLI fallback:** Unused slots with `auth_type=sub` (same subscription tier)
+2. **T1 — flat-rate CLI fallback:** Unused slots with `auth_type=sub` (flat-rate subscription CLIs)
    - `$T1_UNUSED = [available slots with auth_type=sub] − $DISPATCH_LIST`
    - Dispatch all T1 slots at once as parallel Tasks (one message turn)
-3. **T2 — cross-subscription fallback:** Unused slots with `auth_type≠sub`
+3. **T2 — pay-per-use API fallback:** Unused slots with `auth_type≠sub`
    - Only dispatch T2 if T1 is empty or fully UNAVAIL
    - `$T2_FALLBACK = [available slots with auth_type≠sub] − $DISPATCH_LIST − [already dispatched]`
    - Dispatch all T2 slots at once as parallel Tasks (one message turn)

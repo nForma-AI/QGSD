@@ -1,9 +1,9 @@
 {
   "schema_version": "2",
-  "generated": "2026-03-26T15:20:10.436Z",
-  "wiring_purpose_score": 0.9813084112149533,
-  "total_entries": 214,
-  "grounded_entries": 210,
+  "generated": "2026-04-01T16:32:32.873Z",
+  "wiring_purpose_score": 0.982532751091703,
+  "total_entries": 229,
+  "grounded_entries": 225,
   "orphaned_entries": 4,
   "target": 1,
   "target_met": false
