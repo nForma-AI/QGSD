@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-02T12:19:07.256Z",
+  "generated": "2026-04-02T15:48:53.728Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -84,24 +84,24 @@
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-04-02T12:18:07.321Z",
-      "hash": "62ebde8f"
+      "mtime": "2026-04-02T13:37:35.900Z",
+      "hash": "e2513c64"
     },
     "invariant-catalog.json": {
       "mtime": "2026-03-06T14:00:17.868Z",
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-04-02T12:10:07.263Z",
-      "hash": "360beaac"
+      "mtime": "2026-04-02T13:43:03.951Z",
+      "hash": "ec64fa0d"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-04-02T12:00:47.268Z",
-      "hash": "454114fb"
+      "mtime": "2026-04-02T13:35:58.061Z",
+      "hash": "7eda7458"
     },
     "instrumentation-map.json": {
-      "mtime": "2026-04-02T12:01:19.026Z",
-      "hash": "f9f7fa04"
+      "mtime": "2026-04-02T13:36:27.473Z",
+      "hash": "11273330"
     },
     "event-vocabulary.json": {
       "mtime": "2026-03-08T20:28:45.150Z",
@@ -116,18 +116,18 @@
       "hash": "2df5c0d7"
     },
     "git-heatmap.json": {
-      "mtime": "2026-04-02T12:02:53.543Z",
-      "hash": "02a303fa"
+      "mtime": "2026-04-02T13:37:47.765Z",
+      "hash": "0ff55c8c"
     },
     "debt.json": {
       "mtime": "2026-03-04T13:33:16.983Z",
       "hash": "4f085cf2"
     },
     "source-annotations": {
-      "mtime": "2026-04-02T12:18:06.243Z"
+      "mtime": "2026-04-02T13:37:23.661Z"
     },
     "code-source-annotations": {
-      "mtime": "2026-04-02T12:02:25.036Z"
+      "mtime": "2026-04-02T15:44:25.376Z"
     }
   },
   "nodes": {
@@ -17110,6 +17110,11 @@
           "to": "invariant::CoverageAlwaysFailOpen",
           "rel": "verified_by",
           "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/SOLVE-10.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         },
         {
           "to": "formal_model::.planning/formal/alloy/solve-tc-coverage.als",
@@ -55575,6 +55580,17 @@
       "edges": [
         {
           "to": "requirement::TRUNC-05",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/SOLVE-10.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SOLVE-10.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SOLVE-10",
           "rel": "tests",
           "source": "unit-test-coverage"
         }

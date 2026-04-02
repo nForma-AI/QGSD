@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-02T12:00:47.263Z",
+  "generated_at": "2026-04-02T13:35:58.058Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -3879,6 +3879,15 @@
         {
           "test_file": ".planning/formal/generated-stubs/TRUNC-05.stub.test.js",
           "test_name": "TRUNC-05 — RawFieldTruncationMarked: behavioral verification"
+        }
+      ]
+    },
+    "SOLVE-10": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SOLVE-10.stub.test.js",
+          "test_name": "SOLVE-10: nf-solve.cjs exports crossReferenceFormalCoverage function"
         }
       ]
     },

@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-02T12:20:37.206Z",
+    "generated_at": "2026-04-02T15:51:30.125Z",
     "generator_version": "1.1",
     "data_sources": {
       "annotations": {
@@ -16,7 +16,7 @@
       },
       "unit_test_coverage": {
         "available": true,
-        "requirements_matched": 429
+        "requirements_matched": 430
       }
     }
   },
@@ -9707,7 +9707,16 @@
           "latest_result": "pass",
           "check_id": "alloy:solve-tc-coverage"
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SOLVE-10.stub.test.js",
+            "test_name": "SOLVE-10: nf-solve.cjs exports crossReferenceFormalCoverage function"
+          }
+        ]
+      }
     },
     "SOLVE-07": {
       "id": "SOLVE-07",
@@ -32884,8 +32893,8 @@
     }
   },
   "coverage_summary": {
-    "total_requirements": 445,
-    "covered_count": 429,
+    "total_requirements": 446,
+    "covered_count": 430,
     "coverage_percentage": 96.4,
     "uncovered_requirements": [
       "BML-02",
@@ -33796,6 +33805,12 @@
         "requirement_id": "PF-05",
         "direction": "model_claims_requirement",
         "detail": "model-registry lists PF-05 for .planning/formal/alloy/solve-pf-layer.als but requirements.json PF-05 does not list .planning/formal/alloy/solve-pf-layer.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/solve-tc-coverage.als",
+        "requirement_id": "SOLVE-10",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists SOLVE-10 for .planning/formal/alloy/solve-tc-coverage.als but requirements.json SOLVE-10 does not list .planning/formal/alloy/solve-tc-coverage.als in formal_models"
       },
       {
         "model_file": ".planning/formal/alloy/solve-triage-display.als",
@@ -35662,11 +35677,6 @@
       },
       {
         "type": "unknown_requirement_id",
-        "reference": "SOLVE-10",
-        "referenced_by": "model-registry .planning/formal/alloy/solve-tc-coverage.als requirements"
-      },
-      {
-        "type": "unknown_requirement_id",
         "reference": "SOLVE-16",
         "referenced_by": "model-registry .planning/formal/alloy/solve-tui-features.als requirements"
       },
@@ -35948,8 +35958,8 @@
     ],
     "summary": {
       "total_checked": 715,
-      "asymmetric_count": 384,
-      "stale_count": 146,
+      "asymmetric_count": 385,
+      "stale_count": 145,
       "clean": false
     }
   },
@@ -36670,7 +36680,7 @@
   },
   "coverage_preservation": {
     "baseline_found": true,
-    "baseline_date": "2026-04-02T12:10:07.252Z",
+    "baseline_date": "2026-04-02T13:43:03.939Z",
     "requirements_checked": 568,
     "regressions": [],
     "summary": {
