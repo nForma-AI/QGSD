@@ -35,7 +35,8 @@ The orchestrator passes a JSON object (as part of the Agent prompt):
   "post_residual": { /* from re-diagnostic */ },
   "iteration_count": N,
   "flags": { "verbose": bool, "json": bool },
-  "focus": null | { "phrase": string }
+  "focus": null | { "phrase": string },
+  "timing": null | { "layer_key": { "duration_ms": N, "skipped": bool }, ..., "total_diagnostic_ms": N }
 }
 ```
 </input_contract>
@@ -134,7 +135,7 @@ Note: R->D gaps are auto-remediated by generating developer doc entries in docs/
 After the before/after summary, run `state-candidates.cjs` to discover missing states that should be modeled:
 
 ```bash
-node ~/.claude/nf-bin/state-candidates.cjs --json 2>/dev/null || node bin/state-candidates.cjs --json 2>/dev/null || true
+node /Users/jonathanborduas/.claude/nf-bin/state-candidates.cjs --json 2>/dev/null || node bin/state-candidates.cjs --json 2>/dev/null || true
 ```
 
 If the script produces output, display a summary of unmodeled state candidates: count of unmapped actions and suggested missing transitions. These are informational — they feed into the next `/nf:solve` iteration if new formal models are created. Fail-open: if the script is not found or errors, skip silently.
@@ -143,7 +144,7 @@ If the script produces output, display a summary of unmodeled state candidates: 
 
 Re-run a lightweight diagnostic to get a fresh residual snapshot:
 ```bash
-DRIFT_SNAPSHOT=$(node ~/.claude/nf-bin/nf-solve.cjs --json --report-only --fast --project-root=$(pwd) 2>/dev/null)
+DRIFT_SNAPSHOT=$(node /Users/jonathanborduas/.claude/nf-bin/nf-solve.cjs --json --report-only --fast --project-root=$(pwd) 2>/dev/null)
 ```
 If nf-bin path doesn't exist, fall back to `bin/nf-solve.cjs`.
 
@@ -183,15 +184,43 @@ If `result.detected` is false:
 
 Fail-open: if the drift check script errors, log warning and continue.
 
+### Step 6.3: Diagnostic Timing Summary
+
+If `input.timing` is non-null and contains entries, display a timing summary section:
+
+```
+─ Diagnostic Timing ────────────────────────────────────
+Total wall-clock:  {total_diagnostic_ms}ms
+
+Top 5 slowest layers:
+  {layer_name}           {duration_ms}ms
+  {layer_name}           {duration_ms}ms
+  {layer_name}           {duration_ms}ms
+  {layer_name}           {duration_ms}ms
+  {layer_name}           {duration_ms}ms
+
+Layers skipped:    {count} of {total}
+────────────────────────────────────────────────────────
+```
+
+To compute:
+1. Extract `total_diagnostic_ms` from `input.timing.total_diagnostic_ms`
+2. Collect all entries from `input.timing` where key !== `total_diagnostic_ms`
+3. Sort by `duration_ms` descending, take top 5 (exclude entries where `skipped: true`)
+4. Count entries where `skipped: true` for the "Layers skipped" line
+5. Right-align the `ms` column for readability
+
+If `input.timing` is null or empty, skip this section silently (fail-open — older solve runs won't have timing data).
+
 ### Step 6.5: Convergence Report
 
 Display the convergence section showing trend sparklines, oscillation status, and action items:
 
 ```bash
-node ~/.claude/nf-bin/convergence-report.cjs --project-root=$(pwd) 2>/dev/null || node bin/convergence-report.cjs --project-root=$(pwd) 2>/dev/null || true
+node /Users/jonathanborduas/.claude/nf-bin/convergence-report.cjs --project-root=$(pwd) 2>/dev/null || node bin/convergence-report.cjs --project-root=$(pwd) 2>/dev/null || true
 ```
 
-If `~/.claude/nf-bin/convergence-report.cjs` exists, prefer the installed path. Falls back to `bin/convergence-report.cjs` (CWD-relative).
+If `/Users/jonathanborduas/.claude/nf-bin/convergence-report.cjs` exists, prefer the installed path. Falls back to `bin/convergence-report.cjs` (CWD-relative).
 
 This section is only meaningful after 5+ solve sessions (per MIN_POINTS threshold). On early runs, it displays a brief note indicating more sessions are needed. Fail-open: if the script errors, skip silently and continue to Step 7.
 
@@ -201,10 +230,10 @@ This section is only meaningful after 5+ solve sessions (per MIN_POINTS threshol
 
 After the before/after table, run the full formal verification using absolute paths if not already run during remediation:
 ```bash
-node ~/.claude/nf-bin/run-formal-verify.cjs --project-root=$(pwd)
+node /Users/jonathanborduas/.claude/nf-bin/run-formal-verify.cjs --project-root=$(pwd)
 ```
 
-If ~/.claude/nf-bin/run-formal-verify.cjs does not exist, fall back to bin/run-formal-verify.cjs (CWD-relative).
+If /Users/jonathanborduas/.claude/nf-bin/run-formal-verify.cjs does not exist, fall back to bin/run-formal-verify.cjs (CWD-relative).
 
 Parse `.planning/formal/check-results.ndjson` and display **every check** grouped by result:
 
@@ -250,7 +279,7 @@ Check if any gates can be promoted based on sustained zero residual. A gate qual
 node bin/promote-gate-maturity.cjs --check --json --project-root=$(pwd)
 ```
 
-If `~/.claude/nf-bin/promote-gate-maturity.cjs` exists, prefer the installed path. Parse the JSON output and log any promotions or demotions:
+If `/Users/jonathanborduas/.claude/nf-bin/promote-gate-maturity.cjs` exists, prefer the installed path. Parse the JSON output and log any promotions or demotions:
 - If models are eligible for promotion: log `"Gate maturity: {N} model(s) eligible for promotion"`
 - If models need demotion (violations detected): log `"Gate maturity: {N} model(s) demoted due to violations"`
 - If `--fix` would be appropriate (models have violations), log the suggestion but do NOT auto-fix — gate maturity changes require deliberate action.
