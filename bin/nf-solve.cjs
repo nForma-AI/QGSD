@@ -1925,9 +1925,60 @@ function sweepDtoC() {
         if (!fs.existsSync(claimAbsPath) && !fs.existsSync(formalFallback)) {
           // Skip runtime output files that get created on first use
           const isRuntimeOutput = /\.(jsonl|ndjson)$/.test(claim.value);
-          if (!isRuntimeOutput) {
-            isBroken = true;
-            reason = 'file not found';
+          if (isRuntimeOutput) {
+            // no-op — skip runtime output
+          } else if (/[*?]/.test(claim.value)) {
+            // QUICK-375: Glob pattern expansion — resolve *, ?, ** before checking existence
+            const globDir = path.join(ROOT, path.dirname(claim.value));
+            const globPattern = path.basename(claim.value);
+            let globMatched = false;
+            try {
+              if (fs.existsSync(globDir)) {
+                const entries = fs.readdirSync(globDir);
+                const re = new RegExp('^' + globPattern.replace(/\./g, '\\.').replace(/\*\*/g, '.*').replace(/\*/g, '[^/]*').replace(/\?/g, '.') + '$');
+                globMatched = entries.some(e => re.test(e));
+              }
+            } catch (_) { /* fail-open: treat as broken if glob resolution fails */ }
+            if (!globMatched) {
+              isBroken = true;
+              reason = 'glob pattern has no matches';
+            }
+          } else {
+            // QUICK-375: Design doc staleness — suppress claims from docs/plans/ or docs/design/
+            // where the doc is a pre-implementation proposal and similar files exist (fuzzy rename)
+            const isDesignDoc = /^docs\/(plans?|designs?|proposals?|architecture)\//i.test(relativePath);
+            if (isDesignDoc) {
+              // Fuzzy rename detection: check for files in same directory with similar basename
+              const claimDir = path.join(ROOT, path.dirname(claim.value));
+              const claimBase = path.basename(claim.value, path.extname(claim.value)).toLowerCase();
+              let fuzzyMatch = false;
+              try {
+                if (fs.existsSync(claimDir)) {
+                  const siblings = fs.readdirSync(claimDir);
+                  for (const sib of siblings) {
+                    const sibBase = path.basename(sib, path.extname(sib)).toLowerCase();
+                    // Check keyword overlap: if >50% of words in claimed name appear in sibling
+                    const claimWords = claimBase.split(/[_-]+/).filter(w => w.length > 2);
+                    const sibWords = sibBase.split(/[_-]+/).filter(w => w.length > 2);
+                    if (claimWords.length > 0) {
+                      const overlap = claimWords.filter(w => sibWords.some(sw => sw.includes(w) || w.includes(sw)));
+                      if (overlap.length >= Math.ceil(claimWords.length * 0.5)) {
+                        fuzzyMatch = true;
+                        break;
+                      }
+                    }
+                  }
+                }
+              } catch (_) { /* fail-open */ }
+              if (!fuzzyMatch) {
+                isBroken = true;
+                reason = 'file not found (design doc)';
+              }
+              // If fuzzyMatch, suppress — likely a rename from pre-implementation proposal
+            } else {
+              isBroken = true;
+              reason = 'file not found';
+            }
           }
         }
       } else if (claim.type === 'cli_command') {
@@ -1941,6 +1992,18 @@ function sweepDtoC() {
           }
         }
       } else if (claim.type === 'dependency') {
+        // QUICK-375: System tool allowlist — common CLI tools mentioned in docs that aren't packages
+        const SYSTEM_TOOLS = new Set([
+          'nvidia-smi', 'docker', 'docker-compose', 'git', 'curl', 'wget', 'make', 'gcc', 'g++',
+          'python', 'python3', 'pip', 'pip3', 'node', 'npm', 'npx', 'yarn', 'pnpm', 'bun',
+          'cargo', 'rustc', 'go', 'java', 'javac', 'gradle', 'maven', 'mvn',
+          'ruby', 'gem', 'bundler', 'brew', 'apt', 'apt-get', 'yum', 'dnf',
+          'ssh', 'scp', 'rsync', 'tar', 'zip', 'unzip', 'gzip',
+          'psql', 'mysql', 'redis-cli', 'mongosh', 'sqlite3',
+          'aws', 'gcloud', 'az', 'kubectl', 'helm', 'terraform',
+        ]);
+        if (SYSTEM_TOOLS.has(claim.value.toLowerCase())) continue;
+
         // Verify against all known dependency manifests (#22: multi-ecosystem)
         if (!(claim.value in pkgDeps) && !(claim.value in pkgDevDeps) && !allKnownDeps.has(claim.value.toLowerCase())) {
           // Check infrastructure ignore patterns (#22)
