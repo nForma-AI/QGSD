@@ -6,6 +6,24 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.41.8] - 2026-04-03 — Pure JS TUI & D→C FP Reduction
+
+Deprecates blessed-xterm (native C++ node-pty dependency) in favor of pure JS blessed-terminal.cjs. Reduces D→C false positives with glob expansion, system tool allowlist, and design doc fuzzy rename detection.
+
+### Changed
+- `feat(tui)`: replace `blessed-xterm` + `node-pty` with pure JS `blessed-terminal.cjs` (`@xterm/headless` + `child_process.spawn`) — zero native dependencies, works on all platforms
+- `feat(tui)`: remove 30-line node-pty auto-rebuild fallback from TUI boot
+
+### Added
+- `feat(solve)`: D→C glob pattern expansion — `seed_data/*.json` now resolves to matching files instead of being flagged as broken
+- `feat(solve)`: system tool allowlist (40+ entries) — `nvidia-smi`, `docker`, `git`, etc. auto-suppressed from dependency checks
+- `feat(solve)`: design doc fuzzy rename detection — files from `docs/plans/` with keyword-overlapping siblings are suppressed (catches `features.py` → `linucb.py` renames)
+
+### Removed
+- `blessed-xterm` dependency (v1.5.1)
+- `node-pty` dependency (v1.1.0)
+- `overrides.blessed-xterm` section from package.json
+
 ## [0.41.7] - 2026-04-02 — Solve Telemetry & Robustness
 
 Comprehensive observability for the `/nf:solve` pipeline: per-layer timing, global deadline, session-aware token tracking, and convergence analysis tooling. Fixes diagnostic hang caused by unbounded test suite execution.
