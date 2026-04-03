@@ -19,10 +19,14 @@ Deprecates blessed-xterm (native C++ node-pty dependency) in favor of pure JS bl
 - `feat(solve)`: system tool allowlist (40+ entries) — `nvidia-smi`, `docker`, `git`, etc. auto-suppressed from dependency checks
 - `feat(solve)`: design doc fuzzy rename detection — files from `docs/plans/` with keyword-overlapping siblings are suppressed (catches `features.py` → `linucb.py` renames)
 
+### Fixed
+- `fix(test)`: ensure `~/.claude/` directory exists in `withNfJson` test helper — CI failure after node-pty removal (node-pty postinstall previously created this directory)
+
 ### Removed
 - `blessed-xterm` dependency (v1.5.1)
 - `node-pty` dependency (v1.1.0)
 - `overrides.blessed-xterm` section from package.json
+- `git-heatmap.json` from git tracking (gitignored — 138K+ line churn per solve run, still generated locally)
 
 ## [0.41.7] - 2026-04-02 — Solve Telemetry & Robustness
 
