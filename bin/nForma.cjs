@@ -476,32 +476,9 @@ if (cliArgs.includes('--screenshot')) {
 
 // ─── TUI (interactive mode — no CLI flags matched) ───────────────────────────
 const blessed    = require('blessed');
-let XTerm;
-let _xtermError = null;
-try {
-  XTerm = require('blessed-xterm');
-} catch (e) {
-  _xtermError = e.message;
-  // Auto-rebuild node-pty native addon when missing or compiled for wrong Node ABI
-  const needsRebuild = (e.code === 'MODULE_NOT_FOUND' && e.message.includes('pty.node'))
-    || e.code === 'ERR_DLOPEN_FAILED';
-  if (needsRebuild) {
-    try {
-      const { spawnSync } = require('child_process');
-      const projRoot = path.join(__dirname, '..');
-      // npm rebuild exits 1 even on success — ignore exit code, check file after
-      spawnSync('npm', ['rebuild', 'node-pty'], { cwd: projRoot, stdio: 'ignore', timeout: 60000 });
-      // Clear all cached blessed-xterm/node-pty modules before retry
-      Object.keys(require.cache).forEach(k => {
-        if (k.includes('blessed-xterm') || k.includes('node-pty')) delete require.cache[k];
-      });
-      XTerm = require('blessed-xterm');
-      _xtermError = null;
-    } catch (rebuildErr) {
-      _xtermError = `blessed-xterm native rebuild failed: ${rebuildErr.message}`;
-    }
-  }
-}
+// Pure JS terminal widget — replaces blessed-xterm (which required node-pty native addon).
+// Uses @xterm/headless + child_process.spawn instead. Zero native dependencies.
+const XTerm = require('./blessed-terminal.cjs');
 
 // ─── Reuse logic layer from manage-agents-core.cjs ───────────────────────────
 const core = require('./manage-agents-core.cjs');
@@ -660,10 +637,8 @@ function logEvent(level, msg) {
   if (_logEntries.length > LOG_MAX) _logEntries.shift();
 }
 
-if (_xtermError) logEvent('warn', `blessed-xterm unavailable: ${_xtermError}`);
-
 // ─── Session state & persistence ─────────────────────────────────────────────
-const sessions = [];        // { id, name, cwd, claudeSessionId, term (XTerm widget), alive }
+const sessions = [];        // { id, name, cwd, claudeSessionId, term (BlessedTerminal widget), alive }
 let activeSessionIdx = -1;  // -1 = no terminal shown
 let sessionIdCounter = 0;
 
@@ -841,10 +816,6 @@ function refreshSessionMenu() {
 }
 
 function createSession(name, cwd, resumeSessionId) {
-  if (!XTerm) {
-    toast('Sessions require blessed-xterm (native rebuild needed). Run: npm rebuild', true);
-    return null;
-  }
   // Guard: fall back to getTargetPath() if provided cwd no longer exists (e.g., resumed session)
   let effectiveCwd = cwd || getTargetPath();
   if (!fs.existsSync(effectiveCwd)) {

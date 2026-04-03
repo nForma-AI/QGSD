@@ -1413,12 +1413,11 @@ test('logEvent: ring buffer caps at LOG_MAX (200)', () => {
   assert.match(first.msg, /^flood-/, 'oldest entry should still be a flood entry');
 });
 
-test('logEvent: boot captures blessed-xterm warning', () => {
-  // _xtermError is set at module load time; the logEvent call happens before tests
+test('logEvent: boot log mechanism works without blessed-xterm', () => {
+  // blessed-xterm removed — pure JS blessed-terminal.cjs used instead (no native addon)
+  // Verify boot log mechanism didn't crash (no _xtermError warning expected)
   const xtermWarn = _pure._logEntries.find(e => e.level === 'warn' && e.msg.includes('blessed-xterm'));
-  // In test env blessed-xterm mock may or may not fail — just verify the log mechanism works
-  // If no warn, logEvent at least didn't crash during boot
-  assert.ok(true, 'boot log did not throw');
+  assert.strictEqual(xtermWarn, undefined, 'no blessed-xterm warning should exist');
 });
 
 // ─────────────────────────────────────────────────────────────────────────────

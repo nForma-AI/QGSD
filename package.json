@@ -61,9 +61,7 @@
   "dependencies": {
     "@xterm/headless": "^5.5.0",
     "blessed": "^0.1.81",
-    "blessed-xterm": "^1.5.1",
-    "inquirer": "^8.2.7",
-    "node-pty": "^1.1.0"
+    "inquirer": "^8.2.7"
   },
   "devDependencies": {
     "@hpcc-js/wasm-graphviz": "^1.21.0",
@@ -79,11 +77,7 @@
   "optionalDependencies": {
     "@huggingface/transformers": "^3.0.0"
   },
-  "overrides": {
-    "blessed-xterm": {
-      "node-pty": "$node-pty"
-    }
-  },
+  "overrides": {},
   "lint-staged": {},
   "scripts": {
     "postinstall": "node scripts/postinstall.js",
