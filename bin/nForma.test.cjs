@@ -283,6 +283,8 @@ const NF_JSON_PATH = path.join(os.homedir(), '.claude', 'nf.json');
 
 function withNfJson(data, fn) {
   const bak = NF_JSON_PATH + '.test-bak';
+  // Ensure ~/.claude/ exists (may not in CI where node-pty postinstall no longer creates it)
+  fs.mkdirSync(path.dirname(NF_JSON_PATH), { recursive: true });
   const had = fs.existsSync(NF_JSON_PATH);
   if (had) fs.copyFileSync(NF_JSON_PATH, bak);
   writeNfJson(data);
