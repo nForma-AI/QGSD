@@ -169,6 +169,21 @@ Output: Advisory warnings, --require-baselines flag, progress nudge, improved DI
   Returns a match.
 
   ```bash
+  # Verify baseline_advisory is NOT in solve-state.json (direct negative check)
+  node bin/nf-solve.cjs --json --report-only --no-timeout --no-format 2>/dev/null && \
+  cat .planning/formal/solve-state.json | node -e "
+    const data = JSON.parse(require('fs').readFileSync(0, 'utf8'));
+    if ('baseline_advisory' in data) {
+      console.error('FAIL: baseline_advisory found in solve-state.json (should be jsonObj only)');
+      process.exit(1);
+    } else {
+      console.log('PASS: baseline_advisory correctly absent from solve-state.json');
+    }
+  "
+  ```
+  Confirms baseline_advisory is NOT persisted to solve-state.json (only on jsonObj for --json output).
+
+  ```bash
   # Verify --require-baselines is checked in resume path
   grep -A2 'requireBaselines' bin/nf-solve.cjs | grep -i 'resume\|execute\|session'
   ```
@@ -181,6 +196,7 @@ Output: Advisory warnings, --require-baselines flag, progress nudge, improved DI
   - --require-baselines is enforced in BOTH the fresh-run AND --execute/--resume paths
   - Advisory emitted to stderr with distinct messages for missing-file vs zero-baselines
   - baseline_advisory field present in jsonObj (--json output), NOT in solveState
+  - baseline_advisory confirmed ABSENT from persisted solve-state.json (direct negative check)
   - DIAG-02 layers include baseline_hint in their -1 detail objects
   </done>
 </task>
@@ -273,15 +289,29 @@ if (data.baseline_advisory) {
 NF_EVAL
 ```
 Shows advisory object with file_missing field when baselines are missing.
-3. `grep "require-baselines" commands/nf/solve.md` — flag documented
-4. `grep "baseline" core/workflows/progress.md` — nudge present
-5. `diff core/workflows/progress.md ~/.claude/nf/workflows/progress.md` — synced
-6. `grep 'jsonObj.baseline_advisory' bin/nf-solve.cjs` — confirms field is on jsonObj, not solveState
+3. **Verify baseline_advisory is NOT in solve-state.json (direct negative check):**
+```bash
+cat .planning/formal/solve-state.json | node -e "
+  const data = JSON.parse(require('fs').readFileSync(0, 'utf8'));
+  if ('baseline_advisory' in data) {
+    console.error('FAIL: baseline_advisory in solve-state.json');
+    process.exit(1);
+  } else {
+    console.log('PASS: baseline_advisory absent from solve-state.json');
+  }
+"
+```
+Confirms separation: baseline_advisory on jsonObj only, not persisted.
+4. `grep "require-baselines" commands/nf/solve.md` — flag documented
+5. `grep "baseline" core/workflows/progress.md` — nudge present
+6. `diff core/workflows/progress.md ~/.claude/nf/workflows/progress.md` — synced
+7. `grep 'jsonObj.baseline_advisory' bin/nf-solve.cjs` — confirms field is on jsonObj, not solveState
 </verification>
 
 <success_criteria>
 - Advisory stderr message printed when nf-solve detects no baseline requirements (with distinct messages for missing-file vs zero-baselines)
 - JSON output (jsonObj) includes baseline_advisory field with file_missing discriminator
+- baseline_advisory confirmed ABSENT from persisted solve-state.json (direct negative check in verification step)
 - --require-baselines flag causes hard exit(1) when baselines missing, in both fresh-run and --execute/--resume paths
 - nf:progress shows nudge when baselines absent
 - All new tests pass (including malformed JSON and file_missing cases)
