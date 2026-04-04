@@ -14,7 +14,7 @@ See: .planning/PROJECT.md
 
 | # | Description | Date | Commit | Status | Directory |
 |---|---|---|---|---|---|
-| 374 | Make API slots backup-only | 2026-04-04 | (pending) | Pending | [374-make-api-slots-backup-only-dispatch-to-a](./quick/374-make-api-slots-backup-only-dispatch-to-a/) |
+| 374 | Make API slots backup-only | 2026-04-04 | 99b79b4f | Verified | [374-make-api-slots-backup-only-dispatch-to-a](./quick/374-make-api-slots-backup-only-dispatch-to-a/) |
 
 ## Session Log
 
