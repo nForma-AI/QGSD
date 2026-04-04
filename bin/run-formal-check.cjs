@@ -338,6 +338,16 @@ const MODULE_CHECKS = {
         '-workers', '1'
       ]
     }
+  ],
+  'uppaal-races': [
+    {
+      tool: 'alloy',
+      cmd: [
+        'java', '-jar', '.planning/formal/alloy/org.alloytools.alloy.dist.jar', 'exec',
+        '--output', '-', '--type', 'text', '--quiet',
+        '.planning/formal/alloy/uppaal-race-modeling.als'
+      ]
+    }
   ]
 };
 
