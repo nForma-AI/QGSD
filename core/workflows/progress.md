@@ -92,6 +92,17 @@ PROGRESS_BAR=$(node ~/.claude/nf/bin/gsd-tools.cjs progress bar --raw)
 
 # Get formal coverage summary
 FORMAL=$(node ~/.claude/nf/bin/gsd-tools.cjs formal-summary 2>/dev/null)
+
+# Check baseline requirement presence
+BASELINE_CHECK=$(node << 'NF_EVAL'
+try {
+  const d = JSON.parse(require('fs').readFileSync('.planning/formal/requirements.json', 'utf8'));
+  const reqs = d.requirements || [];
+  const baselined = reqs.filter(r => r.provenance && r.provenance.source_file === 'nf-baseline').length;
+  console.log(JSON.stringify({ has_baselines: baselined > 0, count: baselined, total: reqs.length }));
+} catch (e) { console.log(JSON.stringify({ has_baselines: false, count: 0, total: 0, error: e.message })); }
+NF_EVAL
+)
 ```
 
 Present:
@@ -132,6 +143,10 @@ Requirements: {complete_count} Complete / {pending_count} Pending (of {total})
 Model coverage: {coverage_pct}% ({covered_by_model}/{total} requirements linked to formal models)
 (If uncovered_count > 0:) {uncovered_count} uncovered — /nf:close-formal-gaps to address
 (If pending_count > 0:) {pending_count} pending — /nf:new-milestone to plan future work
+
+## Baseline Coverage
+(Only show this section if BASELINE_CHECK.has_baselines is false AND FORMAL.available is true)
+No baseline requirements found. Run `node bin/sync-baseline-requirements.cjs` to populate baselines — this improves /nf:solve coverage across R->D, C->R, and D->R layers.
 
 ## What's Next
 [Next phase/plan objective from roadmap analyze]
