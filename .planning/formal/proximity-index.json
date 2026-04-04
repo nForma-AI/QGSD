@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-02T18:11:54.704Z",
+  "generated": "2026-04-04T07:20:54.828Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -84,24 +84,24 @@
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-04-02T15:51:31.660Z",
-      "hash": "72db8044"
+      "mtime": "2026-04-04T07:20:47.784Z",
+      "hash": "564e7349"
     },
     "invariant-catalog.json": {
       "mtime": "2026-03-06T14:00:17.868Z",
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-04-02T15:51:30.136Z",
-      "hash": "5536134f"
+      "mtime": "2026-04-04T07:19:54.194Z",
+      "hash": "7f176beb"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-04-02T13:35:58.061Z",
-      "hash": "7eda7458"
+      "mtime": "2026-04-04T07:20:29.748Z",
+      "hash": "9cc22354"
     },
     "instrumentation-map.json": {
-      "mtime": "2026-04-02T13:36:27.473Z",
-      "hash": "11273330"
+      "mtime": "2026-04-04T07:20:17.369Z",
+      "hash": "9b92b774"
     },
     "event-vocabulary.json": {
       "mtime": "2026-03-08T20:28:45.150Z",
@@ -116,18 +116,18 @@
       "hash": "2df5c0d7"
     },
     "git-heatmap.json": {
-      "mtime": "2026-04-02T13:37:47.765Z",
-      "hash": "0ff55c8c"
+      "mtime": "2026-04-04T07:20:01.651Z",
+      "hash": "c419f068"
     },
     "debt.json": {
       "mtime": "2026-03-04T13:33:16.983Z",
       "hash": "4f085cf2"
     },
     "source-annotations": {
-      "mtime": "2026-04-02T15:51:30.538Z"
+      "mtime": "2026-04-04T07:20:47.784Z"
     },
     "code-source-annotations": {
-      "mtime": "2026-04-02T15:44:25.376Z"
+      "mtime": "2026-04-04T07:19:09.050Z"
     }
   },
   "nodes": {
@@ -13567,9 +13567,7 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ],
-      "source_layer": "L3",
-      "gate_maturity": "SOFT_GATE"
+      ]
     },
     "formal_model::.planning/formal/alloy/readme-structure.als": {
       "type": "formal_model",
@@ -21040,9 +21038,7 @@
     "formal_model::.planning/formal/prism/quorum.pm": {
       "type": "formal_model",
       "id": ".planning/formal/prism/quorum.pm",
-      "edges": [],
-      "source_layer": "L3",
-      "gate_maturity": "SOFT_GATE"
+      "edges": []
     },
     "formal_model::.planning/formal/tla/NFAccountManager.tla": {
       "type": "formal_model",
@@ -22497,9 +22493,7 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ],
-      "source_layer": "L3",
-      "gate_maturity": "SOFT_GATE"
+      ]
     },
     "formal_model::.planning/formal/tla/NFQuorum_xstate.tla": {
       "type": "formal_model",
@@ -22510,9 +22504,7 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ],
-      "source_layer": "L3",
-      "gate_maturity": "SOFT_GATE"
+      ]
     },
     "formal_model::.planning/formal/tla/NFReasoning.tla": {
       "type": "formal_model",

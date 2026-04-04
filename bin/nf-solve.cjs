@@ -132,6 +132,7 @@ const verboseMode = args.includes('--verbose');
 const fastMode = args.includes('--fast');
 const skipProximity = args.includes('--skip-proximity');
 const skipTests = args.includes('--skip-tests');
+const requireBaselines = args.includes('--require-baselines');
 
 // Global deadline: abort after N ms to prevent indefinite hangs.
 // Uses wall-clock checks between sync operations (setTimeout won't fire during
@@ -1667,7 +1668,7 @@ function sweepRtoD() {
   if (!fs.existsSync(reqPath)) {
     return {
       residual: -1,
-      detail: { skipped: true, reason: 'missing: requirements.json' },
+      detail: { skipped: true, reason: 'missing: requirements.json', baseline_hint: 'run sync-baseline-requirements.cjs to populate' },
     };
   }
 
@@ -1677,7 +1678,7 @@ function sweepRtoD() {
   } catch (e) {
     return {
       residual: -1,
-      detail: { skipped: true, reason: 'missing: requirements.json (parse error: ' + e.message + ')' },
+      detail: { skipped: true, reason: 'missing: requirements.json (parse error: ' + e.message + ')', baseline_hint: 'run sync-baseline-requirements.cjs to populate' },
     };
   }
 
@@ -2181,14 +2182,14 @@ const MAX_REVERSE_CANDIDATES = 200;
 function sweepCtoR() {
   const reqPath = path.join(ROOT, '.planning', 'formal', 'requirements.json');
   if (!fs.existsSync(reqPath)) {
-    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json' } };
+    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json', baseline_hint: 'run sync-baseline-requirements.cjs to populate' } };
   }
 
   let reqData;
   try {
     reqData = JSON.parse(fs.readFileSync(reqPath, 'utf8'));
   } catch (e) {
-    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json (parse error)' } };
+    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json (parse error)', baseline_hint: 'run sync-baseline-requirements.cjs to populate' } };
   }
 
   // Flatten requirements
@@ -2600,14 +2601,14 @@ function sweepTtoR() {
 function sweepDtoR() {
   const reqPath = path.join(ROOT, '.planning', 'formal', 'requirements.json');
   if (!fs.existsSync(reqPath)) {
-    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json' } };
+    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json', baseline_hint: 'run sync-baseline-requirements.cjs to populate' } };
   }
 
   let reqData;
   try {
     reqData = JSON.parse(fs.readFileSync(reqPath, 'utf8'));
   } catch (e) {
-    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json (parse error)' } };
+    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json (parse error)', baseline_hint: 'run sync-baseline-requirements.cjs to populate' } };
   }
 
   // Flatten requirements and extract keywords per requirement
@@ -3970,6 +3971,47 @@ function checkLayerSkip(layerKey) {
     return { residual: -1, detail: { skipped: true, reason: 'incremental: layer not affected by remediation' } };
   }
   return null;
+}
+
+/**
+ * Check if requirements.json contains baseline-sourced requirements.
+ * Returns { has_baselines: boolean, baseline_count: number, total_count: number, file_missing: boolean, error?: string }
+ * Fail-open: JSON parse errors return { has_baselines: false, ... }
+ */
+function checkBaselinePresence() {
+  try {
+    const reqPath = path.join(ROOT, '.planning', 'formal', 'requirements.json');
+
+    // First check: file existence
+    if (!fs.existsSync(reqPath)) {
+      return { has_baselines: false, baseline_count: 0, total_count: 0, file_missing: true };
+    }
+
+    // Second check: parse JSON
+    const data = JSON.parse(fs.readFileSync(reqPath, 'utf8'));
+    const reqs = data.requirements || [];
+
+    // Count baseline-sourced requirements
+    const baselineCount = reqs.filter(r =>
+      r.provenance && r.provenance.source_file === 'nf-baseline'
+    ).length;
+
+    return {
+      has_baselines: baselineCount > 0,
+      baseline_count: baselineCount,
+      total_count: reqs.length,
+      file_missing: false
+    };
+  } catch (e) {
+    // Fail-open: JSON parse or other errors
+    return {
+      has_baselines: false,
+      baseline_count: 0,
+      total_count: 0,
+      file_missing: false,
+      error: e.message
+    };
+  }
 }
 
 /**
@@ -5615,6 +5657,20 @@ function main() {
     existingSolveState.consecutive_clean_sessions = 0;
   }
 
+  // Check baseline presence and emit advisory if needed
+  const baselineCheck = checkBaselinePresence();
+  if (!baselineCheck.has_baselines) {
+    if (baselineCheck.file_missing) {
+      process.stderr.write(TAG + " ADVISORY: requirements.json not found. Run 'node bin/sync-baseline-requirements.cjs' to create it with baseline requirements.\n");
+    } else {
+      process.stderr.write(TAG + " ADVISORY: requirements.json contains 0 of " + baselineCheck.total_count + " requirements from baselines. Run 'node bin/sync-baseline-requirements.cjs' to populate baselines and improve coverage.\n");
+    }
+    if (requireBaselines) {
+      process.stderr.write(TAG + " ERROR: --require-baselines set but no baselines found. Aborting.\n");
+      process.exit(1);
+    }
+  }
+
   const iterations = [];
   let converged = false;
   let prevTotal = null;
@@ -5920,6 +5976,17 @@ function main() {
   }
   const jsonObj = formatJSON(iterations, finalResidual, converged);
   jsonObj.oscillating_layers = cycleDetector.detectOscillating();
+  jsonObj.baseline_advisory = baselineCheck.has_baselines ? null : {
+    warning: baselineCheck.file_missing
+      ? 'requirements.json not found'
+      : 'no baseline-sourced requirements in requirements.json',
+    suggestion: baselineCheck.file_missing
+      ? 'run sync-baseline-requirements.cjs to create baseline requirements'
+      : 'run sync-baseline-requirements.cjs to populate baselines',
+    file_missing: baselineCheck.file_missing,
+    baseline_count: baselineCheck.baseline_count,
+    total_count: baselineCheck.total_count
+  };
   const jsonText = JSON.stringify(jsonObj, null, 2);
 
   // Persist session summary before stdout/exit
