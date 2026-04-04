@@ -522,9 +522,32 @@ async function main() {
         return originalOrder.get(a) - originalOrder.get(b); // preserve probe order within tier
       });
 
+      // ─── Model dedup guard (DEDUP-01) ────────────────────────────────────
+      // When the same model appears in both CCR and API tiers (e.g., ccr-1 and
+      // api-1 both → DeepSeek-V3.1), keep the first occurrence (higher-tier slot
+      // due to sort order: CLI/CCR before HTTP) and move the duplicate to backup.
+      const modelMap = new Map(activeProviders.map(p => [p.name, p.model]));
+      const seenModels = new Set();
+      const deduped = [];
+      const dedupedOut = [];
+      for (const slot of output.available_slots) {
+        const model = modelMap.get(slot);
+        if (model && seenModels.has(model)) {
+          dedupedOut.push(slot);
+        } else {
+          if (model) seenModels.add(model);
+          deduped.push(slot);
+        }
+      }
+      if (dedupedOut.length > 0) {
+        process.stderr.write(`[preflight] Dedup: ${dedupedOut.length} duplicate model(s) moved to backup: ${dedupedOut.join(', ')}\n`);
+      }
+      output.available_slots = deduped;
+      output.deduped_slots = dedupedOut;
+
       // Add transparency fields
       output.primary_slots = output.available_slots.filter(s => typeMap.get(s) !== 'http');
-      output.backup_slots = output.available_slots.filter(s => typeMap.get(s) === 'http');
+      output.backup_slots = output.available_slots.filter(s => typeMap.get(s) === 'http').concat(dedupedOut);
 
       // Emit stderr log when backup slots exist
       if (output.backup_slots.length > 0) {
