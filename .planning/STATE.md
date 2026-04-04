@@ -91,7 +91,7 @@ None yet.
 | 370 | Implement project-level formal spec discovery with security hardening | 2026-04-01 | bc538273 | Pending | [369-implement-project-level-formal-spec-disc](./quick/369-implement-project-level-formal-spec-disc/) |
 | 371 | Add per-layer timing telemetry to nf-solve.cjs | 2026-04-02 | 286ad404 | Verified | [370-add-per-layer-timing-telemetry-to-nf-sol](./quick/370-add-per-layer-timing-telemetry-to-nf-sol/) |
 | 372 | Add timing summary section to solve-report.md | 2026-04-02 | 749472c8 | Verified | [371-add-timing-summary-section-to-solve-repo](./quick/371-add-timing-summary-section-to-solve-repo/) |
-| 373 | Add advisory baseline check to nf:solve, nudge in nf:progress, fix DIAG-02 residual=-1 for missing baselines, optional --require-baselines flag | 2026-04-04 | PENDING | Pending | [373-add-advisory-baseline-check-to-nf-solve-](./quick/373-add-advisory-baseline-check-to-nf-solve-/) |
+| 373 | Add advisory baseline check to nf:solve, nudge in nf:progress, fix DIAG-02 residual=-1 for missing baselines, optional --require-baselines flag | 2026-04-04 | 78abeb42 | Needs Review | [373-add-advisory-baseline-check-to-nf-solve-](./quick/373-add-advisory-baseline-check-to-nf-solve-/) |
 | 374 | Create convergence timeline analysis tool | 2026-04-02 | af6c7e72 | Verified | [372-create-convergence-timeline-analysis-tool](./quick/372-create-convergence-timeline-analysis-tool/) | [370-add-per-layer-timing-telemetry-to-nf-sol](./quick/370-add-per-layer-timing-telemetry-to-nf-sol/) |
 
 ### Blockers/Concerns
