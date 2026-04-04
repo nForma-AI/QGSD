@@ -72,14 +72,23 @@ In the `--all` mode block of `main()` (around line 491-507), after building the 
    
 2. Build a name-to-type lookup from `activeProviders` (or `providers` if no active filter). For each provider, map `p.name -> p.type`.
 
-3. Sort `output.available_slots` using a comparator:
+3. Sort `output.available_slots` using a stable comparator that preserves within-tier relative order (i.e., the health-probe discovery order). While V8's Array.sort is stable, make the intent explicit by using original index as a tiebreaker:
    ```javascript
    const typeMap = new Map(activeProviders.map(p => [p.name, p.type]));
+   const originalOrder = new Map(output.available_slots.map((s, i) => [s, i]));
    output.available_slots.sort((a, b) => {
      const aIsBackup = typeMap.get(a) === 'http' ? 1 : 0;
      const bIsBackup = typeMap.get(b) === 'http' ? 1 : 0;
-     return aIsBackup - bIsBackup;
+     if (aIsBackup !== bIsBackup) return aIsBackup - bIsBackup;
+     return originalOrder.get(a) - originalOrder.get(b); // preserve probe order within tier
    });
+   ```
+   
+   Add a comment above the sort noting that nf-prompt.js has its own independent tiering via `auth_type` — this sort covers the quorum.md direct-read path only:
+   ```javascript
+   // NOTE: nf-prompt.js also tiers slots independently via auth_type in its
+   // quorum injection logic. This sort covers the quorum.md direct-read path
+   // (workflows that consume preflight JSON output directly).
    ```
 
 4. Add two new output fields for transparency (after the sort):

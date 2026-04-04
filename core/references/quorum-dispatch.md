@@ -93,6 +93,8 @@ esac
 # When FAN_OUT_COUNT = 1: DISPATCH_LIST is empty — quorum is skipped entirely.
 ```
 
+**Tiered Slot Ordering (TIER-01):** The preflight `available_slots` array is pre-sorted with CLI/CCR slots (subprocess and ccr types) first and HTTP API slots last. Since `$DISPATCH_LIST` picks the first `(FAN_OUT_COUNT - 1)` entries, HTTP API slots are backup-only — they are never dispatched when sufficient CLI/CCR slots are available. The preflight output also includes `primary_slots` (CLI/CCR) and `backup_slots` (HTTP API) arrays for diagnostic transparency.
+
 **Skip-quorum path (FAN_OUT_COUNT = 1):** When risk_level is "low", no external quorum workers are dispatched. The orchestrator proceeds directly to execution. EventualConsensus and ProtocolTerminates invariants do not apply (no quorum protocol runs). An audit log is emitted to ensure traceability.
 
 **Reduced-quorum note (FAN-05):** If FAN_OUT_COUNT < MAX_QUORUM_SIZE AND FAN_OUT_COUNT > 1, emit:
@@ -111,9 +113,9 @@ Reason: risk_level=${RISK_LEVEL}. Reduced fan-out — task risk does not warrant
  Primary slots (${FAN_OUT_COUNT - 1}):
    ${DISPATCH_LIST entries with model names}
 
- Fallback order:
-   T1 (flat-rate CLI): ${T1_UNUSED slots, or "none"}
-   T2 (pay-per-use API): ${T2_FALLBACK slots, or "none"}
+ Fallback order (tiered):
+   T1 (flat-rate CLI/CCR): ${primary slots not in dispatch list, or "none"}
+   T2 (pay-per-use HTTP API, backup-only): ${backup_slots, or "none"}
 
  Total available: ${available_slots count}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

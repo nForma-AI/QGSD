@@ -505,6 +505,31 @@ async function main() {
           output.unavailable_slots.push({ name, reason });
         }
       }
+
+      // NOTE: nf-prompt.js also tiers slots independently via auth_type in its
+      // quorum injection logic. This sort covers the quorum.md direct-read path
+      // (workflows that consume preflight JSON output directly).
+
+      // Build name-to-type lookup from activeProviders
+      const typeMap = new Map(activeProviders.map(p => [p.name, p.type]));
+      const originalOrder = new Map(output.available_slots.map((s, i) => [s, i]));
+
+      // Sort available_slots: CLI/CCR primary (type !== 'http') before HTTP backup (type === 'http')
+      output.available_slots.sort((a, b) => {
+        const aIsBackup = typeMap.get(a) === 'http' ? 1 : 0;
+        const bIsBackup = typeMap.get(b) === 'http' ? 1 : 0;
+        if (aIsBackup !== bIsBackup) return aIsBackup - bIsBackup;
+        return originalOrder.get(a) - originalOrder.get(b); // preserve probe order within tier
+      });
+
+      // Add transparency fields
+      output.primary_slots = output.available_slots.filter(s => typeMap.get(s) !== 'http');
+      output.backup_slots = output.available_slots.filter(s => typeMap.get(s) === 'http');
+
+      // Emit stderr log when backup slots exist
+      if (output.backup_slots.length > 0) {
+        process.stderr.write(`[preflight] Tiered ordering: ${output.primary_slots.length} primary (CLI/CCR) + ${output.backup_slots.length} backup (HTTP API)\n`);
+      }
     }
 
     console.log(JSON.stringify(output));

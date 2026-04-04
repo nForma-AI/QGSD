@@ -156,4 +156,44 @@ describe('quorum-preflight --probe', () => {
     }
   });
 
+  // -- Test 8: Tiered ordering — CLI/CCR slots before HTTP API slots --
+  it('available_slots are ordered with CLI/CCR primary before HTTP backup', () => {
+    const raw = runPreflight(['--all']);
+    const data = JSON.parse(raw);
+
+    // primary_slots and backup_slots must be present
+    assert.ok(Array.isArray(data.primary_slots), 'primary_slots should be an array');
+    assert.ok(Array.isArray(data.backup_slots), 'backup_slots should be an array');
+
+    // All primary slots should appear before all backup slots in available_slots
+    const available = data.available_slots || [];
+    if (data.primary_slots.length > 0 && data.backup_slots.length > 0) {
+      const lastPrimaryIdx = Math.max(...data.primary_slots.map(s => available.indexOf(s)));
+      const firstBackupIdx = Math.min(...data.backup_slots.map(s => available.indexOf(s)).filter(i => i !== -1));
+      assert.ok(lastPrimaryIdx < firstBackupIdx,
+        `Last primary slot (idx ${lastPrimaryIdx}) should come before first backup slot (idx ${firstBackupIdx})`);
+    }
+
+    // backup_slots should only contain api-* type slots
+    for (const s of data.backup_slots) {
+      assert.ok(s.startsWith('api-'), `backup slot "${s}" should be an api-* slot`);
+    }
+
+    // primary + backup should equal available
+    const combined = [...data.primary_slots, ...data.backup_slots].sort();
+    const sorted_available = [...available].sort();
+    assert.deepStrictEqual(combined, sorted_available,
+      'primary_slots + backup_slots should equal available_slots');
+  });
+
+  // -- Test 9: --no-probe still has standard output shape --
+  it('--all --no-probe includes standard keys without probe fields', () => {
+    const raw = runPreflight(['--all', '--no-probe']);
+    const data = JSON.parse(raw);
+    // Without probe, available_slots is absent, so primary/backup should also be absent
+    // This test just verifies no crash and that the standard keys are still correct.
+    assert.strictEqual(typeof data.team, 'object', 'team should be present');
+    assert.ok(Array.isArray(data.quorum_active), 'quorum_active should be present');
+  });
+
 });
