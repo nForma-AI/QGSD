@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-04-02T12:25:14.847Z",
-  "content_hash": "2d204be9c12fe019",
+  "aggregated_at": "2026-04-04T19:46:11.442Z",
+  "content_hash": "8629ecf5241a7562",
   "requirements": [
     {
       "id": "ACT-01",
@@ -1420,6 +1420,18 @@
         ".planning/formal/tla/QGSDDispatchPipeline.tla"
       ],
       "category_raw": "Dispatch Reliability"
+    },
+    {
+      "id": "DISP-06",
+      "text": "Quorum dispatcher tiered ordering: available_slots are pre-sorted with CLI/CCR slots (subprocess and ccr types) before HTTP API slots (http type), ensuring HTTP API slots are backup-only and only dispatched when CLI/CCR slots are exhausted or unavailable.",
+      "category": "Quorum & Dispatch",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "HTTP API slots (api-1 through api-6) lack local file access and are pay-per-use, making them suitable only as fallback when flat-rate CLI-based slots cannot satisfy the quorum requirement. Tiered ordering in the preflight available_slots array achieves this without modifying dispatch logic.",
+      "provenance": {
+        "source_file": ".planning/quick/374-make-api-slots-backup-only-dispatch-to-a/374-PLAN.md",
+        "milestone": "quick-374"
+      }
     },
     {
       "id": "DRIFT-01",
@@ -4710,6 +4722,106 @@
       "category_raw": "Slot-based Naming"
     },
     {
+      "id": "SOLVE-01",
+      "text": "bin/formal-graph-search.cjs provides BFS graph traversal over the proximity index (reachFiltered, semanticSearch) used by formal-scope-scan.cjs and candidate-discovery.cjs for graph-first requirement and model lookups",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "bin/formal-graph-search.cjs",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-02",
+      "text": "Quick mode (/nf:quick) shall provide the same atomic commit and state tracking guarantees as full phase execution while skipping optional steps (research, plan checker, verifier), tracking work in .planning/quick/",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-03",
+      "text": "The fsm-to-tla transpiler shall accept state machine definitions from supported frameworks and produce valid TLA+ specifications, supporting at least 28 framework patterns across 13 languages",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-04",
+      "text": "/nf:close-formal-gaps shall auto-generate formal specifications (TLA+, Alloy, or PRISM) from project requirements to close formal model coverage gaps",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-05",
+      "text": "Quorum dispatch shall perform pre-dispatch authentication checks on all agent slots, detecting unauthenticated agents before sending work to avoid timeout-based failure discovery",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-06",
+      "text": "Plan-phase verification shall check generated plans against phase requirements and loop until plans pass validation before allowing execution to proceed",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-07",
+      "text": "Execute-phase verification shall check that the codebase delivers what the phase goal promised after task execution completes, using goal-backward analysis",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-08",
+      "text": "/nf:solve-report shall generate a before/after summary including full formal verification results showing what changed during the solve cycle",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-09",
+      "text": "The circuit breaker shall detect ping-pong commit oscillation by collapsing consecutive commits on the same file set into run-groups and triggering when 3+ alternating groups are detected, blocking write commands until Haiku classification confirms genuine oscillation, quorum diagnosis identifies the structural coupling, and user approval is granted",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-10",
+      "text": "Quorum dispatch MUST enforce per-provider concurrency limits via file-based semaphores to prevent rate-limit cascades when multiple slots share an API provider",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "bin/provider-concurrency.cjs",
+        "milestone": "solver-tui"
+      }
+    },
+    {
       "id": "SPEC-01",
       "text": "Stop hook formalized in `QGSDStopHook.tla` + `MCStopHook.cfg`, TLC verifies safety + liveness",
       "category": "Formal Verification",
@@ -5436,6 +5548,66 @@
       "category_raw": "Triage Bundle"
     },
     {
+      "id": "TRUNC-01",
+      "text": "Quorum slot subprocess output buffers (stdout/stderr) SHALL have explicit size caps, and when a cap is hit the truncation event MUST be recorded in the YAML result block with a machine-readable marker (truncated: true, original_size_bytes: N).",
+      "category": "Quorum & Dispatch",
+      "priority": "must",
+      "background": "bin/call-quorum-slot.cjs caps stdout at 10MB and stderr at 4KB; bin/quorum-slot-dispatch.cjs caps at 50KB. The 50KB cap appends [OUTPUT TRUNCATED] but the 10MB cap is silent. Neither records structured truncation metadata.",
+      "provenance": {
+        "source_file": "bin/quorum-slot-dispatch.cjs",
+        "source_line": "1296-1320"
+      },
+      "status": "Complete"
+    },
+    {
+      "id": "TRUNC-02",
+      "text": "The verdict extraction pipeline (parseVerdict, parseReasoning, parseCitations) MUST operate on the FULL subprocess output buffer, not on a pre-truncated subset. If the buffer was truncated before verdict extraction, the verdict MUST be tagged as potentially incomplete (verdict_integrity: 'truncated').",
+      "category": "Quorum & Dispatch",
+      "priority": "must",
+      "background": "Currently parseVerdict runs on the full 50KB buffer (L3), but the raw field in emitResultBlock is independently truncated to 5KB (L6). If L1 (10MB) fires before L3, verdict extraction operates on truncated data. The verdict defaults to FLAG when no verdict: line is found, but a FLAG-from-truncation is indistinguishable from a genuine FLAG.",
+      "provenance": {
+        "source_file": "bin/quorum-slot-dispatch.cjs",
+        "source_line": "800-816, 1033, 1344-1346"
+      },
+      "status": "Complete"
+    },
+    {
+      "id": "TRUNC-03",
+      "text": "The consensus gate (nf-stop.js) MUST distinguish between a genuine verdict (APPROVE/REJECT/FLAG from complete output) and a default verdict (FLAG from missing verdict: line due to truncation or malformed output). Truncation-derived verdicts MUST NOT count toward quorum consensus without explicit acknowledgment.",
+      "category": "Hooks & Enforcement",
+      "priority": "must",
+      "background": "nf-stop.js validates verdicts via regex /verdict:\\s*UNAVAIL/i but does not check whether the verdict was extracted from complete output. A slot whose verbose response was truncated at 50KB, losing the verdict: line, silently becomes FLAG — which may break or distort consensus.",
+      "provenance": {
+        "source_file": "hooks/nf-stop.js",
+        "source_line": "494-496"
+      },
+      "status": "Complete"
+    },
+    {
+      "id": "TRUNC-04",
+      "text": "Quorum telemetry (quorum-rounds JSONL) MUST record per-slot truncation metadata: whether truncation occurred, which layer triggered it (L1/L2/L3), original output size, and whether the verdict was extracted from complete or truncated data.",
+      "category": "Observability & Diagnostics",
+      "priority": "must",
+      "background": "recordTelemetry() in call-quorum-slot.cjs records slot, round, verdict, latency, provider, error_type — but has no fields for truncation state. The truncated boolean in quorum-slot-dispatch.cjs exists locally but never propagates to telemetry.",
+      "provenance": {
+        "source_file": "bin/call-quorum-slot.cjs",
+        "source_line": "57-80"
+      },
+      "status": "Complete"
+    },
+    {
+      "id": "TRUNC-05",
+      "text": "The emitResultBlock raw field truncation (5KB cap) MUST append a machine-readable truncation suffix and MUST NOT destroy structured verdict/reasoning/citations lines if they appear within the raw output.",
+      "category": "Quorum & Dispatch",
+      "priority": "should",
+      "background": "emitResultBlock truncates rawOutput to 5000 chars for the YAML raw: field (line 1033) without any marker. Since verdict/reasoning are extracted separately before this truncation, this primarily affects debugging — but if raw is used downstream for re-parsing or audit, the silent truncation creates integrity gaps.",
+      "provenance": {
+        "source_file": "bin/quorum-slot-dispatch.cjs",
+        "source_line": "1032-1037"
+      },
+      "status": "Complete"
+    },
+    {
       "id": "TUI-01",
       "text": "TUI \"Add Agent → CLI Agent\" generates a working MCP entry that correctly specifies the CLI binary path and args for Codex/Gemini/OpenCode/Copilot slots",
       "category": "TUI",
@@ -5939,169 +6111,10 @@
         "source_file": ".planning/milestones/v0.35-REQUIREMENTS.md",
         "milestone": "unknown"
       }
-    },
-    {
-      "id": "SOLVE-01",
-      "text": "bin/formal-graph-search.cjs provides BFS graph traversal over the proximity index (reachFiltered, semanticSearch) used by formal-scope-scan.cjs and candidate-discovery.cjs for graph-first requirement and model lookups",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "bin/formal-graph-search.cjs",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-02",
-      "text": "Quick mode (/nf:quick) shall provide the same atomic commit and state tracking guarantees as full phase execution while skipping optional steps (research, plan checker, verifier), tracking work in .planning/quick/",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-03",
-      "text": "The fsm-to-tla transpiler shall accept state machine definitions from supported frameworks and produce valid TLA+ specifications, supporting at least 28 framework patterns across 13 languages",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-04",
-      "text": "/nf:close-formal-gaps shall auto-generate formal specifications (TLA+, Alloy, or PRISM) from project requirements to close formal model coverage gaps",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-05",
-      "text": "Quorum dispatch shall perform pre-dispatch authentication checks on all agent slots, detecting unauthenticated agents before sending work to avoid timeout-based failure discovery",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-06",
-      "text": "Plan-phase verification shall check generated plans against phase requirements and loop until plans pass validation before allowing execution to proceed",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-07",
-      "text": "Execute-phase verification shall check that the codebase delivers what the phase goal promised after task execution completes, using goal-backward analysis",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-08",
-      "text": "/nf:solve-report shall generate a before/after summary including full formal verification results showing what changed during the solve cycle",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-09",
-      "text": "The circuit breaker shall detect ping-pong commit oscillation by collapsing consecutive commits on the same file set into run-groups and triggering when 3+ alternating groups are detected, blocking write commands until Haiku classification confirms genuine oscillation, quorum diagnosis identifies the structural coupling, and user approval is granted",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "TRUNC-01",
-      "text": "Quorum slot subprocess output buffers (stdout/stderr) SHALL have explicit size caps, and when a cap is hit the truncation event MUST be recorded in the YAML result block with a machine-readable marker (truncated: true, original_size_bytes: N).",
-      "category": "Quorum & Dispatch",
-      "priority": "must",
-      "background": "bin/call-quorum-slot.cjs caps stdout at 10MB and stderr at 4KB; bin/quorum-slot-dispatch.cjs caps at 50KB. The 50KB cap appends [OUTPUT TRUNCATED] but the 10MB cap is silent. Neither records structured truncation metadata.",
-      "provenance": {
-        "source_file": "bin/quorum-slot-dispatch.cjs",
-        "source_line": "1296-1320"
-      },
-      "status": "Complete"
-    },
-    {
-      "id": "TRUNC-02",
-      "text": "The verdict extraction pipeline (parseVerdict, parseReasoning, parseCitations) MUST operate on the FULL subprocess output buffer, not on a pre-truncated subset. If the buffer was truncated before verdict extraction, the verdict MUST be tagged as potentially incomplete (verdict_integrity: 'truncated').",
-      "category": "Quorum & Dispatch",
-      "priority": "must",
-      "background": "Currently parseVerdict runs on the full 50KB buffer (L3), but the raw field in emitResultBlock is independently truncated to 5KB (L6). If L1 (10MB) fires before L3, verdict extraction operates on truncated data. The verdict defaults to FLAG when no verdict: line is found, but a FLAG-from-truncation is indistinguishable from a genuine FLAG.",
-      "provenance": {
-        "source_file": "bin/quorum-slot-dispatch.cjs",
-        "source_line": "800-816, 1033, 1344-1346"
-      },
-      "status": "Complete"
-    },
-    {
-      "id": "TRUNC-03",
-      "text": "The consensus gate (nf-stop.js) MUST distinguish between a genuine verdict (APPROVE/REJECT/FLAG from complete output) and a default verdict (FLAG from missing verdict: line due to truncation or malformed output). Truncation-derived verdicts MUST NOT count toward quorum consensus without explicit acknowledgment.",
-      "category": "Hooks & Enforcement",
-      "priority": "must",
-      "background": "nf-stop.js validates verdicts via regex /verdict:\\s*UNAVAIL/i but does not check whether the verdict was extracted from complete output. A slot whose verbose response was truncated at 50KB, losing the verdict: line, silently becomes FLAG — which may break or distort consensus.",
-      "provenance": {
-        "source_file": "hooks/nf-stop.js",
-        "source_line": "494-496"
-      },
-      "status": "Complete"
-    },
-    {
-      "id": "TRUNC-04",
-      "text": "Quorum telemetry (quorum-rounds JSONL) MUST record per-slot truncation metadata: whether truncation occurred, which layer triggered it (L1/L2/L3), original output size, and whether the verdict was extracted from complete or truncated data.",
-      "category": "Observability & Diagnostics",
-      "priority": "must",
-      "background": "recordTelemetry() in call-quorum-slot.cjs records slot, round, verdict, latency, provider, error_type — but has no fields for truncation state. The truncated boolean in quorum-slot-dispatch.cjs exists locally but never propagates to telemetry.",
-      "provenance": {
-        "source_file": "bin/call-quorum-slot.cjs",
-        "source_line": "57-80"
-      },
-      "status": "Complete"
-    },
-    {
-      "id": "TRUNC-05",
-      "text": "The emitResultBlock raw field truncation (5KB cap) MUST append a machine-readable truncation suffix and MUST NOT destroy structured verdict/reasoning/citations lines if they appear within the raw output.",
-      "category": "Quorum & Dispatch",
-      "priority": "should",
-      "background": "emitResultBlock truncates rawOutput to 5000 chars for the YAML raw: field (line 1033) without any marker. Since verdict/reasoning are extracted separately before this truncation, this primarily affects debugging — but if raw is used downstream for re-parsing or audit, the silent truncation creates integrity gaps.",
-      "provenance": {
-        "source_file": "bin/quorum-slot-dispatch.cjs",
-        "source_line": "1032-1037"
-      },
-      "status": "Complete"
-    },
-    {
-      "id": "SOLVE-10",
-      "text": "Quorum dispatch MUST enforce per-provider concurrency limits via file-based semaphores to prevent rate-limit cascades when multiple slots share an API provider",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "bin/provider-concurrency.cjs",
-        "milestone": "solver-tui"
-      }
     }
   ],
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
-  "last_sync": "2026-03-31T09:45:23.686Z"
+  "last_sync": "2026-03-31T09:45:23.686Z",
+  "frozen_at": "2026-04-04T19:46:11.443Z"
 }
