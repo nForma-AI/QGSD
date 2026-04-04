@@ -11,7 +11,7 @@ files_modified:
   - core/workflows/progress.md
 autonomous: true
 formal_artifacts: none
-requirements: [INTENT-01]
+requirements: [DIAG-02]
 
 must_haves:
   truths:
@@ -193,7 +193,14 @@ Output: Advisory warnings, --require-baselines flag, progress nudge, improved DI
 
 <verification>
 1. `node --test bin/nf-solve-baseline-check.test.cjs` — all tests pass
-2. `node bin/nf-solve.cjs --json --report-only --no-timeout 2>/dev/null | node -p "JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')).baseline_advisory"` — shows advisory object (or use heredoc equivalent)
+2. Verify baseline_advisory field in JSON output:
+```bash
+node bin/nf-solve.cjs --json --report-only --no-timeout 2>/dev/null > /tmp/nf-solve-output.json && node << 'NF_EVAL'
+const data = JSON.parse(require('fs').readFileSync('/tmp/nf-solve-output.json', 'utf8'));
+console.log(JSON.stringify(data.baseline_advisory, null, 2));
+NF_EVAL
+```
+Shows advisory object when baselines are missing.
 3. `grep "require-baselines" commands/nf/solve.md` — flag documented
 4. `grep "baseline" core/workflows/progress.md` — nudge present
 5. `diff core/workflows/progress.md ~/.claude/nf/workflows/progress.md` — synced
