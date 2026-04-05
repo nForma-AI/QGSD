@@ -2851,6 +2851,17 @@ function install(isGlobal, runtime = 'claude') {
     // This ensures codex-2, gemini-2, and all other provider slots have MCP entries before quorum_active discovery.
     ensureMcpSlotsFromProviders();
 
+    // Sync CCR presets from providers.json (keeps ~/.claude-code-router/presets/ in sync)
+    try {
+      const syncScript = path.join(binDir, 'sync-ccr-presets.cjs');
+      if (fs.existsSync(syncScript)) {
+        const { execFileSync } = require('child_process');
+        execFileSync(process.execPath, [syncScript], { stdio: 'inherit' });
+      }
+    } catch (e) {
+      console.warn(`  ${yellow}⚠${reset} CCR preset sync skipped: ${e.message}`);
+    }
+
     // Write nForma config — skip if exists unless --redetect-mcps flag set
     const nfConfigPath = path.join(targetDir, 'nf.json');
 
