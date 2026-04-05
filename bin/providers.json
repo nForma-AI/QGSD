@@ -447,12 +447,21 @@
       "description": "Execute real Claude Code non-interactively (slot 2)",
       "mainTool": "claude",
       "model": "claude-sonnet-4-6",
-      "health_check_args": ["--version"],
+      "health_check_args": [
+        "--version"
+      ],
       "display_provider": "Anthropic",
       "cli": "/Users/jonathanborduas/.local/bin/claude",
-      "args_template": ["-p", "--permission-mode", "plan", "{prompt}"],
+      "args_template": [
+        "-p",
+        "--permission-mode",
+        "plan",
+        "{prompt}"
+      ],
       "supports_quorum_session_persistence": false,
-      "helpArgs": ["--help"],
+      "helpArgs": [
+        "--help"
+      ],
       "extraTools": [],
       "timeout_ms": 300000,
       "quorum_timeout_ms": 300000,
@@ -462,9 +471,14 @@
       "env": {},
       "display_type": "claude-cli",
       "auth_check": {
-        "args": ["auth", "status"],
+        "args": [
+          "auth",
+          "status"
+        ],
         "success_pattern": "logged in|authenticated|subscription|api key",
-        "login_args": ["auth"],
+        "login_args": [
+          "auth"
+        ],
         "login_hint": "Use Claude Code auth flow or configure an Anthropic API key",
         "timeout_ms": 5000
       },
@@ -483,12 +497,21 @@
       "description": "Execute real Claude Code non-interactively (slot 3)",
       "mainTool": "claude",
       "model": "claude-sonnet-4-6",
-      "health_check_args": ["--version"],
+      "health_check_args": [
+        "--version"
+      ],
       "display_provider": "Anthropic",
       "cli": "/Users/jonathanborduas/.local/bin/claude",
-      "args_template": ["-p", "--permission-mode", "plan", "{prompt}"],
+      "args_template": [
+        "-p",
+        "--permission-mode",
+        "plan",
+        "{prompt}"
+      ],
       "supports_quorum_session_persistence": false,
-      "helpArgs": ["--help"],
+      "helpArgs": [
+        "--help"
+      ],
       "extraTools": [],
       "timeout_ms": 300000,
       "quorum_timeout_ms": 300000,
@@ -498,9 +521,14 @@
       "env": {},
       "display_type": "claude-cli",
       "auth_check": {
-        "args": ["auth", "status"],
+        "args": [
+          "auth",
+          "status"
+        ],
         "success_pattern": "logged in|authenticated|subscription|api key",
-        "login_args": ["auth"],
+        "login_args": [
+          "auth"
+        ],
         "login_hint": "Use Claude Code auth flow or configure an Anthropic API key",
         "timeout_ms": 5000
       },
@@ -519,12 +547,21 @@
       "description": "Execute real Claude Code non-interactively (slot 4)",
       "mainTool": "claude",
       "model": "claude-sonnet-4-6",
-      "health_check_args": ["--version"],
+      "health_check_args": [
+        "--version"
+      ],
       "display_provider": "Anthropic",
       "cli": "/Users/jonathanborduas/.local/bin/claude",
-      "args_template": ["-p", "--permission-mode", "plan", "{prompt}"],
+      "args_template": [
+        "-p",
+        "--permission-mode",
+        "plan",
+        "{prompt}"
+      ],
       "supports_quorum_session_persistence": false,
-      "helpArgs": ["--help"],
+      "helpArgs": [
+        "--help"
+      ],
       "extraTools": [],
       "timeout_ms": 300000,
       "quorum_timeout_ms": 300000,
@@ -534,9 +571,14 @@
       "env": {},
       "display_type": "claude-cli",
       "auth_check": {
-        "args": ["auth", "status"],
+        "args": [
+          "auth",
+          "status"
+        ],
         "success_pattern": "logged in|authenticated|subscription|api key",
-        "login_args": ["auth"],
+        "login_args": [
+          "auth"
+        ],
         "login_hint": "Use Claude Code auth flow or configure an Anthropic API key",
         "timeout_ms": 5000
       },
@@ -555,12 +597,21 @@
       "description": "Execute real Claude Code non-interactively (slot 5)",
       "mainTool": "claude",
       "model": "claude-sonnet-4-6",
-      "health_check_args": ["--version"],
+      "health_check_args": [
+        "--version"
+      ],
       "display_provider": "Anthropic",
       "cli": "/Users/jonathanborduas/.local/bin/claude",
-      "args_template": ["-p", "--permission-mode", "plan", "{prompt}"],
+      "args_template": [
+        "-p",
+        "--permission-mode",
+        "plan",
+        "{prompt}"
+      ],
       "supports_quorum_session_persistence": false,
-      "helpArgs": ["--help"],
+      "helpArgs": [
+        "--help"
+      ],
       "extraTools": [],
       "timeout_ms": 300000,
       "quorum_timeout_ms": 300000,
@@ -570,9 +621,14 @@
       "env": {},
       "display_type": "claude-cli",
       "auth_check": {
-        "args": ["auth", "status"],
+        "args": [
+          "auth",
+          "status"
+        ],
         "success_pattern": "logged in|authenticated|subscription|api key",
-        "login_args": ["auth"],
+        "login_args": [
+          "auth"
+        ],
         "login_hint": "Use Claude Code auth flow or configure an Anthropic API key",
         "timeout_ms": 5000
       },
@@ -591,12 +647,21 @@
       "description": "Execute real Claude Code non-interactively (slot 6)",
       "mainTool": "claude",
       "model": "claude-sonnet-4-6",
-      "health_check_args": ["--version"],
+      "health_check_args": [
+        "--version"
+      ],
       "display_provider": "Anthropic",
       "cli": "/Users/jonathanborduas/.local/bin/claude",
-      "args_template": ["-p", "--permission-mode", "plan", "{prompt}"],
+      "args_template": [
+        "-p",
+        "--permission-mode",
+        "plan",
+        "{prompt}"
+      ],
       "supports_quorum_session_persistence": false,
-      "helpArgs": ["--help"],
+      "helpArgs": [
+        "--help"
+      ],
       "extraTools": [],
       "timeout_ms": 300000,
       "quorum_timeout_ms": 300000,
@@ -606,9 +671,14 @@
       "env": {},
       "display_type": "claude-cli",
       "auth_check": {
-        "args": ["auth", "status"],
+        "args": [
+          "auth",
+          "status"
+        ],
         "success_pattern": "logged in|authenticated|subscription|api key",
-        "login_args": ["auth"],
+        "login_args": [
+          "auth"
+        ],
         "login_hint": "Use Claude Code auth flow or configure an Anthropic API key",
         "timeout_ms": 5000
       },
@@ -640,7 +710,6 @@
         "{prompt}"
       ],
       "supports_quorum_session_persistence": false,
-
       "max_context_tokens": 163840,
       "ccr_overhead_tokens": 100000,
       "ccr_response_budget_tokens": 70000,
@@ -656,9 +725,18 @@
       "env": {},
       "display_type": "claude-code-router",
       "service": {
-        "start": ["ccr", "start"],
-        "stop": ["ccr", "stop"],
-        "status": ["ccr", "status"]
+        "start": [
+          "ccr",
+          "start"
+        ],
+        "stop": [
+          "ccr",
+          "stop"
+        ],
+        "status": [
+          "ccr",
+          "status"
+        ]
       },
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
@@ -675,16 +753,25 @@
       "description": "Claude Code Router preset claude-2 (Qwen3.5-397B via Together.xyz)",
       "mainTool": "ask",
       "model": "Qwen/Qwen3.5-397B-A17B",
-      "health_check_args": ["status"],
+      "health_check_args": [
+        "status"
+      ],
       "display_provider": "Claude Code Router",
       "cli": "/opt/homebrew/bin/ccr",
-      "args_template": ["claude-2", "--permission-mode", "plan", "-p", "{prompt}"],
+      "args_template": [
+        "claude-2",
+        "--permission-mode",
+        "plan",
+        "-p",
+        "{prompt}"
+      ],
       "supports_quorum_session_persistence": false,
-
       "max_context_tokens": 131072,
       "ccr_overhead_tokens": 100000,
       "ccr_response_budget_tokens": 70000,
-      "helpArgs": ["--help"],
+      "helpArgs": [
+        "--help"
+      ],
       "extraTools": [],
       "timeout_ms": 300000,
       "quorum_timeout_ms": 300000,
@@ -694,9 +781,18 @@
       "env": {},
       "display_type": "claude-code-router",
       "service": {
-        "start": ["ccr", "start"],
-        "stop": ["ccr", "stop"],
-        "status": ["ccr", "status"]
+        "start": [
+          "ccr",
+          "start"
+        ],
+        "stop": [
+          "ccr",
+          "stop"
+        ],
+        "status": [
+          "ccr",
+          "status"
+        ]
       },
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
@@ -713,16 +809,25 @@
       "description": "Claude Code Router preset claude-3 (Qwen3-Coder-480B via Together.xyz)",
       "mainTool": "ask",
       "model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
-      "health_check_args": ["status"],
+      "health_check_args": [
+        "status"
+      ],
       "display_provider": "Claude Code Router",
       "cli": "/opt/homebrew/bin/ccr",
-      "args_template": ["claude-3", "--permission-mode", "plan", "-p", "{prompt}"],
+      "args_template": [
+        "claude-3",
+        "--permission-mode",
+        "plan",
+        "-p",
+        "{prompt}"
+      ],
       "supports_quorum_session_persistence": false,
-
       "max_context_tokens": 131072,
       "ccr_overhead_tokens": 100000,
       "ccr_response_budget_tokens": 70000,
-      "helpArgs": ["--help"],
+      "helpArgs": [
+        "--help"
+      ],
       "extraTools": [],
       "timeout_ms": 300000,
       "quorum_timeout_ms": 300000,
@@ -732,9 +837,18 @@
       "env": {},
       "display_type": "claude-code-router",
       "service": {
-        "start": ["ccr", "start"],
-        "stop": ["ccr", "stop"],
-        "status": ["ccr", "status"]
+        "start": [
+          "ccr",
+          "start"
+        ],
+        "stop": [
+          "ccr",
+          "stop"
+        ],
+        "status": [
+          "ccr",
+          "status"
+        ]
       },
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
@@ -751,16 +865,25 @@
       "description": "Claude Code Router preset claude-4 (Kimi-K2.5 via Together.xyz)",
       "mainTool": "ask",
       "model": "moonshotai/Kimi-K2.5",
-      "health_check_args": ["status"],
+      "health_check_args": [
+        "status"
+      ],
       "display_provider": "Claude Code Router",
       "cli": "/opt/homebrew/bin/ccr",
-      "args_template": ["claude-4", "--permission-mode", "plan", "-p", "{prompt}"],
+      "args_template": [
+        "claude-4",
+        "--permission-mode",
+        "plan",
+        "-p",
+        "{prompt}"
+      ],
       "supports_quorum_session_persistence": false,
-
       "max_context_tokens": 131072,
       "ccr_overhead_tokens": 100000,
       "ccr_response_budget_tokens": 70000,
-      "helpArgs": ["--help"],
+      "helpArgs": [
+        "--help"
+      ],
       "extraTools": [],
       "timeout_ms": 300000,
       "quorum_timeout_ms": 300000,
@@ -770,9 +893,18 @@
       "env": {},
       "display_type": "claude-code-router",
       "service": {
-        "start": ["ccr", "start"],
-        "stop": ["ccr", "stop"],
-        "status": ["ccr", "status"]
+        "start": [
+          "ccr",
+          "start"
+        ],
+        "stop": [
+          "ccr",
+          "stop"
+        ],
+        "status": [
+          "ccr",
+          "status"
+        ]
       },
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
@@ -789,16 +921,25 @@
       "description": "Claude Code Router preset claude-5 (GPT-OSS-120B via Together.xyz)",
       "mainTool": "ask",
       "model": "openai/gpt-oss-120b",
-      "health_check_args": ["status"],
+      "health_check_args": [
+        "status"
+      ],
       "display_provider": "Claude Code Router",
       "cli": "/opt/homebrew/bin/ccr",
-      "args_template": ["claude-5", "--permission-mode", "plan", "-p", "{prompt}"],
+      "args_template": [
+        "claude-5",
+        "--permission-mode",
+        "plan",
+        "-p",
+        "{prompt}"
+      ],
       "supports_quorum_session_persistence": false,
-
       "max_context_tokens": 131072,
       "ccr_overhead_tokens": 100000,
       "ccr_response_budget_tokens": 70000,
-      "helpArgs": ["--help"],
+      "helpArgs": [
+        "--help"
+      ],
       "extraTools": [],
       "timeout_ms": 300000,
       "quorum_timeout_ms": 300000,
@@ -808,9 +949,18 @@
       "env": {},
       "display_type": "claude-code-router",
       "service": {
-        "start": ["ccr", "start"],
-        "stop": ["ccr", "stop"],
-        "status": ["ccr", "status"]
+        "start": [
+          "ccr",
+          "start"
+        ],
+        "stop": [
+          "ccr",
+          "stop"
+        ],
+        "status": [
+          "ccr",
+          "status"
+        ]
       },
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
@@ -827,16 +977,25 @@
       "description": "Claude Code Router preset claude-6 (GLM-5 via Together.xyz)",
       "mainTool": "ask",
       "model": "zai-org/GLM-5",
-      "health_check_args": ["status"],
+      "health_check_args": [
+        "status"
+      ],
       "display_provider": "Claude Code Router",
       "cli": "/opt/homebrew/bin/ccr",
-      "args_template": ["claude-6", "--permission-mode", "plan", "-p", "{prompt}"],
+      "args_template": [
+        "claude-6",
+        "--permission-mode",
+        "plan",
+        "-p",
+        "{prompt}"
+      ],
       "supports_quorum_session_persistence": false,
-
       "max_context_tokens": 131072,
       "ccr_overhead_tokens": 100000,
       "ccr_response_budget_tokens": 70000,
-      "helpArgs": ["--help"],
+      "helpArgs": [
+        "--help"
+      ],
       "extraTools": [],
       "timeout_ms": 300000,
       "quorum_timeout_ms": 300000,
@@ -846,9 +1005,18 @@
       "env": {},
       "display_type": "claude-code-router",
       "service": {
-        "start": ["ccr", "start"],
-        "stop": ["ccr", "stop"],
-        "status": ["ccr", "status"]
+        "start": [
+          "ccr",
+          "start"
+        ],
+        "stop": [
+          "ccr",
+          "stop"
+        ],
+        "status": [
+          "ccr",
+          "status"
+        ]
       },
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
@@ -886,7 +1054,8 @@
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
         "timeout_ms": 45000
-      }
+      },
+      "active": false
     },
     {
       "name": "api-2",
@@ -918,7 +1087,8 @@
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
         "timeout_ms": 45000
-      }
+      },
+      "active": false
     },
     {
       "name": "api-3",
@@ -950,7 +1120,8 @@
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
         "timeout_ms": 45000
-      }
+      },
+      "active": false
     },
     {
       "name": "api-4",
@@ -982,7 +1153,8 @@
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
         "timeout_ms": 45000
-      }
+      },
+      "active": false
     },
     {
       "name": "api-5",
@@ -1014,7 +1186,8 @@
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
         "timeout_ms": 45000
-      }
+      },
+      "active": false
     },
     {
       "name": "api-6",
@@ -1046,7 +1219,8 @@
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
         "timeout_ms": 45000
-      }
+      },
+      "active": false
     }
   ]
 }
