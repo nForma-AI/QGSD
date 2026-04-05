@@ -1884,6 +1884,10 @@ async function main() {
 
 // ─── Module exports ───────────────────────────────────────────────────────────
 module.exports = {
+    semKey,
+    semAcquire,
+    semRelease,
+    SEM_DIR,
     buildModeAPrompt,
     buildModeBPrompt,
     formatDiagnosticForPrompt,
