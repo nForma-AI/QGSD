@@ -21,6 +21,8 @@ must_haves:
     - "Staleness appears as an informational signal in the solve-report table"
     - "Entries without stored hashes degrade gracefully (skip, no error)"
     - "First run populates hashes without flagging anything stale"
+    - "Diagnostic sweep is read-only -- hashes are only written with explicit --update-hashes flag"
+    - "model_stale appears in formatReport() CLI output alongside other diagnostic rows"
   artifacts:
     - path: "bin/check-model-staleness.cjs"
       provides: "Standalone staleness detection script"
@@ -31,8 +33,12 @@ must_haves:
   key_links:
     - from: "bin/nf-solve.cjs"
       to: "bin/check-model-staleness.cjs"
-      via: "spawnTool() in sweepModelStaleness"
-      pattern: "check-model-staleness"
+      via: "spawnTool() in sweepModelStaleness with --dry-run"
+      pattern: "check-model-staleness.*--dry-run"
+    - from: "bin/nf-solve.cjs"
+      to: "formatReport() diagRows"
+      via: "model_stale entry in diagnostic rows array"
+      pattern: "model_stale"
     - from: "commands/nf/solve-report.md"
       to: "model_stale"
       via: "informational signal row in report table"
@@ -54,7 +60,7 @@ Output: `bin/check-model-staleness.cjs` script, `sweepModelStaleness()` in nf-so
 <context>
 @.planning/STATE.md
 @.planning/formal/model-registry.json (first 80 lines -- schema reference)
-@bin/nf-solve.cjs (sweepFormalLint pattern ~line 3401, computeResidual ~line 4021, informational bucket ~line 4246, exports ~line 6080)
+@bin/nf-solve.cjs (sweepFormalLint pattern ~line 3401, sweepAssetStaleness ~line 3753, computeResidual ~line 4021, informational bucket ~line 4246, diagRows in formatReport ~line 4901, exports ~line 6080)
 @commands/nf/solve-report.md (informational signals table ~line 81)
 </context>
 
@@ -75,11 +81,14 @@ Create `bin/check-model-staleness.cjs` (CommonJS, 'use strict') that:
    - Build a hash record: `{ model_hash: string, source_hashes: { [path]: string } }`.
 
 3. **Compare against stored hashes** in the registry entry's `content_hashes` field (if present):
-   - If `content_hashes` is absent (first run or legacy entry): compute and store hashes, mark as `"first_hash"` (not stale).
+   - If `content_hashes` is absent (first run or legacy entry): mark as `"first_hash"` (not stale). If `--update-hashes` flag is active, populate `content_hashes` on the entry.
    - If `content_hashes.model_hash` differs from computed: mark as stale, reason `"model_changed"`.
    - If any source file hash differs: mark as stale, reason `"source_changed"`, list changed files.
 
-4. **Update model-registry.json** in place with new `content_hashes` field on each entry. Only write if any hashes changed (avoid unnecessary git noise). Use atomic write pattern (write to tmp then rename).
+4. **Write behavior is gated by `--update-hashes` flag**:
+   - Default mode (no flags, or `--dry-run`): **read-only**. Compare hashes and report, but NEVER write to model-registry.json. This is the mode used by the diagnostic sweep.
+   - `--update-hashes` mode: Write updated `content_hashes` to model-registry.json in place. Only write if any hashes changed (avoid unnecessary git noise). Use atomic write pattern (write to tmp then rename). This mode is for explicit baseline population, NOT for use during nf-solve sweeps.
+   - `--dry-run` is kept as an explicit alias for read-only mode (the default), for self-documenting invocations.
 
 5. **Output JSON to stdout** when `--json` flag is present:
    ```json
@@ -91,11 +100,11 @@ Create `bin/check-model-staleness.cjs` (CommonJS, 'use strict') that:
    }
    ```
 
-6. **CLI flags**: `--json` (JSON output), `--project-root=PATH` (override root), `--dry-run` (compute but do not update registry).
+6. **CLI flags**: `--json` (JSON output), `--project-root=PATH` (override root), `--dry-run` (explicit read-only, same as default), `--update-hashes` (opt-in write mode -- populates/updates content_hashes in registry).
 
 Use `crypto.createHash('sha256')` from Node built-ins. Follow fail-open pattern: wrap everything in try/catch, exit 0 on unexpected errors. Use `process.stderr.write` for diagnostics, never stdout (stdout is the data channel).
 
-Export `checkStaleness(root)` for programmatic use (returns the same object as JSON output).
+Export `checkStaleness(root, { updateHashes })` for programmatic use (returns the same object as JSON output). The `updateHashes` option defaults to `false` (read-only).
 
 For the **test file** `bin/check-model-staleness.test.cjs`:
 - Test that missing registry returns skipped result
@@ -104,19 +113,22 @@ For the **test file** `bin/check-model-staleness.test.cjs`:
 - Test that changed model content is detected as stale
 - Test that changed source content is detected as stale
 - Test graceful degradation when source file is missing
+- Test that default mode (no --update-hashes) does NOT write to registry (read-only verification)
+- Test that --update-hashes mode DOES write content_hashes to registry
 - Use `node:test` and `node:assert`, create temp directories with `fs.mkdtempSync`
   </action>
   <verify>
 Run: `node --test bin/check-model-staleness.test.cjs` -- all tests pass.
 Run: `node bin/check-model-staleness.cjs --json --dry-run` -- exits 0, produces valid JSON with `total_checked > 0`.
+Verify read-only default: `node bin/check-model-staleness.cjs --json 2>/dev/null` does NOT modify `.planning/formal/model-registry.json` (compare before/after with `sha256sum`).
   </verify>
   <done>
-`bin/check-model-staleness.cjs` computes SHA-256 hashes for model files and their source dependencies, detects staleness by comparing against stored hashes, and degrades gracefully for entries without hashes. Test suite passes.
+`bin/check-model-staleness.cjs` computes SHA-256 hashes for model files and their source dependencies, detects staleness by comparing against stored hashes, and is read-only by default. Writing hashes requires explicit `--update-hashes` flag. Test suite passes including read-only verification.
   </done>
 </task>
 
 <task type="auto">
-  <name>Task 2: Wire sweepModelStaleness into nf-solve.cjs diagnostic sweep</name>
+  <name>Task 2: Wire sweepModelStaleness into nf-solve.cjs diagnostic sweep and formatReport</name>
   <files>bin/nf-solve.cjs</files>
   <action>
 Add `sweepModelStaleness()` function to `bin/nf-solve.cjs`, following the exact pattern of `sweepFormalLint()` (~line 3401) and `sweepAssetStaleness()` (~line 3753):
@@ -132,7 +144,7 @@ function sweepModelStaleness() {
     if (!fs.existsSync(scriptPath)) {
       return { residual: -1, detail: { skipped: true, reason: 'check-model-staleness.cjs not found' } };
     }
-    const result = spawnTool('bin/check-model-staleness.cjs', ['--json']);
+    const result = spawnTool('bin/check-model-staleness.cjs', ['--json', '--dry-run']);
     if (!result.stdout) {
       return { residual: -1, detail: { error: true, stderr: (result.stderr || '').slice(0, 500) } };
     }
@@ -156,6 +168,8 @@ function sweepModelStaleness() {
 }
 ```
 
+**CRITICAL**: The sweep MUST invoke with `['--json', '--dry-run']` to ensure read-only behavior. The diagnostic sweep must NEVER write to model-registry.json. Hash baseline population is a separate explicit action via `--update-hashes`.
+
 Place it after `sweepMemoryHealth` (around line 3845) to keep informational sweeps grouped.
 
 In `computeResidual()`:
@@ -173,17 +187,25 @@ In `computeResidual()`:
 
 3. Add `model_stale` to the return object (~line 4290, after `memory_health`).
 
-4. Add `sweepModelStaleness` to the module.exports object (after `sweepBtoF` in the exports block ~line 6108).
+4. **Add `model_stale` to the `diagRows` array in `formatReport()`** (~line 4901, after the `MH (Memory Health)` row):
+   ```javascript
+   { label: 'MS (Model Stale)', key: 'model_stale' },
+   ```
+   This ensures the model staleness signal renders in the CLI report output, not just in the JSON residual object.
+
+5. Add `sweepModelStaleness` to the module.exports object (after `sweepBtoF` in the exports block ~line 6108).
 
 Do NOT add model_stale to `automatable` or `manual` buckets -- it is purely informational. Do NOT modify autoClose() -- staleness is a signal, not an auto-fixable gap.
   </action>
   <verify>
 Run: `grep 'sweepModelStaleness' bin/nf-solve.cjs` -- returns matches for function def, invocation in computeResidual, addition to informational sum, return object, and exports.
-Run: `grep 'model_stale' bin/nf-solve.cjs` -- returns matches in computeResidual timing, informational bucket, and return object.
+Run: `grep 'model_stale' bin/nf-solve.cjs` -- returns matches in computeResidual timing, informational bucket, return object, AND diagRows array in formatReport.
+Run: `grep "MS (Model Stale)" bin/nf-solve.cjs` -- confirms the row exists in the diagRows array for CLI rendering.
+Run: `grep '\-\-dry-run' bin/nf-solve.cjs` -- confirms the sweep invokes check-model-staleness.cjs with --dry-run flag.
 Run: `node bin/nf-solve.cjs --json --report-only --fast --project-root=$(pwd) 2>/dev/null | node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')); console.log('model_stale' in d ? 'FOUND' : 'MISSING')"` -- prints FOUND (even if skipped in fast mode, the key exists).
   </verify>
   <done>
-`sweepModelStaleness()` is wired into the nf-solve diagnostic sweep as an informational signal. It appears in the residual output, timing telemetry, and module exports. It does not affect the automatable or manual residual totals.
+`sweepModelStaleness()` is wired into the nf-solve diagnostic sweep as a read-only informational signal using `--dry-run`. It appears in the residual output, timing telemetry, module exports, AND the `diagRows` array in `formatReport()` for CLI rendering. It does not affect the automatable or manual residual totals. The sweep never writes to model-registry.json.
   </done>
 </task>
 
@@ -225,16 +247,22 @@ MODEL_STALE appears in the solve-report informational signals table with expansi
 <verification>
 1. `node --test bin/check-model-staleness.test.cjs` passes all tests
 2. `node bin/check-model-staleness.cjs --json --dry-run` produces valid JSON
-3. `grep 'sweepModelStaleness' bin/nf-solve.cjs` shows function, invocation, informational sum, return, exports
-4. `grep 'model_stale' commands/nf/solve-report.md` shows table row and expansion
-5. No existing tests break: `node --test bin/nf-solve.test.cjs` passes
+3. `node bin/check-model-staleness.cjs --json` does NOT modify model-registry.json (read-only default)
+4. `grep 'sweepModelStaleness' bin/nf-solve.cjs` shows function, invocation, informational sum, return, exports
+5. `grep "MS (Model Stale)" bin/nf-solve.cjs` confirms diagRows entry for CLI rendering
+6. `grep '\-\-dry-run' bin/nf-solve.cjs` confirms read-only sweep invocation
+7. `grep 'model_stale' commands/nf/solve-report.md` shows table row and expansion
+8. No existing tests break: `node --test bin/nf-solve.test.cjs` passes
 </verification>
 
 <success_criteria>
 - SHA-256 content hashes are computed for model files and their Source-declared dependencies
 - Staleness is detected when hashes diverge from stored values in model-registry.json
-- Entries without content_hashes degrade gracefully (first-run populates, no false stale)
+- Entries without content_hashes degrade gracefully (first-run reports first_hash_count, no false stale)
+- Default execution mode is read-only; writing hashes requires explicit --update-hashes flag
+- Diagnostic sweep in nf-solve invokes with --dry-run (read-only, no side effects)
 - MODEL_STALE is an informational signal in nf-solve (not automatable, not manual)
+- model_stale appears in formatReport() diagRows for CLI rendering
 - Solve-report renders the staleness row with detail expansion for non-zero counts
 - All tests pass, no regressions
 </success_criteria>
