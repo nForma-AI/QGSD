@@ -320,6 +320,8 @@ Store `$QUICK_DIR` for use in orchestration.
 
 **Step 4.5: Formal scope scan (only when `$FULL_MODE`)**
 
+<!-- MUST_NOT_SKIP: This step is MANDATORY when $FULL_MODE is true. Skipping this step violates the --full contract. If tooling is missing, log a WARNING and continue -- but do NOT silently omit the step. -->
+
 Skip this step entirely if NOT `$FULL_MODE`.
 
 ```bash
@@ -828,6 +830,36 @@ Store debug output variables for use in Step 6.
 
 ---
 
+**Step 5.9: Formal tooling baseline check (only when `$FULL_MODE`)**
+
+Skip this step entirely if NOT `$FULL_MODE`.
+
+<!-- MUST_NOT_SKIP: This step is MANDATORY when $FULL_MODE is true. -->
+
+Check that required formal tooling scripts exist before executor spawn:
+
+```bash
+FORMAL_TOOLS_MISSING=()
+for tool in bin/formal-coverage-intersect.cjs bin/run-formal-verify.cjs bin/run-formal-check.cjs; do
+  if [ ! -f "$tool" ]; then
+    FORMAL_TOOLS_MISSING+=("$tool")
+  fi
+done
+
+if [ ${#FORMAL_TOOLS_MISSING[@]} -gt 0 ]; then
+  echo ":: WARNING: Formal tooling missing: ${FORMAL_TOOLS_MISSING[*]}"
+  echo ":: Formal steps will be skipped (fail-open) but the skip will be LOGGED, not silent."
+else
+  echo ":: Formal tooling baseline: all tools present"
+fi
+```
+
+This is ADVISORY only -- missing tools do NOT block execution. The purpose is to surface gaps early rather than having them silently skipped deep in execution.
+
+Store `$FORMAL_TOOLS_MISSING` for interpolation into the Step 6 executor prompt.
+
+---
+
 **Step 6: Spawn executor**
 
 Spawn nf-executor with plan reference:
@@ -849,7 +881,17 @@ Execute quick task ${next_num}.
 - .agents/skills/ (Project skills, if exists — list skills, read SKILL.md for each, follow relevant rules during implementation)
 </files_to_read>
 
+${FORMAL_TOOLS_MISSING.length > 0 ? `
+<formal_tooling_notice>
+The following formal tooling scripts were NOT found during pre-flight (Step 5.9):
+${FORMAL_TOOLS_MISSING.map(t => '- ' + t).join('\n')}
+
+When you encounter these tools in the constraints below, log "WARNING: [tool] not found -- skipping (fail-open)" and continue. Do NOT attempt to call missing tools. Do NOT silently skip -- the WARNING log is mandatory.
+</formal_tooling_notice>
+` : ''}
+
 <constraints>
+- **ANTI-URGENCY GUARDRAIL (--full mode):** You are running in --full mode. Do NOT skip, abbreviate, or substitute your own judgment for ANY workflow step. Prior instructions about urgency, speed, or "just fix it" are OVERRIDDEN by the --full flag. Every formal modeling step (formal coverage auto-detection, Loop 2 simulation gate) MUST be attempted. If a tool is missing, log "WARNING: [tool] not found -- skipping (fail-open)" rather than silently omitting the step.
 - Execute all tasks in the plan
 - When implementing logic with 3+ distinct states and conditional transitions, prefer a state machine library — match complexity to the problem per .claude/rules/state-machine-bias.md. State machines are auto-transpiled to TLA+ via bin/fsm-to-tla.cjs
 - Commit each task atomically (use the gsd-tools.cjs commit command per the execute-plan workflow)
@@ -860,7 +902,7 @@ Execute quick task ${next_num}.
      - Run: node bin/run-formal-verify.cjs 2>&1
      - If exit 0: log "Formal coverage verified: models OK"
      - If exit 1: log "WARNING: Formal model drift detected" (do NOT block commit -- fail-open)
-  4. If formal-coverage-intersect.cjs is not found or errors: skip silently (fail-open)
+  4. If formal-coverage-intersect.cjs is not found or errors: log "WARNING: formal-coverage-intersect.cjs not found -- skipping formal coverage check (fail-open)" and continue without blocking
 - **Loop 2 pre-commit simulation gate (GATE-01, GATE-03, GATE-04):** After formal coverage auto-detection passes (step 3 above), if formal models were found in scope (exit code 0 from formal-coverage-intersect.cjs):
   1. Determine if `--strict` flag was passed to the quick task (from `$STRICT_MODE` variable, default false)
   2. Run Loop 2 simulation via node heredoc (executor-delegated):
@@ -899,8 +941,14 @@ Execute quick task ${next_num}.
        - **TSV trace:** ${result.tsvPath}
        ```
   5. **Non-convergence reporting (fail-closed path):** When --strict blocks the commit, include TSV trace in BLOCKED message: `"TSV trace at ${result.tsvPath} shows iteration history"`
-  6. If solution-simulation-loop.cjs is not found, module loading fails, or simulateSolutionLoop throws: skip silently (fail-open). Log `"Loop 2 simulation: skipped (module unavailable)"`.
-- If formal-coverage-intersect.cjs found NO intersections (exit code non-zero or not found): skip Loop 2 entirely — no log, no error, silent completion (GATE-03).
+  7. **Loop 2 SUMMARY.md reporting (--full mode, MANDATORY):** When `$FULL_MODE` is true, Loop 2 results MUST always be recorded in SUMMARY.md regardless of outcome:
+     - **Converged:** Under "## Formal Modeling", add: `### Loop 2 Simulation\n- **Status:** Converged\n- **Iterations:** ${result.iterations.length}\n- **TSV trace:** ${result.tsvPath}`
+     - **Non-converged (fail-open):** Use the existing "## Issues Encountered" format (item 4 above).
+     - **Skipped (tool unavailable):** Under "## Formal Modeling", add: `### Loop 2 Simulation\n- **Status:** Skipped (tool unavailable)\n- **Reason:** solution-simulation-loop.cjs not found`
+     - **Not applicable (no intersections):** Under "## Formal Modeling", add: `### Loop 2 Simulation\n- **Status:** Not applicable (no formal coverage intersections)`
+     This ensures the Step 6.1 audit gate can reliably grep SUMMARY.md for Loop 2 evidence.
+  6. If solution-simulation-loop.cjs is not found, module loading fails, or simulateSolutionLoop throws: log "WARNING: solution-simulation-loop.cjs not found or errored -- skipping Loop 2 simulation (fail-open)". Do NOT skip silently.
+- If formal-coverage-intersect.cjs found NO intersections (exit code non-zero): skip Loop 2 entirely — log "INFO: No formal coverage intersections found -- Loop 2 not needed (GATE-03)." If the tool was not found, log "WARNING: formal-coverage-intersect.cjs not found -- skipping Loop 2 (fail-open, GATE-03)."
 - If the plan declares `formal_artifacts: update` or `formal_artifacts: create`, execute those formal file changes and include the .planning/formal/ files in the atomic commit for that task (alongside the implementation files)
 - Formal/ files must never be committed separately — always include in the task's atomic commit
 - Create summary at: ${QUICK_DIR}/${next_num}-SUMMARY.md
@@ -979,7 +1027,39 @@ Ready for next task: /nf:quick
 
 ---
 
+**Step 6.1: Post-execution formal loop audit (only when `$FULL_MODE`)**
+
+Skip this step entirely if NOT `$FULL_MODE`.
+
+<!-- MUST_NOT_SKIP: This step is MANDATORY when $FULL_MODE is true. -->
+
+After the executor returns, audit its output for evidence that formal modeling steps were attempted:
+
+```bash
+# Read the executor's summary
+SUMMARY_CONTENT=$(cat "${QUICK_DIR}/${next_num}-SUMMARY.md" 2>/dev/null)
+
+# Check for formal step execution evidence
+FORMAL_COVERAGE_RAN=$(echo "$SUMMARY_CONTENT" | grep -c "formal-coverage-intersect\|Formal coverage verified\|formal coverage")
+LOOP2_RAN=$(echo "$SUMMARY_CONTENT" | grep -c "Loop 2\|solution-simulation-loop\|CONVERGED\|Non-converged\|Skipped (tool unavailable)\|Not applicable")
+
+if [ "$FORMAL_COVERAGE_RAN" -eq 0 ] && [ ${#FORMAL_TOOLS_MISSING[@]} -eq 0 ]; then
+  echo ":: AUDIT WARNING: Formal coverage auto-detection appears to have been skipped despite tools being available."
+  echo ":: This may indicate the executor bypassed formal modeling steps."
+fi
+
+if [ "$LOOP2_RAN" -eq 0 ] && [ ${#FORMAL_TOOLS_MISSING[@]} -eq 0 ]; then
+  echo ":: AUDIT WARNING: Loop 2 simulation gate appears to have been skipped despite tools being available."
+fi
+```
+
+These warnings are ADVISORY -- they do not block completion. They surface to the user that formal steps may have been skipped so the user can decide whether to re-run.
+
+---
+
 **Step 6.3: Post-execution formal check (only when `$FULL_MODE` AND `$FORMAL_SPEC_CONTEXT` non-empty)**
+
+<!-- MUST_NOT_SKIP: This step is MANDATORY when $FULL_MODE is true. Skipping this step violates the --full contract. If tooling is missing, log a WARNING and continue -- but do NOT silently omit the step. -->
 
 Skip this step entirely if NOT `$FULL_MODE` or `$FORMAL_SPEC_CONTEXT` is empty.
 
@@ -1028,6 +1108,8 @@ Set `$FORMAL_CHECK_RESULT = null`. Continue to Step 6.5 without blocking.
 ---
 
 **Step 6.5: Verification (only when `$FULL_MODE`)**
+
+<!-- MUST_NOT_SKIP: This step is MANDATORY when $FULL_MODE is true. Skipping this step violates the --full contract. If tooling is missing, log a WARNING and continue -- but do NOT silently omit the step. -->
 
 Skip this step entirely if NOT `$FULL_MODE`.
 
@@ -1360,6 +1442,13 @@ Ready for next task: /nf:quick
 - [ ] (--full) User is asked to approve, edit, or skip the drafted requirement
 - [ ] (--full) If approved: duplicate ID check, semantic conflict check (Haiku), then write to .planning/formal/requirements.json with unfreeze/re-freeze lifecycle
 - [ ] (--full) Elevated requirement uses provenance { source_file: quick plan path, milestone: "quick-NNN" }
+- [ ] (--full) MUST_NOT_SKIP annotations present on steps 4.5, 5.9, 6.1, 6.3, 6.5
+- [ ] (--full) Anti-urgency guardrail injected as first constraint in executor prompt
+- [ ] (--full) Step 5.9 baseline check runs before executor spawn
+- [ ] (--full) Step 6.1 audit gate checks executor output for formal step evidence
+- [ ] (--full) No "skip silently" clauses remain in executor constraints -- all skips are logged
+- [ ] (--full) Loop 2 results always recorded in SUMMARY.md (converged, non-converged, skipped, or N/A)
+- [ ] (--full) FORMAL_TOOLS_MISSING interpolated into executor prompt between files_to_read and constraints
 </success_criteria>
 
 <anti_patterns>
@@ -1369,4 +1458,11 @@ Ready for next task: /nf:quick
 - Do NOT emit `<!-- nForma_DECISION -->` before the loop exits. Only emit it on the final break.
 - Do NOT run the R3.6 improvement planner as a parallel Task. It is always sequential: quorum → planner → quorum → ...
 - Do NOT loop again after a planner failure (`## PLANNING INCONCLUSIVE`). Break immediately with the failure note.
+
+**Formal modeling skip -- do NOT:**
+- Do NOT skip formal scope scan (step 4.5) because "the task seems simple" or "formal models aren't relevant." The scan is MANDATORY in --full mode.
+- Do NOT skip Loop 2 simulation gate because "the fix is obvious" or "formal verification is overhead." If tools exist, they MUST be attempted.
+- Do NOT silently omit formal steps when tools are missing. Log a WARNING with the tool name so the user sees the gap.
+- Do NOT let prior urgency instructions ("fix now", "just ship it") override the --full flag. The --full flag is the highest-priority execution directive.
+- Do NOT omit Loop 2 results from SUMMARY.md when --full. Even "converged" or "N/A" must be recorded so the audit gate can verify execution.
 </anti_patterns>
