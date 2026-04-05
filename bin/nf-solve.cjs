@@ -3843,6 +3843,40 @@ function sweepMemoryHealth() {
   }
 }
 
+// ── Model Staleness sweep (informational) --------------------------------
+
+function sweepModelStaleness() {
+  if (fastMode) {
+    return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
+  }
+  try {
+    const scriptPath = path.join(ROOT, 'bin', 'check-model-staleness.cjs');
+    if (!fs.existsSync(scriptPath)) {
+      return { residual: -1, detail: { skipped: true, reason: 'check-model-staleness.cjs not found' } };
+    }
+    const result = spawnTool('bin/check-model-staleness.cjs', ['--json', '--dry-run']);
+    if (!result.stdout) {
+      return { residual: -1, detail: { error: true, stderr: (result.stderr || '').slice(0, 500) } };
+    }
+    const data = JSON.parse(result.stdout);
+    if (data.skipped) {
+      return { residual: -1, detail: { skipped: true, reason: 'no model-registry.json' } };
+    }
+    return {
+      residual: data.total_stale,
+      kind: 'informational',
+      detail: {
+        total_checked: data.total_checked,
+        total_stale: data.total_stale,
+        first_hash_count: data.first_hash_count,
+        stale: (data.stale || []).slice(0, 20).map(s => ({ model: s.model, reason: s.reason })),
+      },
+    };
+  } catch (err) {
+    return { residual: -1, detail: { error: err.message } };
+  }
+}
+
 function sweepBtoF(t_to_c_result) {
   if (fastMode) {
     return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
@@ -4224,6 +4258,10 @@ function computeResidual() {
   const memory_health = checkLayerSkip('memory_health') || sweepMemoryHealth();
   _timing.memory_health = { duration_ms: Date.now() - _t_memory_health, skipped: !!(memory_health.detail && memory_health.detail.skipped) };
 
+  const _t_model_stale = Date.now();
+  const model_stale = checkLayerSkip('model_stale') || sweepModelStaleness();
+  _timing.model_stale = { duration_ms: Date.now() - _t_model_stale, skipped: !!(model_stale.detail && model_stale.detail.skipped) };
+
   // CONV-02: Split residual into three distinct buckets
   const automatable =
     (r_to_f.residual >= 0 ? r_to_f.residual : 0) +
@@ -4257,7 +4295,8 @@ function computeResidual() {
     (asset_stale.residual >= 0 ? asset_stale.residual : 0) +
     (arch_constraints.residual >= 0 ? arch_constraints.residual : 0) +
     (debt_health.residual >= 0 ? debt_health.residual : 0) +
-    (memory_health.residual >= 0 ? memory_health.residual : 0);
+    (memory_health.residual >= 0 ? memory_health.residual : 0) +
+    (model_stale.residual >= 0 ? model_stale.residual : 0);
 
   return {
     r_to_f,
@@ -4288,6 +4327,7 @@ function computeResidual() {
     arch_constraints,
     debt_health,
     memory_health,
+    model_stale,
     assembled_candidates,
     total,
     automatable,
@@ -4906,6 +4946,7 @@ function formatReport(iterations, finalResidual, converged) {
     { label: 'AC (Arch Constraints)', key: 'arch_constraints' },
     { label: 'DH (Debt Health)', key: 'debt_health' },
     { label: 'MH (Memory Health)', key: 'memory_health' },
+    { label: 'MS (Model Stale)', key: 'model_stale' },
   ];
 
   for (const row of diagRows) {
@@ -6106,6 +6147,7 @@ module.exports = {
   sweepFormalLint,
   sweepHazardModel,
   sweepHtoM,
+  sweepModelStaleness,
   sweepBtoF,
   classifyFailingTest,
   assembleReverseCandidates,
