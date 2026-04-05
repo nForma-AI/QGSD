@@ -22,6 +22,14 @@
         "exec",
         "{prompt}"
       ],
+      "resume_args_template": [
+        "exec",
+        "resume",
+        "{session_id}",
+        "{prompt}"
+      ],
+      "supports_quorum_session_persistence": true,
+      "session_capture_strategy": "codex-index",
       "helpArgs": [
         "--help"
       ],
@@ -103,6 +111,16 @@
         "-p",
         "{prompt}"
       ],
+      "resume_args_template": [
+        "--resume",
+        "{session_id}",
+        "-m",
+        "gemini-3-flash-preview",
+        "-p",
+        "{prompt}"
+      ],
+      "supports_quorum_session_persistence": true,
+      "session_capture_strategy": "gemini-list",
       "helpArgs": [
         "--help"
       ],
@@ -157,29 +175,112 @@
     },
     {
       "name": "opencode-1",
-      "provider": "xai",
+      "provider": "github-copilot",
       "type": "subprocess",
       "auth_type": "sub",
       "has_file_access": true,
-      "description": "Run OpenCode agent non-interactively with a message",
+      "description": "Run OpenCode agent non-interactively (Grok via GitHub Copilot)",
       "mainTool": "opencode",
       "model": "grok-code-fast-1",
-      "model_detect": {
-        "file": "~/.local/state/opencode/model.json",
-        "pattern": "\"recent\":\\[{\"providerID\":\"[^\"]*\",\"modelID\":\"([^\"]+)\""
-      },
       "health_check_args": [
         "--version"
       ],
-      "display_provider": "OpenCode",
+      "display_provider": "GitHub Copilot",
       "cli": "/opt/homebrew/bin/opencode",
       "args_template": [
         "run",
+        "-m",
+        "github-copilot/grok-code-fast-1",
         "--print-logs",
         "--log-level",
         "ERROR",
         "{prompt}"
       ],
+      "resume_args_template": [
+        "run",
+        "--session",
+        "{session_id}",
+        "-m",
+        "github-copilot/grok-code-fast-1",
+        "--print-logs",
+        "--log-level",
+        "ERROR",
+        "{prompt}"
+      ],
+      "supports_quorum_session_persistence": true,
+      "session_capture_strategy": "opencode-list",
+      "helpArgs": [
+        "--help"
+      ],
+      "extraTools": [
+        {
+          "name": "opencode_check_update",
+          "description": "Check whether a newer version of OpenCode is available on npm. Returns current version, latest version, and whether an update is available.",
+          "checkUpdate": true
+        }
+      ],
+      "timeout_ms": 300000,
+      "quorum_timeout_ms": 300000,
+      "idle_timeout_ms": 45000,
+      "hard_timeout_ms": 600000,
+      "latency_budget_ms": null,
+      "env": {},
+      "display_type": "opencode-cli",
+      "auth_check": {
+        "args": [
+          "auth",
+          "list"
+        ],
+        "success_pattern": "api|oauth",
+        "login_args": [
+          "auth",
+          "login"
+        ],
+        "login_hint": "Configure provider credentials for OpenCode",
+        "timeout_ms": 5000
+      },
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 90000
+      }
+    },
+    {
+      "name": "opencode-2",
+      "provider": "akashml",
+      "type": "subprocess",
+      "auth_type": "sub",
+      "has_file_access": true,
+      "description": "Run OpenCode agent non-interactively (Gemma 4 via AkashML)",
+      "mainTool": "opencode",
+      "model": "google/gemma-4-31B-it",
+      "health_check_args": [
+        "--version"
+      ],
+      "display_provider": "AkashML",
+      "cli": "/opt/homebrew/bin/opencode",
+      "args_template": [
+        "run",
+        "-m",
+        "akash/google/gemma-4-31B-it",
+        "--print-logs",
+        "--log-level",
+        "ERROR",
+        "{prompt}"
+      ],
+      "resume_args_template": [
+        "run",
+        "--session",
+        "{session_id}",
+        "-m",
+        "akash/google/gemma-4-31B-it",
+        "--print-logs",
+        "--log-level",
+        "ERROR",
+        "{prompt}"
+      ],
+      "supports_quorum_session_persistence": true,
+      "session_capture_strategy": "opencode-list",
       "helpArgs": [
         "--help"
       ],
@@ -237,6 +338,7 @@
         "--no-color",
         "-s"
       ],
+      "supports_quorum_session_persistence": false,
       "helpArgs": [
         "--help"
       ],
@@ -288,13 +390,481 @@
     },
     {
       "name": "claude-1",
+      "provider": "anthropic",
+      "type": "subprocess",
+      "auth_type": "sub",
+      "has_file_access": true,
+      "description": "Execute real Claude Code non-interactively (slot 1)",
+      "mainTool": "claude",
+      "model": "claude-sonnet-4-6",
+      "health_check_args": [
+        "--version"
+      ],
+      "display_provider": "Anthropic",
+      "cli": "/Users/jonathanborduas/.local/bin/claude",
+      "args_template": [
+        "-p",
+        "--permission-mode",
+        "plan",
+        "{prompt}"
+      ],
+      "supports_quorum_session_persistence": false,
+      "helpArgs": [
+        "--help"
+      ],
+      "extraTools": [],
+      "timeout_ms": 300000,
+      "quorum_timeout_ms": 300000,
+      "idle_timeout_ms": 45000,
+      "hard_timeout_ms": 600000,
+      "latency_budget_ms": null,
+      "env": {},
+      "display_type": "claude-cli",
+      "auth_check": {
+        "args": [
+          "auth",
+          "status"
+        ],
+        "success_pattern": "logged in|authenticated|subscription|api key",
+        "login_args": [
+          "auth"
+        ],
+        "login_hint": "Use Claude Code auth flow or configure an Anthropic API key",
+        "timeout_ms": 5000
+      },
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 45000
+      }
+    },
+    {
+      "name": "claude-2",
+      "provider": "anthropic",
+      "type": "subprocess",
+      "auth_type": "sub",
+      "has_file_access": true,
+      "description": "Execute real Claude Code non-interactively (slot 2)",
+      "mainTool": "claude",
+      "model": "claude-sonnet-4-6",
+      "health_check_args": ["--version"],
+      "display_provider": "Anthropic",
+      "cli": "/Users/jonathanborduas/.local/bin/claude",
+      "args_template": ["-p", "--permission-mode", "plan", "{prompt}"],
+      "supports_quorum_session_persistence": false,
+      "helpArgs": ["--help"],
+      "extraTools": [],
+      "timeout_ms": 300000,
+      "quorum_timeout_ms": 300000,
+      "idle_timeout_ms": 45000,
+      "hard_timeout_ms": 600000,
+      "latency_budget_ms": null,
+      "env": {},
+      "display_type": "claude-cli",
+      "auth_check": {
+        "args": ["auth", "status"],
+        "success_pattern": "logged in|authenticated|subscription|api key",
+        "login_args": ["auth"],
+        "login_hint": "Use Claude Code auth flow or configure an Anthropic API key",
+        "timeout_ms": 5000
+      },
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 45000
+      }
+    },
+    {
+      "name": "claude-3",
+      "provider": "anthropic",
+      "type": "subprocess",
+      "auth_type": "sub",
+      "has_file_access": true,
+      "description": "Execute real Claude Code non-interactively (slot 3)",
+      "mainTool": "claude",
+      "model": "claude-sonnet-4-6",
+      "health_check_args": ["--version"],
+      "display_provider": "Anthropic",
+      "cli": "/Users/jonathanborduas/.local/bin/claude",
+      "args_template": ["-p", "--permission-mode", "plan", "{prompt}"],
+      "supports_quorum_session_persistence": false,
+      "helpArgs": ["--help"],
+      "extraTools": [],
+      "timeout_ms": 300000,
+      "quorum_timeout_ms": 300000,
+      "idle_timeout_ms": 45000,
+      "hard_timeout_ms": 600000,
+      "latency_budget_ms": null,
+      "env": {},
+      "display_type": "claude-cli",
+      "auth_check": {
+        "args": ["auth", "status"],
+        "success_pattern": "logged in|authenticated|subscription|api key",
+        "login_args": ["auth"],
+        "login_hint": "Use Claude Code auth flow or configure an Anthropic API key",
+        "timeout_ms": 5000
+      },
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 45000
+      }
+    },
+    {
+      "name": "claude-4",
+      "provider": "anthropic",
+      "type": "subprocess",
+      "auth_type": "sub",
+      "has_file_access": true,
+      "description": "Execute real Claude Code non-interactively (slot 4)",
+      "mainTool": "claude",
+      "model": "claude-sonnet-4-6",
+      "health_check_args": ["--version"],
+      "display_provider": "Anthropic",
+      "cli": "/Users/jonathanborduas/.local/bin/claude",
+      "args_template": ["-p", "--permission-mode", "plan", "{prompt}"],
+      "supports_quorum_session_persistence": false,
+      "helpArgs": ["--help"],
+      "extraTools": [],
+      "timeout_ms": 300000,
+      "quorum_timeout_ms": 300000,
+      "idle_timeout_ms": 45000,
+      "hard_timeout_ms": 600000,
+      "latency_budget_ms": null,
+      "env": {},
+      "display_type": "claude-cli",
+      "auth_check": {
+        "args": ["auth", "status"],
+        "success_pattern": "logged in|authenticated|subscription|api key",
+        "login_args": ["auth"],
+        "login_hint": "Use Claude Code auth flow or configure an Anthropic API key",
+        "timeout_ms": 5000
+      },
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 45000
+      }
+    },
+    {
+      "name": "claude-5",
+      "provider": "anthropic",
+      "type": "subprocess",
+      "auth_type": "sub",
+      "has_file_access": true,
+      "description": "Execute real Claude Code non-interactively (slot 5)",
+      "mainTool": "claude",
+      "model": "claude-sonnet-4-6",
+      "health_check_args": ["--version"],
+      "display_provider": "Anthropic",
+      "cli": "/Users/jonathanborduas/.local/bin/claude",
+      "args_template": ["-p", "--permission-mode", "plan", "{prompt}"],
+      "supports_quorum_session_persistence": false,
+      "helpArgs": ["--help"],
+      "extraTools": [],
+      "timeout_ms": 300000,
+      "quorum_timeout_ms": 300000,
+      "idle_timeout_ms": 45000,
+      "hard_timeout_ms": 600000,
+      "latency_budget_ms": null,
+      "env": {},
+      "display_type": "claude-cli",
+      "auth_check": {
+        "args": ["auth", "status"],
+        "success_pattern": "logged in|authenticated|subscription|api key",
+        "login_args": ["auth"],
+        "login_hint": "Use Claude Code auth flow or configure an Anthropic API key",
+        "timeout_ms": 5000
+      },
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 45000
+      }
+    },
+    {
+      "name": "claude-6",
+      "provider": "anthropic",
+      "type": "subprocess",
+      "auth_type": "sub",
+      "has_file_access": true,
+      "description": "Execute real Claude Code non-interactively (slot 6)",
+      "mainTool": "claude",
+      "model": "claude-sonnet-4-6",
+      "health_check_args": ["--version"],
+      "display_provider": "Anthropic",
+      "cli": "/Users/jonathanborduas/.local/bin/claude",
+      "args_template": ["-p", "--permission-mode", "plan", "{prompt}"],
+      "supports_quorum_session_persistence": false,
+      "helpArgs": ["--help"],
+      "extraTools": [],
+      "timeout_ms": 300000,
+      "quorum_timeout_ms": 300000,
+      "idle_timeout_ms": 45000,
+      "hard_timeout_ms": 600000,
+      "latency_budget_ms": null,
+      "env": {},
+      "display_type": "claude-cli",
+      "auth_check": {
+        "args": ["auth", "status"],
+        "success_pattern": "logged in|authenticated|subscription|api key",
+        "login_args": ["auth"],
+        "login_hint": "Use Claude Code auth flow or configure an Anthropic API key",
+        "timeout_ms": 5000
+      },
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 45000
+      }
+    },
+    {
+      "name": "ccr-1",
+      "provider": "claude-code-router",
+      "type": "ccr",
+      "auth_type": "api",
+      "has_file_access": true,
+      "description": "Claude Code Router preset claude-1 (MiniMax-M2.5 via Together.xyz)",
+      "mainTool": "ask",
+      "model": "MiniMaxAI/MiniMax-M2.5",
+      "health_check_args": [
+        "status"
+      ],
+      "display_provider": "Claude Code Router",
+      "cli": "/opt/homebrew/bin/ccr",
+      "args_template": [
+        "claude-1",
+        "--permission-mode",
+        "plan",
+        "-p",
+        "{prompt}"
+      ],
+      "supports_quorum_session_persistence": false,
+
+      "max_context_tokens": 163840,
+      "ccr_overhead_tokens": 100000,
+      "ccr_response_budget_tokens": 70000,
+      "helpArgs": [
+        "--help"
+      ],
+      "extraTools": [],
+      "timeout_ms": 300000,
+      "quorum_timeout_ms": 300000,
+      "idle_timeout_ms": 45000,
+      "hard_timeout_ms": 600000,
+      "latency_budget_ms": null,
+      "env": {},
+      "display_type": "claude-code-router",
+      "service": {
+        "start": ["ccr", "start"],
+        "stop": ["ccr", "stop"],
+        "status": ["ccr", "status"]
+      },
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 45000
+      }
+    },
+    {
+      "name": "ccr-2",
+      "provider": "claude-code-router",
+      "type": "ccr",
+      "auth_type": "api",
+      "has_file_access": true,
+      "description": "Claude Code Router preset claude-2 (Qwen3.5-397B via Together.xyz)",
+      "mainTool": "ask",
+      "model": "Qwen/Qwen3.5-397B-A17B",
+      "health_check_args": ["status"],
+      "display_provider": "Claude Code Router",
+      "cli": "/opt/homebrew/bin/ccr",
+      "args_template": ["claude-2", "--permission-mode", "plan", "-p", "{prompt}"],
+      "supports_quorum_session_persistence": false,
+
+      "max_context_tokens": 131072,
+      "ccr_overhead_tokens": 100000,
+      "ccr_response_budget_tokens": 70000,
+      "helpArgs": ["--help"],
+      "extraTools": [],
+      "timeout_ms": 300000,
+      "quorum_timeout_ms": 300000,
+      "idle_timeout_ms": 45000,
+      "hard_timeout_ms": 600000,
+      "latency_budget_ms": null,
+      "env": {},
+      "display_type": "claude-code-router",
+      "service": {
+        "start": ["ccr", "start"],
+        "stop": ["ccr", "stop"],
+        "status": ["ccr", "status"]
+      },
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 45000
+      }
+    },
+    {
+      "name": "ccr-3",
+      "provider": "claude-code-router",
+      "type": "ccr",
+      "auth_type": "api",
+      "has_file_access": true,
+      "description": "Claude Code Router preset claude-3 (Qwen3-Coder-480B via Together.xyz)",
+      "mainTool": "ask",
+      "model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
+      "health_check_args": ["status"],
+      "display_provider": "Claude Code Router",
+      "cli": "/opt/homebrew/bin/ccr",
+      "args_template": ["claude-3", "--permission-mode", "plan", "-p", "{prompt}"],
+      "supports_quorum_session_persistence": false,
+
+      "max_context_tokens": 131072,
+      "ccr_overhead_tokens": 100000,
+      "ccr_response_budget_tokens": 70000,
+      "helpArgs": ["--help"],
+      "extraTools": [],
+      "timeout_ms": 300000,
+      "quorum_timeout_ms": 300000,
+      "idle_timeout_ms": 45000,
+      "hard_timeout_ms": 600000,
+      "latency_budget_ms": null,
+      "env": {},
+      "display_type": "claude-code-router",
+      "service": {
+        "start": ["ccr", "start"],
+        "stop": ["ccr", "stop"],
+        "status": ["ccr", "status"]
+      },
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 45000
+      }
+    },
+    {
+      "name": "ccr-4",
+      "provider": "claude-code-router",
+      "type": "ccr",
+      "auth_type": "api",
+      "has_file_access": true,
+      "description": "Claude Code Router preset claude-4 (Kimi-K2.5 via Together.xyz)",
+      "mainTool": "ask",
+      "model": "moonshotai/Kimi-K2.5",
+      "health_check_args": ["status"],
+      "display_provider": "Claude Code Router",
+      "cli": "/opt/homebrew/bin/ccr",
+      "args_template": ["claude-4", "--permission-mode", "plan", "-p", "{prompt}"],
+      "supports_quorum_session_persistence": false,
+
+      "max_context_tokens": 131072,
+      "ccr_overhead_tokens": 100000,
+      "ccr_response_budget_tokens": 70000,
+      "helpArgs": ["--help"],
+      "extraTools": [],
+      "timeout_ms": 300000,
+      "quorum_timeout_ms": 300000,
+      "idle_timeout_ms": 45000,
+      "hard_timeout_ms": 600000,
+      "latency_budget_ms": null,
+      "env": {},
+      "display_type": "claude-code-router",
+      "service": {
+        "start": ["ccr", "start"],
+        "stop": ["ccr", "stop"],
+        "status": ["ccr", "status"]
+      },
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 45000
+      }
+    },
+    {
+      "name": "ccr-5",
+      "provider": "claude-code-router",
+      "type": "ccr",
+      "auth_type": "api",
+      "has_file_access": true,
+      "description": "Claude Code Router preset claude-5 (GPT-OSS-120B via Together.xyz)",
+      "mainTool": "ask",
+      "model": "openai/gpt-oss-120b",
+      "health_check_args": ["status"],
+      "display_provider": "Claude Code Router",
+      "cli": "/opt/homebrew/bin/ccr",
+      "args_template": ["claude-5", "--permission-mode", "plan", "-p", "{prompt}"],
+      "supports_quorum_session_persistence": false,
+
+      "max_context_tokens": 131072,
+      "ccr_overhead_tokens": 100000,
+      "ccr_response_budget_tokens": 70000,
+      "helpArgs": ["--help"],
+      "extraTools": [],
+      "timeout_ms": 300000,
+      "quorum_timeout_ms": 300000,
+      "idle_timeout_ms": 45000,
+      "hard_timeout_ms": 600000,
+      "latency_budget_ms": null,
+      "env": {},
+      "display_type": "claude-code-router",
+      "service": {
+        "start": ["ccr", "start"],
+        "stop": ["ccr", "stop"],
+        "status": ["ccr", "status"]
+      },
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 45000
+      }
+    },
+    {
+      "name": "ccr-6",
+      "provider": "claude-code-router",
+      "type": "ccr",
+      "auth_type": "api",
+      "has_file_access": true,
+      "description": "Claude Code Router preset claude-6 (GLM-5 via Together.xyz)",
+      "mainTool": "ask",
+      "model": "zai-org/GLM-5",
+      "health_check_args": ["status"],
+      "display_provider": "Claude Code Router",
+      "cli": "/opt/homebrew/bin/ccr",
+      "args_template": ["claude-6", "--permission-mode", "plan", "-p", "{prompt}"],
+      "supports_quorum_session_persistence": false,
+
+      "max_context_tokens": 131072,
+      "ccr_overhead_tokens": 100000,
+      "ccr_response_budget_tokens": 70000,
+      "helpArgs": ["--help"],
+      "extraTools": [],
+      "timeout_ms": 300000,
+      "quorum_timeout_ms": 300000,
+      "idle_timeout_ms": 45000,
+      "hard_timeout_ms": 600000,
+      "latency_budget_ms": null,
+      "env": {},
+      "display_type": "claude-code-router",
+      "service": {
+        "start": ["ccr", "start"],
+        "stop": ["ccr", "stop"],
+        "status": ["ccr", "status"]
+      },
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 45000
+      }
+    },
+    {
+      "name": "api-1",
       "provider": "together-xyz",
       "type": "http",
       "auth_type": "api",
       "has_file_access": false,
-      "description": "DeepSeek-V3.1 via Together.xyz — direct HTTP API (no CCR overhead)",
+      "description": "MiniMax-M2.5 via Together.xyz — direct HTTP API (no CCR overhead)",
       "mainTool": "claude",
-      "model": "deepseek-ai/DeepSeek-V3.1",
+      "model": "MiniMaxAI/MiniMax-M2.5",
       "max_context_tokens": 163840,
       "max_output_tokens": 4096,
       "baseUrl": "https://api.together.xyz/v1",
@@ -306,6 +876,7 @@
       "idle_timeout_ms": 90000,
       "hard_timeout_ms": 300000,
       "latency_budget_ms": null,
+      "supports_quorum_session_persistence": false,
       "max_concurrency": 3,
       "env": {},
       "display_type": "http-api",
@@ -318,7 +889,7 @@
       }
     },
     {
-      "name": "claude-2",
+      "name": "api-2",
       "provider": "together-xyz",
       "type": "http",
       "auth_type": "api",
@@ -337,6 +908,7 @@
       "idle_timeout_ms": 90000,
       "hard_timeout_ms": 300000,
       "latency_budget_ms": null,
+      "supports_quorum_session_persistence": false,
       "max_concurrency": 3,
       "env": {},
       "display_type": "http-api",
@@ -349,7 +921,7 @@
       }
     },
     {
-      "name": "claude-3",
+      "name": "api-3",
       "provider": "together-xyz",
       "type": "http",
       "auth_type": "api",
@@ -368,6 +940,7 @@
       "idle_timeout_ms": 90000,
       "hard_timeout_ms": 300000,
       "latency_budget_ms": null,
+      "supports_quorum_session_persistence": false,
       "max_concurrency": 3,
       "env": {},
       "display_type": "http-api",
@@ -380,7 +953,7 @@
       }
     },
     {
-      "name": "claude-4",
+      "name": "api-4",
       "provider": "together-xyz",
       "type": "http",
       "auth_type": "api",
@@ -399,6 +972,7 @@
       "idle_timeout_ms": 90000,
       "hard_timeout_ms": 300000,
       "latency_budget_ms": null,
+      "supports_quorum_session_persistence": false,
       "max_concurrency": 3,
       "env": {},
       "display_type": "http-api",
@@ -411,7 +985,7 @@
       }
     },
     {
-      "name": "claude-5",
+      "name": "api-5",
       "provider": "together-xyz",
       "type": "http",
       "auth_type": "api",
@@ -430,6 +1004,7 @@
       "idle_timeout_ms": 90000,
       "hard_timeout_ms": 300000,
       "latency_budget_ms": null,
+      "supports_quorum_session_persistence": false,
       "max_concurrency": 3,
       "env": {},
       "display_type": "http-api",
@@ -442,7 +1017,7 @@
       }
     },
     {
-      "name": "claude-6",
+      "name": "api-6",
       "provider": "together-xyz",
       "type": "http",
       "auth_type": "api",
@@ -461,6 +1036,7 @@
       "idle_timeout_ms": 90000,
       "hard_timeout_ms": 300000,
       "latency_budget_ms": null,
+      "supports_quorum_session_persistence": false,
       "max_concurrency": 3,
       "env": {},
       "display_type": "http-api",

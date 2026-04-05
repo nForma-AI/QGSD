@@ -1591,15 +1591,20 @@ async function main() {
       for (const action of compactActions) {
         process.stderr.write(`[quorum-slot-dispatch] CTXWIN-01: ${action} for ${dispatchSlot} (${budgetResult.totalEstimate} > ${dispatchProvider.max_context_tokens} tokens)\n`);
       }
-      if (!budgetResult.fits && dispatchProvider.fallback_slot) {
-        const fallbackProvider = providers.find(p => p.name === dispatchProvider.fallback_slot);
-        if (fallbackProvider) {
-          process.stderr.write(`[quorum-slot-dispatch] CTXWIN-01: rerouting ${dispatchSlot} to ${fallbackProvider.name} due to CCR budget overflow\n`);
-          dispatchSlot = fallbackProvider.name;
-          dispatchProvider = fallbackProvider;
-          prompt = buildPromptForProvider(dispatchProvider);
-          applyRetrieval();
-          return enforceBudget();
+      if (!budgetResult.fits) {
+        if (dispatchProvider.fallback_slot) {
+          const fallbackProvider = providers.find(p => p.name === dispatchProvider.fallback_slot);
+          if (fallbackProvider) {
+            process.stderr.write('[quorum-slot-dispatch] CTXWIN-01: rerouting ' + dispatchSlot + ' to ' + fallbackProvider.name + ' due to CCR budget overflow\n');
+            dispatchSlot = fallbackProvider.name;
+            dispatchProvider = fallbackProvider;
+            prompt = buildPromptForProvider(dispatchProvider);
+            applyRetrieval();
+            return enforceBudget();
+          }
+          process.stderr.write('[quorum-slot-dispatch] CTXWIN-01: fallback_slot ' + dispatchProvider.fallback_slot + ' not found in providers — proceeding with truncated prompt\n');
+        } else {
+          process.stderr.write('[quorum-slot-dispatch] CTXWIN-01: no fallback_slot for ' + dispatchSlot + ' — proceeding with truncated prompt (' + budgetResult.totalEstimate + ' tokens)\n');
         }
       }
     }
