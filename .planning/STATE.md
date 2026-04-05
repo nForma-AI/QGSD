@@ -15,7 +15,7 @@ See: .planning/PROJECT.md
 | # | Description | Date | Commit | Status | Directory |
 |---|---|---|---|---|---|
 | 374 | Make API slots backup-only | 2026-04-04 | 99b79b4f | Verified | [374-make-api-slots-backup-only-dispatch-to-a](./quick/374-make-api-slots-backup-only-dispatch-to-a/) |
-| 379 | Issue #46: Add formal model staleness detection via content hashing | 2026-04-05 | bb660b30 | Pending | [379-issue-46-add-formal-model-staleness-dete](./quick/379-issue-46-add-formal-model-staleness-dete/) |
+| 379 | Issue #46: Add formal model staleness detection via content hashing | 2026-04-05 | 7ae0fe01 | Needs Review | [379-issue-46-add-formal-model-staleness-dete](./quick/379-issue-46-add-formal-model-staleness-dete/) |
 
 ## Session Log
 
