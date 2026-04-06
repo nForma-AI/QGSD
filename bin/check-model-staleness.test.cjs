@@ -237,6 +237,220 @@ test('default mode (no --update-hashes) does NOT write to registry (read-only ve
   }
 });
 
+test('* Source: header (TLA+ style) is parsed correctly', async () => {
+  const tmpDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'model-stale-'));
+  try {
+    fs.mkdirSync(path.join(tmpDir, '.planning', 'formal'), { recursive: true });
+    fs.mkdirSync(path.join(tmpDir, 'hooks'), { recursive: true });
+
+    const modelContent = '\\* Model: auth-session\n\\* Source: hooks/nf-stop.js\nVARIABLES state\n';
+    const modelPath = path.join(tmpDir, '.planning', 'formal', 'auth.tla');
+    fs.writeFileSync(modelPath, modelContent, 'utf8');
+
+    const sourceContent = 'module.exports = {};\n';
+    fs.writeFileSync(path.join(tmpDir, 'hooks', 'nf-stop.js'), sourceContent, 'utf8');
+
+    const registry = {
+      version: '1.0',
+      models: {
+        '.planning/formal/auth.tla': { version: 1 },
+      },
+    };
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'formal', 'model-registry.json'),
+      JSON.stringify(registry), 'utf8'
+    );
+
+    const result = checkStaleness(tmpDir, { updateHashes: true });
+
+    assert.strictEqual(result.first_hash_count, 1);
+    const updated = JSON.parse(fs.readFileSync(
+      path.join(tmpDir, '.planning', 'formal', 'model-registry.json'), 'utf8'
+    ));
+    const hashes = updated.models['.planning/formal/auth.tla'].content_hashes;
+    assert(hashes.source_hashes['hooks/nf-stop.js'], 'should have parsed * Source: header');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true });
+  }
+});
+
+test('multiple comma-separated source files are all parsed and hashed', async () => {
+  const tmpDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'model-stale-'));
+  try {
+    fs.mkdirSync(path.join(tmpDir, '.planning', 'formal'), { recursive: true });
+    fs.mkdirSync(path.join(tmpDir, 'bin'), { recursive: true });
+    fs.mkdirSync(path.join(tmpDir, 'hooks'), { recursive: true });
+
+    const modelContent = '-- Source: bin/a.cjs, hooks/b.js, bin/c.cjs\nmod multi {}\n';
+    fs.writeFileSync(path.join(tmpDir, '.planning', 'formal', 'multi.als'), modelContent, 'utf8');
+
+    fs.writeFileSync(path.join(tmpDir, 'bin', 'a.cjs'), 'a\n', 'utf8');
+    fs.writeFileSync(path.join(tmpDir, 'hooks', 'b.js'), 'b\n', 'utf8');
+    fs.writeFileSync(path.join(tmpDir, 'bin', 'c.cjs'), 'c\n', 'utf8');
+
+    const registry = {
+      version: '1.0',
+      models: { '.planning/formal/multi.als': { version: 1 } },
+    };
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'formal', 'model-registry.json'),
+      JSON.stringify(registry), 'utf8'
+    );
+
+    const result = checkStaleness(tmpDir, { updateHashes: true });
+    const updated = JSON.parse(fs.readFileSync(
+      path.join(tmpDir, '.planning', 'formal', 'model-registry.json'), 'utf8'
+    ));
+    const srcHashes = updated.models['.planning/formal/multi.als'].content_hashes.source_hashes;
+
+    assert.strictEqual(Object.keys(srcHashes).length, 3);
+    assert(srcHashes['bin/a.cjs']);
+    assert(srcHashes['hooks/b.js']);
+    assert(srcHashes['bin/c.cjs']);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true });
+  }
+});
+
+test('missing model file is skipped gracefully (not counted as stale)', async () => {
+  const tmpDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'model-stale-'));
+  try {
+    fs.mkdirSync(path.join(tmpDir, '.planning', 'formal'), { recursive: true });
+
+    // Registry references a model file that does not exist on disk
+    const registry = {
+      version: '1.0',
+      models: {
+        '.planning/formal/ghost.als': {
+          version: 1,
+          content_hashes: {
+            model_hash: 'abc123',
+            source_hashes: {},
+          },
+        },
+      },
+    };
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'formal', 'model-registry.json'),
+      JSON.stringify(registry), 'utf8'
+    );
+
+    const result = checkStaleness(tmpDir);
+
+    assert.strictEqual(result.total_checked, 1);
+    assert.strictEqual(result.total_stale, 0);
+    assert.strictEqual(result.first_hash_count, 0);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true });
+  }
+});
+
+test('corrupt registry JSON returns skipped result', async () => {
+  const tmpDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'model-stale-'));
+  try {
+    fs.mkdirSync(path.join(tmpDir, '.planning', 'formal'), { recursive: true });
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'formal', 'model-registry.json'),
+      '{not valid json!!!', 'utf8'
+    );
+
+    const result = checkStaleness(tmpDir);
+
+    assert.strictEqual(result.skipped, true);
+    assert.strictEqual(result.total_checked, 0);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true });
+  }
+});
+
+test('removed source file (in stored but not computed) is detected as stale', async () => {
+  const tmpDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'model-stale-'));
+  try {
+    fs.mkdirSync(path.join(tmpDir, '.planning', 'formal'), { recursive: true });
+
+    // Model with no Source header (so computed sources is empty)
+    const modelContent = 'mod test {}\n';
+    const modelPath = path.join(tmpDir, '.planning', 'formal', 'model1.als');
+    fs.writeFileSync(modelPath, modelContent, 'utf8');
+
+    const modelHash = crypto.createHash('sha256').update(modelContent).digest('hex');
+
+    const registry = {
+      version: '1.0',
+      models: {
+        '.planning/formal/model1.als': {
+          version: 1,
+          content_hashes: {
+            model_hash: modelHash,
+            source_hashes: { 'bin/was-here.cjs': 'deadbeef' },
+          },
+        },
+      },
+    };
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'formal', 'model-registry.json'),
+      JSON.stringify(registry), 'utf8'
+    );
+
+    const result = checkStaleness(tmpDir);
+
+    assert.strictEqual(result.total_stale, 1);
+    assert.strictEqual(result.stale[0].reason, 'source_changed');
+    assert(result.stale[0].changed_sources.some(s => s.includes('was-here.cjs')));
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true });
+  }
+});
+
+test('multiple models: mixed stale and fresh results', async () => {
+  const tmpDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'model-stale-'));
+  try {
+    fs.mkdirSync(path.join(tmpDir, '.planning', 'formal'), { recursive: true });
+
+    // Model 1: fresh (hashes match)
+    const content1 = 'mod fresh {}\n';
+    fs.writeFileSync(path.join(tmpDir, '.planning', 'formal', 'fresh.als'), content1, 'utf8');
+    const hash1 = crypto.createHash('sha256').update(content1).digest('hex');
+
+    // Model 2: stale (model changed)
+    const content2 = 'mod changed {}\n';
+    fs.writeFileSync(path.join(tmpDir, '.planning', 'formal', 'stale.als'), content2, 'utf8');
+    const oldHash2 = crypto.createHash('sha256').update('mod old {}\n').digest('hex');
+
+    // Model 3: first run (no hashes)
+    const content3 = 'mod new {}\n';
+    fs.writeFileSync(path.join(tmpDir, '.planning', 'formal', 'new.als'), content3, 'utf8');
+
+    const registry = {
+      version: '1.0',
+      models: {
+        '.planning/formal/fresh.als': {
+          version: 1,
+          content_hashes: { model_hash: hash1, source_hashes: {} },
+        },
+        '.planning/formal/stale.als': {
+          version: 1,
+          content_hashes: { model_hash: oldHash2, source_hashes: {} },
+        },
+        '.planning/formal/new.als': { version: 1 },
+      },
+    };
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'formal', 'model-registry.json'),
+      JSON.stringify(registry), 'utf8'
+    );
+
+    const result = checkStaleness(tmpDir);
+
+    assert.strictEqual(result.total_checked, 3);
+    assert.strictEqual(result.total_stale, 1);
+    assert.strictEqual(result.first_hash_count, 1);
+    assert.strictEqual(result.stale[0].model, '.planning/formal/stale.als');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true });
+  }
+});
+
 test('--update-hashes mode DOES write content_hashes to registry', async () => {
   const tmpDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'model-stale-'));
   try {
