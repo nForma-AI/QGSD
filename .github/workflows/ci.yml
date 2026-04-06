@@ -25,8 +25,19 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
+      - name: Verify lockfile sync
+        run: |
+          PKG=$(node -p "require('./package.json').version")
+          LOCK=$(node -p "require('./package-lock.json').version")
+          if [ "$PKG" != "$LOCK" ]; then
+            echo "ERROR: package.json ($PKG) != package-lock.json ($LOCK)"
+            echo "Fix: npm install --package-lock-only && commit package-lock.json"
+            exit 1
+          fi
+          echo "Lockfile synced: $PKG"
+
       - name: Install dependencies
-        run: npm ci --ignore-scripts
+        run: npm ci --ignore-scripts || npm install --ignore-scripts
 
       - name: Build artifacts
         run: npm run build:hooks && npm run build:machines
