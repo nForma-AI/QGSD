@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-04-04T19:46:11.442Z",
-  "content_hash": "8629ecf5241a7562",
+  "aggregated_at": "2026-04-06T11:52:32.757Z",
+  "content_hash": "2df7f9c75c6fc3ba",
   "requirements": [
     {
       "id": "ACT-01",
@@ -1432,6 +1432,19 @@
         "source_file": ".planning/quick/374-make-api-slots-backup-only-dispatch-to-a/374-PLAN.md",
         "milestone": "quick-374"
       }
+    },
+    {
+      "id": "DIST-01",
+      "text": "The npm `@next` dist-tag SHALL never point to a version older than `@latest`. After every stable publish to `@latest`, the `@next` dist-tag MUST be aligned to the same or a newer version.",
+      "category": "Release & Distribution",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": "manual",
+        "milestone": "v0.41"
+      },
+      "background": "Implemented in 0.41.14. Automated in release.yml (CI), publish.sh (manual publish), and documented in CLAUDE.md. Prevents stale prerelease tags from confusing consumers who install via @next."
     },
     {
       "id": "DRIFT-01",
@@ -6116,5 +6129,5 @@
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
   "last_sync": "2026-03-31T09:45:23.686Z",
-  "frozen_at": "2026-04-04T19:46:11.443Z"
+  "frozen_at": "2026-04-06T11:52:32.757Z"
 }
