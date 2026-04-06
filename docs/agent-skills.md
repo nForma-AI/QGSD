@@ -1,0 +1,144 @@
+# Agent Skills
+
+This document serves two purposes:
+
+- explain how packaged skills fit into nForma's workflow model
+- compare nForma's current coverage against the MIT-licensed [`addyosmani/agent-skills`](https://github.com/addyosmani/agent-skills) catalog
+
+## What packaged skills are for
+
+Packaged skills are small reusable workflow guides under `agents/skills/`.
+
+Use them when you need a focused process around a specific activity:
+
+- shape an idea
+- normalize a request into an issue
+- review code before merge
+- capture a decision in docs
+- harden a change before merge or release
+- prepare a safe launch
+
+Do not use packaged skills as a replacement for nForma's main orchestration commands. nForma already has strong slash-command workflows for planning, execution, debugging, verification, and milestone management.
+
+## Packaged skill vs slash command
+
+Use a packaged skill when:
+
+- the task is narrow and process-oriented
+- you need a reusable checklist or output structure
+- you are between the larger roadmap steps
+
+Use a slash command when:
+
+- the task needs orchestration, state tracking, or multi-agent execution
+- the task belongs to the main project lifecycle
+- you want nForma to create plans, execute work, or verify outcomes
+
+## Lifecycle routing
+
+Recommended flow:
+
+`idea-refine -> task-intake -> /nf:new-project or /nf:new-milestone -> /nf:plan-phase -> /nf:execute-phase -> /nf:verify-work -> code-review-and-quality -> security-and-hardening -> shipping-and-launch`
+
+For smaller ad-hoc work:
+
+`idea-refine -> task-intake -> /nf:quick --full -> code-review-and-quality -> shipping-and-launch`
+
+## Current packaged skills
+
+| Skill | Purpose | Typical next step |
+|---|---|---|
+| `idea-refine` | Turn a rough idea into a focused one-pager with assumptions and MVP | `task-intake` or `/nf:new-project` |
+| `task-intake` | Turn rough requests into issue-ready structured JSON | issue creation or `/nf:quick --full` |
+| `code-review-and-quality` | Run a reusable merge-readiness review | `/nf:quick --full`, `/nf:verify-work`, or merge |
+| `documentation-and-adrs` | Capture decisions and workflow changes clearly | docs update or changelog |
+| `security-and-hardening` | Run a security-focused review and minimum hardening checks | fix issues or `shipping-and-launch` |
+| `shipping-and-launch` | Prepare rollout, rollback, and launch readiness | release, staged rollout, or `/nf:observe` |
+
+## Current state
+
+nForma already has strong workflow coverage in these areas:
+
+- project and milestone intake: `/nf:new-project`, `/nf:new-milestone`, `task-intake`
+- research and planning: `/nf:research-phase`, `/nf:plan-phase`, `nf-planner`, `nf-plan-checker`
+- execution and verification: `/nf:execute-phase`, `/nf:verify-work`, `/nf:quorum-test`, `nf-executor`, `nf-verifier`
+- debugging and production observation: `/nf:debug`, `/nf:observe`, `/nf:solve-*`
+
+Before this work, nForma lacked a small set of portable, reusable skills for the earlier and later parts of the lifecycle:
+
+- before planning: idea shaping and scope convergence
+- after building: shipping, rollout, rollback, and launch discipline
+
+## Upstream matrix
+
+| Upstream skill | nForma today | Status | Recommendation |
+|---|---|---|---|
+| `using-agent-skills` | Meta guidance now lives in this document | Covered | Keep as documentation, not a separate packaged skill |
+| `idea-refine` | Packaged skill added | Covered | Keep and iterate based on usage |
+| `spec-driven-development` | `/nf:new-project`, `/nf:new-milestone`, requirements and roadmap flows | Partial | Adapt later only if we want a lightweight non-roadmap spec flow |
+| `planning-and-task-breakdown` | `/nf:plan-phase`, `nf-planner`, plan verification loop | Covered | Improve existing planner prompts instead of importing |
+| `incremental-implementation` | `/nf:execute-phase`, worktree executor, wave model | Partial | Add only if we want a generic non-phase build skill |
+| `test-driven-development` | `/nf:fix-tests`, `/nf:debug`, quorum verification, testing rules | Partial | Improve existing test workflows; no new skill yet |
+| `code-review-and-quality` | `nf-verifier`, `nf-integration-checker`, quorum gates, plus packaged skill | Covered | Keep skill lightweight and routed into verifier flows |
+| `documentation-and-adrs` | Existing planning docs plus packaged skill | Covered | Prefer existing docs as the output location |
+| `git-workflow-and-versioning` | Contributor guide, worktree executor rules, release scripts | Partial | Prefer doc updates over a dedicated skill for now |
+| `api-and-interface-design` | No dedicated reusable design skill | Gap | Lower priority; can wait |
+| `browser-testing-with-devtools` | No packaged browser-testing skill | Gap | Lower priority unless frontend work increases |
+| `ci-cd-and-automation` | GitHub Actions, release scripts, publish scripts | Partial | Better as references/checklists than a full skill today |
+| `code-simplification` | No dedicated simplification/refactor skill | Gap | Lower priority |
+| `context-engineering` | Core nForma strength: fresh subagents, planning context, routing, guardrails | Covered | Keep native approach |
+| `debugging-and-error-recovery` | `/nf:debug`, `/nf:observe`, solve loop, quorum diagnosis | Covered | Keep native approach |
+| `deprecation-and-migration` | No dedicated migration skill | Gap | Lower priority |
+| `frontend-ui-engineering` | Brand guidance exists, but no reusable UI engineering skill | Gap | Lower priority |
+| `performance-optimization` | Some observability and analysis tooling, no dedicated skill | Gap | Medium priority later |
+| `security-and-hardening` | Security docs, secret scan, security sweep, plus packaged skill | Covered | Reuse repo scripts instead of generic checklists |
+| `shipping-and-launch` | Release automation plus packaged launch skill | Covered | Keep tied to `/nf:observe` and release scripts |
+
+## Recommended import order
+
+1. `idea-refine`
+2. `shipping-and-launch`
+3. `code-review-and-quality`
+4. `documentation-and-adrs`
+5. `security-and-hardening`
+
+This ordering matches the current hole in nForma's lifecycle:
+
+`idea -> scope -> plan -> build -> verify -> review -> ship`
+
+nForma is already strong from `plan` through `verify`. This pass extends that strength into `idea`, `review`, and `ship`.
+
+## Design principles for adaptation
+
+Do not copy upstream skills verbatim into nForma. Adapt them to nForma's existing workflow model:
+
+- route into slash commands where strong equivalents already exist
+- keep packaged skills small and reusable
+- prefer repo-aware outputs over generic advice
+- avoid duplicate planning systems when nForma already has one
+- treat upstream checklists as references, not replacements for nForma orchestration
+
+## Reference checklists
+
+The `references/` directory contains lightweight checklists adapted from upstream for use alongside packaged skills:
+
+| Checklist | Use with |
+|---|---|
+| `references/testing-patterns.md` | `code-review-and-quality`, `/nf:fix-tests`, `/nf:verify-work` |
+| `references/security-checklist.md` | `security-and-hardening`, `/nf:solve` |
+| `references/performance-checklist.md` | `code-review-and-quality`, performance-sensitive changes |
+| `references/accessibility-checklist.md` | CLI output changes, documentation updates |
+
+These checklists are reference material, not enforcement gates. Use them during review or when a packaged skill recommends a deeper check.
+
+## Using packaged skills well
+
+- Start with the smallest skill that matches the problem.
+- Route back into slash commands once orchestration or execution is needed.
+- Prefer repo-aware outputs over generic guidance.
+- Reference the checklists in `references/` when a skill calls for deeper verification.
+- Avoid parallel documentation systems; packaged skills should reinforce existing nForma flows.
+
+## Suggested next step
+
+The next useful move is not importing every upstream skill blindly. It is continuing to tighten the bridge between packaged skills and core commands so outputs flow naturally into the rest of nForma.

@@ -14,6 +14,11 @@ const yellow = '\x1b[33m';
 const dim = '\x1b[2m';
 const reset = '\x1b[0m';
 
+// Verbose logging helper — gates per-item detail output behind --verbose flag
+function log(...args) {
+  if (hasVerbose) console.log(...args);
+}
+
 // Install hints for external CLIs (shown when not detected)
 const CLI_INSTALL_HINTS = {
   codex:    'npm i -g @openai/codex',
@@ -77,6 +82,7 @@ const hasMigrateSlots = args.includes('--migrate-slots');
 const hasFormal = args.includes('--formal');
 const hasUninstallFormal = args.includes('--uninstall-formal');
 const hasAllProviders = args.includes('--all-providers');
+const hasVerbose = args.includes('--verbose') || args.includes('-v');
 
 // Provider slot filter: null = all (backward compat), array = filtered
 let selectedProviderSlots = null;
@@ -841,6 +847,8 @@ const claudeToGeminiTools = {
   TodoWrite: 'write_todos',
   AskUserQuestion: 'ask_user',
 };
+
+const ALL_RUNTIMES = ['claude', 'opencode', 'gemini', 'kilo', 'cursor', 'windsurf', 'codex', 'copilot', 'antigravity', 'augment', 'trae', 'cline'];
 
 /**
  * Convert a Claude Code tool name to OpenCode format
@@ -2271,7 +2279,7 @@ function install(isGlobal, runtime = 'claude') {
   if (runtime === 'trae') runtimeLabel = 'Trae';
   if (runtime === 'cline') runtimeLabel = 'Cline';
 
-  console.log(`  Installing for ${cyan}${runtimeLabel}${reset} to ${cyan}${locationLabel}${reset}\n`);
+  log(`  Installing for ${cyan}${runtimeLabel}${reset} to ${cyan}${locationLabel}${reset}\n`);
 
   // Track installation failures
   const failures = [];
@@ -2294,7 +2302,7 @@ function install(isGlobal, runtime = 'claude') {
     copyFlattenedCommands(gsdSrc, commandDir, 'nf', pathPrefix, runtime);
     if (verifyInstalled(commandDir, 'command/nf-*')) {
       const count = fs.readdirSync(commandDir).filter(f => f.startsWith('nf-')).length;
-      console.log(`  ${green}✓${reset} Installed ${count} commands to command/`);
+      log(`  ${green}✓${reset} Installed ${count} commands to command/`);
     } else {
       failures.push('command/nf-*');
     }
@@ -2307,7 +2315,7 @@ function install(isGlobal, runtime = 'claude') {
     const gsdDest = path.join(commandsDir, 'nf');
     copyWithPathReplacement(gsdSrc, gsdDest, pathPrefix, runtime);
     if (verifyInstalled(gsdDest, 'commands/nf')) {
-      console.log(`  ${green}✓${reset} Installed commands/nf`);
+      log(`  ${green}✓${reset} Installed commands/nf`);
     } else {
       failures.push('commands/nf');
     }
@@ -2318,7 +2326,7 @@ function install(isGlobal, runtime = 'claude') {
   const skillDest = path.join(targetDir, 'nf');
   copyWithPathReplacement(skillSrc, skillDest, pathPrefix, runtime);
   if (verifyInstalled(skillDest, 'nf')) {
-    console.log(`  ${green}✓${reset} Installed nf`);
+    log(`  ${green}✓${reset} Installed nf`);
   } else {
     failures.push('nf');
   }
@@ -2357,7 +2365,7 @@ function install(isGlobal, runtime = 'claude') {
       }
     }
     if (verifyInstalled(agentsDest, 'agents')) {
-      console.log(`  ${green}✓${reset} Installed agents`);
+      log(`  ${green}✓${reset} Installed agents`);
     } else {
       failures.push('agents');
     }
@@ -2369,7 +2377,7 @@ function install(isGlobal, runtime = 'claude') {
   if (fs.existsSync(changelogSrc)) {
     fs.copyFileSync(changelogSrc, changelogDest);
     if (verifyFileInstalled(changelogDest, 'CHANGELOG.md')) {
-      console.log(`  ${green}✓${reset} Installed CHANGELOG.md`);
+      log(`  ${green}✓${reset} Installed CHANGELOG.md`);
     } else {
       failures.push('CHANGELOG.md');
     }
@@ -2391,7 +2399,7 @@ function install(isGlobal, runtime = 'claude') {
       skillCount++;
     }
     if (skillCount > 0) {
-      console.log(`  ${green}✓${reset} Installed ${skillCount} skill${skillCount > 1 ? 's' : ''} to skills/`);
+      log(`  ${green}✓${reset} Installed ${skillCount} skill${skillCount > 1 ? 's' : ''} to skills/`);
     }
   }
 
@@ -2399,7 +2407,7 @@ function install(isGlobal, runtime = 'claude') {
   const versionDest = path.join(targetDir, 'nf', 'VERSION');
   fs.writeFileSync(versionDest, pkg.version);
   if (verifyFileInstalled(versionDest, 'VERSION')) {
-    console.log(`  ${green}✓${reset} Wrote VERSION (${pkg.version})`);
+    log(`  ${green}✓${reset} Wrote VERSION (${pkg.version})`);
   } else {
     failures.push('VERSION');
   }
@@ -2409,7 +2417,7 @@ function install(isGlobal, runtime = 'claude') {
   // Node.js walks up looking for package.json - this stops inheritance from project
   const pkgJsonDest = path.join(targetDir, 'package.json');
   fs.writeFileSync(pkgJsonDest, '{"type":"commonjs"}\n');
-  console.log(`  ${green}✓${reset} Wrote package.json (CommonJS mode)`);
+  log(`  ${green}✓${reset} Wrote package.json (CommonJS mode)`);
 
   // Auto-rebuild hooks/dist/ if missing (fresh source clone support)
   const hooksDir = path.join(src, 'hooks');
@@ -2450,7 +2458,7 @@ function install(isGlobal, runtime = 'claude') {
       }
     }
     if (verifyInstalled(hooksDest, 'hooks')) {
-      console.log(`  ${green}✓${reset} Installed hooks (bundled)`);
+      log(`  ${green}✓${reset} Installed hooks (bundled)`);
     } else {
       failures.push('hooks');
     }
@@ -2467,7 +2475,7 @@ function install(isGlobal, runtime = 'claude') {
         fs.copyFileSync(path.join(binSrc, entry), path.join(binDest, entry));
       }
     }
-    console.log(`  ${green}✓${reset} Installed nf-bin scripts`);
+    log(`  ${green}✓${reset} Installed nf-bin scripts`);
 
     // Copy bin/adapters/ to nf-bin/adapters/ (FSM-to-TLA+ transpiler adapters)
     const adaptersSrc = path.join(binSrc, 'adapters');
@@ -2479,7 +2487,7 @@ function install(isGlobal, runtime = 'claude') {
           fs.copyFileSync(path.join(adaptersSrc, entry), path.join(adaptersDest, entry));
         }
       }
-      console.log(`  ${green}✓${reset} Installed FSM-to-TLA+ adapters`);
+      log(`  ${green}✓${reset} Installed FSM-to-TLA+ adapters`);
     }
 
     // Copy dist/machines/ to nf-bin/dist/machines/ (XState bundle for gate scripts)
@@ -2492,7 +2500,7 @@ function install(isGlobal, runtime = 'claude') {
           fs.copyFileSync(path.join(machinesSrc, entry), path.join(machinesDest, entry));
         }
       }
-      console.log(`  ${green}✓${reset} Installed XState machine bundle`);
+      log(`  ${green}✓${reset} Installed XState machine bundle`);
     }
 
     // Mirror nf-bin/ scripts into nf/bin/ so both paths resolve
@@ -2526,7 +2534,7 @@ function install(isGlobal, runtime = 'claude') {
         }
       }
       if (mirrored > 0) {
-        console.log(`  ${green}✓${reset} Mirrored ${mirrored} nf-bin scripts into nf/bin`);
+        log(`  ${green}✓${reset} Mirrored ${mirrored} nf-bin scripts into nf/bin`);
       }
     } else if (fs.existsSync(nfBinDir) && fs.lstatSync(nfBinDir).isSymbolicLink()) {
       // Previous install created a symlink — restore as real dir with merged contents
@@ -2549,7 +2557,7 @@ function install(isGlobal, runtime = 'claude') {
           }
         }
       }
-      console.log(`  ${green}✓${reset} Restored nf/bin (was symlink) with merged contents`);
+      log(`  ${green}✓${reset} Restored nf/bin (was symlink) with merged contents`);
     }
   }
 
@@ -2568,7 +2576,7 @@ function install(isGlobal, runtime = 'claude') {
     }
     failures.push('Structural Integrity');
   } else {
-    console.log(`  ${green}✓${reset} Structural validation passed`);
+    log(`  ${green}✓${reset} Structural validation passed`);
   }
 
   if (failures.length > 0) {
@@ -2594,7 +2602,7 @@ function install(isGlobal, runtime = 'claude') {
     }
     if (!settings.experimental.enableAgents) {
       settings.experimental.enableAgents = true;
-      console.log(`  ${green}✓${reset} Enabled experimental agents`);
+      log(`  ${green}✓${reset} Enabled experimental agents`);
     }
   }
 
@@ -2608,13 +2616,13 @@ function install(isGlobal, runtime = 'claude') {
     for (const event of Object.keys(settings.hooks)) {
       if (!GEMINI_SUPPORTED_EVENTS.has(event)) {
         delete settings.hooks[event];
-        console.log(`  ${green}!${reset} Removed unsupported Gemini hook event: ${event}`);
+        log(`  ${green}!${reset} Removed unsupported Gemini hook event: ${event}`);
       }
     }
   }
 
   if (isGemini) {
-    console.log(`  ${cyan}i${reset} Gemini CLI: only registering SessionStart + SessionEnd hooks (other events unsupported)`);
+    log(`  ${cyan}i${reset} Gemini CLI: only registering SessionStart + SessionEnd hooks (other events unsupported)`);
   }
 
   // Configure SessionStart hook for update checking (skip for opencode)
@@ -2639,7 +2647,7 @@ function install(isGlobal, runtime = 'claude') {
           }
         ]
       });
-      console.log(`  ${green}✓${reset} Configured update check hook`);
+      log(`  ${green}✓${reset} Configured update check hook`);
     }
 
     // Register nForma session-start secret sync hook
@@ -2655,7 +2663,7 @@ function install(isGlobal, runtime = 'claude') {
           }
         ]
       });
-      console.log(`  ${green}✓${reset} Configured nForma secret sync hook (SessionStart)`);
+      log(`  ${green}✓${reset} Configured nForma secret sync hook (SessionStart)`);
     }
 
     // INST-05: Warn (yellow) if quorum MCP servers are absent — runs every install
@@ -2681,7 +2689,7 @@ function install(isGlobal, runtime = 'claude') {
           ))
         );
         if (settings.hooks[event].length < before) {
-          console.log(`  ${green}✓${reset} Migrated old ${names.join(', ')} hook(s) → nf equivalent`);
+          log(`  ${green}✓${reset} Migrated old ${names.join(', ')} hook(s) → nf equivalent`);
         }
         if (settings.hooks[event].length === 0) delete settings.hooks[event];
       }
@@ -2700,7 +2708,7 @@ function install(isGlobal, runtime = 'claude') {
       settings.hooks.UserPromptSubmit.push({
         hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-prompt.js') }]
       });
-      console.log(`  ${green}✓${reset} Configured nForma quorum injection hook (UserPromptSubmit)`);
+      log(`  ${green}✓${reset} Configured nForma quorum injection hook (UserPromptSubmit)`);
     }
 
     // Register nForma Stop hook (quorum gate — verifies quorum evidence before Claude delivers planning output)
@@ -2712,7 +2720,7 @@ function install(isGlobal, runtime = 'claude') {
       settings.hooks.Stop.push({
         hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-stop.js'), timeout: 30 }]
       });
-      console.log(`  ${green}✓${reset} Configured nForma quorum gate hook (Stop)`);
+      log(`  ${green}✓${reset} Configured nForma quorum gate hook (Stop)`);
     }
 
     // INST-08: Register nForma circuit breaker hook (PreToolUse — Claude Code only)
@@ -2724,7 +2732,7 @@ function install(isGlobal, runtime = 'claude') {
       settings.hooks.PreToolUse.push({
         hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-circuit-breaker.js'), timeout: 10 }]
       });
-      console.log(`  ${green}✓${reset} Configured nForma circuit breaker hook (PreToolUse)`);
+      log(`  ${green}✓${reset} Configured nForma circuit breaker hook (PreToolUse)`);
     }
 
     // Register nForma destructive git guard hook (PreToolUse — warn on destructive git ops)
@@ -2735,7 +2743,7 @@ function install(isGlobal, runtime = 'claude') {
       settings.hooks.PreToolUse.push({
         hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-destructive-git-guard.js'), timeout: 10 }]
       });
-      console.log(`  ${green}✓${reset} Configured nForma destructive git guard hook (PreToolUse)`);
+      log(`  ${green}✓${reset} Configured nForma destructive git guard hook (PreToolUse)`);
     }
 
     // Register nForma MCP dispatch guard hook (PreToolUse — warn on direct MCP calls)
@@ -2746,7 +2754,7 @@ function install(isGlobal, runtime = 'claude') {
       settings.hooks.PreToolUse.push({
         hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-mcp-dispatch-guard.js'), timeout: 10 }]
       });
-      console.log(`  ${green}+${reset} Configured nForma MCP dispatch guard hook (PreToolUse)`);
+      log(`  ${green}+${reset} Configured nForma MCP dispatch guard hook (PreToolUse)`);
     }
 
     // Register nForma scope guard hook (PreToolUse — warn on out-of-scope edits)
@@ -2757,7 +2765,7 @@ function install(isGlobal, runtime = 'claude') {
       settings.hooks.PreToolUse.push({
         hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-scope-guard.js'), timeout: 10 }]
       });
-      console.log(`  ${green}+${reset} Configured nForma scope guard hook (PreToolUse)`);
+      log(`  ${green}+${reset} Configured nForma scope guard hook (PreToolUse)`);
     }
 
     // Register nForma node-eval guard hook (PreToolUse — rewrite node -e to heredoc for zsh safety)
@@ -2768,7 +2776,7 @@ function install(isGlobal, runtime = 'claude') {
       settings.hooks.PreToolUse.push({
         hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-node-eval-guard.js'), timeout: 10 }]
       });
-      console.log(`  ${green}+${reset} Configured nForma node-eval guard hook (PreToolUse)`);
+      log(`  ${green}+${reset} Configured nForma node-eval guard hook (PreToolUse)`);
     }
 
     // Register nForma context monitor hook (PostToolUse — context window warnings)
@@ -2780,7 +2788,7 @@ function install(isGlobal, runtime = 'claude') {
       settings.hooks.PostToolUse.push({
         hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-context-monitor.js') }]
       });
-      console.log(`  ${green}✓${reset} Configured nForma context monitor hook (PostToolUse)`);
+      log(`  ${green}✓${reset} Configured nForma context monitor hook (PostToolUse)`);
     }
 
     // Register nForma spec-regen hook (PostToolUse — auto-regenerate specs on machine file write)
@@ -2792,7 +2800,7 @@ function install(isGlobal, runtime = 'claude') {
       settings.hooks.PostToolUse.push({
         hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-spec-regen.js') }]
       });
-      console.log(`  ${green}✓${reset} Configured nForma spec-regen hook (PostToolUse)`);
+      log(`  ${green}✓${reset} Configured nForma spec-regen hook (PostToolUse)`);
     }
 
     // Register nForma post-edit format hook (PostToolUse — auto-format JS/TS after Edit)
@@ -2804,7 +2812,7 @@ function install(isGlobal, runtime = 'claude') {
       settings.hooks.PostToolUse.push({
         hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-post-edit-format.js') }]
       });
-      console.log(`  ${green}✓${reset} Configured nForma post-edit format hook (PostToolUse)`);
+      log(`  ${green}✓${reset} Configured nForma post-edit format hook (PostToolUse)`);
     }
 
     // Register nForma console guard hook (Stop — warn about leftover console.log)
@@ -2816,7 +2824,7 @@ function install(isGlobal, runtime = 'claude') {
       settings.hooks.Stop.push({
         hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-console-guard.js') }]
       });
-      console.log(`  ${green}✓${reset} Configured nForma console guard hook (Stop)`);
+      log(`  ${green}✓${reset} Configured nForma console guard hook (Stop)`);
     }
 
     // Register nForma PreCompact hook (phase state injection at compaction time)
@@ -2828,7 +2836,7 @@ function install(isGlobal, runtime = 'claude') {
       settings.hooks.PreCompact.push({
         hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-precompact.js') }]
       });
-      console.log(`  ${green}✓${reset} Configured nForma PreCompact hook (phase state injection)`);
+      log(`  ${green}✓${reset} Configured nForma PreCompact hook (phase state injection)`);
     }
 
     // Register nForma token collector hook (SubagentStop — logs per-slot token usage)
@@ -2841,7 +2849,7 @@ function install(isGlobal, runtime = 'claude') {
         matcher: 'nf-quorum-slot-worker',
         hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-token-collector.js'), async: true }]
       });
-      console.log(`  ${green}✓${reset} Configured nForma token collector hook (SubagentStop)`);
+      log(`  ${green}✓${reset} Configured nForma token collector hook (SubagentStop)`);
     }
 
     // Register nForma slot correlator hook (SubagentStart — writes agent_id correlation file)
@@ -2854,7 +2862,7 @@ function install(isGlobal, runtime = 'claude') {
         matcher: 'nf-quorum-slot-worker',
         hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-slot-correlator.js'), async: true }]
       });
-      console.log(`  ${green}✓${reset} Configured nForma slot correlator hook (SubagentStart)`);
+      log(`  ${green}✓${reset} Configured nForma slot correlator hook (SubagentStart)`);
     }
 
     } // end if (!isGemini) — non-Session hooks
@@ -2868,7 +2876,7 @@ function install(isGlobal, runtime = 'claude') {
       settings.hooks.SessionEnd.push({
         hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-session-end.js') }]
       });
-      console.log(`  ${green}✓${reset} Configured nForma session-end hook (SessionEnd)`);
+      log(`  ${green}✓${reset} Configured nForma session-end hook (SessionEnd)`);
     }
 
     // MULTI-03: ensureMcpSlotsFromProviders() MUST run before buildActiveSlots() because
@@ -2896,7 +2904,7 @@ function install(isGlobal, runtime = 'claude') {
     // --redetect-mcps: delete existing config so fresh detection runs below
     if (hasRedetectMcps && fs.existsSync(nfConfigPath)) {
       fs.unlinkSync(nfConfigPath);
-      console.log(`  ${cyan}◆${reset} Re-detecting MCP prefixes (--redetect-mcps)...`);
+      log(`  ${cyan}◆${reset} Re-detecting MCP prefixes (--redetect-mcps)...`);
     }
 
     if (!fs.existsSync(nfConfigPath)) {
@@ -2920,8 +2928,8 @@ function install(isGlobal, runtime = 'claude') {
       };
 
       fs.writeFileSync(nfConfigPath, JSON.stringify(nfConfig, null, 2) + '\n', 'utf8');
-      console.log(`  ${green}✓${reset} Wrote nForma config with detected MCP prefixes (~/.claude/nf.json)`);
-      console.log(`  ${green}✓${reset} Wrote quorum_active (${nfConfig.quorum_active.length} slots) to nf.json`);
+      log(`  ${green}✓${reset} Wrote nForma config with detected MCP prefixes (~/.claude/nf.json)`);
+      log(`  ${green}✓${reset} Wrote quorum_active (${nfConfig.quorum_active.length} slots) to nf.json`);
     } else {
       // INST-06: print active config summary on reinstall
       try {
@@ -2930,14 +2938,14 @@ function install(isGlobal, runtime = 'claude') {
         const summary = Object.entries(models)
           .map(([key, def]) => `${key} → ${def.tool_prefix || '(unset)'}`)
           .join(', ');
-        console.log(`  ${dim}↳ ~/.claude/nf.json exists — active config: ${summary}${reset}`);
-        console.log(`  ${dim}  (run with --redetect-mcps to refresh MCP prefix detection)${reset}`);
+        log(`  ${dim}↳ ~/.claude/nf.json exists — active config: ${summary}${reset}`);
+        log(`  ${dim}  (run with --redetect-mcps to refresh MCP prefix detection)${reset}`);
 
         // INST-10: Add missing circuit_breaker block or missing sub-keys without touching existing user values
         if (!existingConfig.circuit_breaker) {
           existingConfig.circuit_breaker = { oscillation_depth: 3, commit_window: 6 };
           fs.writeFileSync(nfConfigPath, JSON.stringify(existingConfig, null, 2) + '\n', 'utf8');
-          console.log(`  ${green}✓${reset} Added circuit_breaker config block to nf.json`);
+          log(`  ${green}✓${reset} Added circuit_breaker config block to nf.json`);
         } else {
           // Backfill individual missing sub-keys without touching values the user has set
           let subKeyAdded = false;
@@ -2951,7 +2959,7 @@ function install(isGlobal, runtime = 'claude') {
           }
           if (subKeyAdded) {
             fs.writeFileSync(nfConfigPath, JSON.stringify(existingConfig, null, 2) + '\n', 'utf8');
-            console.log(`  ${green}✓${reset} Added missing circuit_breaker sub-keys to nf.json`);
+            log(`  ${green}✓${reset} Added missing circuit_breaker sub-keys to nf.json`);
           }
         }
 
@@ -2961,7 +2969,7 @@ function install(isGlobal, runtime = 'claude') {
           if (discoveredSlots.length > 0) {
             existingConfig.quorum_active = discoveredSlots;
             fs.writeFileSync(nfConfigPath, JSON.stringify(existingConfig, null, 2) + '\n', 'utf8');
-            console.log(`  ${green}✓${reset} Backfilled quorum_active (${discoveredSlots.length} slots) in nf.json`);
+            log(`  ${green}✓${reset} Backfilled quorum_active (${discoveredSlots.length} slots) in nf.json`);
           }
         }
 
@@ -2974,21 +2982,21 @@ function install(isGlobal, runtime = 'claude') {
           for (const newSlot of newSlots) {
             const result = addSlotToQuorumActive(newSlot, nfConfigPath);
             if (result.added) {
-              console.log(`  ${green}✓${reset} Added new slot to quorum_active: ${newSlot}`);
+              log(`  ${green}✓${reset} Added new slot to quorum_active: ${newSlot}`);
               existingConfig.quorum_active.push(newSlot); // keep in-memory copy consistent
             }
           }
         }
         // If quorum_active is already set and non-empty: do NOT overwrite (user config preserved)
       } catch {
-        console.log(`  ${dim}↳ ~/.claude/nf.json already exists — skipping (user config preserved)${reset}`);
+        log(`  ${dim}↳ ~/.claude/nf.json already exists — skipping (user config preserved)${reset}`);
       }
     }
   }
 
   // Write file manifest for future modification detection
   writeManifest(targetDir);
-  console.log(`  ${green}✓${reset} Wrote file manifest (${MANIFEST_NAME})`);
+  log(`  ${green}✓${reset} Wrote file manifest (${MANIFEST_NAME})`);
 
   // Report any backed-up local patches
   reportLocalPatches(targetDir);
@@ -2998,8 +3006,9 @@ function install(isGlobal, runtime = 'claude') {
 
 /**
  * Apply statusline config, then print completion message
+ * @param {boolean} multiRuntime - If true, suppress per-runtime banner (compact summary printed by caller)
  */
-function finishInstall(settingsPath, settings, statuslineCommand, shouldInstallStatusline, runtime = 'claude', isGlobal = true) {
+function finishInstall(settingsPath, settings, statuslineCommand, shouldInstallStatusline, runtime = 'claude', isGlobal = true, multiRuntime = false) {
   const isOpencode = runtime === 'opencode';
 
   if (shouldInstallStatusline && !isOpencode) {
@@ -3007,7 +3016,7 @@ function finishInstall(settingsPath, settings, statuslineCommand, shouldInstallS
       type: 'command',
       command: statuslineCommand
     };
-    console.log(`  ${green}✓${reset} Configured statusline`);
+    log(`  ${green}✓${reset} Configured statusline`);
   }
 
   // PRIO-01: Sort hooks by priority for deterministic execution order
@@ -3020,7 +3029,7 @@ function finishInstall(settingsPath, settings, statuslineCommand, shouldInstallS
     }
   })();
   sortHooksByPriority(settings, nfConfig.hook_priorities);
-  console.log(`  ${green}✓${reset} Sorted hooks by priority (safety-critical first)`);
+  log(`  ${green}✓${reset} Sorted hooks by priority (safety-critical first)`);
 
   // Always write settings
   writeSettings(settingsPath, settings);
@@ -3029,6 +3038,9 @@ function finishInstall(settingsPath, settings, statuslineCommand, shouldInstallS
   if (isOpencode) {
     configureOpencodePermissions(isGlobal);
   }
+
+  // In multi-runtime mode, skip per-runtime banner (caller prints compact summary)
+  if (multiRuntime) return;
 
   let program = 'Claude Code';
   if (runtime === 'opencode') program = 'OpenCode';
@@ -3282,12 +3294,12 @@ function promptRuntime(callback) {
   ${cyan}13${reset}) All
   `);
 
-  rl.question(`  Choice ${dim}[1]${reset}: `, (answer) => {
+  rl.question(`  Choice ${dim}[13]${reset}: `, (answer) => {
     answered = true;
     rl.close();
-    const choice = answer.trim() || '1';
+    const choice = answer.trim() || '13';
     if (choice === '13') {
-      callback(['claude', 'opencode', 'gemini', 'kilo', 'cursor', 'windsurf', 'codex', 'copilot', 'antigravity', 'augment', 'trae', 'cline']);
+      callback(ALL_RUNTIMES);
     } else if (choice === '12') {
       callback(['cline']);
     } else if (choice === '11') {
@@ -3496,10 +3508,61 @@ function promptLocation(runtimes) {
 }
 
 /**
+ * Runtime label map for display
+ */
+const RUNTIME_LABELS = {
+  claude: 'Claude Code',
+  opencode: 'OpenCode',
+  gemini: 'Gemini',
+  kilo: 'Kilo',
+  cursor: 'Cursor',
+  windsurf: 'Windsurf',
+  codex: 'Codex',
+  copilot: 'GitHub Copilot',
+  antigravity: 'Antigravity',
+  augment: 'Augment',
+  trae: 'Trae',
+  cline: 'Cline',
+};
+
+/**
+ * Print compact multi-runtime summary (one banner instead of twelve)
+ */
+function printMultiRuntimeSummary(runtimes, isGlobal) {
+  const runtimeNames = runtimes.map(r => RUNTIME_LABELS[r] || r);
+  const nudge = runtimes.includes('claude') && !hasClaudeMcpAgents()
+    ? `\n  ${yellow}⚠${reset} No quorum agents configured.\n    Run ${cyan}/nf:mcp-setup${reset} in Claude Code to set up your agents.\n`
+    : '';
+
+  console.log(`
+  ${green}Done!${reset} Installed for ${cyan}${runtimeNames.length}${reset} runtime${runtimeNames.length > 1 ? 's' : ''}:
+  ${runtimeNames.map(n => `${green}✓${reset} ${n}`).join('\n  ')}
+${nudge}
+  Run ${cyan}/nf:help${reset} (or ${cyan}/nf-help${reset} in OpenCode) to get started.
+
+  ${dim}TUI dashboard:${reset} ${cyan}npx @nforma.ai/nforma tui${reset}
+  ${dim}Or install globally:${reset} ${cyan}npm install -g @nforma.ai/nforma${reset} → then run ${cyan}nforma${reset}
+
+  ${cyan}Join the community:${reset} https://discord.gg/M8SevJEuZG
+`);
+
+  // Best-effort formal tools — always runs after success banner, never blocks main install
+  if (!hasUninstall && !hasFormal) {
+    const { spawnSync: _formalSpawn } = require('child_process');
+    const formalScript = path.join(__dirname, 'install-formal-tools.cjs');
+    if (fs.existsSync(formalScript)) {
+      console.log('  Formal verification tools:');
+      _formalSpawn(process.execPath, [formalScript], { stdio: 'inherit' });
+    }
+  }
+}
+
+/**
  * Install GSD for all selected runtimes
  */
 function installAllRuntimes(runtimes, isGlobal, isInteractive) {
   const results = [];
+  const isMulti = runtimes.length > 1;
 
   for (const runtime of runtimes) {
     const result = install(isGlobal, runtime);
@@ -3512,39 +3575,37 @@ function installAllRuntimes(runtimes, isGlobal, isInteractive) {
   const opencodeResult = results.find(r => r.runtime === 'opencode');
 
   if (results.length === 1) {
-    // Single runtime install
+    // Single runtime install — full banner
     const result = results[0];
     const runtime = result.runtime;
     const shouldInstallStatusline = (runtime === 'claude' || runtime === 'gemini') && !hasUninstall;
-    finishInstall(result.settingsPath, result.settings, result.statuslineCommand, shouldInstallStatusline, runtime, isGlobal);
+    finishInstall(result.settingsPath, result.settings, result.statuslineCommand, shouldInstallStatusline, runtime, isGlobal, false);
   } else {
-    // Multi-runtime install
-    if (claudeResult || geminiResult) {
-      // Use whichever settings exist to check for existing statusline
-      const primaryResult = claudeResult || geminiResult;
-      
-      handleStatusline(primaryResult.settings, isInteractive, (shouldInstallStatusline) => {
-        if (claudeResult) {
-          finishInstall(claudeResult.settingsPath, claudeResult.settings, claudeResult.statuslineCommand, shouldInstallStatusline, 'claude', isGlobal);
-        }
-        if (geminiResult) {
-          finishInstall(geminiResult.settingsPath, geminiResult.settings, geminiResult.statuslineCommand, shouldInstallStatusline, 'gemini', isGlobal);
-        }
-        if (opencodeResult) {
-          finishInstall(opencodeResult.settingsPath, opencodeResult.settings, opencodeResult.statuslineCommand, false, 'opencode', isGlobal);
-        }
-        // Handle other runtimes
-        for (const result of results) {
-          if (result.runtime !== 'claude' && result.runtime !== 'gemini' && result.runtime !== 'opencode') {
-            finishInstall(result.settingsPath, result.settings, result.statuslineCommand, false, result.runtime, isGlobal);
-          }
-        }
-      });
-    } else {
-      // No Claude or Gemini
-      for (const result of results) {
-        finishInstall(result.settingsPath, result.settings, result.statuslineCommand, false, result.runtime, isGlobal);
+    // Multi-runtime install — finalize each runtime silently, then print one summary
+    const finishAll = (shouldInstallStatusline) => {
+      if (claudeResult) {
+        finishInstall(claudeResult.settingsPath, claudeResult.settings, claudeResult.statuslineCommand, shouldInstallStatusline, 'claude', isGlobal, true);
       }
+      if (geminiResult) {
+        finishInstall(geminiResult.settingsPath, geminiResult.settings, geminiResult.statuslineCommand, shouldInstallStatusline, 'gemini', isGlobal, true);
+      }
+      if (opencodeResult) {
+        finishInstall(opencodeResult.settingsPath, opencodeResult.settings, opencodeResult.statuslineCommand, false, 'opencode', isGlobal, true);
+      }
+      for (const result of results) {
+        if (result.runtime !== 'claude' && result.runtime !== 'gemini' && result.runtime !== 'opencode') {
+          finishInstall(result.settingsPath, result.settings, result.statuslineCommand, false, result.runtime, isGlobal, true);
+        }
+      }
+      // Print compact summary
+      printMultiRuntimeSummary(runtimes, isGlobal);
+    };
+
+    if (claudeResult || geminiResult) {
+      const primaryResult = claudeResult || geminiResult;
+      handleStatusline(primaryResult.settings, isInteractive, finishAll);
+    } else {
+      finishAll(false);
     }
   }
 }
@@ -3681,7 +3742,7 @@ if (hasGlobal && hasLocal) {
     console.error(`  ${yellow}--uninstall requires --global or --local${reset}`);
     process.exit(1);
   }
-  const runtimes = selectedRuntimes.length > 0 ? selectedRuntimes : ['claude'];
+  const runtimes = selectedRuntimes.length > 0 ? selectedRuntimes : ALL_RUNTIMES;
   for (const runtime of runtimes) {
     uninstall(hasGlobal, runtime);
   }
@@ -3708,7 +3769,7 @@ if (hasGlobal && hasLocal) {
     installAllRuntimes(selectedRuntimes, hasGlobal, false);
   }
 } else if (hasGlobal || hasLocal) {
-  // Default to Claude if no runtime specified but location is
+  // Default to all runtimes if no runtime specified but location is
   if (!hasAllProviders) {
     const provs = require('./providers.json').providers;
     const classified = classifyProviders(provs);
@@ -3727,11 +3788,11 @@ if (hasGlobal && hasLocal) {
       console.log(`  ${green}✓${reset} Auto-including detected CLIs: ${foundNames.join(', ')}`);
     }
   }
-  installAllRuntimes(['claude'], hasGlobal, false);
+  installAllRuntimes(ALL_RUNTIMES, hasGlobal, false);
 } else {
   // Interactive
   if (!process.stdin.isTTY) {
-    console.log(`  ${yellow}Non-interactive terminal detected, defaulting to Claude Code global install${reset}\n`);
+    console.log(`  ${yellow}Non-interactive terminal detected, defaulting to all runtimes global install${reset}\n`);
     if (!hasAllProviders) {
       const provs = require('./providers.json').providers;
       const classified = classifyProviders(provs);
@@ -3742,7 +3803,7 @@ if (hasGlobal && hasLocal) {
         console.log(`  ${green}✓${reset} Auto-including detected CLIs: ${foundNames.join(', ')}`);
       }
     }
-    installAllRuntimes(['claude'], true, false);
+    installAllRuntimes(ALL_RUNTIMES, true, false);
   } else {
     promptRuntime((runtimes) => {
       if (!hasAllProviders && runtimes.includes('claude')) {
