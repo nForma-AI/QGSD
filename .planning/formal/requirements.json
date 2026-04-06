@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-04-06T11:52:32.757Z",
-  "content_hash": "2df7f9c75c6fc3ba",
+  "aggregated_at": "2026-04-06T19:06:31.714Z",
+  "content_hash": "ee351f7dcfb7942b",
   "requirements": [
     {
       "id": "ACT-01",
@@ -2322,6 +2322,18 @@
       "provenance": {
         "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
         "milestone": "v0.29"
+      }
+    },
+    {
+      "id": "INTG-07",
+      "text": "nf:solve integrates a coderlm HTTP adapter with graph-driven wave scheduling via Tarjan SCC collapsing, falling back to heuristic waves when coderlm is unavailable or disabled",
+      "category": "Integration",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "The coderlm service provides an indexed symbol/call graph that enables precise dependency edges across a codebase. By integrating coderlm into nf:solve's wave scheduler, remediation can be ordered using Tarjan's SCC algorithm to detect and collapse dependency cycles. Backward compatibility is preserved through fail-open design.",
+      "provenance": {
+        "source_file": ".planning/quick/380-integrate-coderlm-adapter-and-graph-driv/380-PLAN.md",
+        "milestone": "quick-380"
       }
     },
     {
@@ -6129,5 +6141,5 @@
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
   "last_sync": "2026-03-31T09:45:23.686Z",
-  "frozen_at": "2026-04-06T11:52:32.757Z"
+  "frozen_at": "2026-04-06T19:06:31.715Z"
 }
