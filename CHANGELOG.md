@@ -6,6 +6,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.41.12] - 2026-04-06 — Skill distribution via installer
+
+### Added
+- `feat(install)`: distribute skills from `agents/skills/` to `~/.claude/skills/` during installation — currently installs `task-intake` skill
+
 ## [0.41.11] - 2026-04-06 — Multi-runtime installer & bug fixes
 
 ### Added

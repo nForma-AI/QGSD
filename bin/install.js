@@ -2375,6 +2375,26 @@ function install(isGlobal, runtime = 'claude') {
     }
   }
 
+  // Copy skills to skills directory (Claude Code / OpenCode only)
+  const skillsSrc = path.join(agentsSrc, 'skills');
+  if (fs.existsSync(skillsSrc)) {
+    const skillsDest = path.join(targetDir, 'skills');
+    let skillCount = 0;
+    for (const entry of fs.readdirSync(skillsSrc, { withFileTypes: true })) {
+      if (!entry.isDirectory()) continue;
+      const skillDir = path.join(skillsSrc, entry.name);
+      const skillFile = path.join(skillDir, 'SKILL.md');
+      if (!fs.existsSync(skillFile)) continue;
+      const destDir = path.join(skillsDest, entry.name);
+      fs.mkdirSync(destDir, { recursive: true });
+      fs.copyFileSync(skillFile, path.join(destDir, 'SKILL.md'));
+      skillCount++;
+    }
+    if (skillCount > 0) {
+      console.log(`  ${green}✓${reset} Installed ${skillCount} skill${skillCount > 1 ? 's' : ''} to skills/`);
+    }
+  }
+
   // Write VERSION file
   const versionDest = path.join(targetDir, 'nf', 'VERSION');
   fs.writeFileSync(versionDest, pkg.version);
