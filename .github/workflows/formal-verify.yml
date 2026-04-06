@@ -24,28 +24,10 @@ on:
       - 'bin/check-trace-redaction.cjs'
       - 'bin/check-trace-schema-drift.cjs'
       - '.planning/formal/trace/**'
+  # Always trigger on PRs — this is a required check for branch protection.
+  # Without this, PRs that don't touch formal files never get the check,
+  # and branch protection blocks the merge.
   pull_request:
-    paths:
-      - 'src/machines/nf-workflow.machine.ts'
-      - '.planning/formal/tla/**'
-      - '.planning/formal/alloy/**'
-      - '.planning/formal/prism/**'
-      - 'bin/run-tlc.cjs'
-      - 'bin/run-alloy.cjs'
-      - 'bin/run-prism.cjs'
-      - 'bin/generate-formal-specs.cjs'
-      - 'bin/check-spec-sync.cjs'
-      - 'bin/verify-quorum-health.cjs'
-      - 'bin/xstate-to-tla.cjs'
-      - 'bin/run-formal-verify.cjs'
-      - 'bin/run-oauth-rotation-prism.cjs'
-      - 'bin/run-account-pool-alloy.cjs'
-      - 'bin/run-account-manager-tlc.cjs'
-      - 'bin/write-check-result.cjs'
-      - 'bin/check-results-exit.cjs'
-      - 'bin/check-trace-redaction.cjs'
-      - 'bin/check-trace-schema-drift.cjs'
-      - '.planning/formal/trace/**'
   workflow_dispatch:  # manual trigger
 
 jobs:
