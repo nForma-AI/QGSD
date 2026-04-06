@@ -179,9 +179,9 @@
       "type": "subprocess",
       "auth_type": "sub",
       "has_file_access": true,
-      "description": "Run OpenCode agent non-interactively (Grok via GitHub Copilot)",
+      "description": "Run OpenCode agent non-interactively (GPT-5-mini via GitHub Copilot)",
       "mainTool": "opencode",
-      "model": "grok-code-fast-1",
+      "model": "gpt-5-mini",
       "health_check_args": [
         "--version"
       ],
@@ -190,7 +190,9 @@
       "args_template": [
         "run",
         "-m",
-        "github-copilot/grok-code-fast-1",
+        "github-copilot/gpt-5-mini",
+        "--variant",
+        "LOW",
         "--print-logs",
         "--log-level",
         "ERROR",
@@ -201,7 +203,9 @@
         "--session",
         "{session_id}",
         "-m",
-        "github-copilot/grok-code-fast-1",
+        "github-copilot/gpt-5-mini",
+        "--variant",
+        "LOW",
         "--print-logs",
         "--log-level",
         "ERROR",
