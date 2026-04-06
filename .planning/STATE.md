@@ -21,6 +21,7 @@ See: .planning/PROJECT.md
 | 380 | Delegate quorum slot coding to external agents via quorum-slot-dispatch.cjs | 2026-04-06 | f56c7d43 | Verified | [380-delegate-quorum-slot-coding-to-external-](./quick/380-delegate-quorum-slot-coding-to-external-/) |
 | 380 | Trim packaged skills to 6, merge into lifecycle | 2026-04-07 | 807f0c5b | Pending | [380-trim-packaged-skills-to-6-merge-removed-](./quick/380-trim-packaged-skills-to-6-merge-removed-/) |
 | 380 | Issue #64: Make --auto the default for milestone workflows — complete default_milestone config feature | 2026-04-07 | c7df57eb | Verified | [380-issue-64-make-auto-the-default-for-miles](./quick/380-issue-64-make-auto-the-default-for-miles/) |
+| 380 | Integrate coderlm adapter and graph-driven computeWaves into nf:solve (issue #58) | 2026-04-06 | 2c08362a | Verified | [380-integrate-coderlm-adapter-and-graph-driv](./quick/380-integrate-coderlm-adapter-and-graph-driv/) |
 | 381 | Add --delegate flag to nf:quick for full task delegation via Mode C dispatch | 2026-04-07 | e77c29eb | Verified | [381-add-delegate-flag-to-nf-quick-for-full-t](./quick/381-add-delegate-flag-to-nf-quick-for-full-t/) |
 | 381 | Create checklist registry JSON + matching script | 2026-04-07 | 0c515031 | Pending | [381-create-checklist-registry-json-with-trig](./quick/381-create-checklist-registry-json-with-trig/) |
 | 382 | Implement Tier 0 policy interface and Tier 1 River bandit layer for routing authority ladder in selectSlot | 2026-04-07 | 1fc88449 | Verified | [382-implement-tier-0-policy-interface-and-ti](./quick/382-implement-tier-0-policy-interface-and-ti/) |
@@ -39,6 +40,7 @@ See: .planning/PROJECT.md
 - 2026-04-06 - Completed quick task 380: Delegate quorum slot coding to external agents via quorum-slot-dispatch.cjs
 - 2026-04-07: Completed quick task 380: Trim packaged skills to 6
 - 2026-04-07: Completed quick task 380 - Issue #64: Make --auto the default for milestone workflows
+- 2026-04-06: Completed quick task 380: Integrate coderlm adapter and graph-driven computeWaves into nf:solve (issue #58)
 - 2026-04-07 - Completed quick task 381: Add --delegate flag to nf:quick for full task delegation via Mode C dispatch
 - 2026-04-07: Completed quick task 381: Create checklist registry JSON + matching script
 - 2026-04-07 - Completed quick task 382: Implement Tier 0 policy interface and Tier 1 River bandit layer for routing authority ladder in selectSlot
