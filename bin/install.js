@@ -57,6 +57,15 @@ const hasLocal = args.includes('--local') || args.includes('-l');
 const hasOpencode = args.includes('--opencode');
 const hasClaude = args.includes('--claude');
 const hasGemini = args.includes('--gemini');
+const hasKilo = args.includes('--kilo');
+const hasCursor = args.includes('--cursor');
+const hasWindsurf = args.includes('--windsurf');
+const hasCodex = args.includes('--codex');
+const hasCopilot = args.includes('--copilot');
+const hasAntigravity = args.includes('--antigravity');
+const hasAugment = args.includes('--augment');
+const hasTrae = args.includes('--trae');
+const hasCline = args.includes('--cline');
 const hasBoth = args.includes('--both'); // Legacy flag, keeps working
 const hasAll = args.includes('--all');
 const hasUninstall = args.includes('--uninstall') || args.includes('-u');
@@ -75,20 +84,40 @@ let selectedProviderSlots = null;
 // Runtime selection - can be set by flags or interactive prompt
 let selectedRuntimes = [];
 if (hasAll) {
-  selectedRuntimes = ['claude', 'opencode', 'gemini'];
+  selectedRuntimes = ['claude', 'opencode', 'gemini', 'kilo', 'cursor', 'windsurf', 'codex', 'copilot', 'antigravity', 'augment', 'trae', 'cline'];
 } else if (hasBoth) {
   selectedRuntimes = ['claude', 'opencode'];
 } else {
   if (hasOpencode) selectedRuntimes.push('opencode');
   if (hasClaude) selectedRuntimes.push('claude');
   if (hasGemini) selectedRuntimes.push('gemini');
+  if (hasKilo) selectedRuntimes.push('kilo');
+  if (hasCursor) selectedRuntimes.push('cursor');
+  if (hasWindsurf) selectedRuntimes.push('windsurf');
+  if (hasCodex) selectedRuntimes.push('codex');
+  if (hasCopilot) selectedRuntimes.push('copilot');
+  if (hasAntigravity) selectedRuntimes.push('antigravity');
+  if (hasAugment) selectedRuntimes.push('augment');
+  if (hasTrae) selectedRuntimes.push('trae');
+  if (hasCline) selectedRuntimes.push('cline');
 }
 
 // Helper to get directory name for a runtime (used for local/project installs)
 function getDirName(runtime) {
   if (runtime === 'opencode') return '.opencode';
+  if (runtime === 'claude') return '.claude';
   if (runtime === 'gemini') return '.gemini';
-  return '.claude';
+  if (runtime === 'kilo') return '.kilo';
+  if (runtime === 'cursor') return '.cursor';
+  if (runtime === 'windsurf') return '.windsurf';
+  if (runtime === 'codex') return '.codex';
+  if (runtime === 'copilot') return '.copilot';
+  if (runtime === 'antigravity') return '.antigravity';
+  if (runtime === 'augment') return '.augment';
+  if (runtime === 'trae') return '.trae';
+  if (runtime === 'cline') return '.cline';
+  // Defensive fallback: return runtime prefixed with a dot if unknown
+  return `.${runtime}`;
 }
 
 /**
@@ -109,6 +138,16 @@ function getConfigDirFromHome(runtime, isGlobal) {
     return "'.config', 'opencode'";
   }
   if (runtime === 'gemini') return "'.gemini'";
+  if (runtime === 'kilo') return "'.config', 'kilo'";
+  if (runtime === 'cursor') return "'.cursor'";
+  if (runtime === 'windsurf') return "'.windsurf'";
+  if (runtime === 'codex') return "'.codex'";
+  if (runtime === 'copilot') return "'.copilot'";
+  if (runtime === 'antigravity') return "'.antigravity'";
+  if (runtime === 'augment') return "'.augment'";
+  if (runtime === 'trae') return "'.trae'";
+  if (runtime === 'cline') return "'.cline'";
+  // Default: claude runtime (and any unknown runtime)
   return "'.claude'";
 }
 
@@ -139,7 +178,7 @@ function getOpencodeGlobalDir() {
 
 /**
  * Get the global config directory for a runtime
- * @param {string} runtime - 'claude', 'opencode', or 'gemini'
+ * @param {string} runtime - 'claude', 'opencode', 'gemini', 'kilo', 'cursor', 'windsurf'
  * @param {string|null} explicitDir - Explicit directory from --config-dir flag
  */
 function getGlobalDir(runtime, explicitDir = null) {
@@ -160,6 +199,105 @@ function getGlobalDir(runtime, explicitDir = null) {
       return expandTilde(process.env.GEMINI_CONFIG_DIR);
     }
     return path.join(os.homedir(), '.gemini');
+  }
+
+  if (runtime === 'kilo') {
+    // Kilo: --config-dir > KILO_CONFIG_DIR > ~/.config/kilo (XDG style)
+    if (explicitDir) {
+      return expandTilde(explicitDir);
+    }
+    if (process.env.KILO_CONFIG_DIR) {
+      return expandTilde(process.env.KILO_CONFIG_DIR);
+    }
+    return path.join(os.homedir(), '.config', 'kilo');
+  }
+
+  if (runtime === 'cursor') {
+    // Cursor: --config-dir > CURSOR_CONFIG_DIR > ~/.cursor
+    if (explicitDir) {
+      return expandTilde(explicitDir);
+    }
+    if (process.env.CURSOR_CONFIG_DIR) {
+      return expandTilde(process.env.CURSOR_CONFIG_DIR);
+    }
+    return path.join(os.homedir(), '.cursor');
+  }
+
+  if (runtime === 'windsurf') {
+    // Windsurf: --config-dir > WINDSURF_CONFIG_DIR > ~/.windsurf
+    if (explicitDir) {
+      return expandTilde(explicitDir);
+    }
+    if (process.env.WINDSURF_CONFIG_DIR) {
+      return expandTilde(process.env.WINDSURF_CONFIG_DIR);
+    }
+    return path.join(os.homedir(), '.windsurf');
+  }
+  
+  if (runtime === 'codex') {
+    // Codex: --config-dir > CODEX_CONFIG_DIR > ~/.codex
+    if (explicitDir) {
+      return expandTilde(explicitDir);
+    }
+    if (process.env.CODEX_CONFIG_DIR) {
+      return expandTilde(process.env.CODEX_CONFIG_DIR);
+    }
+    return path.join(os.homedir(), '.codex');
+  }
+
+  if (runtime === 'copilot') {
+    // Copilot: --config-dir > COPILOT_CONFIG_DIR > ~/.copilot
+    if (explicitDir) {
+      return expandTilde(explicitDir);
+    }
+    if (process.env.COPILOT_CONFIG_DIR) {
+      return expandTilde(process.env.COPILOT_CONFIG_DIR);
+    }
+    return path.join(os.homedir(), '.copilot');
+  }
+
+  if (runtime === 'antigravity') {
+    // Antigravity: --config-dir > ANTIGRAVITY_CONFIG_DIR > ~/.antigravity
+    if (explicitDir) {
+      return expandTilde(explicitDir);
+    }
+    if (process.env.ANTIGRAVITY_CONFIG_DIR) {
+      return expandTilde(process.env.ANTIGRAVITY_CONFIG_DIR);
+    }
+    return path.join(os.homedir(), '.antigravity');
+  }
+
+  if (runtime === 'augment') {
+    // Augment: --config-dir > AUGMENT_CONFIG_DIR > ~/.augment
+    if (explicitDir) {
+      return expandTilde(explicitDir);
+    }
+    if (process.env.AUGMENT_CONFIG_DIR) {
+      return expandTilde(process.env.AUGMENT_CONFIG_DIR);
+    }
+    return path.join(os.homedir(), '.augment');
+  }
+
+  if (runtime === 'trae') {
+    // Trae: --config-dir > TRAE_CONFIG_DIR > ~/.trae
+    if (explicitDir) {
+      return expandTilde(explicitDir);
+    }
+    if (process.env.TRAE_CONFIG_DIR) {
+      return expandTilde(process.env.TRAE_CONFIG_DIR);
+    }
+    return path.join(os.homedir(), '.trae');
+  }
+
+  if (runtime === 'cline') {
+    // Cline: --config-dir > CLINE_CONFIG_DIR > ~/.cline
+    if (explicitDir) {
+      return expandTilde(explicitDir);
+    }
+    if (process.env.CLINE_CONFIG_DIR) {
+      return expandTilde(process.env.CLINE_CONFIG_DIR);
+    }
+    return path.join(os.homedir(), '.cline');
   }
   
   // Claude Code: --config-dir > CLAUDE_CONFIG_DIR > ~/.claude
@@ -194,6 +332,12 @@ const NF_KEYWORD_MAP = {
   gemini:   { keywords: ['gemini'],   defaultPrefix: 'mcp__gemini-cli-1__' },
   opencode: { keywords: ['opencode'], defaultPrefix: 'mcp__opencode-1__'   },
   copilot:  { keywords: ['copilot'],  defaultPrefix: 'mcp__copilot-1__'    },
+  cursor:   { keywords: ['cursor'],   defaultPrefix: 'mcp__cursor-1__'     },
+  windsurf: { keywords: ['windsurf', 'codeium'], defaultPrefix: 'mcp__windsurf-1__' },
+  antigravity: { keywords: ['antigravity'], defaultPrefix: 'mcp__antigravity-1__' },
+  augment:  { keywords: ['augment'],  defaultPrefix: 'mcp__augment-1__'  },
+  trae:     { keywords: ['trae'],     defaultPrefix: 'mcp__trae-1__'      },
+  cline:    { keywords: ['cline'],    defaultPrefix: 'mcp__cline-1__'     },
 };
 
 // Reads ~/.claude.json to find MCP server names, keyword-matches to identify quorum candidates,
@@ -252,29 +396,33 @@ function buildActiveSlots() {
 }
 
 /**
- * Classify providers into tiers: ccr (Claude Code Router), externalPrimary, dualSubscription.
+ * Classify providers into tiers: ccr (Claude Code Router), api (direct HTTP),
+ * externalPrimary (subprocess), dualSubscription (optional subprocess duplicates).
  * @param {Array} providers - providers array from providers.json
- * @returns {{ ccr: Array, externalPrimary: Array, dualSubscription: Array }}
+ * @returns {{ ccr: Array, api: Array, externalPrimary: Array, dualSubscription: Array }}
  */
 function classifyProviders(providers) {
   const ccr = [];
+  const api = [];
   const externalPrimary = [];
   const dualSubscription = [];
 
   for (const p of providers) {
     const cliBase = path.basename(p.cli || '');
-    if (cliBase === 'ccr') {
-      ccr.push({ ...p });
-    } else if (p.name.endsWith('-2')) {
+    if (p.type === 'ccr') {
+      ccr.push({ ...p, bareCli: cliBase || p.mainTool });
+    } else if (p.type === 'http') {
+      api.push({ ...p });
+    } else if (p.dual_subscription === true) {
       const bareCli = cliBase || p.mainTool;
-      dualSubscription.push({ ...p, parent: p.name.replace(/-2$/, '-1'), bareCli });
+      dualSubscription.push({ ...p, parent: p.parent_slot || p.name.replace(/-2$/, '-1'), bareCli });
     } else {
       const bareCli = cliBase || p.mainTool;
       externalPrimary.push({ ...p, bareCli });
     }
   }
 
-  return { ccr, externalPrimary, dualSubscription };
+  return { ccr, api, externalPrimary, dualSubscription };
 }
 
 /**
@@ -359,6 +507,9 @@ function ensureMcpSlotsFromProviders() {
     let addedCount = 0;
     for (const provider of providers) {
       const providerName = provider.name;
+      if (provider.active === false) {
+        continue; // Skip inactive providers (e.g., api-* HTTP slots removed from MCP config)
+      }
       if (selectedProviderSlots && !selectedProviderSlots.includes(providerName)) {
         continue;
       }
@@ -449,7 +600,7 @@ function warnMissingMcpServers() {
   }
 }
 
-// INST-01: Detects whether any claude-mcp-server quorum agents are configured.
+// INST-01: Detects whether any API/Claude/CCR quorum agents are configured.
 // Used in finishInstall() to nudge new users to run /nf:mcp-setup.
 // Fail-open: returns false on read errors (never blocks install).
 function hasClaudeMcpAgents() {
@@ -459,8 +610,8 @@ function hasClaudeMcpAgents() {
     const d = JSON.parse(fs.readFileSync(claudeJsonPath, 'utf8'));
     const mcpServers = d.mcpServers || {};
     return Object.entries(mcpServers).some(([name, cfg]) => {
-      // Match slot pattern: claude-1 through claude-N
-      if (/^claude-\d+$/.test(name)) return true;
+      // Match direct API slots, real Claude MCP slots, and CCR slots
+      if (/^(api|claude|ccr)-\d+$/.test(name)) return true;
       // Fallback: detect claude-mcp-server in args path (handles new installs before migration)
       if ((cfg.args || []).some(a => String(a).includes('claude-mcp-server'))) return true;
       return false;
@@ -502,7 +653,7 @@ console.log(banner);
 
 // Show help if requested
 if (hasHelp) {
-  console.log(`  ${yellow}Usage:${reset} npx get-shit-done-cc [options]\n\n  ${yellow}Options:${reset}\n    ${cyan}-g, --global${reset}              Install globally (to config directory)\n    ${cyan}-l, --local${reset}               Install locally (to current directory)\n    ${cyan}--claude${reset}                  Install for Claude Code only\n    ${cyan}--opencode${reset}                Install for OpenCode only\n    ${cyan}--gemini${reset}                  Install for Gemini only\n    ${cyan}--all${reset}                     Install for all runtimes\n    ${cyan}-u, --uninstall${reset}           Uninstall GSD (remove all GSD files)\n    ${cyan}-c, --config-dir <path>${reset}   Specify custom config directory\n    ${cyan}-h, --help${reset}                Show this help message\n    ${cyan}--force-statusline${reset}        Replace existing statusline config\n    ${cyan}--formal${reset}                  Install formal verification tools (TLA+, Alloy, PRISM)\n    ${cyan}--uninstall-formal${reset}        Remove formal verification tools\n\n  ${yellow}Examples:${reset}\n    ${dim}# Interactive install (prompts for runtime and location)${reset}\n    npx get-shit-done-cc\n\n    ${dim}# Install for Claude Code globally${reset}\n    npx get-shit-done-cc --claude --global\n\n    ${dim}# Install for Gemini globally${reset}\n    npx get-shit-done-cc --gemini --global\n\n    ${dim}# Install for all runtimes globally${reset}\n    npx get-shit-done-cc --all --global\n\n    ${dim}# Install to custom config directory${reset}\n    npx get-shit-done-cc --claude --global --config-dir ~/.claude-bc\n\n    ${dim}# Install to current project only${reset}\n    npx get-shit-done-cc --claude --local\n\n    ${dim}# Uninstall GSD from Claude Code globally${reset}\n    npx get-shit-done-cc --claude --global --uninstall\n\n  ${yellow}Notes:${reset}\n    The --config-dir option is useful when you have multiple configurations.\n    It takes priority over CLAUDE_CONFIG_DIR / GEMINI_CONFIG_DIR environment variables.\n`);
+  console.log(`  ${yellow}Usage:${reset} npx get-shit-done-cc [options]\n\n  ${yellow}Options:${reset}\n    ${cyan}-g, --global${reset}              Install globally (to config directory)\n    ${cyan}-l, --local${reset}               Install locally (to current directory)\n    ${cyan}--claude${reset}                  Install for Claude Code only\n    ${cyan}--opencode${reset}                Install for OpenCode only\n    ${cyan}--gemini${reset}                  Install for Gemini CLI only\n    ${cyan}--kilo${reset}                    Install for Kilo only\n    ${cyan}--cursor${reset}                  Install for Cursor only\n    ${cyan}--windsurf${reset}                Install for Windsurf only\n    ${cyan}--codex${reset}                   Install for Codex only\n    ${cyan}--copilot${reset}                 Install for GitHub Copilot only\n    ${cyan}--antigravity${reset}             Install for Antigravity only\n    ${cyan}--augment${reset}                 Install for Augment only\n    ${cyan}--trae${reset}                    Install for Trae only\n    ${cyan}--cline${reset}                   Install for Cline only\n    ${cyan}--all${reset}                     Install for all runtimes\n    ${cyan}-u, --uninstall${reset}           Uninstall GSD (remove all GSD files)\n    ${cyan}-c, --config-dir <path>${reset}   Specify custom config directory\n    ${cyan}-h, --help${reset}                Show this help message\n    ${cyan}--force-statusline${reset}        Replace existing statusline config\n    ${cyan}--formal${reset}                  Install formal verification tools (TLA+, Alloy, PRISM)\n    ${cyan}--uninstall-formal${reset}        Remove formal verification tools\n\n  ${yellow}Examples:${reset}\n    ${dim}# Interactive install (prompts for runtime and location)${reset}\n    npx get-shit-done-cc\n\n    ${dim}# Install for Claude Code globally${reset}\n    npx get-shit-done-cc --claude --global\n\n    ${dim}# Install for Gemini globally${reset}\n    npx get-shit-done-cc --gemini --global\n\n    ${dim}# Install for Kilo globally${reset}\n    npx get-shit-done-cc --kilo --global\n\n    ${dim}# Install for Cursor globally${reset}\n    npx get-shit-done-cc --cursor --global\n\n    ${dim}# Install for Windsurf globally${reset}\n    npx get-shit-done-cc --windsurf --global\n\n    ${dim}# Install for Codex globally${reset}\n    npx get-shit-done-cc --codex --global\n\n    ${dim}# Install for GitHub Copilot globally${reset}\n    npx get-shit-done-cc --copilot --global\n\n    ${dim}# Install for Antigravity globally${reset}\n    npx get-shit-done-cc --antigravity --global\n\n    ${dim}# Install for Augment globally${reset}\n    npx get-shit-done-cc --augment --global\n\n    ${dim}# Install for Trae globally${reset}\n    npx get-shit-done-cc --trae --global\n\n    ${dim}# Install for Cline globally${reset}\n    npx get-shit-done-cc --cline --global\n\n    ${dim}# Install for all runtimes globally${reset}\n    npx get-shit-done-cc --all --global\n\n    ${dim}# Install locally to current project${reset}\n    npx get-shit-done-cc --local\n\n    ${dim}# Uninstall from global location${reset}\n    npx get-shit-done-cc --uninstall --global`);
   process.exit(0);
 }
 
@@ -684,7 +835,7 @@ const claudeToGeminiTools = {
   Edit: 'replace',
   Bash: 'run_shell_command',
   Glob: 'glob',
-  Grep: 'search_file_content',
+  Grep: 'grep_search',
   WebSearch: 'google_web_search',
   WebFetch: 'web_fetch',
   TodoWrite: 'write_todos',
@@ -752,13 +903,22 @@ function stripSubTags(content) {
  * - mcp__* tools: must be excluded (auto-discovered at runtime)
  */
 function convertClaudeToGeminiAgent(content) {
-  if (!content.startsWith('---')) return content;
+  // Skip leading HTML comments (e.g., <!-- DEPRECATED ... -->)
+  // Gemini CLI requires the file to start with --- for YAML frontmatter
+  let processedContent = content;
+  while (processedContent.trimStart().startsWith('<!--')) {
+    const commentEnd = processedContent.indexOf('-->');
+    if (commentEnd === -1) break;
+    processedContent = processedContent.substring(commentEnd + 3).trimStart();
+  }
 
-  const endIndex = content.indexOf('---', 3);
-  if (endIndex === -1) return content;
+  if (!processedContent.startsWith('---')) return processedContent;
 
-  const frontmatter = content.substring(3, endIndex).trim();
-  const body = content.substring(endIndex + 3);
+  const endIndex = processedContent.indexOf('---', 3);
+  if (endIndex === -1) return processedContent;
+
+  const frontmatter = processedContent.substring(3, endIndex).trim();
+  const body = processedContent.substring(endIndex + 3);
 
   const lines = frontmatter.split('\n');
   const newLines = [];
@@ -790,8 +950,9 @@ function convertClaudeToGeminiAgent(content) {
       continue;
     }
 
-    // Strip color field (not supported by Gemini CLI, causes validation error)
+    // Strip fields not supported by Gemini CLI (causes validation error)
     if (trimmed.startsWith('color:')) continue;
+    if (trimmed.startsWith('isolation:')) continue;
 
     // Collect allowed-tools/tools array items
     if (inAllowedTools) {
@@ -1207,6 +1368,15 @@ function uninstall(isGlobal, runtime = 'claude') {
   let runtimeLabel = 'Claude Code';
   if (runtime === 'opencode') runtimeLabel = 'OpenCode';
   if (runtime === 'gemini') runtimeLabel = 'Gemini';
+  if (runtime === 'kilo') runtimeLabel = 'Kilo';
+  if (runtime === 'cursor') runtimeLabel = 'Cursor';
+  if (runtime === 'windsurf') runtimeLabel = 'Windsurf';
+  if (runtime === 'codex') runtimeLabel = 'Codex';
+  if (runtime === 'copilot') runtimeLabel = 'GitHub Copilot';
+  if (runtime === 'antigravity') runtimeLabel = 'Antigravity';
+  if (runtime === 'augment') runtimeLabel = 'Augment';
+  if (runtime === 'trae') runtimeLabel = 'Trae';
+  if (runtime === 'cline') runtimeLabel = 'Cline';
 
   console.log(`  Uninstalling GSD from ${cyan}${runtimeLabel}${reset} at ${cyan}${locationLabel}${reset}\n`);
 
@@ -1837,6 +2007,95 @@ function validateHookPaths(hooksDest, targetDir) {
 }
 
 /**
+ * Deep structural validation of the installation.
+ * Checks counts, dependency integrity, and runtime transformations.
+ * @param {string} targetDir - Root of the installation target (e.g. ~/.claude)
+ * @param {string} runtime - 'claude', 'opencode', or 'gemini'
+ * @returns {string[]} List of error messages (empty if pass)
+ */
+function validateStructuralIntegrity(targetDir, runtime) {
+  const errors = [];
+  const isOpencode = runtime === 'opencode';
+  const isGemini = runtime === 'gemini';
+
+  // Helper: Recursive file count
+  const countFiles = (dir, filter) => {
+    if (!fs.existsSync(dir)) return 0;
+    let count = 0;
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        count += countFiles(fullPath, filter);
+      } else if (filter(entry.name)) {
+        count++;
+      }
+    }
+    return count;
+  };
+
+  // 1. Verify Commands (Expected: 60)
+  const EXPECTED_COMMANDS = 60;
+  let commandCount = 0;
+  if (isOpencode) {
+    commandCount = countFiles(path.join(targetDir, 'command'), f => f.startsWith('nf-') && f.endsWith('.md'));
+  } else {
+    const ext = isGemini ? '.toml' : '.md';
+    commandCount = countFiles(path.join(targetDir, 'commands', 'nf'), f => f.endsWith(ext));
+  }
+
+  if (commandCount < EXPECTED_COMMANDS) {
+    errors.push(`Command count mismatch: expected at least ${EXPECTED_COMMANDS}, found ${commandCount}`);
+  }
+
+  // 2. Verify Agents (Expected: 17 for Claude/OpenCode, ~13 for Gemini)
+  const EXPECTED_AGENTS = isGemini ? 13 : 17;
+  const agentCount = countFiles(path.join(targetDir, 'agents'), f => f.startsWith('nf-') && f.endsWith('.md'));
+  if (agentCount < EXPECTED_AGENTS) {
+    errors.push(`Agent count mismatch: expected at least ${EXPECTED_AGENTS}, found ${agentCount}`);
+  }
+
+  // 3. Verify Hooks (Skip for OpenCode as it doesn't use active hooks)
+  if (!isOpencode) {
+    const hooksDir = path.join(targetDir, 'hooks');
+    if (!fs.existsSync(hooksDir)) {
+      errors.push('Hooks directory missing');
+    } else {
+      const hookFiles = fs.readdirSync(hooksDir).filter(f => f.endsWith('.js') && !f.endsWith('.test.js') && !f.endsWith('.test.cjs'));
+      
+      // Every hook must resolve its local requires
+      for (const hookFile of hookFiles) {
+        const content = fs.readFileSync(path.join(hooksDir, hookFile), 'utf8');
+        const requireMatches = content.matchAll(/require\(['"]\.\/([^'"]+)['"]\)/g);
+        for (const match of requireMatches) {
+          let dep = match[1];
+          if (!path.extname(dep)) dep += '.js';
+          if (!fs.existsSync(path.join(hooksDir, dep))) {
+            errors.push(`Hook dependency missing: ${hookFile} requires ${dep}`);
+          }
+        }
+      }
+    }
+  }
+
+  // 4. Runtime Transformation Check
+  if (isOpencode) {
+    const cmdDir = path.join(targetDir, 'command');
+    if (fs.existsSync(cmdDir)) {
+      const cmdFiles = fs.readdirSync(cmdDir).filter(f => f.startsWith('nf-') && f.endsWith('.md'));
+      for (const cmdFile of cmdFiles) {
+        const content = fs.readFileSync(path.join(cmdDir, cmdFile), 'utf8');
+        if (content.includes('/nf:')) {
+          errors.push(`OpenCode transformation failed: found /nf: reference in ${cmdFile}`);
+        }
+      }
+    }
+  }
+
+  return errors;
+}
+
+/**
  * Install to the specified directory for a specific runtime
  * @param {boolean} isGlobal - Whether to install globally or locally
  * @param {string} runtime - Target runtime ('claude', 'opencode', 'gemini')
@@ -2002,6 +2261,15 @@ function install(isGlobal, runtime = 'claude') {
   let runtimeLabel = 'Claude Code';
   if (isOpencode) runtimeLabel = 'OpenCode';
   if (isGemini) runtimeLabel = 'Gemini';
+  if (runtime === 'kilo') runtimeLabel = 'Kilo';
+  if (runtime === 'cursor') runtimeLabel = 'Cursor';
+  if (runtime === 'windsurf') runtimeLabel = 'Windsurf';
+  if (runtime === 'codex') runtimeLabel = 'Codex';
+  if (runtime === 'copilot') runtimeLabel = 'GitHub Copilot';
+  if (runtime === 'antigravity') runtimeLabel = 'Antigravity';
+  if (runtime === 'augment') runtimeLabel = 'Augment';
+  if (runtime === 'trae') runtimeLabel = 'Trae';
+  if (runtime === 'cline') runtimeLabel = 'Cline';
 
   console.log(`  Installing for ${cyan}${runtimeLabel}${reset} to ${cyan}${locationLabel}${reset}\n`);
 
@@ -2269,6 +2537,18 @@ function install(isGlobal, runtime = 'claude') {
   const hooksDestValidation = path.join(targetDir, 'hooks');
   if (fs.existsSync(hooksDestValidation)) {
     validateHookPaths(hooksDestValidation, targetDir);
+  }
+
+  // Deep structural validation
+  const structuralErrors = validateStructuralIntegrity(targetDir, runtime);
+  if (structuralErrors.length > 0) {
+    console.log(`\n  ${yellow}Structural validation failed:${reset}`);
+    for (const err of structuralErrors) {
+      console.log(`    ${yellow}✗${reset} ${err}`);
+    }
+    failures.push('Structural Integrity');
+  } else {
+    console.log(`  ${green}✓${reset} Structural validation passed`);
   }
 
   if (failures.length > 0) {
@@ -2576,6 +2856,20 @@ function install(isGlobal, runtime = 'claude') {
     // This ensures codex-2, gemini-2, and all other provider slots have MCP entries before quorum_active discovery.
     ensureMcpSlotsFromProviders();
 
+    // Sync CCR presets from providers.json (keeps ~/.claude-code-router/presets/ in sync)
+    try {
+      // binDir should point to the source bin/ directory. If it's not defined,
+      // derive it relative to the repo root (src variable above points to repo root).
+      const binDirResolved = (typeof binDir !== 'undefined') ? binDir : path.join(src, 'bin');
+      const syncScript = path.join(binDirResolved, 'sync-ccr-presets.cjs');
+      if (fs.existsSync(syncScript)) {
+        const { execFileSync } = require('child_process');
+        execFileSync(process.execPath, [syncScript], { stdio: 'inherit' });
+      }
+    } catch (e) {
+      console.warn(`  ${yellow}⚠${reset} CCR preset sync skipped: ${e.message}`);
+    }
+
     // Write nForma config — skip if exists unless --redetect-mcps flag set
     const nfConfigPath = path.join(targetDir, 'nf.json');
 
@@ -2719,6 +3013,15 @@ function finishInstall(settingsPath, settings, statuslineCommand, shouldInstallS
   let program = 'Claude Code';
   if (runtime === 'opencode') program = 'OpenCode';
   if (runtime === 'gemini') program = 'Gemini';
+  if (runtime === 'kilo') program = 'Kilo';
+  if (runtime === 'cursor') program = 'Cursor';
+  if (runtime === 'windsurf') program = 'Windsurf';
+  if (runtime === 'codex') program = 'Codex';
+  if (runtime === 'copilot') program = 'GitHub Copilot';
+  if (runtime === 'antigravity') program = 'Antigravity';
+  if (runtime === 'augment') program = 'Augment';
+  if (runtime === 'trae') program = 'Trae';
+  if (runtime === 'cline') program = 'Cline';
 
   const command = isOpencode ? '/nf-help' : '/nf:help';
 
@@ -2947,15 +3250,42 @@ function promptRuntime(callback) {
   console.log(`  ${yellow}Which runtime(s) would you like to install for?${reset}\n\n  ${cyan}1${reset}) Claude Code ${dim}(~/.claude)${reset}
   ${cyan}2${reset}) OpenCode    ${dim}(~/.config/opencode)${reset} - open source, free models
   ${cyan}3${reset}) Gemini      ${dim}(~/.gemini)${reset}
-  ${cyan}4${reset}) All
-`);
+  ${cyan}4${reset}) Kilo        ${dim}(~/.config/kilo)${reset}
+  ${cyan}5${reset}) Cursor      ${dim}(~/.cursor)${reset}
+  ${cyan}6${reset}) Windsurf    ${dim}(~/.windsurf)${reset}
+  ${cyan}7${reset}) Codex       ${dim}(~/.codex)${reset}
+  ${cyan}8${reset}) Copilot     ${dim}(~/.copilot)${reset}
+  ${cyan}9${reset}) Antigravity ${dim}(~/.antigravity)${reset}
+  ${cyan}10${reset}) Augment     ${dim}(~/.augment)${reset}
+  ${cyan}11${reset}) Trae        ${dim}(~/.trae)${reset}
+  ${cyan}12${reset}) Cline       ${dim}(~/.cline)${reset}
+  ${cyan}13${reset}) All
+  `);
 
   rl.question(`  Choice ${dim}[1]${reset}: `, (answer) => {
     answered = true;
     rl.close();
     const choice = answer.trim() || '1';
-    if (choice === '4') {
-      callback(['claude', 'opencode', 'gemini']);
+    if (choice === '13') {
+      callback(['claude', 'opencode', 'gemini', 'kilo', 'cursor', 'windsurf', 'codex', 'copilot', 'antigravity', 'augment', 'trae', 'cline']);
+    } else if (choice === '12') {
+      callback(['cline']);
+    } else if (choice === '11') {
+      callback(['trae']);
+    } else if (choice === '10') {
+      callback(['augment']);
+    } else if (choice === '9') {
+      callback(['antigravity']);
+    } else if (choice === '8') {
+      callback(['copilot']);
+    } else if (choice === '7') {
+      callback(['codex']);
+    } else if (choice === '6') {
+      callback(['windsurf']);
+    } else if (choice === '5') {
+      callback(['cursor']);
+    } else if (choice === '4') {
+      callback(['kilo']);
     } else if (choice === '3') {
       callback(['gemini']);
     } else if (choice === '2') {
@@ -2979,7 +3309,7 @@ function promptProviders(callback) {
   const selected = [];
 
   console.log(`\n  ${yellow}Quorum agent setup:${reset}`);
-  console.log(`  Run /nf:mcp-setup after install to configure Claude slots (claude-1..6).\n`);
+  console.log(`  Run /nf:mcp-setup after install to configure quorum slots (api-*, claude-*, ccr-*).\n`);
 
   // Print detection results
   for (const d of detected) {
@@ -2989,6 +3319,14 @@ function promptProviders(callback) {
       const hint = CLI_INSTALL_HINTS[d.bareCli] || '';
       console.log(`  ${yellow}\u2717${reset} ${d.name} \u2014 not found${hint ? ` (${hint})` : ''}`);
     }
+  }
+  if (classified.ccr.length > 0) {
+    console.log('');
+    console.log(`  ${cyan}CCR slots:${reset}`);
+    for (const ccrSlot of classified.ccr) {
+      console.log(`  ${cyan}\u00BB${reset} ${ccrSlot.name} \u2014 CCR preset (${ccrSlot.model || 'unknown model'})`);
+    }
+    console.log(`  Install/enable ccr (${CLI_INSTALL_HINTS.ccr || 'npm i -g @musistudio/claude-code-router'}) before running these slots.\n`);
   }
   console.log('');
 
@@ -3151,31 +3489,43 @@ function installAllRuntimes(runtimes, isGlobal, isInteractive) {
   // Handle statusline for Claude & Gemini (OpenCode uses themes)
   const claudeResult = results.find(r => r.runtime === 'claude');
   const geminiResult = results.find(r => r.runtime === 'gemini');
+  const opencodeResult = results.find(r => r.runtime === 'opencode');
 
-  // Logic: if both are present, ask once if interactive? Or ask for each?
-  // Simpler: Ask once and apply to both if applicable.
-  
-  if (claudeResult || geminiResult) {
-    // Use whichever settings exist to check for existing statusline
-    const primaryResult = claudeResult || geminiResult;
-    
-    handleStatusline(primaryResult.settings, isInteractive, (shouldInstallStatusline) => {
-      if (claudeResult) {
-        finishInstall(claudeResult.settingsPath, claudeResult.settings, claudeResult.statuslineCommand, shouldInstallStatusline, 'claude', isGlobal);
-      }
-      if (geminiResult) {
-         finishInstall(geminiResult.settingsPath, geminiResult.settings, geminiResult.statuslineCommand, shouldInstallStatusline, 'gemini', isGlobal);
-      }
-
-      const opencodeResult = results.find(r => r.runtime === 'opencode');
-      if (opencodeResult) {
-        finishInstall(opencodeResult.settingsPath, opencodeResult.settings, opencodeResult.statuslineCommand, false, 'opencode', isGlobal);
-      }
-    });
+  if (results.length === 1) {
+    // Single runtime install
+    const result = results[0];
+    const runtime = result.runtime;
+    const shouldInstallStatusline = (runtime === 'claude' || runtime === 'gemini') && !hasUninstall;
+    finishInstall(result.settingsPath, result.settings, result.statuslineCommand, shouldInstallStatusline, runtime, isGlobal);
   } else {
-    // Only OpenCode
-    const opencodeResult = results[0];
-    finishInstall(opencodeResult.settingsPath, opencodeResult.settings, opencodeResult.statuslineCommand, false, 'opencode', isGlobal);
+    // Multi-runtime install
+    if (claudeResult || geminiResult) {
+      // Use whichever settings exist to check for existing statusline
+      const primaryResult = claudeResult || geminiResult;
+      
+      handleStatusline(primaryResult.settings, isInteractive, (shouldInstallStatusline) => {
+        if (claudeResult) {
+          finishInstall(claudeResult.settingsPath, claudeResult.settings, claudeResult.statuslineCommand, shouldInstallStatusline, 'claude', isGlobal);
+        }
+        if (geminiResult) {
+          finishInstall(geminiResult.settingsPath, geminiResult.settings, geminiResult.statuslineCommand, shouldInstallStatusline, 'gemini', isGlobal);
+        }
+        if (opencodeResult) {
+          finishInstall(opencodeResult.settingsPath, opencodeResult.settings, opencodeResult.statuslineCommand, false, 'opencode', isGlobal);
+        }
+        // Handle other runtimes
+        for (const result of results) {
+          if (result.runtime !== 'claude' && result.runtime !== 'gemini' && result.runtime !== 'opencode') {
+            finishInstall(result.settingsPath, result.settings, result.statuslineCommand, false, result.runtime, isGlobal);
+          }
+        }
+      });
+    } else {
+      // No Claude or Gemini
+      for (const result of results) {
+        finishInstall(result.settingsPath, result.settings, result.statuslineCommand, false, result.runtime, isGlobal);
+      }
+    }
   }
 }
 
@@ -3347,7 +3697,7 @@ if (hasGlobal && hasLocal) {
       const ccrStatus = detectCcrCli();
       if (!ccrStatus.found) {
         const hint = CLI_INSTALL_HINTS['ccr'] || '';
-        console.log(`  ${yellow}⚠${reset} ccr not found — claude-1..6 slots require it${hint ? `. Install: ${hint}` : ''}`);
+        console.log(`  ${yellow}⚠${reset} ccr not found — only future ccr-* slots require it${hint ? `. Install: ${hint}` : ''}`);
       }
     }
     const detected = detectExternalClis(classified.externalPrimary);
@@ -3386,5 +3736,5 @@ if (hasGlobal && hasLocal) {
 
 // Export for testing (only when required as a library, not when run directly)
 if (require.main !== module) {
-  module.exports = { validateHookPaths, fileHash, generateManifest, saveLocalPatches, reportLocalPatches, PATCHES_DIR_NAME, MANIFEST_NAME, classifyProviders, detectExternalClis };
+  module.exports = { validateStructuralIntegrity, validateHookPaths, fileHash, generateManifest, saveLocalPatches, reportLocalPatches, PATCHES_DIR_NAME, MANIFEST_NAME, classifyProviders, detectExternalClis };
 }

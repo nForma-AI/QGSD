@@ -514,8 +514,9 @@ function parseMustHavesBlock(content, blockName) {
 }
 
 function output(result, raw, rawValue) {
+  let data;
   if (raw && rawValue !== undefined) {
-    process.stdout.write(String(rawValue));
+    data = String(rawValue);
   } else {
     const json = JSON.stringify(result, null, 2);
     // Large payloads exceed Claude Code's Bash tool buffer (~50KB).
@@ -523,11 +524,14 @@ function output(result, raw, rawValue) {
     if (json.length > 50000) {
       const tmpPath = path.join(require('os').tmpdir(), `gsd-${Date.now()}.json`);
       fs.writeFileSync(tmpPath, json, 'utf-8');
-      process.stdout.write('@file:' + tmpPath);
+      data = '@file:' + tmpPath;
     } else {
-      process.stdout.write(json);
+      data = json;
     }
   }
+  // Use synchronous fd write — process.stdout.write() buffers 8KB for pipes and
+  // process.exit() can kill the process before the buffer drains.
+  fs.writeSync(1, data);
   process.exit(0);
 }
 
@@ -1162,7 +1166,7 @@ function cmdStateLoad(cwd, raw) {
       `roadmap_exists=${roadmapExists}`,
       `state_exists=${stateExists}`,
     ];
-    process.stdout.write(lines.join('\n'));
+    fs.writeSync(1, lines.join('\n'));
     process.exit(0);
   }
 

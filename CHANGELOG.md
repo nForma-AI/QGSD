@@ -6,6 +6,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.41.11] - 2026-04-06 — Multi-runtime installer & bug fixes
+
+### Added
+- `feat(install)`: support 9 new runtimes — kilo, cursor, windsurf, codex, copilot, antigravity, augment, trae, cline — each with `--{runtime}` flag, directory mapping, and config path
+- `feat(install)`: defensive fallback for unknown runtimes in `getDirName()` (returns `.{runtime}` instead of crashing)
+- `test(install)`: add smoke test for claude local skill distribution (`tests/bin/install-claude-skills.test.js`)
+
+### Fixed
+- `fix(gsd-tools)`: stdout truncation at 8KB when piped — `process.exit(0)` was called before `process.stdout.write()` buffer could flush; replaced with synchronous `fs.writeSync(1, data)` to guarantee full output
+- `fix(install)`: resolve `binDir` reference error in CCR preset sync — use explicit `binDirResolved` fallback when `binDir` is undefined
+- `fix(ci)`: add `npm ci || npm install` fallback to release.yml (test and publish jobs) — matches ci.yml resilience pattern; fixes 0.41.10 release pipeline failure
+- `fix(test)`: isolate nf-stop quorum enforcement tests from project `.claude/nf.json` — pass `hookCwd` to `runHookWithEnv()` so `loadConfig()` reads from temp home instead of real project config
+
 ## [0.41.10] - 2026-04-06 — CI resilience & task-intake skill distribution
 
 ### Changed
