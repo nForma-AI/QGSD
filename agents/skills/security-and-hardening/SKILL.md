@@ -1,5 +1,5 @@
 ---
-name: security-and-hardening
+name: nf:security-and-hardening
 description: Applies a security-focused review and minimum hardening checks for changes involving trust boundaries, secrets, auth, or external integrations.
 ---
 

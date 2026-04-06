@@ -1,5 +1,5 @@
 ---
-name: shipping-and-launch
+name: nf:shipping-and-launch
 description: Prepares a change for safe release with readiness checks, rollout planning, rollback triggers, and post-launch follow-through.
 ---
 

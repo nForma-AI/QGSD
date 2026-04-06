@@ -1,5 +1,5 @@
 ---
-name: idea-refine
+name: nf:idea-refine
 description: Refines vague product or workflow ideas into a focused direction, MVP scope, assumptions, and the right next nForma workflow.
 ---
 

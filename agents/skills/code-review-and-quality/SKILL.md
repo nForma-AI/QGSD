@@ -1,5 +1,5 @@
 ---
-name: code-review-and-quality
+name: nf:code-review-and-quality
 description: Runs a reusable merge-readiness review across correctness, readability, architecture, security, performance, and verification evidence.
 ---
 

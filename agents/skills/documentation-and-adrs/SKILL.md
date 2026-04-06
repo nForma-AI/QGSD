@@ -1,5 +1,5 @@
 ---
-name: documentation-and-adrs
+name: nf:documentation-and-adrs
 description: Captures technical decisions and workflow changes in concise docs or ADR-style records tied to existing nForma documentation.
 ---
 
