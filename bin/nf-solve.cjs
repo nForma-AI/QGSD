@@ -55,7 +55,8 @@ const { detectNewlyBlocked } = require('./escalation-classifier.cjs');
 const { CycleDetector } = require('./solve-cycle-detector.cjs');
 const { measureHypotheses } = require('./hypothesis-measure.cjs')._pure;
 const { loadHypothesisTransitions, computeLayerPriorityWeights } = require('./hypothesis-layer-map.cjs');
-const { computeWaves } = require('./solve-wave-dag.cjs');
+const { computeWaves, computeWavesFromGraph } = require('./solve-wave-dag.cjs');
+const { createAdapter } = require('./coderlm-adapter.cjs');
 
 const TAG = '[nf-solve]';
 let ROOT = process.cwd();
@@ -5796,6 +5797,26 @@ function main() {
       // HTARGET-01/02: Compute hypothesis-driven wave dispatch order
       let waveOrder = null;
       try {
+        // Try coderlm graph-driven wave computation first (optional, fail-open)
+        if (process.env.NF_CODERLM_ENABLED === 'true') {
+          try {
+            const adapter = createAdapter();
+            const healthResult = adapter.healthSync();
+            if (healthResult.healthy) {
+              // coderlm server is reachable; graph-driven ordering active
+              // TODO: Query adapter for inter-layer edges based on active residual layers
+              // For now, just log that it's available
+              process.stderr.write(TAG + ' coderlm graph-driven wave ordering available (server healthy)\n');
+              // Fallback to heuristic waves if graph-driven path not yet fully implemented
+            } else {
+              process.stderr.write(TAG + ' coderlm unhealthy (' + healthResult.error + '), falling back to heuristic waves\n');
+            }
+          } catch (e) {
+            process.stderr.write(TAG + ' WARNING: coderlm integration check failed: ' + e.message + ', falling back\n');
+          }
+        }
+
+        // Fall through to hypothesis-driven wave computation (always available as fallback)
         const transitions = loadHypothesisTransitions(ROOT);
         const priorityWeights = computeLayerPriorityWeights(transitions);
         const computedWaves = computeWaves(residual, priorityWeights);
