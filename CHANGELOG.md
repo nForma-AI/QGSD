@@ -6,6 +6,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.41.13] - 2026-04-06 — Formal verify CI fix & CLAUDE.md tracking
+
+### Fixed
+- `fix(ci)`: remove `paths` filter from `formal-verify.yml` `pull_request` trigger — formal verification is a required branch protection check, so it must run on every PR regardless of which files changed
+
+### Changed
+- `chore`: track `CLAUDE.md` in git — release process docs, CI troubleshooting, and key commands are now available to all contributors and fresh clones
+
 ## [0.41.12] - 2026-04-06 — Skill distribution via installer
 
 ### Added
