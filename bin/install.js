@@ -144,6 +144,8 @@ function getConfigDirFromHome(runtime, isGlobal) {
   if (runtime === 'augment') return "'.augment'";
   if (runtime === 'trae') return "'.trae'";
   if (runtime === 'cline') return "'.cline'";
+  // Default: claude runtime (and any unknown runtime)
+  return "'.claude'";
 }
 
 /**
