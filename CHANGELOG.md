@@ -4,7 +4,7 @@ All notable changes to nForma will be documented in this file.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [Unreleased]\n## [0.41.10] - 2026-04-06 — Release 0.41.10\n\n### Added\n- Release PR #45: release changes and task-intake skill distribution copy\n\n
 
 ## [0.41.8] - 2026-04-03 — Pure JS TUI & D→C FP Reduction
 
