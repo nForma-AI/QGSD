@@ -6,6 +6,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.41.14] - 2026-04-06 — Dist-tag alignment automation
+
+### Fixed
+- `fix(ci)`: `release.yml` now auto-aligns `@next` dist-tag to match `@latest` after every stable publish — ensures `next` never falls behind `latest`
+- `fix(publish)`: `publish.sh` (manual publish) also aligns `@next` after stable publish and prints dist-tag summary
+
+### Changed
+- `docs(CLAUDE.md)`: add dist-tag invariant rule — `next` must never fall behind `latest`, with verification command
+- `docs(prepare-release.sh)`: PR body and post-merge instructions now mention `@next` alignment step
+- `docs(release.sh)`: post-release instructions now mention dist-tag verification
+
 ## [0.41.13] - 2026-04-06 — Formal verify CI fix & CLAUDE.md tracking
 
 ### Fixed

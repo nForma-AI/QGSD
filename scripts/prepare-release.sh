@@ -249,7 +249,7 @@ Automated release preparation via \`scripts/prepare-release.sh\`.
 - [x] \`test:ci\` passes
 
 ### After merge
-CI will automatically: test -> tag v${VERSION} -> create GitHub Release -> publish to npm @latest
+CI will automatically: test -> tag v${VERSION} -> create GitHub Release -> publish to npm @latest -> align @next dist-tag
 EOF
 )" \
     --base main)
@@ -270,6 +270,10 @@ else
   echo "  2. Creates git tag v${VERSION}"
   echo "  3. Creates GitHub Release"
   echo "  4. Publishes to npm @latest"
+  echo "  5. Aligns @next dist-tag to ${VERSION} (next must never fall behind latest)"
+  echo ""
+  echo "Verify after release:"
+  echo "  npm dist-tag ls @nforma.ai/nforma"
   echo ""
   echo "Monitor: gh run list --limit 5"
 fi
