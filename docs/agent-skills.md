@@ -54,6 +54,13 @@ For smaller ad-hoc work:
 | `documentation-and-adrs` | Capture decisions and workflow changes clearly | docs update or changelog |
 | `security-and-hardening` | Run a security-focused review and minimum hardening checks | fix issues or `shipping-and-launch` |
 | `shipping-and-launch` | Prepare rollout, rollback, and launch readiness | release, staged rollout, or `/nf:observe` |
+| `test-driven-development` | RED → GREEN → REFACTOR cycle for new features and bug fixes | `code-review-and-quality` or `/nf:quorum-test` |
+| `performance-optimization` | Measure, identify bottlenecks, fix, verify, guard | `code-review-and-quality` or `shipping-and-launch` |
+| `code-simplification` | Reduce complexity and remove dead code without changing behavior | `code-review-and-quality` |
+| `api-and-interface-design` | Contract-first API and interface design | `code-review-and-quality` or `security-and-hardening` |
+| `deprecation-and-migration` | Safe deprecation: replace, announce, migrate, remove | `documentation-and-adrs` or `/nf:plan-phase` |
+| `frontend-ui-engineering` | Production-quality UI: components, accessibility, responsive | `browser-testing-with-devtools` or `code-review-and-quality` |
+| `browser-testing-with-devtools` | Debug and verify web apps using DevTools | `code-review-and-quality` or `shipping-and-launch` |
 
 ## Current state
 
@@ -78,31 +85,54 @@ Before this work, nForma lacked a small set of portable, reusable skills for the
 | `spec-driven-development` | `/nf:new-project`, `/nf:new-milestone`, requirements and roadmap flows | Partial | Adapt later only if we want a lightweight non-roadmap spec flow |
 | `planning-and-task-breakdown` | `/nf:plan-phase`, `nf-planner`, plan verification loop | Covered | Improve existing planner prompts instead of importing |
 | `incremental-implementation` | `/nf:execute-phase`, worktree executor, wave model | Partial | Add only if we want a generic non-phase build skill |
-| `test-driven-development` | `/nf:fix-tests`, `/nf:debug`, quorum verification, testing rules | Partial | Improve existing test workflows; no new skill yet |
+| `test-driven-development` | `/nf:fix-tests`, `/nf:debug`, quorum verification, plus packaged TDD skill | Covered | Packaged skill adds TDD discipline; existing tools handle test fixing and running |
 | `code-review-and-quality` | `nf-verifier`, `nf-integration-checker`, quorum gates, plus packaged skill | Covered | Keep skill lightweight and routed into verifier flows |
 | `documentation-and-adrs` | Existing planning docs plus packaged skill | Covered | Prefer existing docs as the output location |
 | `git-workflow-and-versioning` | Contributor guide, worktree executor rules, release scripts | Partial | Prefer doc updates over a dedicated skill for now |
-| `api-and-interface-design` | No dedicated reusable design skill | Gap | Lower priority; can wait |
-| `browser-testing-with-devtools` | No packaged browser-testing skill | Gap | Lower priority unless frontend work increases |
+| `api-and-interface-design` | Packaged skill added | Covered | Use for any API, module boundary, or interface design work |
+| `browser-testing-with-devtools` | Packaged skill added | Covered | Pairs with frontend-ui-engineering and Playwright MCP |
 | `ci-cd-and-automation` | GitHub Actions, release scripts, publish scripts | Partial | Better as references/checklists than a full skill today |
-| `code-simplification` | No dedicated simplification/refactor skill | Gap | Lower priority |
+| `code-simplification` | Packaged skill added | Covered | Complements `/simplify` plugin with nForma-native process |
 | `context-engineering` | Core nForma strength: fresh subagents, planning context, routing, guardrails | Covered | Keep native approach |
 | `debugging-and-error-recovery` | `/nf:debug`, `/nf:observe`, solve loop, quorum diagnosis | Covered | Keep native approach |
-| `deprecation-and-migration` | No dedicated migration skill | Gap | Lower priority |
-| `frontend-ui-engineering` | Brand guidance exists, but no reusable UI engineering skill | Gap | Lower priority |
-| `performance-optimization` | Some observability and analysis tooling, no dedicated skill | Gap | Medium priority later |
+| `deprecation-and-migration` | Packaged skill added | Covered | Use for sunsetting systems, APIs, or features |
+| `frontend-ui-engineering` | Packaged skill added | Covered | Use for any frontend development work |
+| `performance-optimization` | Packaged skill added, plus `references/performance-checklist.md` | Covered | Measure-first approach; pairs with performance checklist |
 | `security-and-hardening` | Security docs, secret scan, security sweep, plus packaged skill | Covered | Reuse repo scripts instead of generic checklists |
 | `shipping-and-launch` | Release automation plus packaged launch skill | Covered | Keep tied to `/nf:observe` and release scripts |
 
-## Recommended import order
+## Remaining gaps
 
+Only 3 upstream skills are not fully covered by packaged skills:
+
+| Upstream skill | Status | Reason |
+|---|---|---|
+| `spec-driven-development` | Partial | `/nf:new-project` and requirements flows cover this; no standalone skill needed yet |
+| `incremental-implementation` | Partial | `/nf:execute-phase` wave model covers this; no standalone skill needed yet |
+| `git-workflow-and-versioning` | Partial | CONTRIBUTING.md and release scripts cover this; better as documentation |
+| `ci-cd-and-automation` | Partial | GitHub Actions and release scripts cover this; better as reference checklists |
+
+These are intentionally left as partial — nForma's existing orchestration handles them well. Adding dedicated skills would create redundancy.
+
+## Import history
+
+Phase 1 (initial):
 1. `idea-refine`
 2. `shipping-and-launch`
 3. `code-review-and-quality`
 4. `documentation-and-adrs`
 5. `security-and-hardening`
 
-This ordering matches the current hole in nForma's lifecycle:
+Phase 2 (full coverage):
+6. `test-driven-development`
+7. `performance-optimization`
+8. `code-simplification`
+9. `api-and-interface-design`
+10. `deprecation-and-migration`
+11. `frontend-ui-engineering`
+12. `browser-testing-with-devtools`
+
+This covers the full lifecycle:
 
 `idea -> scope -> plan -> build -> verify -> review -> ship`
 
