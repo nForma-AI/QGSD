@@ -870,3 +870,47 @@ test('dispatch_nonce positioned correctly in result block', () => {
   const verdictIdx = lines.findIndex(l => l.startsWith('verdict:'));
   assert.ok(nonceIdx > verdictIdx, 'dispatch_nonce should appear after verdict');
 });
+
+// ── MODE C TESTS (coding delegation) ────────────────────────────────────────
+
+test('Mode C exports: buildModeCPrompt is exported as a function', () => {
+  assert.ok(mod, 'module not loaded');
+  assert.strictEqual(typeof mod.buildModeCPrompt, 'function',
+    'buildModeCPrompt must be exported from bin/quorum-slot-dispatch.cjs');
+});
+
+test('Mode C: buildModeCPrompt produces prompt containing TASK and REPOSITORY sections', () => {
+  assert.ok(mod, 'module not loaded');
+  const prompt = mod.buildModeCPrompt({
+    repoDir: '/tmp/test-repo',
+    task: 'Implement user authentication',
+  });
+  assert.ok(prompt.includes('=== TASK ==='), 'missing TASK section');
+  assert.ok(prompt.includes('Implement user authentication'), 'missing task text');
+  assert.ok(prompt.includes('=== REPOSITORY ==='), 'missing REPOSITORY section');
+  assert.ok(prompt.includes('/tmp/test-repo'), 'missing repo dir');
+});
+
+test('Mode C: buildModeCPrompt with files array includes FILES section', () => {
+  assert.ok(mod, 'module not loaded');
+  const prompt = mod.buildModeCPrompt({
+    repoDir: '/tmp/test-repo',
+    task: 'Fix login bug',
+    files: ['src/auth.js', 'src/session.js'],
+  });
+  assert.ok(prompt.includes('=== FILES ==='), 'missing FILES section');
+  assert.ok(prompt.includes('src/auth.js'), 'missing file entry');
+  assert.ok(prompt.includes('src/session.js'), 'missing second file entry');
+});
+
+test('Mode C: buildModeCPrompt delegates to coding-task-router (not re-inlined)', () => {
+  assert.ok(mod, 'module not loaded');
+  // Verify that buildModeCPrompt produces the same output format as coding-task-router
+  const prompt = mod.buildModeCPrompt({
+    repoDir: '/tmp/repo',
+    task: 'test delegation',
+  });
+  // The OUTPUT FORMAT section is only present in coding-task-router.cjs's buildCodingPrompt
+  assert.ok(prompt.includes('=== OUTPUT FORMAT ==='),
+    'OUTPUT FORMAT section missing -- buildModeCPrompt may be re-inlining instead of delegating');
+});
