@@ -5803,28 +5803,56 @@ function main() {
             const adapter = createAdapter();
             const healthResult = adapter.healthSync();
             if (healthResult.healthy) {
-              // coderlm server is reachable; graph-driven ordering active
-              // TODO: Query adapter for inter-layer edges based on active residual layers
-              // For now, just log that it's available
-              process.stderr.write(TAG + ' coderlm graph-driven wave ordering available (server healthy)\n');
-              // Fallback to heuristic waves if graph-driven path not yet fully implemented
+              // coderlm server is reachable; attempt graph-driven ordering
+              process.stderr.write(TAG + ' coderlm server healthy, attempting graph-driven wave ordering\n');
+
+              // Collect active layers (residual > 0)
+              const activeLayerKeys = [];
+              for (const [key, val] of Object.entries(residual)) {
+                if (val && typeof val === 'object' && val.residual > 0) {
+                  activeLayerKeys.push(key);
+                }
+              }
+
+              if (activeLayerKeys.length > 0) {
+                // Build dependency graph from active residual layers
+                // For now, we construct an empty edge list as a placeholder;
+                // in future iterations, adapter queries can populate this with actual inter-layer edges
+                const graph = {
+                  nodes: activeLayerKeys,
+                  edges: []  // Placeholder: would be populated by adapter queries
+                };
+
+                // Compute wave ordering using graph-driven variant
+                const transitions = loadHypothesisTransitions(ROOT);
+                const priorityWeights = computeLayerPriorityWeights(transitions);
+                const graphWaves = computeWavesFromGraph(graph, priorityWeights);
+
+                if (graphWaves.length > 0) {
+                  waveOrder = graphWaves;
+                  process.stderr.write(TAG + ' coderlm graph-driven wave ordering (' + graphWaves.length + ' waves): ' +
+                    graphWaves.map(w => 'W' + w.wave + '[' + w.layers.join(',') + ']' + (w.sequential ? '(seq)' : '')).join(' -> ') + '\n');
+                }
+              }
             } else {
               process.stderr.write(TAG + ' coderlm unhealthy (' + healthResult.error + '), falling back to heuristic waves\n');
             }
           } catch (e) {
-            process.stderr.write(TAG + ' WARNING: coderlm integration check failed: ' + e.message + ', falling back\n');
+            process.stderr.write(TAG + ' WARNING: coderlm integration failed: ' + e.message + ', falling back\n');
           }
         }
 
-        // Fall through to hypothesis-driven wave computation (always available as fallback)
-        const transitions = loadHypothesisTransitions(ROOT);
-        const priorityWeights = computeLayerPriorityWeights(transitions);
-        const computedWaves = computeWaves(residual, priorityWeights);
-        if (computedWaves.length > 0) {
-          waveOrder = computedWaves;  // Preserve full wave structure (not flattened)
-          process.stderr.write(TAG + ' Wave ordering (' + computedWaves.length + ' waves, ' +
-            (transitions.length > 0 ? transitions.length + ' hypothesis transition(s) applied' : 'no transitions') +
-            '): ' + computedWaves.map(w => 'W' + w.wave + '[' + w.layers.join(',') + ']' + (w.sequential ? '(seq)' : '')).join(' -> ') + '\n');
+        // Fall through to hypothesis-driven wave computation if coderlm path didn't produce a result (always available as fallback)
+        if (!waveOrder) {
+          const transitions = loadHypothesisTransitions(ROOT);
+          const priorityWeights = computeLayerPriorityWeights(transitions);
+          const computedWaves = computeWaves(residual, priorityWeights);
+          if (computedWaves.length > 0) {
+            waveOrder = computedWaves;  // Preserve full wave structure (not flattened)
+            process.stderr.write(TAG + ' Wave ordering (' + computedWaves.length + ' waves, ' +
+              (transitions.length > 0 ? transitions.length + ' hypothesis transition(s) applied' : 'no transitions') +
+              '): ' + computedWaves.map(w => 'W' + w.wave + '[' + w.layers.join(',') + ']' + (w.sequential ? '(seq)' : '')).join(' -> ') + '\n');
+          }
         }
       } catch (e) {
         // fail-open: wave ordering failure means autoClose uses default order
