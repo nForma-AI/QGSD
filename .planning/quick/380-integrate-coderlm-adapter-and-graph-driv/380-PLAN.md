@@ -97,6 +97,7 @@ Create `bin/coderlm-adapter.cjs` — a CommonJS module (`'use strict'`) that pro
 
 **Adapter methods (returned by createAdapter):**
 - `health()` — calls `GET /health`, returns `{ healthy, latencyMs, error? }`
+- `healthSync()` — synchronous variant of `health()` for use in sync codepaths (e.g., nf-solve.cjs which uses spawnSync throughout). Implementation: uses `child_process.spawnSync('node', ['-e', script])` where the inner script performs the async HTTP health check and writes JSON to stdout. The outer wrapper parses stdout JSON and returns `{ healthy, latencyMs, error? }`. On spawnSync failure or non-zero exit, returns `{ healthy: false, error: 'sync-spawn-failed' }`. Timeout inherits from adapter config (default 2000ms) passed as an arg to the inner script.
 - `getCallers(symbol, file)` — calls `GET /callers?symbol=...&file=...`, returns `{ callers: string[] }`
 - `getImplementation(symbol)` — calls `GET /implementation?symbol=...`, returns `{ file: string, line: number }`
 - `findTests(file)` — calls `GET /tests?file=...`, returns `{ tests: string[] }`
@@ -115,6 +116,9 @@ Create `bin/coderlm-adapter.cjs` — a CommonJS module (`'use strict'`) that pro
 - Test 4xx/5xx responses return error objects (not throws)
 - Test `getCallers` success path with mock JSON response
 - Test `NF_CODERLM_ENABLED=false` causes adapter methods to return `{ error: 'disabled' }`
+- Test `healthSync()` success: mock server returning 200, verify `{ healthy: true }` with valid latencyMs
+- Test `healthSync()` failure: no server running on target port, verify `{ healthy: false }` with error string
+- Test `healthSync()` returns synchronously (not a Promise) — `typeof result.then === 'undefined'`
 - Use `node:http.createServer` for mock HTTP server (no external test dependencies)
 
 Follow fail-open pattern per security rules. Use CommonJS per coding-style rules.
@@ -125,7 +129,7 @@ All tests pass. No external dependencies added.
 Verify exports: `node -p "const m = require('./bin/coderlm-adapter.cjs'); [typeof m.createAdapter, typeof m.healthCheck]"` outputs `[ 'function', 'function' ]`
   </verify>
   <done>
-coderlm adapter module exists with health check + 4 query methods, all returning result objects (never throwing). Test file covers success, timeout, 4xx/5xx, disabled states. All tests pass.
+coderlm adapter module exists with health check (async + sync) + 4 query methods, all returning result objects (never throwing). `healthSync()` uses spawnSync pattern for synchronous HTTP in nf-solve.cjs context. Test file covers success, timeout, 4xx/5xx, disabled states, and healthSync synchronous execution. All tests pass.
   </done>
 </task>
 
