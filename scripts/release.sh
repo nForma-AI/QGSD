@@ -41,25 +41,53 @@ if $DRY_RUN; then
   echo ""
 fi
 
-# --- 0. Regenerate docs/assets (terminal SVG + logo SVG/PNG — VHS screenshots are manual) ---
-#        Requires rsvg-convert for PNG generation: brew install librsvg
+# --- 0. Preflight: clean working tree ---
+if [[ -n "$(git status --porcelain)" ]]; then
+  echo "ERROR: Working tree is not clean."
+  echo "Stash or commit your changes first:"
+  echo "  git stash push --include-untracked -m 'pre-release stash'"
+  echo ""
+  git status --short
+  exit 1
+fi
+
+# --- 0b. Sync package-lock.json ---
+echo "=== Syncing package-lock.json ==="
+npm install --package-lock-only
+LOCK_VERSION=$(node -p "require('./package-lock.json').version")
+PKG_VERSION=$(node -p "require('./package.json').version")
+if [[ "$LOCK_VERSION" != "$PKG_VERSION" ]]; then
+  echo "ERROR: package-lock.json version (${LOCK_VERSION}) != package.json (${PKG_VERSION})"
+  exit 1
+fi
+echo "package-lock.json synced to ${LOCK_VERSION}"
+
+# Commit lockfile if it changed
+if [[ -n "$(git diff --name-only package-lock.json)" ]]; then
+  git add package-lock.json
+  git commit -m "chore: sync package-lock.json to ${PKG_VERSION}"
+  echo "Committed lockfile sync"
+fi
+echo ""
+
+# --- 0c. Regenerate docs/assets (terminal SVG + logo SVG/PNG — VHS screenshots are manual) ---
+#          Requires rsvg-convert for PNG generation: brew install librsvg
 echo "=== Regenerating assets ==="
 npm run generate-terminal
 npm run generate-logo
+
+# Commit assets if they changed
+if [[ -n "$(git diff --name-only docs/assets/)" ]]; then
+  git add docs/assets/
+  git commit -m "chore: regenerate assets for ${PKG_VERSION}"
+  echo "Committed asset regeneration"
+fi
 echo ""
 
-# --- 1. Auto-commit all session drift ---
-# Session hooks continuously update .planning/, bin/ (TUI), and other files.
-# Auto-commit everything so hook drift doesn't block the release.
+# --- 1. Verify working tree is clean ---
 if [[ -n "$(git status --porcelain)" ]]; then
-  echo "Auto-committing session drift before release..."
-  git add -A
-  git commit -m "chore: sync session drift for release" --no-verify || true
-fi
-
-# --- 1b. Verify working tree is clean ---
-if [[ -n "$(git status --porcelain)" ]]; then
-  echo "ERROR: Working tree is not clean after auto-commit. Something is still modifying files."
+  echo "ERROR: Working tree is not clean after lockfile sync and asset regeneration."
+  echo "Commit or stash remaining changes before releasing."
   echo ""
   git status --short
   exit 1
