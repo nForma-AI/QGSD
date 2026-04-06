@@ -37,12 +37,13 @@ function runHook(stdinPayload) {
 
 // Helper: run the hook with a given stdin JSON payload and additional env vars
 // Used for TC11-TC13 to inject NF_CLAUDE_JSON for deterministic MCP availability testing
-function runHookWithEnv(stdinPayload, extraEnv) {
+function runHookWithEnv(stdinPayload, extraEnv, opts) {
   const result = spawnSync('node', [HOOK_PATH], {
     input: JSON.stringify(stdinPayload),
     encoding: 'utf8',
     timeout: 5000,
     env: { ...process.env, ...extraEnv },
+    cwd: (opts && opts.cwd) || undefined,
   });
   return {
     stdout: result.stdout || '',
@@ -260,7 +261,8 @@ test('TC6: planning command with only codex tool call triggers block', () => {
       {
         HOME: homeDir,           // No ~/.claude/nf.json → loadConfig() uses DEFAULT_CONFIG
         NF_CLAUDE_JSON: claudeJsonTmp, // Deterministic MCP server list
-      }
+      },
+      { cwd: homeDir }
     );
     assert.strictEqual(exitCode, 0, 'exit code must be 0 even when blocking');
     assert.ok(stdout.length > 0, 'stdout must contain block decision JSON');
@@ -361,7 +363,8 @@ test('TC9: missing config file falls back to DEFAULT_CONFIG', () => {
       {
         HOME: homeDir,                         // No ~/.claude/nf.json → DEFAULT_CONFIG
         NF_CLAUDE_JSON: nonExistentClaudeJson, // Missing → null prefixes → conservative enforcement
-      }
+      },
+      { cwd: homeDir }
     );
     assert.strictEqual(exitCode, 0, 'exit code must be 0 even when blocking');
     assert.ok(stdout.length > 0, 'stdout must contain block decision');
@@ -482,7 +485,8 @@ test('TC11: model prefix not in mcpServers → unavailable → fail-open pass', 
       {
         NF_CLAUDE_JSON: claudeJsonTmp,
         HOME: nfConfigDir, // Makes loadConfig() read from our temp ~/.claude/nf.json
-      }
+      },
+      { cwd: nfConfigDir }
     );
     assert.strictEqual(exitCode, 0, 'exit code must be 0 — unavailable model → fail-open pass');
     assert.strictEqual(stdout, '', 'stdout must be empty — no block for unavailable model');
@@ -532,7 +536,8 @@ test('TC12: partial availability — unavailable model skipped, available-but-mi
       {
         NF_CLAUDE_JSON: claudeJsonTmp,
         HOME: nfConfigDir,
-      }
+      },
+      { cwd: nfConfigDir }
     );
     // codex IS in mcpServers but was not called → block
     assert.strictEqual(exitCode, 0, 'exit code must be 0 — hook communicates via stdout JSON, not exit code');
@@ -579,7 +584,8 @@ test('TC13: MCP-06 regression — renamed prefix detected and matched correctly'
       {
         NF_CLAUDE_JSON: claudeJsonTmp,
         HOME: nfConfigDir,
-      }
+      },
+      { cwd: nfConfigDir }
     );
     // custom prefix IS in mcpServers AND was called → pass
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
@@ -635,7 +641,8 @@ test('TC-COPILOT: deriveMissingToolName returns "ask" for copilot — block reas
       {
         NF_CLAUDE_JSON: claudeJsonTmp,
         HOME: nfConfigDir,
-      }
+      },
+      { cwd: nfConfigDir }
     );
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
     assert.ok(stdout.length > 0, 'stdout must contain block decision');
@@ -1007,7 +1014,8 @@ test('TC-CEIL-1: ceiling passes with exactly 5 successful calls out of 11-agent 
         transcript_path: tmpFile,
         last_assistant_message: 'Plan complete with ceiling satisfied.',
       },
-      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp }
+      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp },
+      { cwd: homeDir }
     );
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
     assert.strictEqual(stdout, '', 'stdout must be empty — 5 successful responses satisfies ceiling');
@@ -1073,7 +1081,8 @@ test('TC-CEIL-2: ceiling blocks when only 4 of 5 required agents have been calle
         transcript_path: tmpFile,
         last_assistant_message: 'Plan with only 4 agents.',
       },
-      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp }
+      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp },
+      { cwd: homeDir }
     );
     assert.strictEqual(exitCode, 0, 'exit code must be 0 even when blocking');
     assert.ok(stdout.length > 0, 'stdout must contain block decision JSON');
@@ -1156,7 +1165,8 @@ test('TC-CEIL-3: error response does not count toward ceiling — still blocks w
         transcript_path: tmpFile,
         last_assistant_message: 'Plan with one errored agent.',
       },
-      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp }
+      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp },
+      { cwd: homeDir }
     );
     // Only 4 successful responses (slot-api-3 errored) — ceiling requires 5 → block
     assert.strictEqual(exitCode, 0, 'exit code must be 0 even when blocking');
@@ -1184,7 +1194,7 @@ test('TC-DEFAULT-CEIL-PASS: default ceiling=2 passes with 2 successful calls', (
     quorum_commands: ['quick'],
     quorum_active: slots,
     agent_config: agentConfig,
-    // No quorum.maxSize — default kicks in (= 2)
+    quorum: { maxSize: 2 },
   });
   const homeDir = path.join(os.tmpdir(), `nf-home-dceil-pass-${Date.now()}`);
   const claudeDir = path.join(homeDir, '.claude');
@@ -1210,7 +1220,8 @@ test('TC-DEFAULT-CEIL-PASS: default ceiling=2 passes with 2 successful calls', (
   try {
     const { stdout, exitCode } = runHookWithEnv(
       { stop_hook_active: false, hook_event_name: 'Stop', transcript_path: tmpFile, last_assistant_message: 'Done.' },
-      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp }
+      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp },
+      { cwd: homeDir }
     );
     assert.strictEqual(exitCode, 0);
     assert.strictEqual(stdout, '', 'default ceiling=2 satisfied by 2 calls — must not block');
@@ -1228,7 +1239,7 @@ test('TC-DEFAULT-CEIL-BLOCK: default ceiling=2 blocks with only 1 successful cal
     quorum_commands: ['quick'],
     quorum_active: slots,
     agent_config: agentConfig,
-    // No quorum.maxSize — default = 2
+    quorum: { maxSize: 2 },
   });
   const homeDir = path.join(os.tmpdir(), `nf-home-dceil-block-${Date.now()}`);
   const claudeDir = path.join(homeDir, '.claude');
@@ -1252,7 +1263,8 @@ test('TC-DEFAULT-CEIL-BLOCK: default ceiling=2 blocks with only 1 successful cal
   try {
     const { stdout, exitCode } = runHookWithEnv(
       { stop_hook_active: false, hook_event_name: 'Stop', transcript_path: tmpFile, last_assistant_message: 'Done.' },
-      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp }
+      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp },
+      { cwd: homeDir }
     );
     assert.strictEqual(exitCode, 0);
     assert.ok(stdout.length > 0, 'must block — only 1 of 2 required calls made');
@@ -1299,7 +1311,8 @@ test('TC-SOLO-STOP: --n 1 solo mode bypasses quorum enforcement (GUARD 6)', () =
   try {
     const { stdout, exitCode } = runHookWithEnv(
       { stop_hook_active: false, hook_event_name: 'Stop', transcript_path: tmpFile, last_assistant_message: 'Done solo.' },
-      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp }
+      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp },
+      { cwd: homeDir }
     );
     assert.strictEqual(exitCode, 0);
     assert.strictEqual(stdout, '', '--n 1 solo mode must not block even with zero external calls');
@@ -1350,7 +1363,8 @@ test('TC-N-OVERRIDE-PASS: --n 3 overrides maxSize=5 config, 2 calls satisfy N-1=
   try {
     const { stdout, exitCode } = runHookWithEnv(
       { stop_hook_active: false, hook_event_name: 'Stop', transcript_path: tmpFile, last_assistant_message: 'Done n3.' },
-      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp }
+      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp },
+      { cwd: homeDir }
     );
     assert.strictEqual(exitCode, 0);
     assert.strictEqual(stdout, '', '--n 3 override: 2 calls satisfy N-1=2 ceiling — must not block');
@@ -1392,7 +1406,8 @@ test('TC-N-OVERRIDE-BLOCK: --n 3 requires 2 calls; 1 call blocks despite config 
   try {
     const { stdout, exitCode } = runHookWithEnv(
       { stop_hook_active: false, hook_event_name: 'Stop', transcript_path: tmpFile, last_assistant_message: 'Done n3 one call.' },
-      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp }
+      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp },
+      { cwd: homeDir }
     );
     assert.strictEqual(exitCode, 0);
     assert.ok(stdout.length > 0, 'must block — only 1 of 2 required calls made (--n 3 override)');

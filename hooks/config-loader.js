@@ -24,6 +24,8 @@ const SLOT_TOOL_SUFFIX = {
   'opencode':  'opencode',
   'copilot-cli':'ask',
   'copilot':   'ask',
+  'api':       'claude',
+  'ccr':       'ask',
   'claude':    'claude',
   'unified':   'claude',
 };
@@ -124,11 +126,11 @@ const DEFAULT_CONFIG = {
     copilot:  { tool_prefix: 'mcp__copilot-cli__',  required: true },
   },
   // quorum: pool-based enforcement (supersedes required_models when quorum_active is set).
-  // minSize — minimum number of agents that must be called (from the available pool).
+  // maxSize — maximum number of agents that must be called (from the available pool).
   //   Default 4 preserves backward compat with the 4-model required_models check.
   // preferSub — sort sub (subscription) agents before api agents in pool and prompt steps.
   quorum: {
-    minSize: 4,
+    maxSize: 4,
     preferSub: false,
   },
   // agent_config: per-slot metadata.
@@ -168,6 +170,10 @@ const DEFAULT_CONFIG = {
   // NOTE: loadConfig() uses shallow spread { ...DEFAULT_CONFIG, ...global, ...project } —
   // if project config sets quorum_active, it entirely replaces the global value.
   quorum_active: [],
+  // orchestrator_slot_family: slot family prefix identifying the orchestrator (e.g., "claude" or "codex").
+  // Slots whose family matches this value are skipped from external dispatch to avoid double-counting the orchestrator vote.
+  // Set to "" to keep all slots, even if they share the same family as the orchestrator.
+  orchestrator_slot_family: 'claude',
   // model_tier_planner: model tier for planner agents (gsd-planner, gsd-roadmapper).
   // model_tier_worker: model tier for worker agents (researcher, checker, executor, etc.).
   // Valid values: 'haiku' | 'sonnet' | 'opus'. Flat keys required — nested objects lost in shallow merge.
@@ -193,6 +199,7 @@ const DEFAULT_CONFIG = {
   smart_compact_threshold_pct: 65,  // Proactive compaction at 65% context (midpoint of 60-70% range from research)
   continuous_verify_enabled: true,  // Master switch for continuous verification in PostToolUse hook
   context_retrieval_enabled: true,  // Master switch for context retrieval enrichment in quorum-slot-dispatch
+  persist_sessions_within_quorum: true, // Reuse provider sessions inside one quorum invocation when supported
   // post_edit_verify: optional command run after Edit operations (disabled by default).
   // When enabled, runs verify command after formatting and emits additionalContext on failure.
   post_edit_verify_enabled: false,
@@ -355,13 +362,29 @@ function validateConfig(config) {
     );
   }
 
+  if (typeof config.orchestrator_slot_family !== 'string') {
+    process.stderr.write('[nf] WARNING: nf.json: orchestrator_slot_family must be a string; defaulting to "claude"\n');
+    config.orchestrator_slot_family = DEFAULT_CONFIG.orchestrator_slot_family;
+  } else {
+    config.orchestrator_slot_family = config.orchestrator_slot_family.trim();
+    if (!config.orchestrator_slot_family) {
+      // Empty string disables auto-filtering
+      config.orchestrator_slot_family = '';
+    }
+  }
+
   // Validate quorum object
   if (typeof config.quorum !== 'object' || config.quorum === null) {
     config.quorum = { ...DEFAULT_CONFIG.quorum };
   } else {
-    if (!Number.isInteger(config.quorum.minSize) || config.quorum.minSize < 1) {
-      process.stderr.write('[nf] WARNING: nf.json: quorum.minSize must be a positive integer; defaulting to 4\n');
-      config.quorum.minSize = DEFAULT_CONFIG.quorum.minSize;
+    // Accept both minSize (legacy) and maxSize (current) — normalize to maxSize
+    if (config.quorum.minSize !== undefined && config.quorum.maxSize === undefined) {
+      config.quorum.maxSize = config.quorum.minSize;
+      delete config.quorum.minSize;
+    }
+    if (!Number.isInteger(config.quorum.maxSize) || config.quorum.maxSize < 1) {
+      process.stderr.write('[nf] WARNING: nf.json: quorum.maxSize must be a positive integer; defaulting to 4\n');
+      config.quorum.maxSize = DEFAULT_CONFIG.quorum.maxSize;
     }
     if (typeof config.quorum.preferSub !== 'boolean') {
       config.quorum.preferSub = DEFAULT_CONFIG.quorum.preferSub;
