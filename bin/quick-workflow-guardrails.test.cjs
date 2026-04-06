@@ -23,12 +23,12 @@ test('quick.md workflow file exists', () => {
 
 // ── MUST_NOT_SKIP annotations ─────────────────────────────────────────
 
-test('GUARD-01: MUST_NOT_SKIP annotations present on formal steps', () => {
+test('GUARD-01: MUST_NOT_SKIP annotations present on all guarded steps', () => {
   const matches = content.match(/MUST_NOT_SKIP/g);
   assert.ok(matches, 'MUST_NOT_SKIP annotation must exist in workflow');
   assert.ok(
-    matches.length >= 5,
-    `Expected >= 5 MUST_NOT_SKIP annotations (steps 4.5, 5.9, 6.1, 6.3, 6.5), found ${matches.length}`
+    matches.length >= 10,
+    `Expected >= 10 MUST_NOT_SKIP annotations (orchestrator: 2.7, 5, 5.5, 5.7, 5.8 + executor: 4.5, 5.9, 6.1, 6.3, 6.5), found ${matches.length}`
   );
 });
 
@@ -61,6 +61,67 @@ test('GUARD-01: MUST_NOT_SKIP on Step 6.5 (verification)', () => {
   assert.ok(
     nextChunk.includes('MUST_NOT_SKIP'),
     'Step 6.5 must have MUST_NOT_SKIP annotation'
+  );
+});
+
+// ── Orchestrator-level MUST_NOT_SKIP ──────────────────────────────────
+
+test('GUARD-01: MUST_NOT_SKIP on Step 2.7 (Haiku classification)', () => {
+  const idx = content.indexOf('**Step 2.7: Derive approach');
+  assert.ok(idx !== -1, 'Step 2.7 header must exist');
+  const nextChunk = content.slice(idx, idx + 500);
+  assert.ok(
+    nextChunk.includes('MUST_NOT_SKIP'),
+    'Step 2.7 must have MUST_NOT_SKIP annotation'
+  );
+});
+
+test('GUARD-01: MUST_NOT_SKIP on Step 5 (planner spawn)', () => {
+  const idx = content.indexOf('**Step 5: Spawn planner');
+  assert.ok(idx !== -1, 'Step 5 header must exist');
+  const nextChunk = content.slice(idx, idx + 500);
+  assert.ok(
+    nextChunk.includes('MUST_NOT_SKIP'),
+    'Step 5 must have MUST_NOT_SKIP annotation'
+  );
+});
+
+test('GUARD-01: MUST_NOT_SKIP on Step 5.5 (plan checker)', () => {
+  const idx = content.indexOf('**Step 5.5: Plan-checker');
+  assert.ok(idx !== -1, 'Step 5.5 header must exist');
+  const nextChunk = content.slice(idx, idx + 500);
+  assert.ok(
+    nextChunk.includes('MUST_NOT_SKIP'),
+    'Step 5.5 must have MUST_NOT_SKIP annotation'
+  );
+});
+
+test('GUARD-01: MUST_NOT_SKIP on Step 5.7 (quorum review)', () => {
+  const idx = content.indexOf('**Step 5.7: Quorum review');
+  assert.ok(idx !== -1, 'Step 5.7 header must exist');
+  const nextChunk = content.slice(idx, idx + 500);
+  assert.ok(
+    nextChunk.includes('MUST_NOT_SKIP'),
+    'Step 5.7 must have MUST_NOT_SKIP annotation'
+  );
+});
+
+test('GUARD-01: MUST_NOT_SKIP on Step 5.8 (debug routing)', () => {
+  const idx = content.indexOf('**Step 5.8: Debug routing');
+  assert.ok(idx !== -1, 'Step 5.8 header must exist');
+  const nextChunk = content.slice(idx, idx + 500);
+  assert.ok(
+    nextChunk.includes('MUST_NOT_SKIP'),
+    'Step 5.8 must have MUST_NOT_SKIP annotation'
+  );
+});
+
+// ── Orchestrator skip anti-patterns ───────────────────────────────────
+
+test('GUARD-01: orchestrator skip anti-patterns documented', () => {
+  assert.ok(
+    content.includes('Orchestrator skip -- do NOT'),
+    'Anti-patterns section must document orchestrator-level skip prevention'
   );
 });
 

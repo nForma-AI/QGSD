@@ -70,6 +70,8 @@ Parse from init JSON: `current_branch`, `is_protected`, `quick_branch_name`, `pr
 
 **Step 2.7: Derive approach and write scope contract (INTENT-01, INTENT-02, INTENT-03)**
 
+<!-- MUST_NOT_SKIP: This step is MANDATORY when $FULL_MODE is true. The orchestrator MUST spawn the 3 Haiku subagents (approach, classification, risk). Do NOT substitute your own judgment for "obvious" classifications. -->
+
 This step is automatic (non-modal per INTENT-03). No user dialog or confirmation.
 
 1. **Derive approach via Haiku subagent:**
@@ -355,6 +357,8 @@ Store `$FORMAL_SPEC_CONTEXT` for use in steps 5, 5.5, 6.5.
 
 **Step 5: Spawn planner (quick mode)**
 
+<!-- MUST_NOT_SKIP: This step is MANDATORY. The orchestrator MUST spawn the nf-planner subagent. Do NOT write code directly — the planner creates the plan, the executor implements it. Skipping this step collapses the plan-execute separation that makes verification possible. -->
+
 **If `$FULL_MODE`:** Use `quick-full` mode with stricter constraints.
 
 **If NOT `$FULL_MODE`:** Use standard `quick` mode.
@@ -439,6 +443,8 @@ If plan not found, error: "Planner failed to create ${next_num}-PLAN.md"
 ---
 
 **Step 5.5: Plan-checker loop (only when `$FULL_MODE`)**
+
+<!-- MUST_NOT_SKIP: This step is MANDATORY when $FULL_MODE is true. The orchestrator MUST spawn the plan-checker subagent. Do NOT skip because "the plan looks fine" — the checker catches issues the planner misses. -->
 
 Skip this step entirely if NOT `$FULL_MODE`.
 
@@ -551,6 +557,8 @@ Offer: 1) Force proceed, 2) Abort
 ---
 
 **Step 5.7: Quorum review of plan with R3.6 (required by R3.1 + R3.6)**
+
+<!-- MUST_NOT_SKIP: This step is MANDATORY regardless of mode (R3.1). The orchestrator MUST dispatch quorum slot-workers. Do NOT skip because "quorum slots are probably unavailable" or "the plan already passed the checker" — quorum catches different issues than the checker. If all slots are UNAVAIL, the fail-open path handles it. -->
 
 This step is MANDATORY regardless of `--full` mode. R3.1 requires quorum for any planning output from `/nf:quick`. R3.6 wraps this in an improvement-iteration loop (up to 10 iterations).
 
@@ -764,6 +772,8 @@ If the signal is absent, the delimiters don't match, or JSON.parse would fail: s
 ---
 
 **Step 5.8: Debug routing (ROUTE-02, ROUTE-03)**
+
+<!-- MUST_NOT_SKIP: When classification is bug_fix with confidence >= 0.7, this step is MANDATORY. The orchestrator MUST spawn /nf:debug. Do NOT skip because "I already understand the bug" — the debug pipeline extracts formal constraints that the executor needs. If the subagent errors or times out, the fail-open path handles it. -->
 
 Route bug_fix tasks through /nf:debug before execution. Feature and refactor tasks skip this step entirely.
 
@@ -1442,7 +1452,7 @@ Ready for next task: /nf:quick
 - [ ] (--full) User is asked to approve, edit, or skip the drafted requirement
 - [ ] (--full) If approved: duplicate ID check, semantic conflict check (Haiku), then write to .planning/formal/requirements.json with unfreeze/re-freeze lifecycle
 - [ ] (--full) Elevated requirement uses provenance { source_file: quick plan path, milestone: "quick-NNN" }
-- [ ] (--full) MUST_NOT_SKIP annotations present on steps 4.5, 5.9, 6.1, 6.3, 6.5
+- [ ] (--full) MUST_NOT_SKIP annotations present on orchestrator steps 2.7, 5, 5.5, 5.7, 5.8 AND executor steps 4.5, 5.9, 6.1, 6.3, 6.5
 - [ ] (--full) Anti-urgency guardrail injected as first constraint in executor prompt
 - [ ] (--full) Step 5.9 baseline check runs before executor spawn
 - [ ] (--full) Step 6.1 audit gate checks executor output for formal step evidence
@@ -1458,6 +1468,13 @@ Ready for next task: /nf:quick
 - Do NOT emit `<!-- nForma_DECISION -->` before the loop exits. Only emit it on the final break.
 - Do NOT run the R3.6 improvement planner as a parallel Task. It is always sequential: quorum → planner → quorum → ...
 - Do NOT loop again after a planner failure (`## PLANNING INCONCLUSIVE`). Break immediately with the failure note.
+
+**Orchestrator skip -- do NOT:**
+- Do NOT skip Step 2.7 (Haiku classification) because "the classification is obvious." The 3 subagents (approach, type, risk) MUST be spawned. Misjudging risk level changes quorum fan-out.
+- Do NOT skip Step 5 (planner) and write code directly. The plan-execute separation is what makes verification possible. Even for "trivial" changes, the planner must produce a plan file.
+- Do NOT skip Step 5.5 (plan checker, --full) because "the plan looks fine." The checker catches structural issues the planner misses.
+- Do NOT skip Step 5.7 (quorum) because "slots are probably unavailable" or "the plan already passed." Quorum catches different issues. If all slots are UNAVAIL, the fail-open path handles it automatically.
+- Do NOT skip Step 5.8 (debug routing) for bug_fix tasks because "I already understand the bug." The debug pipeline extracts formal constraints. If it errors, fail-open handles it.
 
 **Formal modeling skip -- do NOT:**
 - Do NOT skip formal scope scan (step 4.5) because "the task seems simple" or "formal models aren't relevant." The scan is MANDATORY in --full mode.
