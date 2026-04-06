@@ -206,6 +206,28 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Align next dist-tag with latest
+        run: |
+          # Invariant: next must never fall behind latest.
+          # After publishing a stable version to @latest, point @next to the same version.
+          npm dist-tag add "@nforma.ai/nforma@${{ needs.check.outputs.version }}" next
+          echo "Aligned @next → ${{ needs.check.outputs.version }}"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Verify dist-tags
+        run: |
+          echo "=== npm dist-tags ==="
+          npm dist-tag ls @nforma.ai/nforma
+          echo ""
+          # Verify invariant: next >= latest
+          LATEST=$(npm view @nforma.ai/nforma dist-tags.latest)
+          NEXT=$(npm view @nforma.ai/nforma dist-tags.next)
+          echo "latest=$LATEST  next=$NEXT"
+          if [ "$NEXT" != "${{ needs.check.outputs.version }}" ]; then
+            echo "WARNING: next ($NEXT) != published version (${{ needs.check.outputs.version }})"
+          fi
+
       - name: Print result
         env:
           VERSION: ${{ needs.check.outputs.version }}

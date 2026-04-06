@@ -26,3 +26,17 @@ trap 'rm -f "$NPMRC"' EXIT
 echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > "$NPMRC"
 
 npm publish --access public "$@"
+
+# ── Align @next dist-tag with @latest ──
+# Invariant: next must never fall behind latest.
+VERSION=$(node -p "require('./package.json').version")
+if ! echo "$VERSION" | grep -qE '\-'; then
+  echo ""
+  echo "=== Aligning @next dist-tag ==="
+  npm dist-tag add "@nforma.ai/nforma@${VERSION}" next
+  echo "Aligned @next → ${VERSION}"
+fi
+
+echo ""
+echo "=== Dist-tags ==="
+npm dist-tag ls @nforma.ai/nforma

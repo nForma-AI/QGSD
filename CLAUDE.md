@@ -12,6 +12,13 @@ Dist-tag mapping:
 - `latest` — stable versions (0.40.1)
 - `next` — prereleases (0.40.2-rc.1)
 
+**Invariant: `next` must never fall behind `latest`.**
+When a stable version publishes to `@latest`, the `next` dist-tag must also be updated to point to the same version. This is automated in `release.yml` and `publish.sh`, but verify after every release:
+```bash
+npm view @nforma.ai/nforma dist-tags --json
+# Both latest and next should be >= the version you just published
+```
+
 When asked for a "new release", always ask: **latest or next?** Then check `npm view @nforma.ai/nforma dist-tags --json` to determine the next version number.
 
 ### Release process
