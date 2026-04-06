@@ -98,6 +98,15 @@ states/
 .planning/formal/coverage-gaps.md
 .planning/formal/assumption-gaps.md
 
+# Formal verification run artifacts (regenerated every verify cycle)
+.planning/formal/diff-report.md
+.planning/formal/gates/
+.planning/formal/promotion-changelog.json
+.planning/formal/suspects.md
+
+# Agent memory logs (runtime artifacts)
+.planning/memory/
+
 # Nested planning artifacts in .formal
 .planning/formal/alloy/.planning/
 
