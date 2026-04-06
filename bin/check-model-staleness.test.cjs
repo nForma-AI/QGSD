@@ -95,7 +95,7 @@ test('first run (no content_hashes) returns first_hash_count > 0 and zero stale'
   }
 });
 
-test('changed model content is detected as stale', async () => {
+test('changed model content is detected as stale with requirement IDs', async () => {
   const tmpDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'model-stale-'));
   try {
     fs.mkdirSync(path.join(tmpDir, '.planning', 'formal'), { recursive: true });
@@ -111,6 +111,7 @@ test('changed model content is detected as stale', async () => {
       models: {
         '.planning/formal/model1.als': {
           version: 1,
+          requirements: ['STOP-01', 'STOP-02'],
           content_hashes: {
             model_hash: oldHash,
             source_hashes: {},
@@ -126,6 +127,7 @@ test('changed model content is detected as stale', async () => {
     assert.strictEqual(result.total_checked, 1);
     assert.strictEqual(result.total_stale, 1);
     assert.strictEqual(result.stale[0].reason, 'model_changed');
+    assert.deepStrictEqual(result.stale[0].requirements, ['STOP-01', 'STOP-02']);
   } finally {
     fs.rmSync(tmpDir, { recursive: true });
   }
@@ -627,4 +629,46 @@ test('CLI --json with missing registry outputs skipped: true', async () => {
   } finally {
     fs.rmSync(tmpDir, { recursive: true });
   }
+});
+
+// ── baseline-drift integration tests (CONV-04) ─────────────────────
+
+test('baseline-drift detects model staleness as a drift signal', async () => {
+  const { detectBaselineDrift } = require('./baseline-drift.cjs');
+
+  const result = detectBaselineDrift(undefined, undefined, {
+    modelStaleness: {
+      total_stale: 2,
+      stale: [
+        { model: 'a.als', reason: 'model_changed', requirements: ['STOP-01'] },
+        { model: 'b.tla', reason: 'source_changed', requirements: ['DISP-03', 'DISP-04'] },
+      ],
+    },
+  });
+
+  assert.strictEqual(result.detected, true);
+  assert.strictEqual(result.model_staleness_detected, true);
+  assert.match(result.warning, /2 formal model\(s\) stale/);
+  assert.match(result.warning, /STOP-01/);
+  assert.match(result.warning, /DISP-03/);
+});
+
+test('baseline-drift with no model staleness does not flag model_staleness_detected', async () => {
+  const { detectBaselineDrift } = require('./baseline-drift.cjs');
+
+  const result = detectBaselineDrift(undefined, undefined, {
+    modelStaleness: { total_stale: 0, stale: [] },
+  });
+
+  assert.strictEqual(result.model_staleness_detected, false);
+  assert.strictEqual(result.detected, false);
+});
+
+test('baseline-drift without modelStaleness option degrades gracefully', async () => {
+  const { detectBaselineDrift } = require('./baseline-drift.cjs');
+
+  const result = detectBaselineDrift(undefined, undefined, {});
+
+  assert.strictEqual(result.model_staleness_detected, false);
+  assert.strictEqual(result.detected, false);
 });

@@ -3618,15 +3618,24 @@ function sweepReqQuality() {
       if (aggResult.exitCode !== 0) extraResidual += 1;
     } catch (_) { /* fail-open */ }
 
-    // Fold: baseline-drift detection
+    // Fold: baseline-drift detection (with model staleness signal per CONV-04)
     try {
       const bdPath = path.join(ROOT, 'bin', 'baseline-drift.cjs');
       if (fs.existsSync(bdPath)) {
         const bdMod = require(bdPath);
         if (typeof bdMod.detectBaselineDrift === 'function') {
-          const drift = bdMod.detectBaselineDrift();
-          if (drift && ((drift.count && drift.count > 0) || (Array.isArray(drift) && drift.length > 0))) {
-            const driftCount = drift.count || drift.length || 0;
+          // Compute model staleness to feed into drift detection
+          let modelStaleness = null;
+          try {
+            const msPath = path.join(ROOT, 'bin', 'check-model-staleness.cjs');
+            if (fs.existsSync(msPath)) {
+              const msMod = require(msPath);
+              modelStaleness = msMod.checkStaleness(ROOT);
+            }
+          } catch (_) { /* fail-open: staleness unavailable */ }
+          const drift = bdMod.detectBaselineDrift(undefined, undefined, { modelStaleness });
+          if (drift && (drift.detected || (drift.count && drift.count > 0) || (Array.isArray(drift) && drift.length > 0))) {
+            const driftCount = drift.count || drift.layers?.length || (drift.detected ? 1 : 0);
             extraResidual += driftCount;
             extraDetail.baseline_drift = drift;
           }
@@ -3869,7 +3878,7 @@ function sweepModelStaleness() {
         total_checked: data.total_checked,
         total_stale: data.total_stale,
         first_hash_count: data.first_hash_count,
-        stale: (data.stale || []).slice(0, 20).map(s => ({ model: s.model, reason: s.reason })),
+        stale: (data.stale || []).slice(0, 20).map(s => ({ model: s.model, reason: s.reason, requirements: s.requirements || [] })),
       },
     };
   } catch (err) {

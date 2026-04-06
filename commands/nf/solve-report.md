@@ -101,7 +101,7 @@ Grand total (forward):       {N}    {M}    {delta}
 - **R->D**: List all undocumented requirement IDs
 - **D->C**: Table of each broken claim (doc_file, line, type, value, reason)
 - **G->H**: Top uncovered hot zones with priority scores and signal types (churn, bugfix, numerical). Flag which ones were targeted for formal modeling this cycle.
-- **Model Stale**: List each stale model path with reason (model_changed or source_changed). If first_hash_count > 0, note "N models hashed for first time (baseline established)".
+- **Model Stale**: List each stale model path with reason (model_changed or source_changed) and affected requirement IDs. If first_hash_count > 0, note "N models hashed for first time (baseline established)".
 
 Example F->C expansion:
 ```
@@ -119,7 +119,8 @@ T -> C Detail:
 Example Model Stale expansion:
 ```
 Model Stale Detail:
-  ! .planning/formal/alloy/autoclose-signals.als — source_changed (bin/nf-solve.cjs)
+  ! .planning/formal/alloy/autoclose-signals.als — source_changed (bin/nf-solve.cjs) [STOP-01, STOP-02]
+  ! .planning/formal/tla/quorum-race.tla — model_changed [DISP-03, DISP-04]
   i 12 models hashed for first time (baseline)
 ```
 

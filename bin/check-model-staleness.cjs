@@ -138,6 +138,7 @@ function checkStaleness(root, options = {}) {
         model: modelPath,
         reason: 'model_changed',
         changed_sources: [],
+        requirements: entry.requirements || [],
       });
       if (updateHashes) {
         entry.content_hashes = computedHashes;
@@ -168,6 +169,7 @@ function checkStaleness(root, options = {}) {
         model: modelPath,
         reason: 'source_changed',
         changed_sources: changedSources,
+        requirements: entry.requirements || [],
       });
       if (updateHashes) {
         entry.content_hashes = computedHashes;
