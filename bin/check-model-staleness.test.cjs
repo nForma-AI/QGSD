@@ -6,7 +6,11 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
+const { execFileSync } = require('child_process');
+
 const { checkStaleness } = require('./check-model-staleness.cjs');
+
+const SCRIPT = path.join(__dirname, 'check-model-staleness.cjs');
 
 test('missing registry returns skipped result', async () => {
   const tmpDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'model-stale-'));
@@ -479,6 +483,147 @@ test('--update-hashes mode DOES write content_hashes to registry', async () => {
     assert(entry.content_hashes);
     assert(entry.content_hashes.model_hash);
     assert(typeof entry.content_hashes.source_hashes === 'object');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true });
+  }
+});
+
+// ── CLI (main) tests ────────────────────────────────────────────────
+
+/** Helper: set up a tmpDir with a registry + model for CLI tests */
+function setupCliFixture() {
+  const tmpDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'model-stale-cli-'));
+  fs.mkdirSync(path.join(tmpDir, '.planning', 'formal'), { recursive: true });
+
+  const modelContent = '-- Source: bin/src.cjs\nmod cli {}\n';
+  fs.writeFileSync(path.join(tmpDir, '.planning', 'formal', 'test.als'), modelContent, 'utf8');
+
+  fs.mkdirSync(path.join(tmpDir, 'bin'), { recursive: true });
+  fs.writeFileSync(path.join(tmpDir, 'bin', 'src.cjs'), 'hello\n', 'utf8');
+
+  const registry = {
+    version: '1.0',
+    models: { '.planning/formal/test.als': { version: 1 } },
+  };
+  fs.writeFileSync(
+    path.join(tmpDir, '.planning', 'formal', 'model-registry.json'),
+    JSON.stringify(registry), 'utf8'
+  );
+  return tmpDir;
+}
+
+test('CLI --json outputs valid JSON to stdout', async () => {
+  const tmpDir = setupCliFixture();
+  try {
+    const stdout = execFileSync(process.execPath, [SCRIPT, '--json', `--project-root=${tmpDir}`], {
+      encoding: 'utf8',
+      timeout: 10000,
+    });
+    const parsed = JSON.parse(stdout);
+    assert.strictEqual(typeof parsed.total_checked, 'number');
+    assert.strictEqual(typeof parsed.total_stale, 'number');
+    assert.strictEqual(typeof parsed.first_hash_count, 'number');
+    assert(Array.isArray(parsed.stale));
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true });
+  }
+});
+
+test('CLI --json --dry-run does not write to registry', async () => {
+  const tmpDir = setupCliFixture();
+  try {
+    const regPath = path.join(tmpDir, '.planning', 'formal', 'model-registry.json');
+    const before = fs.readFileSync(regPath, 'utf8');
+
+    execFileSync(process.execPath, [SCRIPT, '--json', '--dry-run', `--project-root=${tmpDir}`], {
+      encoding: 'utf8',
+      timeout: 10000,
+    });
+
+    const after = fs.readFileSync(regPath, 'utf8');
+    assert.strictEqual(before, after, 'registry should be unchanged after --dry-run');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true });
+  }
+});
+
+test('CLI --dry-run overrides --update-hashes (no writes)', async () => {
+  const tmpDir = setupCliFixture();
+  try {
+    const regPath = path.join(tmpDir, '.planning', 'formal', 'model-registry.json');
+    const before = fs.readFileSync(regPath, 'utf8');
+
+    execFileSync(process.execPath, [SCRIPT, '--json', '--update-hashes', '--dry-run', `--project-root=${tmpDir}`], {
+      encoding: 'utf8',
+      timeout: 10000,
+    });
+
+    const after = fs.readFileSync(regPath, 'utf8');
+    assert.strictEqual(before, after, '--dry-run should prevent --update-hashes from writing');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true });
+  }
+});
+
+test('CLI --update-hashes populates content_hashes in registry', async () => {
+  const tmpDir = setupCliFixture();
+  try {
+    const regPath = path.join(tmpDir, '.planning', 'formal', 'model-registry.json');
+
+    execFileSync(process.execPath, [SCRIPT, '--json', '--update-hashes', `--project-root=${tmpDir}`], {
+      encoding: 'utf8',
+      timeout: 10000,
+    });
+
+    const updated = JSON.parse(fs.readFileSync(regPath, 'utf8'));
+    const entry = updated.models['.planning/formal/test.als'];
+    assert(entry.content_hashes, 'content_hashes should be written');
+    assert(entry.content_hashes.model_hash);
+    assert(entry.content_hashes.source_hashes['bin/src.cjs']);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true });
+  }
+});
+
+test('CLI text mode (no --json) writes summary to stderr and exits 0', async () => {
+  const tmpDir = setupCliFixture();
+  try {
+    const result = require('child_process').spawnSync(
+      process.execPath, [SCRIPT, `--project-root=${tmpDir}`],
+      { encoding: 'utf8', timeout: 10000 }
+    );
+    assert.strictEqual(result.status, 0);
+    assert.match(result.stderr, /Checked \d+ models/);
+    // stdout should be empty in text mode (no --json)
+    assert.strictEqual(result.stdout.trim(), '');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true });
+  }
+});
+
+test('CLI with missing registry exits 0 and reports skipping to stderr', async () => {
+  const tmpDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'model-stale-cli-'));
+  try {
+    const result = require('child_process').spawnSync(
+      process.execPath, [SCRIPT, `--project-root=${tmpDir}`],
+      { encoding: 'utf8', timeout: 10000 }
+    );
+    assert.strictEqual(result.status, 0);
+    assert.match(result.stderr, /not found; skipping/);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true });
+  }
+});
+
+test('CLI --json with missing registry outputs skipped: true', async () => {
+  const tmpDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'model-stale-cli-'));
+  try {
+    const stdout = execFileSync(process.execPath, [SCRIPT, '--json', `--project-root=${tmpDir}`], {
+      encoding: 'utf8',
+      timeout: 10000,
+    });
+    const parsed = JSON.parse(stdout);
+    assert.strictEqual(parsed.skipped, true);
   } finally {
     fs.rmSync(tmpDir, { recursive: true });
   }
