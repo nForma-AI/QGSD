@@ -72,7 +72,7 @@ jobs:
           node-version: '20'
 
       - name: Install dev dependencies
-        run: npm ci
+        run: npm ci || npm install
 
       - name: Build XState machine (needed by validate-traces)
         run: npm run build:machines

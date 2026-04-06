@@ -6,6 +6,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.41.10] - 2026-04-06 — CI resilience & task-intake skill distribution
+
+### Changed
+- `fix(ci)`: workflow install steps now fall back to `npm install` when `npm ci` fails due to merge-ref lockfile drift — resolves persistent PR check failures
+- `feat(skill)`: add task-intake skill distribution copy to `agents/skills/task-intake/SKILL.md`
+
 ## [0.41.8] - 2026-04-03 — Pure JS TUI & D→C FP Reduction
 
 Deprecates blessed-xterm (native C++ node-pty dependency) in favor of pure JS blessed-terminal.cjs. Reduces D→C false positives with glob expansion, system tool allowlist, and design doc fuzzy rename detection.
