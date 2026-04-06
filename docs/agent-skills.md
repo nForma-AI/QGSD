@@ -82,16 +82,16 @@ Before this work, nForma lacked a small set of portable, reusable skills for the
 |---|---|---|---|
 | `using-agent-skills` | Meta guidance now lives in this document | Covered | Keep as documentation, not a separate packaged skill |
 | `idea-refine` | Packaged skill added | Covered | Keep and iterate based on usage |
-| `spec-driven-development` | `/nf:new-project`, `/nf:new-milestone`, requirements and roadmap flows | Partial | Adapt later only if we want a lightweight non-roadmap spec flow |
+| `spec-driven-development` | `/nf:new-project`, `/nf:new-milestone`, requirements flows, plus packaged skill | Covered | Packaged skill for lightweight standalone specs outside milestone system |
 | `planning-and-task-breakdown` | `/nf:plan-phase`, `nf-planner`, plan verification loop | Covered | Improve existing planner prompts instead of importing |
-| `incremental-implementation` | `/nf:execute-phase`, worktree executor, wave model | Partial | Add only if we want a generic non-phase build skill |
+| `incremental-implementation` | `/nf:execute-phase`, worktree executor, wave model, plus packaged skill | Covered | Packaged skill for standalone incremental work outside phase system |
 | `test-driven-development` | `/nf:fix-tests`, `/nf:debug`, quorum verification, plus packaged TDD skill | Covered | Packaged skill adds TDD discipline; existing tools handle test fixing and running |
 | `code-review-and-quality` | `nf-verifier`, `nf-integration-checker`, quorum gates, plus packaged skill | Covered | Keep skill lightweight and routed into verifier flows |
 | `documentation-and-adrs` | Existing planning docs plus packaged skill | Covered | Prefer existing docs as the output location |
-| `git-workflow-and-versioning` | Contributor guide, worktree executor rules, release scripts | Partial | Prefer doc updates over a dedicated skill for now |
+| `git-workflow-and-versioning` | Contributor guide, worktree executor rules, release scripts, plus packaged skill | Covered | Packaged skill for git discipline guidance in any project |
 | `api-and-interface-design` | Packaged skill added | Covered | Use for any API, module boundary, or interface design work |
 | `browser-testing-with-devtools` | Packaged skill added | Covered | Pairs with frontend-ui-engineering and Playwright MCP |
-| `ci-cd-and-automation` | GitHub Actions, release scripts, publish scripts | Partial | Better as references/checklists than a full skill today |
+| `ci-cd-and-automation` | GitHub Actions, release scripts, publish scripts, plus packaged skill | Covered | Packaged skill for CI/CD pipeline design in any project |
 | `code-simplification` | Packaged skill added | Covered | Complements `/simplify` plugin with nForma-native process |
 | `context-engineering` | Core nForma strength: fresh subagents, planning context, routing, guardrails | Covered | Keep native approach |
 | `debugging-and-error-recovery` | `/nf:debug`, `/nf:observe`, solve loop, quorum diagnosis | Covered | Keep native approach |
@@ -101,18 +101,9 @@ Before this work, nForma lacked a small set of portable, reusable skills for the
 | `security-and-hardening` | Security docs, secret scan, security sweep, plus packaged skill | Covered | Reuse repo scripts instead of generic checklists |
 | `shipping-and-launch` | Release automation plus packaged launch skill | Covered | Keep tied to `/nf:observe` and release scripts |
 
-## Remaining gaps
+## Coverage status
 
-Only 3 upstream skills are not fully covered by packaged skills:
-
-| Upstream skill | Status | Reason |
-|---|---|---|
-| `spec-driven-development` | Partial | `/nf:new-project` and requirements flows cover this; no standalone skill needed yet |
-| `incremental-implementation` | Partial | `/nf:execute-phase` wave model covers this; no standalone skill needed yet |
-| `git-workflow-and-versioning` | Partial | CONTRIBUTING.md and release scripts cover this; better as documentation |
-| `ci-cd-and-automation` | Partial | GitHub Actions and release scripts cover this; better as reference checklists |
-
-These are intentionally left as partial — nForma's existing orchestration handles them well. Adding dedicated skills would create redundancy.
+All 20 upstream skills from `addyosmani/agent-skills` are now covered. 19 have dedicated packaged skills; 1 (`using-agent-skills`) is covered by this document. The only upstream skill without a dedicated packaged skill is `planning-and-task-breakdown`, which is fully handled by `/nf:plan-phase` and `nf-planner`.
 
 ## Import history
 
@@ -123,7 +114,7 @@ Phase 1 (initial):
 4. `documentation-and-adrs`
 5. `security-and-hardening`
 
-Phase 2 (full coverage):
+Phase 2 (engineering practices):
 6. `test-driven-development`
 7. `performance-optimization`
 8. `code-simplification`
@@ -131,6 +122,12 @@ Phase 2 (full coverage):
 10. `deprecation-and-migration`
 11. `frontend-ui-engineering`
 12. `browser-testing-with-devtools`
+
+Phase 3 (complete coverage):
+13. `spec-driven-development`
+14. `incremental-implementation`
+15. `git-workflow-and-versioning`
+16. `ci-cd-and-automation`
 
 This covers the full lifecycle:
 
