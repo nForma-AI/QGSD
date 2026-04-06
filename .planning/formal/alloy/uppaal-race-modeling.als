@@ -45,6 +45,39 @@ sig MeasurementProperty {
 abstract sig MeasurementType {}
 one sig InterSlotResponse, MaxConcurrentSlots, OtherMeasurement extends MeasurementType {}
 
+-- Empirical timing bounds (from /nf:mcp-status 2026-04-04)
+-- Used as timed automaton guard constraints in UPPAAL model
+sig TimingBound {
+  slotType: one SlotType,
+  minLatencyMs: one Int,
+  maxLatencyMs: one Int,
+  timeoutMs: one Int
+}
+
+abstract sig SlotType {}
+one sig CLISlot, CCRSlot, HTTPSlot extends SlotType {}
+
+-- Empirical bounds captured from live health checks:
+--   CLI slots:  88ms - 1898ms  (timeout: 300000ms)
+--   CCR slots:  270ms - 441ms  (timeout: 300000ms, but CCR checks local process)
+--   HTTP slots: 325ms - 8622ms (timeout: 120000ms, real inference round-trip)
+fact EmpiricalTimingBounds {
+  all t: TimingBound | {
+    t.slotType = CLISlot implies (t.minLatencyMs = 88 and t.maxLatencyMs = 1898 and t.timeoutMs = 300000)
+    t.slotType = CCRSlot implies (t.minLatencyMs = 270 and t.maxLatencyMs = 441 and t.timeoutMs = 300000)
+    t.slotType = HTTPSlot implies (t.minLatencyMs = 325 and t.maxLatencyMs = 8622 and t.timeoutMs = 120000)
+  }
+}
+
+-- Race window: the max gap between the fastest and slowest parallel slots
+-- This is the critical timing property for consensus evaluation races
+-- Current worst case: CLI at 88ms vs HTTP at 8622ms = 8534ms race window
+fact RaceWindowBound {
+  all m: UppaalModel | m.capturesConcurrency = True implies {
+    some p: MeasurementProperty | p.parentModel = m and p.propertyType = InterSlotResponse
+  }
+}
+
 -- ── Facts ──────────────────────────────────────────────────────────────
 
 -- UPPAAL-01: The model captures quorum protocol concurrency structure

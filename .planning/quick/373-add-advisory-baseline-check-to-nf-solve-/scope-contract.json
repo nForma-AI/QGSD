@@ -1,0 +1,24 @@
+{
+  "nf/quick-373-add-advisory-baseline-check-to-nf-solve-": {
+    "task_id": 373,
+    "task_description": "Add advisory baseline check to nf:solve, nudge in nf:progress, fix DIAG-02 residual=-1 for missing baselines, optional --require-baselines flag",
+    "approach": "Add advisory baseline check to nf:solve command with optional --require-baselines flag, inject nudge message in nf:progress, and fix DIAG-02 residual=-1 handling for missing baselines.",
+    "out_of_scope": [
+      "Baseline validation gate in CI/CD pipeline",
+      "Automatic baseline generation or inference",
+      "Changes to existing baseline definitions or schema",
+      "Baseline requirement enforcement in other commands beyond nf:solve"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.75,
+      "routed_through_debug": false
+    },
+    "risk_level": "medium",
+    "risk_reason": "Feature task modifying 2-3 command workflow files with new advisory checks and flag handling",
+    "branches_affected": ["nf/quick-373-add-advisory-baseline-check-to-nf-solve-"],
+    "created_at": "2026-04-04T06:44:41.480Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

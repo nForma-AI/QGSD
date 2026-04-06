@@ -34,6 +34,64 @@ const path       = require('path');
 const os         = require('os');
 const planningPaths = require('./planning-paths.cjs');
 
+// ─── Per-provider rate-limit semaphore (SOLVE-10) ───────────────────────────
+// Prevents concurrent API-backed slots from cascading rate-limit failures
+// when multiple slots hit the same provider (e.g., 6 api-* slots → Together.xyz).
+const SEM_DIR = path.join(os.homedir(), '.claude', 'nf-sem');
+
+function semKey(baseUrl) {
+  return crypto.createHash('sha256').update(baseUrl).digest('hex').slice(0, 12);
+}
+
+function semAcquire(baseUrl, maxConcurrency, timeoutMs = 30000) {
+  if (!baseUrl || !maxConcurrency) return null; // no-op for non-HTTP slots
+  try { fs.mkdirSync(SEM_DIR, { recursive: true }); } catch (_) {}
+  const key = semKey(baseUrl);
+  const lockFile = path.join(SEM_DIR, `${key}.${process.pid}.lock`);
+  const start = Date.now();
+  const backoffs = [100, 200, 500, 1000, 2000, 5000];
+
+  for (let attempt = 0; ; attempt++) {
+    // Count live locks for this provider (clean stale PIDs)
+    let activeLocks = 0;
+    try {
+      const files = fs.readdirSync(SEM_DIR).filter(f => f.startsWith(key + '.') && f.endsWith('.lock'));
+      for (const f of files) {
+        const pid = parseInt(f.split('.')[1], 10);
+        if (pid && pid !== process.pid) {
+          try { process.kill(pid, 0); activeLocks++; } catch (_) {
+            // PID dead — remove stale lock
+            try { fs.unlinkSync(path.join(SEM_DIR, f)); } catch (_) {}
+          }
+        }
+      }
+    } catch (_) {}
+
+    if (activeLocks < maxConcurrency) {
+      // Acquire: write our lock file
+      try { fs.writeFileSync(lockFile, String(Date.now())); } catch (_) {}
+      return lockFile;
+    }
+
+    if (Date.now() - start > timeoutMs) {
+      // Timeout — proceed anyway (fail-open)
+      process.stderr.write(`[sem] WARN: semaphore timeout for ${baseUrl} after ${timeoutMs}ms (${activeLocks}/${maxConcurrency} active). Proceeding.\n`);
+      try { fs.writeFileSync(lockFile, String(Date.now())); } catch (_) {}
+      return lockFile;
+    }
+
+    // Backoff
+    const delay = backoffs[Math.min(attempt, backoffs.length - 1)];
+    const { spawnSync: ss } = require('child_process');
+    ss('sleep', [String(delay / 1000)]);
+  }
+}
+
+function semRelease(lockFile) {
+  if (!lockFile) return;
+  try { fs.unlinkSync(lockFile); } catch (_) {}
+}
+
 // ─── Config-loader integration (two-layer merge for nf.json settings) ────────
 function loadNfConfig(cwd) {
   const candidates = [
@@ -1000,7 +1058,7 @@ function parseImprovements(rawOutput) {
  * @param {string} [opts.dispatch_nonce] — 32-char hex nonce proving the dispatch script ran
  * @returns {string}
  */
-function emitResultBlock({ slot, round, verdict, reasoning, citations, improvements, matched_requirement_ids, rawOutput, isUnavail, error_type, dispatch_nonce, unavailMessage, truncated, truncationLayer, originalSizeBytes }) {
+function emitResultBlock({ slot, round, verdict, reasoning, citations, improvements, matched_requirement_ids, rawOutput, isUnavail, error_type, dispatch_nonce, unavailMessage, truncated, truncationLayer, originalSizeBytes, logical_slot, dispatch_slot, compact_actions, budget, retrieval_skipped }) {
   const lines = [];
 
   lines.push(`slot: ${slot}`);
@@ -1045,6 +1103,38 @@ function emitResultBlock({ slot, round, verdict, reasoning, citations, improveme
     for (const ml of msgLines) {
       lines.push(`  ${ml}`);
     }
+  }
+
+  if (logical_slot) {
+    lines.push(`logical_slot: ${logical_slot}`);
+  }
+  if (dispatch_slot) {
+    lines.push(`dispatch_slot: ${dispatch_slot}`);
+  }
+
+  if (compact_actions) {
+    if (compact_actions.length === 0) {
+      lines.push('compact_actions: []');
+    } else {
+      lines.push('compact_actions:');
+      for (const entry of compact_actions) {
+        lines.push(`  - ${entry}`);
+      }
+    }
+  }
+
+  if (budget) {
+    lines.push('budget:');
+    lines.push(`  prompt_tokens: ${budget.promptTokens}`);
+    lines.push(`  overhead_tokens: ${budget.overheadTokens}`);
+    lines.push(`  total_estimate: ${budget.totalEstimate}`);
+    if (budget.maxContextTokens != null) {
+      lines.push(`  max_context_tokens: ${budget.maxContextTokens}`);
+    }
+  }
+
+  if (retrieval_skipped) {
+    lines.push('retrieval_skipped: true');
   }
 
   // L6: raw field truncation with marker (TRUNC-05)
@@ -1192,6 +1282,98 @@ function enrichPromptWithRetrieval(prompt, question, artifactPath, cwd) {
   }
 }
 
+function estimatePromptTokens(prompt, charsPerToken = 4) {
+  return Math.ceil(String(prompt || '').length / charsPerToken);
+}
+
+function computeProviderBudget(provider, prompt, charsPerToken = 4) {
+  const isCcr = provider && provider.display_type === 'claude-code-router';
+  const promptTokens = estimatePromptTokens(prompt, charsPerToken);
+  const overheadTokens = isCcr ? ((provider.ccr_overhead_tokens ?? 95000) + (provider.ccr_response_budget_tokens ?? 64000)) : 0;
+  const totalEstimate = promptTokens + overheadTokens;
+  return {
+    promptTokens,
+    overheadTokens,
+    totalEstimate,
+    maxContextTokens: provider?.max_context_tokens ?? null,
+    fits: provider?.max_context_tokens ? totalEstimate <= provider.max_context_tokens : true,
+  };
+}
+
+function stripRetrievedContext(prompt) {
+  const marker = '\n\n=== RETRIEVED CONTEXT ===\n';
+  const start = prompt.indexOf(marker);
+  if (start === -1) return { prompt, changed: false };
+  const endMarker = '\n=========================\n';
+  const end = prompt.indexOf(endMarker, start);
+  if (end === -1) return { prompt, changed: false };
+  return {
+    prompt: prompt.slice(0, start) + prompt.slice(end + endMarker.length),
+    changed: true,
+  };
+}
+
+function stripBlockByHeading(prompt, heading) {
+  const idx = prompt.indexOf(heading);
+  if (idx === -1) return { prompt, changed: false };
+  let end = prompt.indexOf('\n\n', idx + heading.length);
+  if (end === -1) end = prompt.length;
+  else {
+    while (end < prompt.length && prompt.slice(end, end + 2) === '\n\n') end += 2;
+  }
+  return {
+    prompt: prompt.slice(0, idx) + prompt.slice(end),
+    changed: true,
+  };
+}
+
+function stripPriorPositions(prompt) {
+  const heading = 'Prior positions:\n';
+  const idx = prompt.indexOf(heading);
+  if (idx === -1) return { prompt, changed: false };
+  let end = prompt.indexOf('\n\n', idx + heading.length);
+  if (end === -1) end = prompt.length;
+  else {
+    while (end < prompt.length && prompt.slice(end, end + 2) === '\n\n') end += 2;
+  }
+  return {
+    prompt: prompt.slice(0, idx) + prompt.slice(end),
+    changed: true,
+  };
+}
+
+function compactPromptToFitBudget(prompt, provider, options = {}) {
+  const charsPerToken = options.charsPerToken ?? 4;
+  const actions = [];
+  let current = prompt;
+  let budget = computeProviderBudget(provider, current, charsPerToken);
+  if (budget.fits) return { prompt: current, budget, actions, fits: true };
+
+  const steps = [
+    { name: 'stripped_retrieved_context', fn: stripRetrievedContext },
+    { name: 'stripped_precedents', fn: (p) => stripBlockByHeading(p, '=== RELEVANT PRECEDENTS ===\n') },
+    { name: 'stripped_requirements', fn: (p) => stripBlockByHeading(p, '=== APPLICABLE REQUIREMENTS ===\n') },
+    { name: 'stripped_prior_positions', fn: stripPriorPositions },
+  ];
+
+  for (const step of steps) {
+    const result = step.fn(current);
+    if (!result.changed) continue;
+    current = result.prompt;
+    actions.push(step.name);
+    budget = computeProviderBudget(provider, current, charsPerToken);
+    if (budget.fits) break;
+  }
+
+  return { prompt: current, budget, actions, fits: budget.fits };
+}
+
+function shouldSkipRetrieval(provider, budget, threshold = 0.8) {
+  if (!provider || provider.display_type !== 'claude-code-router') return false;
+  if (!provider.max_context_tokens) return false;
+  return budget.totalEstimate >= provider.max_context_tokens * threshold;
+}
+
 // ─── Main (CLI entry point) ───────────────────────────────────────────────────
 
 async function main() {
@@ -1208,6 +1390,7 @@ async function main() {
   const requestImprovements = hasFlag('--request-improvements');
   const timeoutArg         = getArg('--timeout');
   const cwd                = getArg('--cwd') || process.cwd();
+  const quorumInvocationIdArg = getArg('--quorum-invocation-id') || null;
 
   if (!slot) {
     process.stderr.write('[quorum-slot-dispatch] --slot is required\n');
@@ -1318,100 +1501,149 @@ async function main() {
   const allPrecedents = loadPrecedents(repoDir);
   const matchedPrecedents = matchPrecedentsByKeywords(allPrecedents, question);
 
+  const providersPath = path.join(__dirname, 'providers.json');
+  let providers = [];
+  try {
+    providers = JSON.parse(fs.readFileSync(providersPath, 'utf8')).providers || [];
+  } catch (_) {}
+
   // EXEC-01: Determine review mode — Mode B or explicit --review-only flag
   const isReviewMode = mode === 'B' || reviewOnly;
+  const originalProvider = providers.find(p => p.name === slot) || null;
+  let dispatchSlot = slot;
+  let dispatchProvider = originalProvider;
 
-  // Determine if this slot has file access (subprocess CLIs do, HTTP APIs don't)
-  const hasFileAccess = (() => {
-    try {
-      const pPath = path.join(__dirname, 'providers.json');
-      const providers = JSON.parse(fs.readFileSync(pPath, 'utf8')).providers || [];
-      const provider = providers.find(p => p.name === slot);
-      return provider ? provider.has_file_access !== false : true; // default true for backward compat
-    } catch { return true; }
-  })();
+  const buildPromptForProvider = (provider) => {
+    const hasFileAccess = provider ? provider.has_file_access !== false : true;
+    if (mode === 'B') {
+      return buildModeBPrompt({
+        round,
+        repoDir,
+        question,
+        artifactPath,
+        artifactContent,
+        reviewContext,
+        priorPositions,
+        traces: traces || '',
+        requirements: matchedRequirements,
+        precedents: matchedPrecedents,
+        reviewOnly: isReviewMode,
+        hasFileAccess,
+      });
+    }
+    return buildModeAPrompt({
+      round,
+      repoDir,
+      question,
+      artifactPath,
+      artifactContent,
+      reviewContext,
+      priorPositions,
+      requestImprovements,
+      requirements: matchedRequirements,
+      precedents: matchedPrecedents,
+      hasFileAccess,
+    });
+  };
 
-  let prompt;
-  if (mode === 'B') {
-    prompt = buildModeBPrompt({ round, repoDir, question, artifactPath, artifactContent, reviewContext, priorPositions, traces: traces || '', requirements: matchedRequirements, precedents: matchedPrecedents, reviewOnly: isReviewMode, hasFileAccess });
-  } else {
-    prompt = buildModeAPrompt({ round, repoDir, question, artifactPath, artifactContent, reviewContext, priorPositions, requestImprovements, requirements: matchedRequirements, precedents: matchedPrecedents, hasFileAccess });
-  }
+  const basePrompt = buildPromptForProvider(dispatchProvider);
 
   // ── Context retrieval enrichment (ORCH-01) ──────────────────────────────────
   // Check config kill switch via two-layer config-loader merge (DEFAULT_CONFIG -> global -> project).
   // Fail-open: if config load fails, retrieval is ON (default enabled).
   const nfConfig = loadNfConfig(cwd);
   const retrievalEnabled = nfConfig.context_retrieval_enabled !== false;
+  const persistSessionsWithinQuorum = nfConfig.persist_sessions_within_quorum !== false;
 
-  if (retrievalEnabled) {
-    prompt = enrichPromptWithRetrieval(prompt, question, artifactPath, cwd);
-  }
+  const CHARS_PER_TOKEN = 4;
+  let prompt = basePrompt;
+  let retrievalSkipped = false;
+  const applyRetrieval = () => {
+    if (!retrievalEnabled || !dispatchProvider) return;
+    const budget = computeProviderBudget(dispatchProvider, prompt, CHARS_PER_TOKEN);
+    if (!shouldSkipRetrieval(dispatchProvider, budget, 0.8)) {
+      prompt = enrichPromptWithRetrieval(prompt, question, artifactPath, cwd);
+      retrievalSkipped = false;
+    } else {
+      retrievalSkipped = true;
+    }
+  };
+  applyRetrieval();
 
   // ── Pre-flight context window check (CTXWIN-01) ─────────────────────────────
-  // Estimate token count from prompt length. CCR slots prepend system prompt +
-  // tools (~30K tokens overhead). If estimated total exceeds the model's
-  // max_context_tokens, truncate enriched context or fail immediately with
-  // CONTEXT_OVERFLOW rather than wasting a slow API call that will 400.
-  // CCR overhead is massive: system prompt + all tool definitions + conversation
-  // history + CLAUDE.md injection. Empirically measured from Together 400 errors:
-  //   claude-1 (DeepSeek): 101K input tokens from ~5K prompt → ~96K overhead
-  //   claude-5 (GPT-OSS): 73K input tokens from ~5K prompt → ~68K overhead
-  // Use conservative (higher) estimate to catch overflow before dispatch.
-  const CCR_OVERHEAD_TOKENS = 95000; // system prompt + tools + CLAUDE.md injected by CCR
-  const CCR_RESPONSE_BUDGET = 64000; // default max_tokens set by CCR — Together counts this against context window
-  const CHARS_PER_TOKEN = 4; // conservative estimate (English ~4 chars/token)
-  try {
-    const pPath = path.join(__dirname, 'providers.json');
-    const providers = JSON.parse(fs.readFileSync(pPath, 'utf8')).providers || [];
-    const provider = providers.find(p => p.name === slot);
-    if (provider && provider.max_context_tokens) {
-      const isCcr = provider.display_type === 'claude-code-router';
-      const overhead = isCcr ? CCR_OVERHEAD_TOKENS + CCR_RESPONSE_BUDGET : 0;
-      const promptTokens = Math.ceil(prompt.length / CHARS_PER_TOKEN);
-      const totalEstimate = promptTokens + overhead;
-
-      if (totalEstimate > provider.max_context_tokens) {
-        // Try to salvage by stripping retrieved context (biggest variable-size section)
-        const retrievedIdx = prompt.indexOf('\n\n=== RETRIEVED CONTEXT ===\n');
-        if (retrievedIdx !== -1) {
-          const endIdx = prompt.indexOf('\n=========================\n', retrievedIdx);
-          if (endIdx !== -1) {
-            prompt = prompt.slice(0, retrievedIdx) + prompt.slice(endIdx + '\n=========================\n'.length);
-            process.stderr.write(`[quorum-slot-dispatch] CTXWIN-01: stripped retrieved context for ${slot} (${totalEstimate} > ${provider.max_context_tokens} tokens)\n`);
-          }
-        }
-
-        // Re-check after stripping
-        const newTokens = Math.ceil(prompt.length / CHARS_PER_TOKEN) + overhead;
-        if (newTokens > provider.max_context_tokens) {
-          // Still too large — emit CONTEXT_OVERFLOW immediately
-          const result = emitResultBlock({
-            slot,
-            round,
-            verdict: 'UNAVAIL',
-            reasoning: `CONTEXT_OVERFLOW: estimated ${newTokens} tokens exceeds ${slot} limit of ${provider.max_context_tokens} (prompt: ${Math.ceil(prompt.length / CHARS_PER_TOKEN)}, overhead: ${overhead})`,
-            rawOutput: `Prompt too large for ${slot} (${provider.model}): ~${newTokens} tokens > ${provider.max_context_tokens} max`,
-            isUnavail: true,
-            error_type: 'CONTEXT_OVERFLOW',
-            dispatch_nonce: dispatchNonce,
-            unavailMessage: `Prompt size: ${prompt.length} chars (~${Math.ceil(prompt.length / CHARS_PER_TOKEN)} tokens). Model limit: ${provider.max_context_tokens}. CCR overhead: ${overhead}.`
-          });
-          if (outputFile) {
-            try {
-              fs.mkdirSync(path.dirname(outputFile), { recursive: true });
-              fs.writeFileSync(outputFile, result.endsWith('\n') ? result : result + '\n', 'utf8');
-            } catch (e) {
-              process.stderr.write(`[quorum-slot-dispatch] output-file write failed: ${e.message}\n`);
-            }
-          }
-          process.stdout.write(result);
-          if (!result.endsWith('\n')) process.stdout.write('\n');
-          process.exit(0);
+  // For CCR slots, compact the prompt in multiple stages using provider-specific
+  // overhead metadata. If the compacted prompt still does not fit, optionally
+  // reroute to the paired direct API slot and rebuild the prompt for no-tool mode.
+  let compactActions = [];
+  let budgetResult;
+  const enforceBudget = () => {
+    if (!dispatchProvider || !dispatchProvider.max_context_tokens) {
+      return computeProviderBudget(dispatchProvider, prompt, CHARS_PER_TOKEN);
+    }
+    budgetResult = computeProviderBudget(dispatchProvider, prompt, CHARS_PER_TOKEN);
+    if (budgetResult.fits) return budgetResult;
+    if (dispatchProvider.display_type === 'claude-code-router') {
+      compactActions = [];
+      const compacted = compactPromptToFitBudget(prompt, dispatchProvider, { charsPerToken: CHARS_PER_TOKEN });
+      prompt = compacted.prompt;
+      compactActions = compacted.actions;
+      budgetResult = compacted.budget;
+      for (const action of compactActions) {
+        process.stderr.write(`[quorum-slot-dispatch] CTXWIN-01: ${action} for ${dispatchSlot} (${budgetResult.totalEstimate} > ${dispatchProvider.max_context_tokens} tokens)\n`);
+      }
+      if (!budgetResult.fits && dispatchProvider.fallback_slot) {
+        const fallbackProvider = providers.find(p => p.name === dispatchProvider.fallback_slot);
+        if (fallbackProvider) {
+          process.stderr.write(`[quorum-slot-dispatch] CTXWIN-01: rerouting ${dispatchSlot} to ${fallbackProvider.name} due to CCR budget overflow\n`);
+          dispatchSlot = fallbackProvider.name;
+          dispatchProvider = fallbackProvider;
+          prompt = buildPromptForProvider(dispatchProvider);
+          applyRetrieval();
+          return enforceBudget();
         }
       }
     }
-  } catch (_) { /* fail-open: context check errors never block dispatch */ }
+    return budgetResult;
+  };
+  try {
+    budgetResult = enforceBudget();
+    if (!budgetResult.fits) {
+      const result = emitResultBlock({
+        slot,
+        round,
+        verdict: 'UNAVAIL',
+        reasoning: `CONTEXT_OVERFLOW: estimated ${budgetResult.totalEstimate} tokens exceeds ${dispatchSlot} limit of ${dispatchProvider.max_context_tokens} (prompt: ${budgetResult.promptTokens}, overhead: ${budgetResult.overheadTokens})`,
+        rawOutput: `Prompt too large for logical slot ${slot} via ${dispatchSlot} (${dispatchProvider?.model || 'unknown'}): ~${budgetResult.totalEstimate} tokens > ${dispatchProvider.max_context_tokens} max`,
+        isUnavail: true,
+        error_type: 'CONTEXT_OVERFLOW',
+        dispatch_nonce: dispatchNonce,
+        unavailMessage: `Prompt size: ${prompt.length} chars (~${budgetResult.promptTokens} tokens). Model limit: ${dispatchProvider.max_context_tokens}. Overhead: ${budgetResult.overheadTokens}. Dispatch slot: ${dispatchSlot}.`,
+        compact_actions: compactActions,
+        logical_slot: slot,
+        dispatch_slot: dispatchSlot,
+        budget: budgetResult,
+        retrieval_skipped: retrievalSkipped,
+      });
+      if (outputFile) {
+        try {
+          fs.mkdirSync(path.dirname(outputFile), { recursive: true });
+          fs.writeFileSync(outputFile, result.endsWith('\n') ? result : result + '\n', 'utf8');
+        } catch (e) {
+          process.stderr.write(`[quorum-slot-dispatch] output-file write failed: ${e.message}\n`);
+        }
+      }
+      process.stdout.write(result);
+      if (!result.endsWith('\n')) process.stdout.write('\n');
+      process.exit(0);
+    }
+  } catch (_) {
+    /* fail-open: context check errors never block dispatch */
+  }
+
+  const finalBudget = budgetResult ?? (dispatchProvider ? computeProviderBudget(dispatchProvider, prompt, CHARS_PER_TOKEN) : null);
+  const compactActionsFinal = compactActions;
+  const retrievalSkippedFinal = retrievalSkipped;
+  const fallbacked = dispatchSlot !== slot;
 
   // Locate call-quorum-slot.cjs relative to this script
   const cqsPath = path.join(__dirname, 'call-quorum-slot.cjs');
@@ -1421,13 +1653,35 @@ async function main() {
     try {
       const pPath = path.join(__dirname, 'providers.json');
       const providers = JSON.parse(fs.readFileSync(pPath, 'utf8')).providers || [];
-      const provider = providers.find(p => p.name === slot);
+      const provider = providers.find(p => p.name === dispatchSlot);
       return provider && (provider.display_type === 'claude-code-router' || (provider.cli && provider.cli.includes('ccr')));
     } catch { return false; }
   })();
 
   // Build spawn args — add --allowed-tools for ccr slots in review mode
-  const spawnArgs = [cqsPath, '--slot', slot, '--timeout', String(timeout), '--cwd', cwd];
+  const spawnArgs = [cqsPath, '--slot', dispatchSlot, '--timeout', String(timeout), '--cwd', cwd];
+  spawnArgs.push('--dispatch-slot', dispatchSlot);
+  spawnArgs.push('--compact-actions', JSON.stringify(compactActionsFinal));
+  spawnArgs.push('--retrieval-skipped', retrievalSkippedFinal ? 'true' : 'false');
+  const quorumInvocationId = (() => {
+    if (!persistSessionsWithinQuorum) return null;
+    if (quorumInvocationIdArg) return quorumInvocationIdArg;
+    const stableKey = [
+      process.env.CLAUDE_SESSION_ID || 'manual',
+      cwd,
+      mode,
+      artifactPath || '',
+      reviewContext || '',
+      question || '',
+    ].join('\n');
+    return 'qrm-' + crypto.createHash('sha1').update(stableKey).digest('hex').slice(0, 16);
+  })();
+  if (quorumInvocationId) {
+    spawnArgs.push('--quorum-invocation-id', quorumInvocationId);
+  }
+  if (persistSessionsWithinQuorum === false) {
+    spawnArgs.push('--persist-sessions', 'false');
+  }
   if (isReviewMode && isCcrSlot) {
     spawnArgs.push('--allowed-tools', 'Read,Grep,Glob');
   }
@@ -1436,6 +1690,17 @@ async function main() {
   if (outputFile) {
     spawnArgs.push('--output-file', outputFile, '--dispatch-nonce', dispatchNonce);
   }
+
+  // ─── Acquire per-provider semaphore (SOLVE-10) ───────────────────────
+  let semLock = null;
+  try {
+    const pPath = path.join(__dirname, 'providers.json');
+    const providers = JSON.parse(fs.readFileSync(pPath, 'utf8')).providers || [];
+    const provider = providers.find(p => p.name === dispatchSlot);
+    if (provider && provider.type === 'http' && provider.baseUrl && provider.max_concurrency) {
+      semLock = semAcquire(provider.baseUrl, provider.max_concurrency);
+    }
+  } catch (_) {}
 
   // Spawn call-quorum-slot.cjs as child process with stdin pipe
   const rawOutput = await new Promise((resolve) => {
@@ -1487,13 +1752,22 @@ async function main() {
     });
   });
 
+  // ─── Release per-provider semaphore ──────────────────────────────────
+  semRelease(semLock);
+
   const { exitCode, output, truncated: l3Truncated, originalSize: l3OriginalSize } = rawOutput;
   const l1Truncated = output.includes('[OUTPUT TRUNCATED at 10MB');
-  // Non-zero exit with valid output = available_with_warning (quick-367)
-  // CLI may exit non-zero due to post-processing hooks (e.g., Gemini SessionEnd)
-  // while still producing a valid response. Check for verdict or substantial output.
-  const hasValidOutput = output.length > 100 || /verdict:\s*(APPROVE|REJECT|FLAG)/i.test(output);
-  const isUnavail = (exitCode !== 0 && !hasValidOutput) || output.includes('TIMEOUT');
+  // Non-zero exit with valid output = available_with_warning only when the output
+  // looks like an actual model answer. API/provider failures can also be lengthy,
+  // especially for CCR, and must still classify as UNAVAIL.
+  const looksLikeProviderFailure =
+    /\[exit code \d+\]/i.test(output) ||
+    /^API Error:/i.test(output) ||
+    /provider_response_error/i.test(output) ||
+    /requested token count exceeds/i.test(output) ||
+    /invalid_request_error/i.test(output);
+  const hasValidOutput = (output.length > 100 || /verdict:\s*(APPROVE|REJECT|FLAG)/i.test(output)) && !looksLikeProviderFailure;
+  const isUnavail = (exitCode !== 0 && !hasValidOutput) || output.includes('TIMEOUT') || looksLikeProviderFailure;
 
   let result;
   if (isUnavail) {
@@ -1532,6 +1806,11 @@ async function main() {
       truncated: l3Truncated || l1Truncated,
       truncationLayer: l1Truncated ? 'L1' : (l3Truncated ? 'L3' : null),
       originalSizeBytes: l3OriginalSize || null,
+      compact_actions: compactActionsFinal,
+      logical_slot: slot,
+      dispatch_slot: dispatchSlot,
+      budget: finalBudget,
+      retrieval_skipped: retrievalSkippedFinal,
     });
 
     // L3/L6 supplementary telemetry (TRUNC-04 gap closure)
@@ -1616,6 +1895,12 @@ module.exports = {
     matchPrecedentsByKeywords,
     formatPrecedentsSection,
     enrichPromptWithRetrieval,
+    estimatePromptTokens,
+    computeProviderBudget,
+    compactPromptToFitBudget,
+    stripRetrievedContext,
+    stripPriorPositions,
+    shouldSkipRetrieval,
     classifyDispatchError,
     appendTelemetryUpdate,
   };

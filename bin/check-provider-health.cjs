@@ -140,19 +140,47 @@ const activeMcpServers = (quorumActive.length > 0)
   ? Object.fromEntries(Object.entries(mcpServers).filter(([name]) => quorumActive.includes(name)))
   : mcpServers;
 
+// ─── Load providers.json for PROVIDER_SLOT-based slot discovery ──────────────
+let providersJson = [];
+try {
+  const pjPath = path.join(__dirname, 'providers.json');
+  const pj = JSON.parse(fs.readFileSync(pjPath, 'utf8'));
+  providersJson = pj.providers ?? [];
+} catch (_) {}
+
+// Build lookup: slotName -> { baseUrl, apiKeyEnv, model } from providers.json
+const slotLookup = {};
+for (const p of providersJson) {
+  if (p.type === 'http' && p.baseUrl) {
+    slotLookup[p.name] = { baseUrl: p.baseUrl, apiKeyEnv: p.apiKeyEnv, model: p.model ?? '?' };
+  }
+}
+
 // Build: providerBaseUrl -> { servers: [], apiKey }
 const providers = {};
 for (const [name, cfg] of Object.entries(activeMcpServers)) {
-  // HTTP slots are identified by ANTHROPIC_BASE_URL presence (checked below).
-  // Subprocess slots (codex-1, gemini-1, etc.) have no ANTHROPIC_BASE_URL and are filtered by the !baseUrl guard.
   const env     = cfg.env ?? {};
-  const baseUrl = env.ANTHROPIC_BASE_URL;
-  const apiKey  = env.ANTHROPIC_API_KEY;
-  const model   = env.CLAUDE_DEFAULT_MODEL ?? '?';
+
+  // Path 1: Legacy ANTHROPIC_BASE_URL in MCP server env
+  let baseUrl = env.ANTHROPIC_BASE_URL;
+  let apiKey  = env.ANTHROPIC_API_KEY;
+  let model   = env.CLAUDE_DEFAULT_MODEL ?? '?';
+
+  // Path 2: PROVIDER_SLOT-based slots — resolve baseUrl from providers.json
+  if (!baseUrl && env.PROVIDER_SLOT && slotLookup[env.PROVIDER_SLOT]) {
+    const sl = slotLookup[env.PROVIDER_SLOT];
+    baseUrl = sl.baseUrl;
+    model = sl.model;
+    // Resolve API key from environment variable name
+    if (sl.apiKeyEnv && process.env[sl.apiKeyEnv]) {
+      apiKey = process.env[sl.apiKeyEnv];
+    }
+  }
+
   if (!baseUrl) continue;
 
   if (!providers[baseUrl]) {
-    providers[baseUrl] = { servers: [], apiKey };
+    providers[baseUrl] = { servers: [], apiKey: apiKey || providers[baseUrl]?.apiKey };
   }
   providers[baseUrl].servers.push({ name, model });
 }
@@ -215,7 +243,7 @@ function printQuorumFailures() {
 }
 
 if (Object.keys(providers).length === 0) {
-  console.log('No claude-mcp-server instances with ANTHROPIC_BASE_URL found.');
+  console.log('No HTTP-backed MCP slots found (checked ANTHROPIC_BASE_URL and PROVIDER_SLOT with providers.json).');
   printQuorumFailures();
   process.exit(0);
 }

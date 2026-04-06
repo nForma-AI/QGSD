@@ -132,6 +132,7 @@ const verboseMode = args.includes('--verbose');
 const fastMode = args.includes('--fast');
 const skipProximity = args.includes('--skip-proximity');
 const skipTests = args.includes('--skip-tests');
+const requireBaselines = args.includes('--require-baselines');
 
 // Global deadline: abort after N ms to prevent indefinite hangs.
 // Uses wall-clock checks between sync operations (setTimeout won't fire during
@@ -1667,7 +1668,7 @@ function sweepRtoD() {
   if (!fs.existsSync(reqPath)) {
     return {
       residual: -1,
-      detail: { skipped: true, reason: 'missing: requirements.json' },
+      detail: { skipped: true, reason: 'missing: requirements.json', baseline_hint: 'run sync-baseline-requirements.cjs to populate' },
     };
   }
 
@@ -1677,7 +1678,7 @@ function sweepRtoD() {
   } catch (e) {
     return {
       residual: -1,
-      detail: { skipped: true, reason: 'missing: requirements.json (parse error: ' + e.message + ')' },
+      detail: { skipped: true, reason: 'missing: requirements.json (parse error: ' + e.message + ')', baseline_hint: 'run sync-baseline-requirements.cjs to populate' },
     };
   }
 
@@ -2181,14 +2182,14 @@ const MAX_REVERSE_CANDIDATES = 200;
 function sweepCtoR() {
   const reqPath = path.join(ROOT, '.planning', 'formal', 'requirements.json');
   if (!fs.existsSync(reqPath)) {
-    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json' } };
+    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json', baseline_hint: 'run sync-baseline-requirements.cjs to populate' } };
   }
 
   let reqData;
   try {
     reqData = JSON.parse(fs.readFileSync(reqPath, 'utf8'));
   } catch (e) {
-    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json (parse error)' } };
+    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json (parse error)', baseline_hint: 'run sync-baseline-requirements.cjs to populate' } };
   }
 
   // Flatten requirements
@@ -2600,14 +2601,14 @@ function sweepTtoR() {
 function sweepDtoR() {
   const reqPath = path.join(ROOT, '.planning', 'formal', 'requirements.json');
   if (!fs.existsSync(reqPath)) {
-    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json' } };
+    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json', baseline_hint: 'run sync-baseline-requirements.cjs to populate' } };
   }
 
   let reqData;
   try {
     reqData = JSON.parse(fs.readFileSync(reqPath, 'utf8'));
   } catch (e) {
-    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json (parse error)' } };
+    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json (parse error)', baseline_hint: 'run sync-baseline-requirements.cjs to populate' } };
   }
 
   // Flatten requirements and extract keywords per requirement
@@ -3617,15 +3618,24 @@ function sweepReqQuality() {
       if (aggResult.exitCode !== 0) extraResidual += 1;
     } catch (_) { /* fail-open */ }
 
-    // Fold: baseline-drift detection
+    // Fold: baseline-drift detection (with model staleness signal per CONV-04)
     try {
       const bdPath = path.join(ROOT, 'bin', 'baseline-drift.cjs');
       if (fs.existsSync(bdPath)) {
         const bdMod = require(bdPath);
         if (typeof bdMod.detectBaselineDrift === 'function') {
-          const drift = bdMod.detectBaselineDrift();
-          if (drift && ((drift.count && drift.count > 0) || (Array.isArray(drift) && drift.length > 0))) {
-            const driftCount = drift.count || drift.length || 0;
+          // Compute model staleness to feed into drift detection
+          let modelStaleness = null;
+          try {
+            const msPath = path.join(ROOT, 'bin', 'check-model-staleness.cjs');
+            if (fs.existsSync(msPath)) {
+              const msMod = require(msPath);
+              modelStaleness = msMod.checkStaleness(ROOT);
+            }
+          } catch (_) { /* fail-open: staleness unavailable */ }
+          const drift = bdMod.detectBaselineDrift(undefined, undefined, { modelStaleness });
+          if (drift && (drift.detected || (drift.count && drift.count > 0) || (Array.isArray(drift) && drift.length > 0))) {
+            const driftCount = drift.count || drift.layers?.length || (drift.detected ? 1 : 0);
             extraResidual += driftCount;
             extraDetail.baseline_drift = drift;
           }
@@ -3842,6 +3852,40 @@ function sweepMemoryHealth() {
   }
 }
 
+// ── Model Staleness sweep (informational) --------------------------------
+
+function sweepModelStaleness() {
+  if (fastMode) {
+    return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
+  }
+  try {
+    const scriptPath = path.join(ROOT, 'bin', 'check-model-staleness.cjs');
+    if (!fs.existsSync(scriptPath)) {
+      return { residual: -1, detail: { skipped: true, reason: 'check-model-staleness.cjs not found' } };
+    }
+    const result = spawnTool('bin/check-model-staleness.cjs', ['--json', '--dry-run']);
+    if (!result.stdout) {
+      return { residual: -1, detail: { error: true, stderr: (result.stderr || '').slice(0, 500) } };
+    }
+    const data = JSON.parse(result.stdout);
+    if (data.skipped) {
+      return { residual: -1, detail: { skipped: true, reason: 'no model-registry.json' } };
+    }
+    return {
+      residual: data.total_stale,
+      kind: 'informational',
+      detail: {
+        total_checked: data.total_checked,
+        total_stale: data.total_stale,
+        first_hash_count: data.first_hash_count,
+        stale: (data.stale || []).slice(0, 20).map(s => ({ model: s.model, reason: s.reason, requirements: s.requirements || [] })),
+      },
+    };
+  } catch (err) {
+    return { residual: -1, detail: { error: err.message } };
+  }
+}
+
 function sweepBtoF(t_to_c_result) {
   if (fastMode) {
     return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
@@ -3970,6 +4014,47 @@ function checkLayerSkip(layerKey) {
     return { residual: -1, detail: { skipped: true, reason: 'incremental: layer not affected by remediation' } };
   }
   return null;
+}
+
+/**
+ * Check if requirements.json contains baseline-sourced requirements.
+ * Returns { has_baselines: boolean, baseline_count: number, total_count: number, file_missing: boolean, error?: string }
+ * Fail-open: JSON parse errors return { has_baselines: false, ... }
+ */
+function checkBaselinePresence() {
+  try {
+    const reqPath = path.join(ROOT, '.planning', 'formal', 'requirements.json');
+
+    // First check: file existence
+    if (!fs.existsSync(reqPath)) {
+      return { has_baselines: false, baseline_count: 0, total_count: 0, file_missing: true };
+    }
+
+    // Second check: parse JSON
+    const data = JSON.parse(fs.readFileSync(reqPath, 'utf8'));
+    const reqs = data.requirements || [];
+
+    // Count baseline-sourced requirements
+    const baselineCount = reqs.filter(r =>
+      r.provenance && r.provenance.source_file === 'nf-baseline'
+    ).length;
+
+    return {
+      has_baselines: baselineCount > 0,
+      baseline_count: baselineCount,
+      total_count: reqs.length,
+      file_missing: false
+    };
+  } catch (e) {
+    // Fail-open: JSON parse or other errors
+    return {
+      has_baselines: false,
+      baseline_count: 0,
+      total_count: 0,
+      file_missing: false,
+      error: e.message
+    };
+  }
 }
 
 /**
@@ -4182,6 +4267,10 @@ function computeResidual() {
   const memory_health = checkLayerSkip('memory_health') || sweepMemoryHealth();
   _timing.memory_health = { duration_ms: Date.now() - _t_memory_health, skipped: !!(memory_health.detail && memory_health.detail.skipped) };
 
+  const _t_model_stale = Date.now();
+  const model_stale = checkLayerSkip('model_stale') || sweepModelStaleness();
+  _timing.model_stale = { duration_ms: Date.now() - _t_model_stale, skipped: !!(model_stale.detail && model_stale.detail.skipped) };
+
   // CONV-02: Split residual into three distinct buckets
   const automatable =
     (r_to_f.residual >= 0 ? r_to_f.residual : 0) +
@@ -4215,7 +4304,8 @@ function computeResidual() {
     (asset_stale.residual >= 0 ? asset_stale.residual : 0) +
     (arch_constraints.residual >= 0 ? arch_constraints.residual : 0) +
     (debt_health.residual >= 0 ? debt_health.residual : 0) +
-    (memory_health.residual >= 0 ? memory_health.residual : 0);
+    (memory_health.residual >= 0 ? memory_health.residual : 0) +
+    (model_stale.residual >= 0 ? model_stale.residual : 0);
 
   return {
     r_to_f,
@@ -4246,6 +4336,7 @@ function computeResidual() {
     arch_constraints,
     debt_health,
     memory_health,
+    model_stale,
     assembled_candidates,
     total,
     automatable,
@@ -4864,6 +4955,7 @@ function formatReport(iterations, finalResidual, converged) {
     { label: 'AC (Arch Constraints)', key: 'arch_constraints' },
     { label: 'DH (Debt Health)', key: 'debt_health' },
     { label: 'MH (Memory Health)', key: 'memory_health' },
+    { label: 'MS (Model Stale)', key: 'model_stale' },
   ];
 
   for (const row of diagRows) {
@@ -5615,6 +5707,20 @@ function main() {
     existingSolveState.consecutive_clean_sessions = 0;
   }
 
+  // Check baseline presence and emit advisory if needed
+  const baselineCheck = checkBaselinePresence();
+  if (!baselineCheck.has_baselines) {
+    if (baselineCheck.file_missing) {
+      process.stderr.write(TAG + " ADVISORY: requirements.json not found. Run 'node bin/sync-baseline-requirements.cjs' to create it with baseline requirements.\n");
+    } else {
+      process.stderr.write(TAG + " ADVISORY: requirements.json contains 0 of " + baselineCheck.total_count + " requirements from baselines. Run 'node bin/sync-baseline-requirements.cjs' to populate baselines and improve coverage.\n");
+    }
+    if (requireBaselines) {
+      process.stderr.write(TAG + " ERROR: --require-baselines set but no baselines found. Aborting.\n");
+      process.exit(1);
+    }
+  }
+
   const iterations = [];
   let converged = false;
   let prevTotal = null;
@@ -5920,6 +6026,17 @@ function main() {
   }
   const jsonObj = formatJSON(iterations, finalResidual, converged);
   jsonObj.oscillating_layers = cycleDetector.detectOscillating();
+  jsonObj.baseline_advisory = baselineCheck.has_baselines ? null : {
+    warning: baselineCheck.file_missing
+      ? 'requirements.json not found'
+      : 'no baseline-sourced requirements in requirements.json',
+    suggestion: baselineCheck.file_missing
+      ? 'run sync-baseline-requirements.cjs to create baseline requirements'
+      : 'run sync-baseline-requirements.cjs to populate baselines',
+    file_missing: baselineCheck.file_missing,
+    baseline_count: baselineCheck.baseline_count,
+    total_count: baselineCheck.total_count
+  };
   const jsonText = JSON.stringify(jsonObj, null, 2);
 
   // Persist session summary before stdout/exit
@@ -6039,6 +6156,7 @@ module.exports = {
   sweepFormalLint,
   sweepHazardModel,
   sweepHtoM,
+  sweepModelStaleness,
   sweepBtoF,
   classifyFailingTest,
   assembleReverseCandidates,

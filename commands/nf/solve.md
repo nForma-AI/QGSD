@@ -1,7 +1,7 @@
 ---
 name: nf:solve
 description: Orchestrator skill that dispatches diagnostic, remediation, and reporting sub-skills via Agent tool, managing the convergence loop and report-only gate
-argument-hint: [--report-only] [--plan-only] [--execute] [--resume] [--max-iterations=N] [--json] [--verbose] [--targets=<path>] [--skip-observe] [--focus="<phrase>"]
+argument-hint: [--report-only] [--plan-only] [--execute] [--resume] [--max-iterations=N] [--json] [--verbose] [--targets=<path>] [--skip-observe] [--focus="<phrase>"] [--require-baselines]
 allowed-tools:
   - Read
   - Bash
@@ -51,9 +51,10 @@ Initialize at the very start of the process block:
   - If args contain `--plan-only`, set `planOnly = true`. Otherwise, set `planOnly = false`.
   - If args contain `--execute`, set `executeMode = true`. Otherwise, set `executeMode = false`.
   - If args contain `--resume`, set `resumeMode = true`. Otherwise, set `resumeMode = false`.
+  - If args contain `--require-baselines`, set `requireBaselines = true`. Otherwise, set `requireBaselines = false`.
   - Generate `solveSessionId = Date.now().toString(36)` — unique ID for this solve run.
   - Export it: run `export NF_SOLVE_SESSION_ID={solveSessionId}` in the shell so all Bash commands and Agent subprocesses inherit it. The token collector hook reads this env var to tag token records with the solve session.
-Use `focusPhrase` in Phase 3b bash command and Phase 4 Agent call.
+Use `focusPhrase` in Phase 3b bash command and Phase 4 Agent call. Forward `--require-baselines` to nf-solve.cjs in both Phase 0.5 and Phase 1b.
 
 **Two-phase solve (QUICK-345):**
 - `--plan-only`: Run Phase 1 diagnostic, compute a remediation plan summary, save to solve-session.json, then STOP. The user reviews the plan before committing to execution.
@@ -70,6 +71,23 @@ SESSION=$(node /Users/jonathanborduas/.claude/nf-bin/solve-session.cjs read --pr
 ```
 
 If `/Users/jonathanborduas/.claude/nf-bin/solve-session.cjs` does not exist, fall back to `bin/solve-session.cjs`.
+
+**Before proceeding with session resume, if `requireBaselines` is true, check baseline presence:**
+
+```bash
+# Check baseline requirement presence (quick check without full solve)
+BASELINE_CHECK=$(node << 'NF_EVAL'
+try {
+  const d = JSON.parse(require('fs').readFileSync('.planning/formal/requirements.json', 'utf8'));
+  const reqs = d.requirements || [];
+  const baselined = reqs.filter(r => r.provenance && r.provenance.source_file === 'nf-baseline').length;
+  console.log(JSON.stringify({ has_baselines: baselined > 0, count: baselined, total: reqs.length }));
+} catch (e) { console.log(JSON.stringify({ has_baselines: false, count: 0, total: 0, error: e.message })); }
+NF_EVAL
+)
+```
+
+If `requireBaselines` is true and `BASELINE_CHECK.has_baselines` is false: log `"ERROR: --require-baselines set but no baselines found. Aborting."` and exit with status 1.
 
 Parse the JSON output:
 - If session is null: log `"No saved solve session found — running fresh diagnostic"` and proceed to Phase 1 normally.
@@ -91,7 +109,7 @@ If `/Users/jonathanborduas/.claude/nf-bin/solve-debt-bridge.cjs` does not exist 
 
 **Step 1b: Run diagnostic sweep:**
 ```bash
-BASELINE_RAW=$(node /Users/jonathanborduas/.claude/nf-bin/nf-solve.cjs --json --report-only --project-root=$(pwd)${focusPhrase:+ --focus="$focusPhrase"} 2>/dev/null)
+BASELINE_RAW=$(node /Users/jonathanborduas/.claude/nf-bin/nf-solve.cjs --json --report-only --project-root=$(pwd)${focusPhrase:+ --focus="$focusPhrase"}${requireBaselines:+ --require-baselines} 2>/dev/null)
 ```
 If `/Users/jonathanborduas/.claude/nf-bin/nf-solve.cjs` does not exist, fall back to `bin/nf-solve.cjs` (CWD-relative).
 
