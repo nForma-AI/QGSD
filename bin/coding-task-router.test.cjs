@@ -183,3 +183,117 @@ test('selectSlot returns null for non-array input', () => {
   assert.strictEqual(mod.selectSlot('fix', null), null);
   assert.strictEqual(mod.selectSlot('fix', undefined), null);
 });
+
+// ── INTEGRATION TESTS: Full prompt-build -> parse round-trip ────────────────
+
+test('integration: full round-trip — buildCodingPrompt -> mock output -> parseCodingResult (SUCCESS)', () => {
+  assert.ok(mod, 'module not loaded');
+
+  // Step 1: Build a coding prompt
+  const prompt = mod.buildCodingPrompt({
+    task: 'Add error handling to the database module',
+    repoDir: '/tmp/integration-test',
+    files: ['src/db.js'],
+    constraints: ['use CommonJS'],
+    context: 'Previous version had unhandled promise rejections',
+  });
+
+  // Verify prompt contains the task
+  assert.ok(prompt.includes('Add error handling to the database module'), 'prompt missing task');
+  assert.ok(prompt.includes('=== OUTPUT FORMAT ==='), 'prompt missing output format instructions');
+
+  // Step 2: Simulate a well-formed agent response
+  const mockOutput = [
+    'I have analyzed the database module and added error handling.',
+    '',
+    'status: SUCCESS',
+    'files_modified: [src/db.js]',
+    'summary: Added try-catch blocks around all database operations and proper error propagation',
+    'diff_preview: |',
+    '  +try {',
+    '  +  await db.query(sql);',
+    '  +} catch (err) {',
+    '  +  logger.error(err);',
+    '  +  throw new DatabaseError(err.message);',
+    '  +}',
+  ].join('\n');
+
+  // Step 3: Parse the result
+  const result = mod.parseCodingResult(mockOutput);
+
+  assert.strictEqual(result.status, 'SUCCESS');
+  assert.deepStrictEqual(result.filesModified, ['src/db.js']);
+  assert.ok(result.summary.includes('try-catch'), 'summary should describe changes');
+  assert.ok(result.rawOutput === mockOutput, 'rawOutput preserved');
+});
+
+test('integration: full round-trip — buildCodingPrompt -> mock output -> parseCodingResult (PARTIAL)', () => {
+  assert.ok(mod, 'module not loaded');
+
+  const prompt = mod.buildCodingPrompt({
+    task: 'Refactor auth module to use JWT',
+    repoDir: '/tmp/partial-test',
+    files: ['src/auth.js', 'src/middleware.js'],
+  });
+
+  assert.ok(prompt.includes('Refactor auth module'), 'prompt missing task');
+
+  const mockOutput = [
+    'status: PARTIAL',
+    'files_modified: [src/auth.js]',
+    'summary: Refactored auth.js to use JWT but middleware.js needs manual migration',
+  ].join('\n');
+
+  const result = mod.parseCodingResult(mockOutput);
+
+  assert.strictEqual(result.status, 'PARTIAL');
+  assert.deepStrictEqual(result.filesModified, ['src/auth.js']);
+  assert.ok(result.summary.includes('middleware.js needs manual'), 'summary should explain partial');
+});
+
+test('integration: error handling path — parseCodingResult with only status FAILED', () => {
+  assert.ok(mod, 'module not loaded');
+
+  const mockOutput = 'status: FAILED\nsummary: compilation error — missing import for jwt module';
+  const result = mod.parseCodingResult(mockOutput);
+
+  assert.strictEqual(result.status, 'FAILED');
+  assert.ok(result.summary.includes('compilation error'), 'summary should describe failure');
+  assert.deepStrictEqual(result.filesModified, [], 'no files modified on failure');
+});
+
+test('integration: error handling path — empty output returns fail-open result', () => {
+  assert.ok(mod, 'module not loaded');
+
+  const result = mod.parseCodingResult('');
+  assert.strictEqual(result.status, 'UNKNOWN');
+  assert.deepStrictEqual(result.filesModified, []);
+  assert.strictEqual(result.diffPreview, null);
+});
+
+test('integration: prompt contains all required sections for agent consumption', () => {
+  assert.ok(mod, 'module not loaded');
+
+  const prompt = mod.buildCodingPrompt({
+    task: 'Write unit tests for parser',
+    repoDir: '/home/user/project',
+    files: ['src/parser.js', 'test/parser.test.js'],
+    constraints: ['use node:test framework', 'minimum 80% coverage'],
+    context: 'Parser currently has no tests',
+  });
+
+  // Verify all sections are present and ordered
+  const taskIdx = prompt.indexOf('=== TASK ===');
+  const repoIdx = prompt.indexOf('=== REPOSITORY ===');
+  const filesIdx = prompt.indexOf('=== FILES ===');
+  const constraintsIdx = prompt.indexOf('=== CONSTRAINTS ===');
+  const contextIdx = prompt.indexOf('=== CONTEXT ===');
+  const formatIdx = prompt.indexOf('=== OUTPUT FORMAT ===');
+
+  assert.ok(taskIdx >= 0, 'TASK section missing');
+  assert.ok(repoIdx > taskIdx, 'REPOSITORY should follow TASK');
+  assert.ok(filesIdx > repoIdx, 'FILES should follow REPOSITORY');
+  assert.ok(constraintsIdx > filesIdx, 'CONSTRAINTS should follow FILES');
+  assert.ok(contextIdx > constraintsIdx, 'CONTEXT should follow CONSTRAINTS');
+  assert.ok(formatIdx > contextIdx, 'OUTPUT FORMAT should be last');
+});
