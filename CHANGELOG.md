@@ -47,7 +47,7 @@ Comprehensive observability for the `/nf:solve` pipeline: per-layer timing, glob
 
 ## [0.41.6] - 2026-04-02 — Quorum Infrastructure Overhaul & Project-Level Formal Specs
 
-Major quorum infrastructure overhaul: HTTP API dispatch for claude-1..6, Option C file-based slot output, slot-worker hardening, truncation integrity pipeline, and file write reliability (25% → 100%). New project-level formal spec discovery with security-hardened execution.
+Major quorum infrastructure overhaul: HTTP API dispatch for api-1..6, Option C file-based slot output, slot-worker hardening, truncation integrity pipeline, and file write reliability (25% → 100%). New project-level formal spec discovery with security-hardened execution.
 
 ### Added
 - `feat(quick-365)`: truncation integrity pipeline — markers, metadata propagation, TLA+ model `NFOutputIntegrity.tla` with 6 invariants, nf-stop.js truncation awareness
@@ -62,10 +62,10 @@ Major quorum infrastructure overhaul: HTTP API dispatch for claude-1..6, Option 
 - `test`: 12 new tests for `run-formal-check.test.cjs` (allowlist, arg guards, path traversal, pass/fail commands)
 
 ### Changed
-- `fix(quorum)`: switch claude-1..6 from CCR subprocess to direct HTTP API dispatch — eliminates CCR overhead, adds HTTP-aware prompt adaptation for tool-less slots
+- `fix(quorum)`: switch api-1..6 from CCR subprocess to direct HTTP API dispatch — eliminates CCR overhead, adds HTTP-aware prompt adaptation for tool-less slots
 - `fix(quorum)`: Option C file-based slot output — Node script writes result files directly via `--output-file`, removing Haiku from the critical path
 - `fix(quorum)`: pre-built command agent — slot-worker runs one pre-formed Bash command (no YAML arg parsing)
-- `fix(quorum)`: swap providers — AkashML→Together for claude-1/2, claude-5→GPT-OSS-120B, Gemini pro→flash (free tier quota)
+- `fix(quorum)`: swap providers — AkashML→Together for api-1/2, api-5→GPT-OSS-120B, Gemini pro→flash (free tier quota)
 
 ### Fixed
 - `fix(quorum)`: HTTP slot health check — skip layer1 binary probe for `type:http` slots, add layer2 API probe (0/6 → 6/6 HTTP slots available)
@@ -77,7 +77,7 @@ Major quorum infrastructure overhaul: HTTP API dispatch for claude-1..6, Option 
 - `fix(quorum)`: `FLAG_TRUNCATED` only when verdict was lost (not when it survived truncation)
 - `fix(quorum)`: filter framework noise (hook logs) from valid-output detection
 - `fix(quick-367)`: `findProjectRoot` honors `--cwd` argument; non-zero exit with valid output treated as available
-- `fix(ci)`: add missing `latency_budget_ms` field to claude-5/claude-6 providers, update stale test expectations
+- `fix(ci)`: add missing `latency_budget_ms` field to api-5/api-6 providers, update stale test expectations
 
 ## [0.41.5] - 2026-03-28 — Quorum Convergence Rewrite Restoration
 
