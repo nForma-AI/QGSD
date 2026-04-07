@@ -297,3 +297,31 @@ test('integration: prompt contains all required sections for agent consumption',
   assert.ok(contextIdx > constraintsIdx, 'CONTEXT should follow CONSTRAINTS');
   assert.ok(formatIdx > contextIdx, 'OUTPUT FORMAT should be last');
 });
+
+// ── selectSlot with policy layer (backward compat) ──────────────────────────
+
+test('selectSlot still returns first file-access subprocess provider (backward compat with policy layer)', () => {
+  assert.ok(mod, 'module not loaded');
+  const providers = [
+    { name: 'claude-1', type: 'http', has_file_access: false },
+    { name: 'codex-1', type: 'subprocess', has_file_access: true },
+    { name: 'gemini-1', type: 'subprocess', has_file_access: true },
+  ];
+
+  const result = mod.selectSlot('implement', providers);
+  assert.strictEqual(result, 'codex-1', 'should delegate through policy layer and get same result');
+});
+
+// ── recordRoutingReward TESTS ───────────────────────────────────────────────
+
+test('recordRoutingReward is exported as a function', () => {
+  assert.ok(mod, 'module not loaded');
+  assert.strictEqual(typeof mod.recordRoutingReward, 'function');
+});
+
+test('recordRoutingReward does not throw on call', () => {
+  assert.ok(mod, 'module not loaded');
+  assert.doesNotThrow(() => {
+    mod.recordRoutingReward({ taskType: 'implement', slot: 'codex-1', reward: 0.9, latencyMs: 500 });
+  });
+});

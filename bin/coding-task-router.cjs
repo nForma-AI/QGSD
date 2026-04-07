@@ -18,6 +18,14 @@ const { spawn } = require('child_process');
 const fs        = require('fs');
 const path      = require('path');
 
+// ─── Import routing-policy.cjs (fail-open) ─────────────────────────────────
+let routingPolicy;
+try {
+  routingPolicy = require(path.join(__dirname, 'routing-policy.cjs'));
+} catch (_) {
+  routingPolicy = null;
+}
+
 // ─── Import classifyDispatchError from quorum-slot-dispatch.cjs ─────────────
 let classifyDispatchError;
 try {
@@ -142,11 +150,43 @@ function parseCodingResult(rawOutput) {
 function selectSlot(taskType, providers) {
   if (!Array.isArray(providers)) return null;
 
+  // Delegate to policy layer if available (fail-open to legacy behavior)
+  if (routingPolicy) {
+    try {
+      const result = routingPolicy.selectSlotWithPolicy(taskType, providers);
+      return result.slot;
+    } catch (_) {
+      // Fall through to legacy logic
+    }
+  }
+
+  // Legacy fallback — identical to original behavior
   const candidate = providers.find(
     p => p.type === 'subprocess' && p.has_file_access === true
   );
 
   return candidate ? candidate.name : null;
+}
+
+// ─── recordRoutingReward ────────────────────────────────────────────────────
+/**
+ * Convenience wrapper for recording routing reward signals.
+ * Fail-open: reward recording is best-effort.
+ *
+ * @param {object} opts
+ * @param {string} opts.taskType
+ * @param {string} opts.slot
+ * @param {number} opts.reward   - 0..1
+ * @param {number} [opts.latencyMs]
+ */
+function recordRoutingReward({ taskType, slot, reward, latencyMs } = {}) {
+  if (!routingPolicy) return;
+  try {
+    const recorder = new routingPolicy.RewardRecorder();
+    recorder.record({ taskType, slot, reward, latencyMs });
+  } catch (_) {
+    // Fail-open: reward recording is best-effort
+  }
 }
 
 // ─── routeCodingTask ────────────────────────────────────────────────────────
@@ -288,6 +328,7 @@ if (require.main === module) {
 module.exports = {
   buildCodingPrompt,
   parseCodingResult,
+  recordRoutingReward,
   routeCodingTask,
   selectSlot,
 };
