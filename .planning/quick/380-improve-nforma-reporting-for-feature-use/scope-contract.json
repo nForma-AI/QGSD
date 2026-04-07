@@ -1,0 +1,25 @@
+{
+  "feature/issue-61-improve-nforma-reporting": {
+    "task_id": 380,
+    "task_description": "Improve nForma reporting for feature usefulness and bugs caught",
+    "approach": "Add a structured reporting module that emits schema-validated telemetry events for feature interactions, aggregates per-feature metrics (usage count, unique users, success/failure rate, average run duration) over a selectable time range, links recorded bugs to the feature events that detected or prevented them, and generates human-friendly narrative insights summarizing notable findings.",
+    "out_of_scope": [
+      "Real-time dashboards or live-streaming analytics UI",
+      "User authentication or role-based access control for reports",
+      "Third-party analytics integrations (e.g., Datadog, Mixpanel)",
+      "Automated alerting or notification pipelines based on report thresholds",
+      "Historical data backfill for events emitted before this feature ships"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.95,
+      "routed_through_debug": false
+    },
+    "risk_level": "high",
+    "risk_reason": "New structured reporting module spanning multiple directories with schema-validated telemetry events, aggregation logic, bug linkage, and narrative generation constitutes a multi-phase plan touching 5+ files across multiple directories.",
+    "branches_affected": ["feature/issue-61-improve-nforma-reporting"],
+    "created_at": "2026-04-07T06:34:51.390Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

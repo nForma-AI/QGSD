@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_sync": "2026-04-06T10:48:40.157Z",
+  "last_sync": "2026-04-07T09:10:18.813Z",
   "models": {
     ".planning/formal/alloy/account-pool-structure.als": {
       "version": 1,
@@ -1335,8 +1335,8 @@
       "consecutive_pass_count": 780
     },
     ".planning/formal/alloy/quorum-votes.als": {
-      "version": 2560,
-      "last_updated": "2026-04-06T10:48:40.027Z",
+      "version": 2628,
+      "last_updated": "2026-04-07T09:10:18.282Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
@@ -2308,8 +2308,8 @@
       "consecutive_pass_count": 780
     },
     ".planning/formal/prism/quorum.pm": {
-      "version": 2560,
-      "last_updated": "2026-04-06T10:48:40.029Z",
+      "version": 2628,
+      "last_updated": "2026-04-07T09:10:18.285Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
@@ -2571,16 +2571,16 @@
       "consecutive_pass_count": 780
     },
     ".planning/formal/tla/NFQuorum.tla": {
-      "version": 2560,
-      "last_updated": "2026-04-06T10:48:40.025Z",
+      "version": 2628,
+      "last_updated": "2026-04-07T09:10:18.278Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
       "description": ""
     },
     ".planning/formal/tla/NFQuorum_xstate.tla": {
-      "version": 1776,
-      "last_updated": "2026-04-06T10:48:40.157Z",
+      "version": 1844,
+      "last_updated": "2026-04-07T09:10:18.813Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
