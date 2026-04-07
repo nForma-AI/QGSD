@@ -242,15 +242,23 @@ Categorize: 🛑 Blocker (prevents goal) | ⚠️ Warning (incomplete) | ℹ️ 
 <step name="quality_checklist_scan">
 **Quality Checklist Scan**
 
-After verifying must_haves, scan modified files against relevant quality checklists:
+After verifying must_haves, scan modified files against relevant quality checklists using the checklist registry.
 
-- If test files were modified/created: check against `@~/.claude/nf/references/testing-patterns.md`
-- If security-sensitive files changed (hooks, auth, env handling): check against `@~/.claude/nf/references/security-checklist.md`
-- If performance-sensitive code changed (hot paths, install, startup): check against `@~/.claude/nf/references/performance-checklist.md`
-- If CLI output or docs changed: check against `@~/.claude/nf/references/accessibility-checklist.md`
-- If API endpoints, module interfaces, component props, or public contracts changed: check against `@~/.claude/nf/references/api-design-checklist.md`
+Collect the list of files modified in this phase (from SUMMARY.md or git diff) as `$CHANGED_FILES` (comma-separated).
+Collect the phase description or goal as `$TASK_DESCRIPTION`.
 
-Report violations as Warning-level findings in VERIFICATION.md under a `## Quality Checklist Warnings` section. These do NOT block verification — they are informational.
+```bash
+MATCHES=$(node $HOME/.claude/nf-bin/checklist-match.cjs --files "$CHANGED_FILES" --description "$TASK_DESCRIPTION" 2>/dev/null)
+```
+
+If `$MATCHES` is a non-empty JSON array, for each matched checklist:
+1. Read `$HOME/.claude/nf/references/{file}` (where `{file}` comes from the match result)
+2. Evaluate the modified code against each checklist item
+3. Report violations as Warning-level findings
+
+If `checklist-match.cjs` is not found or returns exit 1 (no matches), skip this step silently (fail-open).
+
+Report violations in VERIFICATION.md under a `## Quality Checklist Warnings` section. These do NOT block verification — they are informational.
 </step>
 
 <step name="identify_human_verification">

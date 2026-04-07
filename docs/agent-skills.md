@@ -14,8 +14,6 @@ Use them when you need a focused process around a specific activity:
 - shape an idea
 - normalize a request into an issue
 - review code before merge
-- design an API or interface contract
-- plan a safe deprecation or migration
 - prepare a safe launch
 
 Do not use packaged skills as a replacement for nForma's main orchestration commands. nForma already has strong slash-command workflows for planning, execution, debugging, verification, and milestone management.
@@ -51,7 +49,6 @@ For smaller ad-hoc work:
 | `idea-refine` | Turn a rough idea into a focused one-pager with assumptions and MVP | `task-intake` or `/nf:new-project` |
 | `task-intake` | Turn rough requests into issue-ready structured JSON | issue creation or `/nf:quick --full` |
 | `code-review-and-quality` | Run a reusable merge-readiness review | `/nf:quick --full`, `/nf:verify-work`, or merge |
-| `deprecation-and-migration` | Safe deprecation: replace, announce, migrate, remove | `/nf:plan-phase` or `shipping-and-launch` |
 | `shipping-and-launch` | Prepare rollout, rollback, and launch readiness | release, staged rollout, or `/nf:observe` |
 
 ## Trimmed skills
@@ -82,16 +79,15 @@ nForma already has strong workflow coverage in these areas:
 - execution and verification: `/nf:execute-phase`, `/nf:verify-work`, `/nf:quorum-test`, `nf-executor`, `nf-verifier`
 - debugging and production observation: `/nf:debug`, `/nf:observe`, `/nf:solve-*`
 
-The 5 remaining packaged skills fill the lifecycle gaps that slash commands do not cover:
+The 4 remaining packaged skills fill the lifecycle gaps that slash commands do not cover:
 
 - before planning: idea shaping (`idea-refine`) and scope convergence (`task-intake`)
 - before merge: code quality review (`code-review-and-quality`)
-- before sunset: deprecation planning (`deprecation-and-migration`)
 - before release: shipping discipline (`shipping-and-launch`)
 
 ## Coverage status
 
-All 20 upstream skills from `addyosmani/agent-skills` are covered. 5 have dedicated packaged skills; 12 were trimmed and their guidance merged into core references and workflows; 2 (`planning-and-task-breakdown`, `context-engineering`) are fully handled by nForma's native orchestration; 1 (`using-agent-skills`) is covered by this document.
+All 20 upstream skills from `addyosmani/agent-skills` are covered. 4 have dedicated packaged skills; 1 (deprecation-and-migration) was converted to a conditional checklist (`core/references/deprecation-checklist.md`); 12 were trimmed and their guidance merged into core references and workflows; 2 (`planning-and-task-breakdown`, `context-engineering`) are fully handled by nForma's native orchestration; 1 (`using-agent-skills`) is covered by this document.
 
 ## Reference checklists
 
@@ -104,8 +100,11 @@ The `core/references/` directory contains lightweight checklists adapted from up
 | `core/references/performance-checklist.md` | `code-review-and-quality`, performance-sensitive changes |
 | `core/references/accessibility-checklist.md` | CLI output changes, documentation updates |
 | `core/references/api-design-checklist.md` | API endpoints, module interfaces, public contracts |
+| `core/references/deprecation-checklist.md` | deprecation planning, migration tasks, `/nf:verify-work` |
 
 These checklists are reference material, not enforcement gates. The verifier workflow (`core/workflows/verify-phase.md`) automatically scans against relevant checklists and reports findings as informational warnings.
+
+The checklist registry (`core/references/checklist-registry.json`) drives automatic checklist resolution in verify-phase. Each entry maps file patterns, keywords, and task types to a checklist file. Adding a new checklist requires only a new `.md` file and a registry entry -- no workflow code changes.
 
 ## Using packaged skills well
 
