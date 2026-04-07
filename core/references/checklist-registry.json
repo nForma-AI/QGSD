@@ -1,0 +1,54 @@
+{
+  "$schema": "checklist-registry/v1",
+  "checklists": [
+    {
+      "id": "testing-patterns",
+      "file": "testing-patterns.md",
+      "triggers": {
+        "file_patterns": ["**/*.test.*", "**/*.spec.*", "test/**"],
+        "task_types": ["bug_fix"],
+        "keywords": ["test", "tdd", "coverage"]
+      }
+    },
+    {
+      "id": "security",
+      "file": "security-checklist.md",
+      "triggers": {
+        "file_patterns": ["hooks/**", "**/auth*", "**/.env*", "**/secret*", "bin/install.js"],
+        "keywords": ["security", "auth", "secret", "token", "credential"]
+      }
+    },
+    {
+      "id": "performance",
+      "file": "performance-checklist.md",
+      "triggers": {
+        "file_patterns": ["bin/**", "**/startup*", "**/install*"],
+        "keywords": ["performance", "optimize", "slow", "latency", "cache"]
+      }
+    },
+    {
+      "id": "accessibility",
+      "file": "accessibility-checklist.md",
+      "triggers": {
+        "file_patterns": ["**/*.md", "**/cli*", "**/output*", "**/terminal*"],
+        "keywords": ["accessibility", "a11y", "screen reader", "keyboard"]
+      }
+    },
+    {
+      "id": "api-design",
+      "file": "api-design-checklist.md",
+      "triggers": {
+        "file_patterns": ["**/api/**", "**/routes/**", "**/endpoints/**", "**/*schema*"],
+        "keywords": ["api", "endpoint", "interface", "contract", "schema", "rest", "graphql"]
+      }
+    },
+    {
+      "id": "deprecation",
+      "file": "deprecation-checklist.md",
+      "triggers": {
+        "file_patterns": [],
+        "keywords": ["deprecat", "migration", "sunset", "remove", "replace", "legacy"]
+      }
+    }
+  ]
+}
