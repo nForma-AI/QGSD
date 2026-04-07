@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-04-07T06:10:32.850Z",
-  "content_hash": "a1fd220b93f72fbb",
+  "aggregated_at": "2026-04-07T08:02:54.724Z",
+  "content_hash": "91abf36fbf72dd02",
   "requirements": [
     {
       "id": "ACT-01",
@@ -1443,6 +1443,18 @@
       "provenance": {
         "source_file": ".planning/quick/380-delegate-quorum-slot-coding-to-external-/380-PLAN.md",
         "milestone": "quick-380"
+      }
+    },
+    {
+      "id": "DISP-08",
+      "text": "/nf:quick --delegate {slot-name} flag enables full task delegation to named external agent CLI slots via Mode C dispatch, bypassing local planning and execution while preserving scope contract tracking and result recording in STATE.md.",
+      "category": "Quorum & Dispatch",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Quick task 381 adds the --delegate flag to the /nf:quick workflow, providing a user-facing interface to Mode C dispatch (established in DISP-07). The flag validates the target slot against providers.json, ensures it is a subprocess provider with file access, and routes the task through coding-task-router.cjs for execution by the external agent.",
+      "provenance": {
+        "source_file": ".planning/quick/381-add-delegate-flag-to-nf-quick-for-full-t/381-PLAN.md",
+        "milestone": "quick-381"
       }
     },
     {
@@ -6141,5 +6153,5 @@
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
   "last_sync": "2026-03-31T09:45:23.686Z",
-  "frozen_at": "2026-04-07T06:10:32.851Z"
+  "frozen_at": "2026-04-07T08:02:54.725Z"
 }
