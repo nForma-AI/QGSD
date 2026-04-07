@@ -141,3 +141,7 @@ bin/.planning/
 # Session artifacts from cycle2 simulations (route to os.tmpdir() instead)
 .planning/formal/cycle2-simulations/
 .planning/quorum/slot-results/
+
+# Routing policy runtime state (learned bandit data)
+.nf-routing-rewards.jsonl
+.nf-river-state.json
