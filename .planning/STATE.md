@@ -17,7 +17,7 @@ See: .planning/PROJECT.md
 | 374 | Make API slots backup-only | 2026-04-04 | 99b79b4f | Verified | [374-make-api-slots-backup-only-dispatch-to-a](./quick/374-make-api-slots-backup-only-dispatch-to-a/) |
 | 379 | Issue #46: Add formal model staleness detection via content hashing | 2026-04-05 | 7ae0fe01 | Needs Review | [379-issue-46-add-formal-model-staleness-dete](./quick/379-issue-46-add-formal-model-staleness-dete/) |
 | 375 | issue-47-agents-skip-formal-modeling | 2026-04-05 | d174cae7 | Verified | [375-issue-47-agents-skip-formal-modeling](./quick/375-issue-47-agents-skip-formal-modeling/) |
-| 380 | Improve nForma reporting for feature usefulness and bugs caught | 2026-04-07 | 0e3bb9ee | Pending | [380-improve-nforma-reporting-for-feature-use](./quick/380-improve-nforma-reporting-for-feature-use/) |
+| 380 | Improve nForma reporting for feature usefulness and bugs caught | 2026-04-07 | 0e3bb9ee | Verified | [380-improve-nforma-reporting-for-feature-use](./quick/380-improve-nforma-reporting-for-feature-use/) |
 
 ## Session Log
 
