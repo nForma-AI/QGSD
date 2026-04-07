@@ -1,0 +1,24 @@
+{
+  "feature/issue-60-delegate-quorum-slot-coding": {
+    "task_id": 381,
+    "task_description": "Add --delegate flag to nf:quick for full task delegation via Mode C dispatch",
+    "approach": "Add a --delegate {slot-name} flag to the /nf:quick workflow that bypasses local planning and dispatches the entire task to a named external agent CLI slot via Mode C, with the orchestrator handling dispatch, result tracking, and recording.",
+    "out_of_scope": [
+      "Modifying quorum slot worker implementations or agent CLI behaviors",
+      "Creating new agent CLI providers or slot definitions",
+      "Fallback or retry logic when delegated execution fails",
+      "Q-learning routing or automatic slot selection"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.95,
+      "routed_through_debug": false
+    },
+    "risk_level": "high",
+    "risk_reason": "Changes to core workflow files (core/workflows/quick.md) that add new --delegate flag with Mode C dispatch integration",
+    "branches_affected": ["feature/issue-60-delegate-quorum-slot-coding"],
+    "created_at": "2026-04-07T06:22:36.339Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

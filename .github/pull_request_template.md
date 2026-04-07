@@ -18,6 +18,7 @@
 - [ ] Updates CHANGELOG.md for user-facing changes
 - [ ] No unnecessary dependencies added
 - [ ] Works on Windows (backslash paths tested)
+- [ ] Relevant agent-skill workflow considered (`task-intake`, `idea-refine`, `code-review-and-quality`, `security-and-hardening`, `shipping-and-launch`)
 
 ## Breaking Changes
 

@@ -1,0 +1,19 @@
+{
+  "feature/issue-60-delegate-quorum-slot-coding": {
+    "task_id": 383,
+    "task_description": "Wire task-intake routing into PresetPolicy, update nf:quick command metadata with delegate flag, add delegation docs",
+    "approach": "Update PresetPolicy to accept routingHint parameter, modify quick.md argument-hint to include --delegate, add delegation usage documentation",
+    "out_of_scope": [
+      "Implementing task-intake routing recommendation detection logic",
+      "Modifying core quorum dispatch beyond PresetPolicy",
+      "Changes to commands other than nf:quick and nf:help"
+    ],
+    "classification": { "type": "feature", "confidence": 0.92, "routed_through_debug": false },
+    "risk_level": "high",
+    "risk_reason": "Modifies commands/ files and routing infrastructure",
+    "branches_affected": ["feature/issue-60-delegate-quorum-slot-coding"],
+    "created_at": "2026-04-07T12:58:17.277Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

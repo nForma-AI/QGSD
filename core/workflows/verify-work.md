@@ -214,9 +214,55 @@ Proceed to `present_test`.
 
 Read Current Test section from UAT file.
 
-Before presenting this test, attempt automated verification per the `<automation_first>` protocol.
-- If automated verification succeeds: update the test result to `pass` with method `auto:{type}`, skip user presentation, and proceed to the next test.
-- If automated verification fails or is insufficient: present to user as normal (existing checkpoint box flow).
+    Before presenting this test, attempt automated verification per the `<automation_first>` protocol.
+
+    Automation attempt (concrete):
+
+    1. Discover project test runners and candidate test files using the repo's test discovery helper. Prefer framework-native discovery (Playwright first, then Jest, then pytest):
+
+    ```bash
+    # Discover tests (writes JSON with `runners`, `test_files`, `by_runner`)
+    DISCOVER_JSON=$(mktemp)
+    node ~/.claude/nf/bin/gsd-tools.cjs maintain-tests discover --dir "${phase_dir:-.}" --output-file "$DISCOVER_JSON" || true
+    ```
+
+    2. If Playwright tests were discovered, prefer running only those (e2e). Otherwise fall back to Jest single-file runs when available.
+
+    ```bash
+    BATCH_FILE=$(mktemp)
+    OUTPUT_JSON=$(mktemp)
+
+    # Prefer playwright runner if present and has files
+    if grep -q '"playwright"' "$DISCOVER_JSON" && grep -q '\.spec\.' "$DISCOVER_JSON"; then
+      # Build a small batch manifest containing discovered Playwright spec files
+      node -e "const fs=require('fs'); const d=JSON.parse(fs.readFileSync(process.argv[1])); const files=(d.by_runner&&d.by_runner.playwright)||d.test_files||[]; const m={batch_id:Date.now(), runner:'playwright', files:files}; fs.writeFileSync(process.argv[2], JSON.stringify(m));" "$DISCOVER_JSON" "$BATCH_FILE"
+    else
+      # Try jest files as fallback
+      node -e "const fs=require('fs'); const d=JSON.parse(fs.readFileSync(process.argv[1])); const files=(d.by_runner&&d.by_runner.jest)||d.test_files||[]; const m={batch_id:Date.now(), runner:'jest', files:files}; fs.writeFileSync(process.argv[2], JSON.stringify(m));" "$DISCOVER_JSON" "$BATCH_FILE"
+    fi
+
+    # If manifest has files, run a short batch (timeout short to keep verify-work responsive)
+    if [ -s "$BATCH_FILE" ] && grep -q '"files"' "$BATCH_FILE"; then
+      node ~/.claude/nf/bin/gsd-tools.cjs maintain-tests run-batch --batch-file "$BATCH_FILE" --output-file "$OUTPUT_JSON" --timeout 300 || true
+
+      # Inspect results: if no failures, mark automated verification passed
+      if grep -q '"failed_count": 0' "$OUTPUT_JSON" >/dev/null 2>&1; then
+        # Record automated pass for this test (auto:browser for playwright, auto:jest for jest)
+        echo "Automated verification succeeded via discovered tests. Results: $OUTPUT_JSON"
+        # The workflow engine should update the UAT file: set Tests.{N}.result = pass and method = auto:{type}
+        # (Interpreter: update in-memory test state and skip user presentation)
+      else
+        # Automation ran but some tests failed or timed out — capture artifacts and fall back to manual presentation
+        echo "Automated verification attempted but reported failures. See $OUTPUT_JSON for details."
+      fi
+    else
+      # No candidate test files discovered; fall back to lighter CLI/file inspection or present to user
+      echo "No framework-native test files discovered for automated verification in ${phase_dir:-.}."
+    fi
+    ```
+
+    - If automated verification (the maintain-tests run) succeeds with no failing tests: update the test result to `pass` with method `auto:{type}` (auto:browser for Playwright, auto:jest for Jest), skip user presentation, and proceed to the next test.
+    - If automated verification fails, times out, or no tests were discovered: present to the user as normal (existing checkpoint box flow). If the run failed due to environment constraints (missing install, playwright browser missing, timeout), include remediation guidance in the UAT frontmatter (e.g., "run npm ci && npx playwright install", required ENV vars).
 
 Display using checkpoint box format:
 

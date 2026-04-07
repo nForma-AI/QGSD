@@ -39,13 +39,27 @@ npm run test:formal
 npm run test:changed
 ```
 
+## Agent Skills
+
+nForma ships 5 packaged skills under `agents/skills/` that complement the slash-command workflows:
+
+- `idea-refine` for converging a vague idea into a small, testable direction
+- `task-intake` for turning rough requests into issue-ready JSON
+- `code-review-and-quality` for reusable pre-merge review structure
+- `deprecation-and-migration` for safe deprecation and migration planning
+- `shipping-and-launch` for release readiness, rollout, and rollback planning
+
+Reference checklists live in `core/references/` (testing-patterns, security, performance, accessibility, API design). The verifier workflow automatically scans against relevant checklists during verification.
+
+See [docs/agent-skills.md](docs/agent-skills.md) for the lifecycle guide, routing recommendations, and the gap analysis against `addyosmani/agent-skills`.
+
 ## Project Structure
 
 | Directory | Purpose |
 |-----------|---------|
 | `bin/` | CLI scripts, installers, formal verification runners |
 | `commands/nf/` | Slash command definitions (skill markdown files) |
-| `core/` | Workflows, templates, references |
+| `core/` | Workflows, templates, references (including quality checklists) |
 | `hooks/` | Claude Code lifecycle hooks (source) |
 | `hooks/dist/` | Built hook files (synced by install) |
 | `agents/` | Subagent definitions |
@@ -95,6 +109,7 @@ See [VERIFICATION_TOOLS.md](VERIFICATION_TOOLS.md) for setup details.
 2. **Run tests** — `npm run test:ci` must pass before submitting
 3. **Describe the "why"** — PR descriptions should explain motivation, not just what changed
 4. **Follow existing patterns** — match the style of surrounding code
+5. **Use the right workflow** — if the work started from a fuzzy idea, run it through `idea-refine` or `task-intake` before implementation; use `code-review-and-quality` before merge; use `security-and-hardening` for sensitive changes; use `shipping-and-launch` before release
 
 ## Good First Issues
 

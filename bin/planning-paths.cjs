@@ -61,6 +61,10 @@ const TYPES = {
     canonical: (root) => path.join(root, '.planning', 'telemetry', 'token-usage.jsonl'),
     legacy:    (root) => path.join(root, '.planning', 'token-usage.jsonl'),
   },
+  'feature-events': {
+    canonical: (root) => path.join(root, '.planning', 'telemetry', 'feature-events.jsonl'),
+    legacy:    (root) => path.join(root, '.planning', 'feature-events.jsonl'),
+  },
 
   // Milestone artifacts (loose ones at root → milestones/)
   'milestone-audit': {

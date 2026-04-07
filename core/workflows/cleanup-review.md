@@ -44,10 +44,17 @@ Scan each file for three categories of issues:
 - Redundant null checks after guaranteed initialization (e.g., checking `x != null` immediately after `const x = new Foo()`)
 - Catch blocks that silently swallow errors without logging
 
+**4. Simplification opportunities** (from code-simplification best practices)
+- Deeply nested conditionals that could use early returns
+- Single-use abstractions that should be inlined
+- Duplicate logic across files (extract only when 3+ similar blocks exist)
+- Dead code or commented-out code that should be removed entirely
+- Premature abstractions — three similar lines are better than a premature abstraction
+
 For each finding, record:
 - **File path** (relative to project root)
 - **Line number** (the specific line where the issue starts)
-- **Category** (Redundancy, Dead Code, or Over-Defensive)
+- **Category** (Redundancy, Dead Code, Over-Defensive, or Simplification)
 - **Description** (concise explanation of the issue)
 
 </step>

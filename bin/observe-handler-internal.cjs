@@ -17,6 +17,7 @@
  * 14. Issue classification from telemetry (issue-classifier.cjs)
  * 15. Health diagnostics (gsd-tools validate health) — QGSD repo only
  * 16. Accumulated error patterns (errors.jsonl via memory-store.cjs)
+ * 17. Feature usefulness report (feature-report.cjs)
  *
  * Returns standard observe schema: { source_label, source_type, status, issues[] }
  */
@@ -29,10 +30,10 @@ const { formatAgeFromMtime } = require('./observe-utils.cjs');
 
 /**
  * Internal work detection handler
- * Scans 16 categories: quick tasks, debug sessions, TODOs, unverified phases,
+ * Scans 17 categories: quick tasks, debug sessions, TODOs, unverified phases,
  * proposed metrics, quorum slots, XState calibration, MCP health, MCP logs,
  * telemetry, observed FSM, sensitivity sweep, security, issue classification,
- * health diagnostics, error patterns
+ * health diagnostics, error patterns, feature usefulness
  *
  * @param {object} sourceConfig - { label?, ...other config }
  * @param {object} options - { projectRoot?, limitOverride? }
@@ -848,6 +849,58 @@ function handleInternal(sourceConfig, options) {
       }
     } catch (err) {
       console.warn(`[observe-internal] Warning scanning error patterns: ${err.message}`);
+    }
+
+    // Category 17: Feature usefulness report (feature-report.cjs)
+    try {
+      const reportScript = resolveScript('feature-report.cjs');
+      if (reportScript) {
+        const result = spawnSync(process.execPath, [reportScript, '--json', '--project-root', projectRoot], {
+          encoding: 'utf8',
+          timeout: 15000,
+        });
+        if (result.status === 0 && result.stdout) {
+          const report = JSON.parse(result.stdout);
+          // Surface features with high failure rates
+          if (report.features) {
+            for (const [featureId, metrics] of Object.entries(report.features)) {
+              if (metrics.usage_count > 0 && metrics.success_rate < 0.5) {
+                issues.push({
+                  id: `internal-feature-high-failure-${featureId}`,
+                  title: `Feature '${featureId}' has ${Math.round((1 - metrics.success_rate) * 100)}% failure rate (${metrics.usage_count} uses)`,
+                  severity: 'medium',
+                  source: 'internal:feature-report',
+                  raw: { feature_id: featureId, ...metrics },
+                });
+              }
+            }
+          }
+          // Surface bugs detected by features
+          if (Array.isArray(report.bug_links)) {
+            for (const bug of report.bug_links) {
+              issues.push({
+                id: `internal-feature-bug-${bug.issue_url.replace(/[^a-zA-Z0-9]/g, '-').slice(0, 60)}`,
+                title: `Bug ${bug.issue_url} ${bug.detection_type} by ${bug.features.join(', ')}`,
+                severity: 'info',
+                source: 'internal:feature-report',
+                raw: bug,
+              });
+            }
+          }
+          // Surface top narrative insights as info-level issues
+          if (Array.isArray(report.insights) && report.insights.length > 0) {
+            issues.push({
+              id: 'internal-feature-insights',
+              title: `Feature report: ${report.insights.length} insight(s) — ${report.insights[0].slice(0, 80)}`,
+              severity: 'info',
+              source: 'internal:feature-report',
+              raw: { insights: report.insights },
+            });
+          }
+        }
+      }
+    } catch (e17) {
+      console.warn(`[observe-internal] Warning collecting feature report: ${e17.message}`);
     }
 
     return {
