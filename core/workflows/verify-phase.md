@@ -239,6 +239,19 @@ Extract files modified in this phase from SUMMARY.md, scan each:
 Categorize: 🛑 Blocker (prevents goal) | ⚠️ Warning (incomplete) | ℹ️ Info (notable).
 </step>
 
+<step name="quality_checklist_scan">
+**Quality Checklist Scan**
+
+After verifying must_haves, scan modified files against relevant quality checklists:
+
+- If test files were modified/created: check against `@~/.claude/nf/references/testing-patterns.md`
+- If security-sensitive files changed (hooks, auth, env handling): check against `@~/.claude/nf/references/security-checklist.md`
+- If performance-sensitive code changed (hot paths, install, startup): check against `@~/.claude/nf/references/performance-checklist.md`
+- If CLI output or docs changed: check against `@~/.claude/nf/references/accessibility-checklist.md`
+
+Report violations as Warning-level findings in VERIFICATION.md under a `## Quality Checklist Warnings` section. These do NOT block verification — they are informational.
+</step>
+
 <step name="identify_human_verification">
 **Always needs human:** Visual appearance, user flow completion, real-time behavior (WebSocket/SSE), external service integration, performance feel, error message clarity.
 
