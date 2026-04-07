@@ -15,7 +15,12 @@ Parse `$ARGUMENTS` for:
 - `--full` flag → store as `$FULL_MODE` (true/false)
 - `--no-branch` flag → store as `$NO_BRANCH` (default: false)
 - `--force-quorum` flag → store as `$FORCE_QUORUM` (default: false). Forces medium-or-higher quorum fan-out regardless of risk classifier output.
+- `--delegate {slot-name}` flag → store as `$DELEGATE_SLOT` (string or null). The value is the next token after `--delegate`.
 - Remaining text → use as `$DESCRIPTION` if non-empty
+
+**Delegate flag validation:**
+- If `--delegate` is present without a value (next token is missing or starts with `--`): error: "Error: --delegate requires a slot name (e.g., --delegate codex-1)"
+- If `--delegate` and `--full` are both present: error: "Error: --delegate and --full cannot be used together. --delegate performs full delegation to the external agent."
 
 If `$DESCRIPTION` is empty after parsing, prompt user interactively:
 
@@ -38,6 +43,15 @@ If `$FULL_MODE`:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Plan checking + verification enabled
+```
+
+If `$DELEGATE_SLOT`:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ nForma ► QUICK TASK (DELEGATE MODE)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+◆ Delegating to: ${DELEGATE_SLOT}
 ```
 
 ---
@@ -291,6 +305,27 @@ Store `$APPROACH_BLOCK` for use in Step 5 (planner spawn). The planner prompt in
 
 ---
 
+**Step 2.8: Validate delegate slot (only when `$DELEGATE_SLOT` is set)**
+
+Skip this step if `$DELEGATE_SLOT` is null.
+
+1. Read `bin/providers.json`, parse the `providers` array.
+2. Find the entry where `name === $DELEGATE_SLOT`.
+3. If not found: error listing valid subprocess slot names:
+   ```
+   Error: Unknown slot '${DELEGATE_SLOT}'. Available subprocess slots: codex-1, gemini-1, opencode-1, copilot-1, ...
+   ```
+   (List all entries from providers.json where `type === 'subprocess'`.)
+4. If found but `type !== 'subprocess'` OR `has_file_access !== true`: error:
+   ```
+   Error: Slot '${DELEGATE_SLOT}' is not a file-access subprocess provider. Delegation requires a full CLI agent.
+   ```
+5. Store the validated slot as `$VALIDATED_DELEGATE_SLOT`.
+
+Log: `"Step 2.8: Delegate slot validated — ${VALIDATED_DELEGATE_SLOT}"`
+
+---
+
 **Step 3: Create task directory**
 
 ```bash
@@ -348,6 +383,120 @@ Matching uses exact concept tokens from each module's `scope.json` (no substring
 - Description "refactor breaker circuit logic" → modules matching: `breaker`
 
 Store `$FORMAL_SPEC_CONTEXT` for use in steps 5, 5.5, 6.5.
+
+---
+
+**If `$DELEGATE_SLOT` is set:** Skip Steps 5, 5.5, 5.7, 5.8, 6, 6.3, 6.5, 6.7. Instead, execute the delegate branch (Steps 5D and 6D) below, then jump to the completion banner.
+
+Step 4.5 (formal scope scan) is also skipped for delegate mode — the external agent handles its own formal checks.
+
+---
+
+**Step 5D: Dispatch to external agent via Mode C (only when `$DELEGATE_SLOT` is set)**
+
+Display:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ nForma ► DELEGATING TO ${DELEGATE_SLOT}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Task: ${DESCRIPTION}
+  Repo: $(pwd)
+  Timeout: 300000ms
+```
+
+Build the delegation prompt using the `buildCodingPrompt` format from `bin/coding-task-router.cjs`. The task description should include:
+- The original `$DESCRIPTION`
+- The derived approach from `$APPROACH_BLOCK.approach`
+- Instruction: "You are a full Claude Code instance with nForma installed. Execute this task completely: implement, test, and commit. Return your result in the structured format."
+
+Dispatch via CLI:
+```bash
+DELEGATE_RESULT=$(node bin/coding-task-router.cjs \
+  --slot "${VALIDATED_DELEGATE_SLOT}" \
+  --task "${DESCRIPTION}. Approach: ${APPROACH_BLOCK.approach}. You are a full Claude Code instance with nForma installed. Execute this task completely: implement, test, and commit. Return your result in the structured format." \
+  --cwd "$(pwd)" \
+  --timeout 300000 2>&1)
+DELEGATE_EXIT=$?
+```
+
+Parse the JSON result. Extract: `status`, `filesModified`, `summary`, `latencyMs`.
+
+**Route on status:**
+
+| Status | Action |
+|--------|--------|
+| SUCCESS | Display success banner, proceed to Step 6D (recording) |
+| PARTIAL | Display partial banner with summary, proceed to Step 6D (recording) |
+| FAILED | Display failure with summary, proceed to Step 6D (recording — do NOT retry) |
+| UNAVAIL | Display error: "Slot ${DELEGATE_SLOT} is unavailable: ${summary}". Proceed to Step 6D (recording) |
+
+---
+
+**Step 6D: Record delegate result (only when `$DELEGATE_SLOT` is set)**
+
+1. Create `${QUICK_DIR}/${next_num}-SUMMARY.md` with delegate-specific template:
+
+```markdown
+# Quick Task ${next_num} Summary (Delegated)
+
+## Task
+${DESCRIPTION}
+
+## Delegation
+- Slot: ${VALIDATED_DELEGATE_SLOT}
+- Status: ${status}
+- Latency: ${latencyMs}ms
+- Files modified: ${filesModified.join(', ') || 'none reported'}
+
+## Result
+${summary}
+```
+
+2. Update STATE.md "Quick Tasks Completed" table with status mapped from delegate result:
+   - SUCCESS -> "Delegated (OK)"
+   - PARTIAL -> "Delegated (Partial)"
+   - FAILED -> "Delegated (Failed)"
+   - UNAVAIL -> "Delegated (Unavail)"
+
+3. Commit PLAN.md + SUMMARY.md + STATE.md atomically:
+```bash
+node ~/.claude/nf/bin/gsd-tools.cjs commit "docs(quick-${next_num}): delegate ${DESCRIPTION}" \
+  --files ${QUICK_DIR}/${next_num}-PLAN.md ${QUICK_DIR}/${next_num}-SUMMARY.md .planning/STATE.md
+```
+
+4. Display completion banner:
+```
+---
+
+nForma > QUICK TASK COMPLETE (DELEGATED)
+
+Quick Task ${next_num}: ${DESCRIPTION}
+Delegated to: ${VALIDATED_DELEGATE_SLOT}
+Status: ${status}
+Latency: ${latencyMs}ms
+Summary: ${QUICK_DIR}/${next_num}-SUMMARY.md
+Commit: ${commit_hash}
+Branch: ${CREATED_BRANCH || current_branch}
+${CREATED_BRANCH ? '-> Ready for PR' : ''}
+
+---
+
+Ready for next task: /nf:quick
+```
+
+5. Run: `node ~/.claude/nf/bin/gsd-tools.cjs activity-clear`
+
+**Important implementation notes:**
+- Steps 2 (init), 2.5 (branching), 2.7 (scope contract), 2.8 (slot validation), 3 (task dir), 4 (quick dir) all still run for delegate mode. This ensures local tracking is preserved.
+- Step 4.5 (formal scope scan) is skipped for delegate mode (the external agent handles its own formal checks).
+- Step 5.7 (quorum review of plan) is skipped because there is no local plan to review — the external agent does its own planning.
+- The delegate branch terminates with the completion banner — there is no shared post-Step-6 cleanup to rejoin.
+
+**Invariant compliance:**
+- EventualConsensus (quorum): Not violated — quorum is skipped because there is no local plan artifact to review. The delegate is a full agent that runs its own quorum if needed.
+- RouteCLiveness (planningstate): Not affected — delegate mode creates STATE.md entries just like normal mode.
+- No direct MCP calls are made — delegation goes through `coding-task-router.cjs` which uses `call-quorum-slot.cjs` subprocess dispatch (R3.2 compliant).
 
 ---
 
@@ -1360,6 +1509,12 @@ Ready for next task: /nf:quick
 - [ ] (--full) User is asked to approve, edit, or skip the drafted requirement
 - [ ] (--full) If approved: duplicate ID check, semantic conflict check (Haiku), then write to .planning/formal/requirements.json with unfreeze/re-freeze lifecycle
 - [ ] (--full) Elevated requirement uses provenance { source_file: quick plan path, milestone: "quick-NNN" }
+- [ ] `--delegate` flag parsed from arguments when present
+- [ ] `--delegate` and `--full` are mutually exclusive
+- [ ] Delegate slot validated against providers.json (subprocess + has_file_access)
+- [ ] Mode C dispatch via coding-task-router.cjs for delegate tasks
+- [ ] Delegate result recorded in SUMMARY.md and STATE.md
+- [ ] Steps 5-6 skipped for delegate mode (no local plan, no local execution)
 </success_criteria>
 
 <anti_patterns>
