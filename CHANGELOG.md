@@ -6,6 +6,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.41.15] - 2026-04-07 — Automatic test reuse in verify-work
+
+### Added
+- `feat(verify-work)`: `present_test` step now auto-discovers and runs framework-native tests (Playwright first, Jest fallback) via `maintain-tests discover` + `maintain-tests run-batch` before presenting to user — UAT completes automatically when all discovered tests pass, falls back to manual checkpoint when tests fail or no tests are found
+
 ## [0.41.14] - 2026-04-06 — Dist-tag alignment automation
 
 ### Fixed
