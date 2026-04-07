@@ -42,11 +42,36 @@ class PresetPolicy {
   /**
    * @param {string} taskType - e.g., "implement", "fix", "refactor", "test"
    * @param {Array}  providers - array of provider objects from providers.json
+   * @param {string|object} [routingHint] - optional hint: slot name string or { executor: string }
    * @returns {PolicyResult}
    */
-  recommend(taskType, providers) {
+  recommend(taskType, providers, routingHint) {
     if (!Array.isArray(providers)) {
       return makePolicyResult({ reason: 'preset:no-providers' });
+    }
+
+    // Routing hint preference: if a valid hint is provided and matches an eligible slot, prefer it
+    if (routingHint) {
+      const hintName = typeof routingHint === 'string'
+        ? routingHint
+        : (routingHint && typeof routingHint.executor === 'string' ? routingHint.executor : null);
+
+      if (hintName) {
+        const hintLower = hintName.toLowerCase();
+        const hinted = providers.find(
+          p => p.name.toLowerCase().includes(hintLower) && p.type === 'subprocess' && p.has_file_access === true
+        );
+        if (hinted) {
+          return makePolicyResult({
+            recommendation: hinted.name,
+            confidence: 1.0,
+            evidenceCount: 0,
+            recentStability: 1.0,
+            reason: 'preset:routing-hint-match',
+          });
+        }
+      }
+      // Invalid or ineligible hint — fall through to first-eligible
     }
 
     const candidate = providers.find(
@@ -331,9 +356,10 @@ function selectSlotWithPolicy(taskType, providers, opts = {}) {
   const policies = opts.policies || [new PresetPolicy(), new RiverPolicy()];
 
   // Collect results from all policies
-  const results = policies.map(p => {
+  const results = policies.map((p, i) => {
     try {
-      return p.recommend(taskType, providers);
+      // Pass routingHint to preset policy (index 0); other policies ignore it
+      return i === 0 ? p.recommend(taskType, providers, opts.routingHint) : p.recommend(taskType, providers);
     } catch (_) {
       return makePolicyResult({ reason: 'policy:error' });
     }

@@ -107,6 +107,59 @@ test('PresetPolicy.recommend returns null recommendation for non-array input', (
   assert.strictEqual(result.reason, 'preset:no-providers');
 });
 
+// ── PresetPolicy routingHint TESTS ─────────────────────────────────────────
+
+test('PresetPolicy.recommend prefers routingHint string when eligible', () => {
+  assert.ok(mod);
+  const policy = new mod.PresetPolicy();
+  const result = policy.recommend('implement', PROVIDERS, 'gemini-1');
+
+  assert.strictEqual(result.recommendation, 'gemini-1');
+  assert.strictEqual(result.confidence, 1.0);
+  assert.strictEqual(result.reason, 'preset:routing-hint-match');
+});
+
+test('PresetPolicy.recommend prefers routingHint object with executor field', () => {
+  assert.ok(mod);
+  const policy = new mod.PresetPolicy();
+  const result = policy.recommend('implement', PROVIDERS, { executor: 'gemini-1', reason: 'test' });
+
+  assert.strictEqual(result.recommendation, 'gemini-1');
+  assert.strictEqual(result.confidence, 1.0);
+  assert.strictEqual(result.reason, 'preset:routing-hint-match');
+});
+
+test('PresetPolicy.recommend falls back when routingHint is ineligible', () => {
+  assert.ok(mod);
+  const policy = new mod.PresetPolicy();
+  // claude-1 is type=http, not subprocess — should fall back
+  const result = policy.recommend('implement', PROVIDERS, 'claude-1');
+
+  assert.strictEqual(result.recommendation, 'codex-1');
+  assert.strictEqual(result.reason, 'preset:first-eligible-subprocess');
+});
+
+test('PresetPolicy.recommend falls back when routingHint names unknown slot', () => {
+  assert.ok(mod);
+  const policy = new mod.PresetPolicy();
+  const result = policy.recommend('implement', PROVIDERS, 'nonexistent-slot');
+
+  assert.strictEqual(result.recommendation, 'codex-1');
+  assert.strictEqual(result.reason, 'preset:first-eligible-subprocess');
+});
+
+test('selectSlotWithPolicy passes routingHint to preset', () => {
+  assert.ok(mod);
+  const result = mod.selectSlotWithPolicy('implement', PROVIDERS, {
+    routingHint: 'gemini-1',
+    policies: [new mod.PresetPolicy()],
+  });
+
+  assert.strictEqual(result.slot, 'gemini-1');
+  assert.strictEqual(result.tier, 0);
+  assert.strictEqual(result.policyResult.reason, 'preset:routing-hint-match');
+});
+
 // ── RewardRecorder TESTS ────────────────────────────────────────────────────
 
 test('RewardRecorder.record writes valid JSONL line', () => {
