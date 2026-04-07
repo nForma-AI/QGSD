@@ -18,6 +18,7 @@ See: .planning/PROJECT.md
 | 379 | Issue #46: Add formal model staleness detection via content hashing | 2026-04-05 | 7ae0fe01 | Needs Review | [379-issue-46-add-formal-model-staleness-dete](./quick/379-issue-46-add-formal-model-staleness-dete/) |
 | 380 | Delegate quorum slot coding to external agents via quorum-slot-dispatch.cjs | 2026-04-06 | f56c7d43 | Verified | [380-delegate-quorum-slot-coding-to-external-](./quick/380-delegate-quorum-slot-coding-to-external-/) |
 | 381 | Add --delegate flag to nf:quick for full task delegation via Mode C dispatch | 2026-04-07 | e77c29eb | Verified | [381-add-delegate-flag-to-nf-quick-for-full-t](./quick/381-add-delegate-flag-to-nf-quick-for-full-t/) |
+| 382 | Implement Tier 0 policy interface and Tier 1 River bandit layer for routing authority ladder in selectSlot | 2026-04-07 | 1fc88449 | Pending | [382-implement-tier-0-policy-interface-and-ti](./quick/382-implement-tier-0-policy-interface-and-ti/) |
 
 ## Session Log
 
@@ -26,3 +27,4 @@ See: .planning/PROJECT.md
 - 2026-04-05: Completed quick task 379 - Issue #46: Add formal model staleness detection via content hashing
 - 2026-04-06 - Completed quick task 380: Delegate quorum slot coding to external agents via quorum-slot-dispatch.cjs
 - 2026-04-07 - Completed quick task 381: Add --delegate flag to nf:quick for full task delegation via Mode C dispatch
+- 2026-04-07 - Completed quick task 382: Implement Tier 0 policy interface and Tier 1 River bandit layer for routing authority ladder in selectSlot
