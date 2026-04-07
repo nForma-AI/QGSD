@@ -1,0 +1,25 @@
+{
+  "feature/issue-60-delegate-quorum-slot-coding": {
+    "task_id": 382,
+    "task_description": "Implement Tier 0 policy interface and Tier 1 River bandit layer for routing authority ladder in selectSlot",
+    "approach": "Refactor selectSlot() to use a pluggable policy interface with PresetPolicy as Tier 0 default, add reward recording to JSON-lines, then implement River-style contextual bandit as Tier 1 with shadow mode and evidence-based promotion gates.",
+    "out_of_scope": [
+      "Tier 2+ policies (Q-learning)",
+      "Telemetry visualization",
+      "Historical reward data migration",
+      "Multi-armed bandit exploration strategies (Thompson sampling, UCB)",
+      "Automatic promotion/demotion scheduling"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.95,
+      "routed_through_debug": false
+    },
+    "risk_level": "low",
+    "risk_reason": "Isolated to bin/ directory: 2 new modules + 1 existing function modification + tests",
+    "branches_affected": ["feature/issue-60-delegate-quorum-slot-coding"],
+    "created_at": "2026-04-07T08:53:32.294Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}
