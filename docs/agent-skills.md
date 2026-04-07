@@ -51,7 +51,6 @@ For smaller ad-hoc work:
 | `idea-refine` | Turn a rough idea into a focused one-pager with assumptions and MVP | `task-intake` or `/nf:new-project` |
 | `task-intake` | Turn rough requests into issue-ready structured JSON | issue creation or `/nf:quick --full` |
 | `code-review-and-quality` | Run a reusable merge-readiness review | `/nf:quick --full`, `/nf:verify-work`, or merge |
-| `api-and-interface-design` | Contract-first API and interface design | `code-review-and-quality` or `shipping-and-launch` |
 | `deprecation-and-migration` | Safe deprecation: replace, announce, migrate, remove | `/nf:plan-phase` or `shipping-and-launch` |
 | `shipping-and-launch` | Prepare rollout, rollback, and launch readiness | release, staged rollout, or `/nf:observe` |
 
@@ -72,6 +71,7 @@ In quick task 380, 11 packaged skills were trimmed because their guidance duplic
 | `ci-cd-and-automation` | `core/references/security-checklist.md` (pipeline gate ordering) |
 | `documentation-and-adrs` | `agents/nf-planner.md` (ADR task suggestion) |
 | `security-and-hardening` | `core/references/security-checklist.md` |
+| `api-and-interface-design` | `core/references/api-design-checklist.md` (verifier conditional checklist) |
 
 ## Current state
 
@@ -82,17 +82,16 @@ nForma already has strong workflow coverage in these areas:
 - execution and verification: `/nf:execute-phase`, `/nf:verify-work`, `/nf:quorum-test`, `nf-executor`, `nf-verifier`
 - debugging and production observation: `/nf:debug`, `/nf:observe`, `/nf:solve-*`
 
-The 6 remaining packaged skills fill the lifecycle gaps that slash commands do not cover:
+The 5 remaining packaged skills fill the lifecycle gaps that slash commands do not cover:
 
 - before planning: idea shaping (`idea-refine`) and scope convergence (`task-intake`)
-- during design: API and interface contracts (`api-and-interface-design`)
 - before merge: code quality review (`code-review-and-quality`)
 - before sunset: deprecation planning (`deprecation-and-migration`)
 - before release: shipping discipline (`shipping-and-launch`)
 
 ## Coverage status
 
-All 20 upstream skills from `addyosmani/agent-skills` are covered. 6 have dedicated packaged skills; 11 were trimmed and their guidance merged into core references and workflows; 2 (`planning-and-task-breakdown`, `context-engineering`) are fully handled by nForma's native orchestration; 1 (`using-agent-skills`) is covered by this document.
+All 20 upstream skills from `addyosmani/agent-skills` are covered. 5 have dedicated packaged skills; 12 were trimmed and their guidance merged into core references and workflows; 2 (`planning-and-task-breakdown`, `context-engineering`) are fully handled by nForma's native orchestration; 1 (`using-agent-skills`) is covered by this document.
 
 ## Reference checklists
 
@@ -104,6 +103,7 @@ The `core/references/` directory contains lightweight checklists adapted from up
 | `core/references/security-checklist.md` | security-sensitive changes, `/nf:solve` |
 | `core/references/performance-checklist.md` | `code-review-and-quality`, performance-sensitive changes |
 | `core/references/accessibility-checklist.md` | CLI output changes, documentation updates |
+| `core/references/api-design-checklist.md` | API endpoints, module interfaces, public contracts |
 
 These checklists are reference material, not enforcement gates. The verifier workflow (`core/workflows/verify-phase.md`) automatically scans against relevant checklists and reports findings as informational warnings.
 

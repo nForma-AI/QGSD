@@ -248,6 +248,7 @@ After verifying must_haves, scan modified files against relevant quality checkli
 - If security-sensitive files changed (hooks, auth, env handling): check against `@~/.claude/nf/references/security-checklist.md`
 - If performance-sensitive code changed (hot paths, install, startup): check against `@~/.claude/nf/references/performance-checklist.md`
 - If CLI output or docs changed: check against `@~/.claude/nf/references/accessibility-checklist.md`
+- If API endpoints, module interfaces, component props, or public contracts changed: check against `@~/.claude/nf/references/api-design-checklist.md`
 
 Report violations as Warning-level findings in VERIFICATION.md under a `## Quality Checklist Warnings` section. These do NOT block verification — they are informational.
 </step>

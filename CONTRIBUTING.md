@@ -41,16 +41,15 @@ npm run test:changed
 
 ## Agent Skills
 
-nForma ships 6 packaged skills under `agents/skills/` that complement the slash-command workflows:
+nForma ships 5 packaged skills under `agents/skills/` that complement the slash-command workflows:
 
 - `idea-refine` for converging a vague idea into a small, testable direction
 - `task-intake` for turning rough requests into issue-ready JSON
 - `code-review-and-quality` for reusable pre-merge review structure
-- `api-and-interface-design` for contract-first API and interface design
 - `deprecation-and-migration` for safe deprecation and migration planning
 - `shipping-and-launch` for release readiness, rollout, and rollback planning
 
-Reference checklists live in `core/references/` (testing-patterns, security, performance, accessibility). The verifier workflow automatically scans against relevant checklists during verification.
+Reference checklists live in `core/references/` (testing-patterns, security, performance, accessibility, API design). The verifier workflow automatically scans against relevant checklists during verification.
 
 See [docs/agent-skills.md](docs/agent-skills.md) for the lifecycle guide, routing recommendations, and the gap analysis against `addyosmani/agent-skills`.
 
