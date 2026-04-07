@@ -29,6 +29,27 @@ Use this checklist when reviewing changes that affect CLI output, terminal rende
 - [ ] Default selections are clearly indicated
 - [ ] Escape or Ctrl+C cleanly exits interactive flows without leaving state behind
 
+## Web accessibility (WCAG 2.1 AA)
+
+When building web interfaces (not just CLI):
+
+- [ ] Full keyboard navigation for every interactive element
+- [ ] ARIA labels where semantic HTML alone is insufficient
+- [ ] Focus management on route changes and modal open/close
+- [ ] Meaningful empty states and error states (not just blank screens)
+- [ ] Touch targets at least 44x44px on mobile
+
+## Responsive design
+
+When building web interfaces, test at these breakpoints:
+
+- [ ] 320px (small mobile)
+- [ ] 768px (tablet)
+- [ ] 1024px (small desktop)
+- [ ] 1440px (standard desktop)
+
+Mobile-first approach: start from the smallest breakpoint and add complexity upward.
+
 ## Internationalization readiness
 
 - [ ] User-facing strings are not embedded in logic (extractable for future i18n)

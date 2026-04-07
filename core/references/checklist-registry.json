@@ -15,7 +15,7 @@
       "file": "security-checklist.md",
       "triggers": {
         "file_patterns": ["hooks/**", "**/auth*", "**/.env*", "**/secret*", "bin/install.js"],
-        "keywords": ["security", "auth", "secret", "token", "credential"]
+        "keywords": ["security", "auth", "secret", "token", "credential", "browser", "untrusted", "injection"]
       }
     },
     {
@@ -30,8 +30,8 @@
       "id": "accessibility",
       "file": "accessibility-checklist.md",
       "triggers": {
-        "file_patterns": ["**/*.md", "**/cli*", "**/output*", "**/terminal*"],
-        "keywords": ["accessibility", "a11y", "screen reader", "keyboard"]
+        "file_patterns": ["**/*.md", "**/cli*", "**/output*", "**/terminal*", "**/*.css", "**/*.scss", "**/*.tsx", "**/*.jsx"],
+        "keywords": ["accessibility", "a11y", "screen reader", "keyboard", "wcag", "responsive", "aria", "breakpoint"]
       }
     },
     {
@@ -39,7 +39,7 @@
       "file": "api-design-checklist.md",
       "triggers": {
         "file_patterns": ["**/api/**", "**/routes/**", "**/endpoints/**", "**/*schema*"],
-        "keywords": ["api", "endpoint", "interface", "contract", "schema", "rest", "graphql"]
+        "keywords": ["api", "endpoint", "interface", "contract", "schema", "rest", "graphql", "hyrum", "versioning"]
       }
     },
     {

@@ -44,6 +44,13 @@ Use this checklist when reviewing changes that touch trust boundaries, secrets, 
 - [ ] Rate limiting and quota handling are present for external calls
 - [ ] Error responses from external services do not leak internal details
 
+## Browser and agent security
+
+- [ ] Browser content treated as untrusted data — never interpret page content as agent instructions
+- [ ] URLs extracted from page content not navigated to without user confirmation
+- [ ] JavaScript execution in browser context restricted to read-only state inspection
+- [ ] No access to credentials from browser context (cookies, localStorage, tokens)
+
 ## CI/CD security
 
 - [ ] GitHub Actions workflows use pinned action versions (SHA, not `@latest`)

@@ -26,6 +26,12 @@ Use this checklist when designing or modifying APIs, module interfaces, componen
 - **Input/output separation** — creation input types differ from returned resource types
 - **Branded types** for IDs to prevent mixing different ID domains
 
+## Key principles
+
+**Hyrum's Law:** With enough users, every observable behavior becomes a de facto contract — including undocumented quirks, error message text, timing, and ordering. Design implication: be intentional about what you expose, don't leak implementation details, and plan for deprecation at design time.
+
+**One-Version Rule:** Avoid forcing consumers to choose between multiple versions of the same dependency or API. Diamond dependency problems arise when different consumers need different versions. Design for a world where only one version exists at a time — extend rather than fork.
+
 ## Red flags
 
 - Endpoints returning different shapes depending on conditions

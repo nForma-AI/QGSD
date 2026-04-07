@@ -26,6 +26,14 @@ Use this checklist when planning or executing deprecation, migration, or sunsett
 - [ ] All references removed: docs, config, imports, tests
 - [ ] Deprecation notice itself removed
 
+## Migration patterns
+
+Choose the pattern that fits the risk profile:
+
+- **Strangler:** Run old and new systems in parallel; shift traffic gradually until old is unused
+- **Adapter:** Translation layer that maintains old interface backed by new implementation
+- **Feature flags:** Per-consumer rollout of the replacement; toggle back if issues found
+
 ## Anti-patterns to avoid
 - [ ] Not deprecating without providing an alternative
 - [ ] Not announcing without a migration guide
