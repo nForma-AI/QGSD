@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-04-07T08:02:54.724Z",
-  "content_hash": "91abf36fbf72dd02",
+  "aggregated_at": "2026-04-07T09:24:58.362Z",
+  "content_hash": "535327adb9754ce0",
   "requirements": [
     {
       "id": "ACT-01",
@@ -4113,6 +4113,18 @@
       ]
     },
     {
+      "id": "ROUTE-05",
+      "text": "selectSlot delegates to pluggable 3-tier policy interface enabling learned slot routing via PresetPolicy (Tier 0) and RiverPolicy (Tier 1) contextual bandit with confidence gates.",
+      "category": "Token Optimization & Model Routing",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Quick task 382 implements a policy layer beneath selectSlot that enables the system to learn which agent slot performs best for each task type, starting with static preset selection and progressing to evidence-based routing through the River contextual bandit algorithm.",
+      "provenance": {
+        "source_file": ".planning/quick/382-implement-tier-0-policy-interface-and-ti/382-PLAN.md",
+        "milestone": "quick-382"
+      }
+    },
+    {
       "id": "RSN-01",
       "text": "Hazard model applies FMEA (Severity x Occurrence x Detection = RPN) to L2 operational model states and transitions",
       "category": "Reasoning",
@@ -6153,5 +6165,5 @@
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
   "last_sync": "2026-03-31T09:45:23.686Z",
-  "frozen_at": "2026-04-07T08:02:54.725Z"
+  "frozen_at": "2026-04-07T09:24:58.362Z"
 }
