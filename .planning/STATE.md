@@ -16,7 +16,7 @@ See: .planning/PROJECT.md
 |---|---|---|---|---|---|
 | 374 | Make API slots backup-only | 2026-04-04 | 99b79b4f | Verified | [374-make-api-slots-backup-only-dispatch-to-a](./quick/374-make-api-slots-backup-only-dispatch-to-a/) |
 | 379 | Issue #46: Add formal model staleness detection via content hashing | 2026-04-05 | 7ae0fe01 | Needs Review | [379-issue-46-add-formal-model-staleness-dete](./quick/379-issue-46-add-formal-model-staleness-dete/) |
-| 380 | Issue #64: Make --auto the default for milestone workflows — complete default_milestone config feature | 2026-04-07 | TBD | Pending | [380-issue-64-make-auto-the-default-for-miles](./quick/380-issue-64-make-auto-the-default-for-miles/) |
+| 380 | Issue #64: Make --auto the default for milestone workflows — complete default_milestone config feature | 2026-04-07 | c7df57eb | Verified | [380-issue-64-make-auto-the-default-for-miles](./quick/380-issue-64-make-auto-the-default-for-miles/) |
 
 ## Session Log
 
