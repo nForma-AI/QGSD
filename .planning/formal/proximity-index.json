@@ -1,133 +1,137 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-04T07:20:54.828Z",
+  "generated": "2026-04-07T19:11:06.414Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
-      "mtime": "2026-03-06T19:30:36.834Z",
+      "mtime": "2026-04-06T16:43:11.891Z",
       "hash": "496b4503"
     },
     "scope.json:agent-loop": {
-      "mtime": "2026-03-06T19:30:38.200Z",
+      "mtime": "2026-04-06T16:43:11.891Z",
       "hash": "cec2299d"
     },
     "scope.json:breaker": {
-      "mtime": "2026-03-06T19:30:39.575Z",
+      "mtime": "2026-04-06T16:43:11.891Z",
       "hash": "8af7675c"
     },
     "scope.json:convergence": {
-      "mtime": "2026-03-06T19:30:41.234Z",
+      "mtime": "2026-04-06T16:43:11.892Z",
       "hash": "4af11fdd"
     },
     "scope.json:deliberation": {
-      "mtime": "2026-03-06T19:30:42.694Z",
+      "mtime": "2026-04-06T16:43:11.892Z",
       "hash": "8ad85f0e"
     },
     "scope.json:deliberation-revision": {
-      "mtime": "2026-03-06T19:30:44.004Z",
+      "mtime": "2026-04-06T16:43:11.892Z",
       "hash": "b5e414df"
     },
+    "scope.json:disttagalignment": {
+      "mtime": "2026-04-07T18:50:15.662Z",
+      "hash": "ff7b987b"
+    },
     "scope.json:formal-proximity-index": {
-      "mtime": "2026-03-17T16:36:24.865Z",
+      "mtime": "2026-04-06T16:43:11.892Z",
       "hash": "1d85bde2"
     },
     "scope.json:installer": {
-      "mtime": "2026-03-06T19:30:45.357Z",
+      "mtime": "2026-04-06T16:43:11.893Z",
       "hash": "7b254fd9"
     },
     "scope.json:mcp-calls": {
-      "mtime": "2026-03-06T19:30:47.553Z",
+      "mtime": "2026-04-06T16:43:11.893Z",
       "hash": "c4479faa"
     },
     "scope.json:oscillation": {
-      "mtime": "2026-03-06T19:30:48.445Z",
+      "mtime": "2026-04-06T16:43:11.893Z",
       "hash": "6318c2f9"
     },
     "scope.json:planningstate": {
-      "mtime": "2026-03-17T16:36:24.865Z",
+      "mtime": "2026-04-06T16:43:11.893Z",
       "hash": "7c1fdd87"
     },
     "scope.json:prefilter": {
-      "mtime": "2026-03-06T19:30:49.807Z",
+      "mtime": "2026-04-06T16:43:11.894Z",
       "hash": "8db746e5"
     },
     "scope.json:quorum": {
-      "mtime": "2026-03-06T19:30:51.579Z",
+      "mtime": "2026-04-06T16:43:11.894Z",
       "hash": "4ca140a7"
     },
     "scope.json:recruiting": {
-      "mtime": "2026-03-06T19:30:52.390Z",
+      "mtime": "2026-04-06T16:43:11.894Z",
       "hash": "1111802b"
     },
     "scope.json:safety": {
-      "mtime": "2026-03-06T19:30:53.763Z",
+      "mtime": "2026-04-06T16:43:11.894Z",
       "hash": "a9b92676"
     },
     "scope.json:sessionpersistence": {
-      "mtime": "2026-03-17T16:36:24.866Z",
+      "mtime": "2026-04-06T16:43:11.894Z",
       "hash": "716f9017"
     },
     "scope.json:solve-convergence": {
-      "mtime": "2026-03-17T16:36:24.866Z",
+      "mtime": "2026-04-06T16:43:11.894Z",
       "hash": "56697a1b"
     },
     "scope.json:stop-hook": {
-      "mtime": "2026-03-06T19:30:55.566Z",
+      "mtime": "2026-04-06T16:43:11.895Z",
       "hash": "c0796108"
     },
     "scope.json:tui-nav": {
-      "mtime": "2026-03-06T19:30:56.442Z",
+      "mtime": "2026-04-06T16:43:11.895Z",
       "hash": "52b50d64"
     },
     "constants-mapping.json": {
-      "mtime": "2026-03-05T12:11:46.863Z",
+      "mtime": "2026-04-06T16:43:11.785Z",
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-04-04T07:20:47.784Z",
-      "hash": "564e7349"
+      "mtime": "2026-04-07T18:50:29.256Z",
+      "hash": "bf709293"
     },
     "invariant-catalog.json": {
-      "mtime": "2026-03-06T14:00:17.868Z",
+      "mtime": "2026-04-06T16:43:11.884Z",
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-04-04T07:19:54.194Z",
-      "hash": "7f176beb"
+      "mtime": "2026-04-07T18:44:19.766Z",
+      "hash": "3817ad43"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-04-04T07:20:29.748Z",
-      "hash": "9cc22354"
+      "mtime": "2026-04-07T19:04:05.860Z",
+      "hash": "4f08f7b5"
     },
     "instrumentation-map.json": {
-      "mtime": "2026-04-04T07:20:17.369Z",
-      "hash": "9b92b774"
+      "mtime": "2026-04-07T18:33:48.051Z",
+      "hash": "4ae54f98"
     },
     "event-vocabulary.json": {
-      "mtime": "2026-03-08T20:28:45.150Z",
+      "mtime": "2026-04-06T16:43:11.801Z",
       "hash": "fa1b7cf9"
     },
     "observed-fsm.json": {
-      "mtime": "2026-04-02T09:03:16.622Z",
-      "hash": "17f06a5d"
+      "mtime": "2026-04-07T18:33:42.698Z",
+      "hash": "86af6008"
     },
     "risk-heatmap.json": {
-      "mtime": "2026-03-09T13:52:46.371Z",
+      "mtime": "2026-04-06T16:43:11.882Z",
       "hash": "2df5c0d7"
     },
     "git-heatmap.json": {
-      "mtime": "2026-04-04T07:20:01.651Z",
-      "hash": "c419f068"
+      "mtime": "2026-04-07T18:34:59.907Z",
+      "hash": "7b633232"
     },
     "debt.json": {
-      "mtime": "2026-03-04T13:33:16.983Z",
+      "mtime": "2026-04-06T16:43:11.786Z",
       "hash": "4f085cf2"
     },
     "source-annotations": {
-      "mtime": "2026-04-04T07:20:47.784Z"
+      "mtime": "2026-04-07T19:02:13.279Z"
     },
     "code-source-annotations": {
-      "mtime": "2026-04-04T07:19:09.050Z"
+      "mtime": "2026-04-07T18:53:39.350Z"
     }
   },
   "nodes": {
@@ -869,6 +873,11 @@
           "source": "scope.json"
         }
       ]
+    },
+    "formal_module::disttagalignment": {
+      "type": "formal_module",
+      "id": "disttagalignment",
+      "edges": []
     },
     "formal_module::formal-proximity-index": {
       "type": "formal_module",
@@ -2851,6 +2860,11 @@
           "to": "invariant::ConsoleLogAlwaysBlocked",
           "rel": "verified_by",
           "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/GUARD-01.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         },
         {
           "to": "formal_model::.planning/formal/alloy/agent-context-payload.als",
@@ -6169,6 +6183,11 @@
           "to": "invariant::NoSpuriousInjection",
           "rel": "verified_by",
           "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/DISP-06.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         },
         {
           "to": "formal_model::.planning/formal/alloy/dispatch-formal-context.als",
@@ -32694,6 +32713,112 @@
         }
       ]
     },
+    "formal_model::.planning/formal/tla/NFWaveDAG.tla": {
+      "type": "formal_model",
+      "id": ".planning/formal/tla/NFWaveDAG.tla",
+      "edges": [
+        {
+          "to": "requirement::INTG-07",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::INTG-07",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
+    },
+    "requirement::INTG-07": {
+      "type": "requirement",
+      "id": "INTG-07",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/NFWaveDAG.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "invariant::TypeOK",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::SCCPartition",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::CondensationNoSelfLoops",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::WaveOrderRespectsEdges",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::RootWavesAreZero",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::AlgorithmTerminates",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/INTG-07.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
+        },
+        {
+          "to": "formal_model::.planning/formal/tla/NFWaveDAG.tla",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/tla/DistTagAlignment.tla": {
+      "type": "formal_model",
+      "id": ".planning/formal/tla/DistTagAlignment.tla",
+      "edges": [
+        {
+          "to": "requirement::DIST-01",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::DIST-01",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::DIST-01": {
+      "type": "requirement",
+      "id": "DIST-01",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/DistTagAlignment.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/DIST-01.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
+        },
+        {
+          "to": "formal_model::.planning/formal/tla/DistTagAlignment.tla",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
     "invariant::TypeOK@MCAgentLoop": {
       "type": "invariant",
       "id": "TypeOK@MCAgentLoop",
@@ -35146,6 +35271,11 @@
         },
         {
           "to": "requirement::DETECT-06",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::INTG-07",
           "rel": "verifies",
           "source": "traceability-matrix"
         }
@@ -39052,6 +39182,11 @@
         },
         {
           "to": "requirement::SCOPE-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::INTG-07",
           "rel": "verifies",
           "source": "traceability-matrix"
         }
@@ -50631,6 +50766,50 @@
         }
       ]
     },
+    "invariant::SCCPartition": {
+      "type": "invariant",
+      "id": "SCCPartition",
+      "edges": [
+        {
+          "to": "requirement::INTG-07",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::CondensationNoSelfLoops": {
+      "type": "invariant",
+      "id": "CondensationNoSelfLoops",
+      "edges": [
+        {
+          "to": "requirement::INTG-07",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::WaveOrderRespectsEdges": {
+      "type": "invariant",
+      "id": "WaveOrderRespectsEdges",
+      "edges": [
+        {
+          "to": "requirement::INTG-07",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::RootWavesAreZero": {
+      "type": "invariant",
+      "id": "RootWavesAreZero",
+      "edges": [
+        {
+          "to": "requirement::INTG-07",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
     "invariant::P=? [ F \"consensus\" ]": {
       "type": "invariant",
       "id": "P=? [ F \"consensus\" ]",
@@ -51887,6 +52066,28 @@
         }
       ]
     },
+    "test_file::.planning/formal/generated-stubs/DISP-06.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/DISP-06.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::DISP-06",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/DIST-01.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/DIST-01.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::DIST-01",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
     "test_file::.planning/formal/generated-stubs/DRIFT-01.stub.test.js": {
       "type": "test_file",
       "id": ".planning/formal/generated-stubs/DRIFT-01.stub.test.js",
@@ -52272,6 +52473,17 @@
         }
       ]
     },
+    "test_file::.planning/formal/generated-stubs/GUARD-01.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/GUARD-01.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::GUARD-01",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
     "test_file::.planning/formal/generated-stubs/GUIDE-01.stub.test.js": {
       "type": "test_file",
       "id": ".planning/formal/generated-stubs/GUIDE-01.stub.test.js",
@@ -52591,6 +52803,17 @@
       "edges": [
         {
           "to": "requirement::INTG-06",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/INTG-07.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/INTG-07.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::INTG-07",
           "rel": "tests",
           "source": "unit-test-coverage"
         }
@@ -54466,6 +54689,116 @@
         }
       ]
     },
+    "test_file::.planning/formal/generated-stubs/SOLVE-01.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SOLVE-01.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SOLVE-01",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/SOLVE-02.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SOLVE-02.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SOLVE-02",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/SOLVE-03.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SOLVE-03.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SOLVE-03",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/SOLVE-04.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SOLVE-04.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SOLVE-04",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/SOLVE-05.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SOLVE-05.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SOLVE-05",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/SOLVE-06.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SOLVE-06.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SOLVE-06",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/SOLVE-07.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SOLVE-07.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SOLVE-07",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/SOLVE-08.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SOLVE-08.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SOLVE-08",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/SOLVE-09.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SOLVE-09.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SOLVE-09",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/SOLVE-10.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SOLVE-10.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SOLVE-10",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
     "test_file::.planning/formal/generated-stubs/SPEC-01.stub.test.js": {
       "type": "test_file",
       "id": ".planning/formal/generated-stubs/SPEC-01.stub.test.js",
@@ -55038,6 +55371,61 @@
         }
       ]
     },
+    "test_file::.planning/formal/generated-stubs/TRUNC-01.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/TRUNC-01.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::TRUNC-01",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/TRUNC-02.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/TRUNC-02.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::TRUNC-02",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/TRUNC-03.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/TRUNC-03.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::TRUNC-03",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/TRUNC-04.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/TRUNC-04.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::TRUNC-04",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/TRUNC-05.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/TRUNC-05.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::TRUNC-05",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
     "test_file::.planning/formal/generated-stubs/TUI-01.stub.test.js": {
       "type": "test_file",
       "id": ".planning/formal/generated-stubs/TUI-01.stub.test.js",
@@ -55423,171 +55811,6 @@
         }
       ]
     },
-    "test_file::.planning/formal/generated-stubs/SOLVE-01.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/SOLVE-01.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::SOLVE-01",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/SOLVE-02.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/SOLVE-02.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::SOLVE-02",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/SOLVE-03.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/SOLVE-03.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::SOLVE-03",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/SOLVE-04.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/SOLVE-04.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::SOLVE-04",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/SOLVE-05.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/SOLVE-05.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::SOLVE-05",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/SOLVE-06.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/SOLVE-06.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::SOLVE-06",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/SOLVE-07.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/SOLVE-07.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::SOLVE-07",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/SOLVE-08.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/SOLVE-08.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::SOLVE-08",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/SOLVE-09.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/SOLVE-09.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::SOLVE-09",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/TRUNC-01.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/TRUNC-01.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::TRUNC-01",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/TRUNC-02.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/TRUNC-02.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::TRUNC-02",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/TRUNC-03.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/TRUNC-03.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::TRUNC-03",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/TRUNC-04.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/TRUNC-04.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::TRUNC-04",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/TRUNC-05.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/TRUNC-05.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::TRUNC-05",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/SOLVE-10.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/SOLVE-10.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::SOLVE-10",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
     "code_line::hooks/nf-prompt.js:713": {
       "type": "code_line",
       "id": "hooks/nf-prompt.js:713",
@@ -55864,26 +56087,6 @@
           "source": "observed-fsm"
         },
         {
-          "to": "fsm_state::DELIBERATING",
-          "rel": "transitions",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "fsm_state::DELIBERATING",
-          "rel": "from_state",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "fsm_state::DECIDED",
-          "rel": "transitions",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "fsm_state::DECIDED",
-          "rel": "from_state",
-          "source": "observed-fsm"
-        },
-        {
           "to": "formal_action::quorum_fallback_t1_required",
           "rel": "triggered_by",
           "source": "event-vocabulary"
@@ -55899,41 +56102,6 @@
       "type": "xstate_event",
       "id": "VOTES_COLLECTED",
       "edges": [
-        {
-          "to": "fsm_state::IDLE",
-          "rel": "transitions",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "fsm_state::IDLE",
-          "rel": "from_state",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "fsm_state::DELIBERATING",
-          "rel": "transitions",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "fsm_state::COLLECTING_VOTES",
-          "rel": "from_state",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "fsm_state::DELIBERATING",
-          "rel": "from_state",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "fsm_state::DECIDED",
-          "rel": "transitions",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "fsm_state::DECIDED",
-          "rel": "from_state",
-          "source": "observed-fsm"
-        },
         {
           "to": "formal_action::quorum_complete",
           "rel": "triggered_by",
@@ -55998,26 +56166,6 @@
           "source": "observed-fsm"
         },
         {
-          "to": "fsm_state::DELIBERATING",
-          "rel": "transitions",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "fsm_state::DELIBERATING",
-          "rel": "from_state",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "fsm_state::DECIDED",
-          "rel": "transitions",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "fsm_state::DECIDED",
-          "rel": "from_state",
-          "source": "observed-fsm"
-        },
-        {
           "to": "formal_action::circuit_break",
           "rel": "triggered_by",
           "source": "event-vocabulary"
@@ -56051,16 +56199,6 @@
       "edges": [
         {
           "to": "xstate_event::QUORUM_START",
-          "rel": "from_state_of",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "xstate_event::VOTES_COLLECTED",
-          "rel": "transitioned_by",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "xstate_event::VOTES_COLLECTED",
           "rel": "from_state_of",
           "source": "observed-fsm"
         },
@@ -56117,11 +56255,6 @@
         },
         {
           "to": "xstate_event::QUORUM_START",
-          "rel": "from_state_of",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "xstate_event::VOTES_COLLECTED",
           "rel": "from_state_of",
           "source": "observed-fsm"
         },
@@ -56195,158 +56328,6 @@
           "to": "fsm_state::COLLECTING_VOTES",
           "rel": "from_state",
           "source": "observed-fsm"
-        },
-        {
-          "to": "fsm_state::DECIDED",
-          "rel": "transitions",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "fsm_state::DELIBERATING",
-          "rel": "from_state",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "fsm_state::DECIDED",
-          "rel": "from_state",
-          "source": "observed-fsm"
-        }
-      ]
-    },
-    "fsm_state::DELIBERATING": {
-      "type": "fsm_state",
-      "id": "DELIBERATING",
-      "edges": [
-        {
-          "to": "xstate_event::QUORUM_START",
-          "rel": "transitioned_by",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "xstate_event::QUORUM_START",
-          "rel": "from_state_of",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "xstate_event::VOTES_COLLECTED",
-          "rel": "transitioned_by",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "xstate_event::VOTES_COLLECTED",
-          "rel": "from_state_of",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "xstate_event::CIRCUIT_BREAK",
-          "rel": "transitioned_by",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "xstate_event::CIRCUIT_BREAK",
-          "rel": "from_state_of",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "xstate_event::DECIDE",
-          "rel": "from_state_of",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "risk_transition::DELIBERATING-DECIDE-DECIDED",
-          "rel": "scored_by",
-          "source": "risk-heatmap"
-        },
-        {
-          "to": "risk_transition::COLLECTING_VOTES-VOTES_COLLECTED-DELIBERATING",
-          "rel": "scored_by",
-          "source": "risk-heatmap"
-        },
-        {
-          "to": "risk_transition::DELIBERATING-CIRCUIT_BREAK-DELIBERATING",
-          "rel": "scored_by",
-          "source": "risk-heatmap"
-        },
-        {
-          "to": "risk_transition::DELIBERATING-QUORUM_START-DELIBERATING",
-          "rel": "scored_by",
-          "source": "risk-heatmap"
-        },
-        {
-          "to": "risk_transition::DELIBERATING-VOTES_COLLECTED-DELIBERATING",
-          "rel": "scored_by",
-          "source": "risk-heatmap"
-        }
-      ]
-    },
-    "fsm_state::DECIDED": {
-      "type": "fsm_state",
-      "id": "DECIDED",
-      "edges": [
-        {
-          "to": "xstate_event::QUORUM_START",
-          "rel": "transitioned_by",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "xstate_event::QUORUM_START",
-          "rel": "from_state_of",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "xstate_event::VOTES_COLLECTED",
-          "rel": "transitioned_by",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "xstate_event::VOTES_COLLECTED",
-          "rel": "from_state_of",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "xstate_event::CIRCUIT_BREAK",
-          "rel": "transitioned_by",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "xstate_event::CIRCUIT_BREAK",
-          "rel": "from_state_of",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "xstate_event::DECIDE",
-          "rel": "transitioned_by",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "xstate_event::DECIDE",
-          "rel": "from_state_of",
-          "source": "observed-fsm"
-        },
-        {
-          "to": "risk_transition::DELIBERATING-DECIDE-DECIDED",
-          "rel": "scored_by",
-          "source": "risk-heatmap"
-        },
-        {
-          "to": "risk_transition::DECIDED-DECIDE-DECIDED",
-          "rel": "scored_by",
-          "source": "risk-heatmap"
-        },
-        {
-          "to": "risk_transition::DECIDED-CIRCUIT_BREAK-DECIDED",
-          "rel": "scored_by",
-          "source": "risk-heatmap"
-        },
-        {
-          "to": "risk_transition::DECIDED-QUORUM_START-DECIDED",
-          "rel": "scored_by",
-          "source": "risk-heatmap"
-        },
-        {
-          "to": "risk_transition::DECIDED-VOTES_COLLECTED-DECIDED",
-          "rel": "scored_by",
-          "source": "risk-heatmap"
         }
       ]
     },
@@ -56380,6 +56361,68 @@
       ],
       "risk_score": 256,
       "risk_tier": "critical"
+    },
+    "fsm_state::DELIBERATING": {
+      "type": "fsm_state",
+      "id": "DELIBERATING",
+      "edges": [
+        {
+          "to": "risk_transition::DELIBERATING-DECIDE-DECIDED",
+          "rel": "scored_by",
+          "source": "risk-heatmap"
+        },
+        {
+          "to": "risk_transition::COLLECTING_VOTES-VOTES_COLLECTED-DELIBERATING",
+          "rel": "scored_by",
+          "source": "risk-heatmap"
+        },
+        {
+          "to": "risk_transition::DELIBERATING-CIRCUIT_BREAK-DELIBERATING",
+          "rel": "scored_by",
+          "source": "risk-heatmap"
+        },
+        {
+          "to": "risk_transition::DELIBERATING-QUORUM_START-DELIBERATING",
+          "rel": "scored_by",
+          "source": "risk-heatmap"
+        },
+        {
+          "to": "risk_transition::DELIBERATING-VOTES_COLLECTED-DELIBERATING",
+          "rel": "scored_by",
+          "source": "risk-heatmap"
+        }
+      ]
+    },
+    "fsm_state::DECIDED": {
+      "type": "fsm_state",
+      "id": "DECIDED",
+      "edges": [
+        {
+          "to": "risk_transition::DELIBERATING-DECIDE-DECIDED",
+          "rel": "scored_by",
+          "source": "risk-heatmap"
+        },
+        {
+          "to": "risk_transition::DECIDED-DECIDE-DECIDED",
+          "rel": "scored_by",
+          "source": "risk-heatmap"
+        },
+        {
+          "to": "risk_transition::DECIDED-CIRCUIT_BREAK-DECIDED",
+          "rel": "scored_by",
+          "source": "risk-heatmap"
+        },
+        {
+          "to": "risk_transition::DECIDED-QUORUM_START-DECIDED",
+          "rel": "scored_by",
+          "source": "risk-heatmap"
+        },
+        {
+          "to": "risk_transition::DECIDED-VOTES_COLLECTED-DECIDED",
+          "rel": "scored_by",
+          "source": "risk-heatmap"
+        }
+      ]
     },
     "risk_transition::IDLE-CIRCUIT_BREAK-IDLE": {
       "type": "risk_transition",

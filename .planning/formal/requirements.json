@@ -1,6 +1,8 @@
 {
   "aggregated_at": "2026-04-08T14:28:34.785Z",
   "content_hash": "f7bd3e745e920a0fc7132450da00117b13ddd42957f9968394a59ac47aff98d7",
+  "aggregated_at": "2026-04-07T09:26:46.147Z",
+  "content_hash": "cefeccf5ea531ffe773f702aefba446f114fe38a5da7a8ed3d9ffff7e49f9ca9",
   "requirements": [
     {
       "id": "ACT-01",
@@ -1478,7 +1480,10 @@
         "source_file": "manual",
         "milestone": "v0.41"
       },
-      "background": "Implemented in 0.41.14. Automated in release.yml (CI), publish.sh (manual publish), and documented in CLAUDE.md. Prevents stale prerelease tags from confusing consumers who install via @next."
+      "background": "Implemented in 0.41.14. Automated in release.yml (CI), publish.sh (manual publish), and documented in CLAUDE.md. Prevents stale prerelease tags from confusing consumers who install via @next.",
+      "formal_models": [
+        ".planning/formal/tla/DistTagAlignment.tla"
+      ]
     },
     {
       "id": "DRIFT-01",
@@ -6223,3 +6228,4 @@
   "last_sync": "2026-03-31T09:45:23.686Z",
   "frozen_at": "2026-04-08T14:28:34.788Z"
 }
+  "frozen_at": "2026-04-07T09:26:46.148Z"

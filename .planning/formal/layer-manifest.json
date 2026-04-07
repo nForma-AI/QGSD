@@ -1,6 +1,6 @@
 {
   "schema_version": "2",
-  "generated": "2026-04-04T07:20:07.941Z",
+  "generated": "2026-04-07T18:33:28.889Z",
   "layers": {
     "L1": [
       {
@@ -1150,6 +1150,11 @@
         "path": ".planning/formal/tla/NFOutputIntegrity.tla",
         "description": "Quorum output truncation pipeline — models 6 truncation layers (L1-L6) and verifies verdict integrity, truncation detection, telemetry recording, and consensus gate awareness. Confirmed 2 violations: TRUNC-04 (telemetry gap) and TRUNC-05 (raw field silent truncation).",
         "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFWaveDAG.tla",
+        "description": "Graph-driven wave scheduling with Tarjan SCC collapsing and topological wave assignment",
+        "grounding_status": "ungrounded"
       }
     ]
   },
@@ -1173,16 +1178,16 @@
   "collapsed_layers": {
     "L2": {
       "reason": "Empty layer — zero entries permanently blocked Gate B (STRUCT-01)",
-      "collapsed_at": "2026-04-04T07:20:07.941Z"
+      "collapsed_at": "2026-04-07T18:33:28.889Z"
     }
   },
   "summary": {
-    "total_models": 229,
+    "total_models": 230,
     "L1_count": 2,
     "L2_count": 0,
-    "L3_count": 227,
+    "L3_count": 228,
     "maturity_distribution": {
-      "0": 192,
+      "0": 193,
       "1": 37
     },
     "spec_modules_with_invariants": 18

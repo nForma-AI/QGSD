@@ -1,15 +1,15 @@
 {
   "metadata": {
-    "generated": "2026-04-04T07:20:51.367Z",
-    "proximity_index_hash": "26cb772e",
+    "generated": "2026-04-07T18:33:46.993Z",
+    "proximity_index_hash": "fa7bcbb0",
     "threshold": 0.7,
     "max_hops": 5,
     "total_pairs_checked": 0,
     "candidates_found": 0,
     "candidates_filtered": 0,
     "orphan_models_count": 1,
-    "orphan_requirements_count": 0,
-    "uncovered_requirements_count": 11,
+    "orphan_requirements_count": 1,
+    "uncovered_requirements_count": 12,
     "non_neighbor_top": 20,
     "fast_path": true
   },
@@ -21,7 +21,12 @@
         "edges": 0
       }
     ],
-    "requirements": []
+    "requirements": [
+      {
+        "id": "DIST-01",
+        "edges": 0
+      }
+    ]
   },
   "uncovered_requirements": [
     {
@@ -55,6 +60,10 @@
     {
       "id": "DBUG-04",
       "text": "Debug skill produces a reproducing formal model as a deliverable (not just a fix)"
+    },
+    {
+      "id": "DIST-01",
+      "text": "The npm `@next` dist-tag SHALL never point to a version older than `@latest`. After every stable publish to `@latest`, the `@next` dist-tag MUST be aligned to the same or a newer version."
     },
     {
       "id": "MRF-01",
