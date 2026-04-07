@@ -352,15 +352,15 @@ nForma provides commands for the full project lifecycle, from initialization thr
 
 ## Packaged Skills
 
-nForma includes small packaged skills under `agents/skills/` for narrower process work that complements the main slash commands.
+nForma includes 6 packaged skills under `agents/skills/` for narrower process work that complements the main slash commands.
 
 Use them like this:
 
 - `idea-refine` when the request is still fuzzy
 - `task-intake` when you want issue-ready structure
 - `code-review-and-quality` before merge
-- `documentation-and-adrs` when a decision or workflow change needs durable context
-- `security-and-hardening` for sensitive or exposed changes
+- `api-and-interface-design` for contract-first API and interface design
+- `deprecation-and-migration` for safe deprecation and migration planning
 - `shipping-and-launch` before go-live
 
 Each packaged skill also has an `nf:` alias for consistency with the main command set. Example: `/task-intake` and `/nf:task-intake` are equivalent.
@@ -370,6 +370,8 @@ Typical flow:
 `idea-refine -> task-intake -> /nf:quick` for small tasks
 
 `idea-refine -> task-intake -> /nf:new-project -> /nf:plan-phase -> /nf:execute-phase -> /nf:verify-work -> shipping-and-launch` for larger work
+
+Reference checklists live in `core/references/` (testing-patterns, security, performance, accessibility). The verifier workflow automatically scans against relevant checklists during verification.
 
 See [docs/agent-skills.md](agent-skills.md) for the full routing guide.
 

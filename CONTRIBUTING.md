@@ -41,16 +41,16 @@ npm run test:changed
 
 ## Agent Skills
 
-nForma now ships a small set of packaged skills under `agents/skills/` that complement the slash-command workflows:
+nForma ships 6 packaged skills under `agents/skills/` that complement the slash-command workflows:
 
-- `task-intake` for turning rough requests into issue-ready JSON
 - `idea-refine` for converging a vague idea into a small, testable direction
+- `task-intake` for turning rough requests into issue-ready JSON
 - `code-review-and-quality` for reusable pre-merge review structure
-- `documentation-and-adrs` for capturing decision context and workflow changes
-- `security-and-hardening` for minimum security review and hardening checks
+- `api-and-interface-design` for contract-first API and interface design
+- `deprecation-and-migration` for safe deprecation and migration planning
 - `shipping-and-launch` for release readiness, rollout, and rollback planning
 
-Reference checklists live in `references/` (testing-patterns, security, performance, accessibility). Use them alongside the packaged skills during review.
+Reference checklists live in `core/references/` (testing-patterns, security, performance, accessibility). The verifier workflow automatically scans against relevant checklists during verification.
 
 See [docs/agent-skills.md](docs/agent-skills.md) for the lifecycle guide, routing recommendations, and the gap analysis against `addyosmani/agent-skills`.
 
@@ -60,9 +60,8 @@ See [docs/agent-skills.md](docs/agent-skills.md) for the lifecycle guide, routin
 |-----------|---------|
 | `bin/` | CLI scripts, installers, formal verification runners |
 | `commands/nf/` | Slash command definitions (skill markdown files) |
-| `core/` | Workflows, templates, references |
+| `core/` | Workflows, templates, references (including quality checklists) |
 | `hooks/` | Claude Code lifecycle hooks (source) |
-| `references/` | Lightweight review checklists (testing, security, performance, accessibility) |
 | `hooks/dist/` | Built hook files (synced by install) |
 | `agents/` | Subagent definitions |
 | `src/machines/` | XState state machine definitions |
