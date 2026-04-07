@@ -124,6 +124,81 @@ function embeddingNearestReq(nodeKey) {
   };
 }
 
+// ── Layer script mapping for coderlm callers queries ────────────────────────
+// Maps layer keys to their primary script files for inter-layer dependency discovery
+
+const LAYER_SCRIPT_MAP = {
+  f_to_t: 'bin/formal-test-sync.cjs',
+  c_to_f: 'bin/nf-solve.cjs',           // inline handler, no separate script
+  t_to_c: 'bin/nf-solve.cjs',           // inline handler
+  f_to_c: 'bin/nf-solve.cjs',           // inline handler
+  d_to_c: 'bin/nf-solve.cjs',           // inline handler
+  git_heatmap: 'bin/git-heatmap.cjs',
+  c_to_r: 'bin/nf-solve.cjs',           // inline handler
+  t_to_r: 'bin/nf-solve.cjs',           // inline handler
+  d_to_r: 'bin/nf-solve.cjs',           // inline handler
+  hazard_model: 'bin/hazard-model.cjs',
+  l1_to_l3: 'bin/nf-solve.cjs',         // inline handler
+  l3_to_tc: 'bin/generate-traceability-matrix.cjs',
+  per_model_gates: 'bin/compute-per-model-gates.cjs',
+  r_to_f: 'bin/nf-solve.cjs',           // inline handler
+  r_to_d: 'bin/nf-solve.cjs',           // inline handler
+  p_to_f: 'bin/nf-solve.cjs',           // inline handler
+  h_to_m: 'bin/nf-solve.cjs',           // inline handler
+  b_to_f: 'bin/nf-solve.cjs',           // inline handler
+};
+
+/**
+ * Query coderlm for inter-layer dependency edges based on active layer scripts.
+ * @param {Object} adapter - coderlm adapter instance
+ * @param {string[]} activeLayerKeys - Array of layer keys with residual > 0
+ * @returns {Array<{from: string, to: string}>} Array of discovered edges
+ */
+function queryEdgesSync(adapter, activeLayerKeys) {
+  const edges = [];
+
+  // Build reverse map: script file -> [layer keys that use it]
+  const scriptToLayers = {};
+  for (const key of activeLayerKeys) {
+    const script = LAYER_SCRIPT_MAP[key];
+    if (!script) continue;
+    if (!scriptToLayers[script]) scriptToLayers[script] = [];
+    scriptToLayers[script].push(key);
+  }
+
+  // For each unique script file among active layers, query callers
+  const queriedScripts = new Set();
+  for (const key of activeLayerKeys) {
+    const script = LAYER_SCRIPT_MAP[key];
+    if (!script || queriedScripts.has(script)) continue;
+    queriedScripts.add(script);
+
+    // Query coderlm for callers of this script's main export
+    const basename = path.basename(script, '.cjs');
+    const result = adapter.getCallersSync(basename, script);
+    if (result.error || !result.callers) continue;
+
+    // Map caller file paths back to layer keys
+    const targetLayers = scriptToLayers[script] || [];
+    for (const callerFile of result.callers) {
+      // Find which active layer this caller belongs to
+      for (const otherKey of activeLayerKeys) {
+        const otherScript = LAYER_SCRIPT_MAP[otherKey];
+        if (otherScript && callerFile.includes(path.basename(otherScript))) {
+          // otherKey's script calls into this script -> edge from otherKey to each target layer
+          for (const target of targetLayers) {
+            if (target !== otherKey) {
+              edges.push({ from: otherKey, to: target });
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return edges;
+}
+
 // ── CLI flags ────────────────────────────────────────────────────────────────
 
 const args = process.argv.slice(2);
@@ -5816,11 +5891,13 @@ function main() {
 
               if (activeLayerKeys.length > 0) {
                 // Build dependency graph from active residual layers
-                // For now, we construct an empty edge list as a placeholder;
-                // in future iterations, adapter queries can populate this with actual inter-layer edges
+                // Query coderlm for inter-layer dependency edges
+                const discoveredEdges = queryEdgesSync(adapter, activeLayerKeys);
+                process.stderr.write(TAG + ' coderlm discovered ' + discoveredEdges.length + ' inter-layer edge(s)\n');
+
                 const graph = {
                   nodes: activeLayerKeys,
-                  edges: []  // Placeholder: would be populated by adapter queries
+                  edges: discoveredEdges
                 };
 
                 // Compute wave ordering using graph-driven variant

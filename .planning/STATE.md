@@ -29,6 +29,7 @@ See: .planning/PROJECT.md
 | 384 | Fully integrate River ML library and Q-learning for quorum slot delegation | 2026-04-08 | 6bf32b45 | Verified | [384-issue-73](./quick/384-issue-73/) |
 | 385 | Add River ML phase indicator to nf-statusline.js | 2026-04-08 | 32ca7b5e | Pending | [385-add-river-ml-phase-indicator-to-nf-statu](./quick/385-add-river-ml-phase-indicator-to-nf-statu/) |
 | 386 | Add E2E test for River ML learning loop and surface shadow recommendations in status line | 2026-04-08 | 017878fb | Verified | [386-add-e2e-test-for-river-ml-learning-loop-](./quick/386-add-e2e-test-for-river-ml-learning-loop-/) |
+| 381 | Wire coderlm adapter queries into nf-solve to populate dependency graph edges from active residual layers | 2026-04-07 | pending | Pending | [381-wire-coderlm-adapter-queries-into-nf-sol](./quick/381-wire-coderlm-adapter-queries-into-nf-sol/) |
 
 ## Session Log
 
@@ -50,3 +51,4 @@ See: .planning/PROJECT.md
 - 2026-04-08 - Completed quick task 386: Add E2E test for River ML learning loop and surface shadow recommendations
 
 Last activity: 2026-04-08
+- 2026-04-07: Completed quick task 381: Wire coderlm adapter queries into nf-solve dependency graph

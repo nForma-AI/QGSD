@@ -217,6 +217,88 @@ check().then(r => console.log(JSON.stringify(r)));
     },
 
     /**
+     * Synchronous wrapper for getCallers using spawnSync pattern.
+     * Spawns a node process to perform async HTTP GET to /callers endpoint.
+     * @param {string} symbol - Symbol name
+     * @param {string} file - File path
+     * @returns {{callers?: string[], error?: string}}
+     */
+    getCallersSync(symbol, file) {
+      if (!enabled) {
+        return { error: 'disabled' };
+      }
+      const parsed = parseUrl(host);
+      const port = parsed.port || (parsed.protocol === 'https:' ? 443 : 80);
+      const script = `
+const http = require('http');
+const https = require('https');
+const protocol = ${JSON.stringify(parsed.protocol)};
+const hostname = ${JSON.stringify(parsed.hostname)};
+const port = ${port};
+const symbol = ${JSON.stringify(symbol)};
+const file = ${JSON.stringify(file)};
+const timeout = ${timeout};
+const client = protocol === 'https:' ? https : http;
+async function getCallers() {
+  return new Promise(resolve => {
+    let timedOut = false;
+    const path = '/callers?symbol=' + encodeURIComponent(symbol) + '&file=' + encodeURIComponent(file);
+    const options = {
+      hostname: hostname,
+      port: port,
+      path: path,
+      method: 'GET',
+      timeout: timeout
+    };
+    const req = client.request(options, res => {
+      let data = '';
+      res.on('data', chunk => { data += chunk; });
+      res.on('end', () => {
+        if (!timedOut) {
+          if (res.statusCode === 200) {
+            try {
+              const parsed = JSON.parse(data);
+              resolve({ callers: parsed.callers || [] });
+            } catch (e) {
+              resolve({ error: 'parse' });
+            }
+          } else {
+            resolve({ error: 'HTTP ' + res.statusCode });
+          }
+        }
+      });
+    });
+    req.on('timeout', () => {
+      timedOut = true;
+      req.destroy();
+      resolve({ error: 'timeout' });
+    });
+    req.on('error', e => {
+      if (!timedOut) {
+        resolve({ error: e.code || 'error' });
+      }
+    });
+    req.end();
+  });
+}
+getCallers().then(r => console.log(JSON.stringify(r)));
+`;
+      try {
+        const result = spawnSync('node', ['-e', script], {
+          timeout: timeout + 1000,
+          encoding: 'utf8',
+        });
+        if (result.status === 0 && result.stdout) {
+          const parsed = JSON.parse(result.stdout.trim());
+          return parsed;
+        }
+        return { error: 'sync-spawn-failed' };
+      } catch (e) {
+        return { error: 'sync-spawn-failed' };
+      }
+    },
+
+    /**
      * Get implementation location of a symbol.
      * @param {string} symbol - Symbol name
      * @returns {Promise<{file?: string, line?: number, error?: string}>}
