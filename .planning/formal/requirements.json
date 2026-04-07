@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-04-06T07:17:59.088Z",
-  "content_hash": "6de002472c2b7872",
+  "aggregated_at": "2026-04-07T09:24:58.362Z",
+  "content_hash": "535327adb9754ce0",
   "requirements": [
     {
       "id": "ACT-01",
@@ -1431,6 +1431,30 @@
       "provenance": {
         "source_file": ".planning/quick/374-make-api-slots-backup-only-dispatch-to-a/374-PLAN.md",
         "milestone": "quick-374"
+      }
+    },
+    {
+      "id": "DISP-07",
+      "text": "Quorum dispatcher Mode C delegates structured coding tasks to external agent CLI slots (codex, gemini, opencode, copilot) via coding-task-router.cjs, with status-to-verdict mapping (SUCCESS->APPROVE, PARTIAL->FLAG, FAILED->REJECT, UNKNOWN->FLAG) for integration into the quorum voting path",
+      "category": "Quorum & Dispatch",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Quick task 380 implemented coding task delegation as the foundational layer for Issue #60. Previously quorum slots only handled review/voting (Mode A for questions, Mode B for execution review). Mode C enables external agents to receive and execute actual coding work with structured result collection.",
+      "provenance": {
+        "source_file": ".planning/quick/380-delegate-quorum-slot-coding-to-external-/380-PLAN.md",
+        "milestone": "quick-380"
+      }
+    },
+    {
+      "id": "DISP-08",
+      "text": "/nf:quick --delegate {slot-name} flag enables full task delegation to named external agent CLI slots via Mode C dispatch, bypassing local planning and execution while preserving scope contract tracking and result recording in STATE.md.",
+      "category": "Quorum & Dispatch",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Quick task 381 adds the --delegate flag to the /nf:quick workflow, providing a user-facing interface to Mode C dispatch (established in DISP-07). The flag validates the target slot against providers.json, ensures it is a subprocess provider with file access, and routes the task through coding-task-router.cjs for execution by the external agent.",
+      "provenance": {
+        "source_file": ".planning/quick/381-add-delegate-flag-to-nf-quick-for-full-t/381-PLAN.md",
+        "milestone": "quick-381"
       }
     },
     {
@@ -4101,6 +4125,18 @@
       ]
     },
     {
+      "id": "ROUTE-05",
+      "text": "selectSlot delegates to pluggable 3-tier policy interface enabling learned slot routing via PresetPolicy (Tier 0) and RiverPolicy (Tier 1) contextual bandit with confidence gates.",
+      "category": "Token Optimization & Model Routing",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Quick task 382 implements a policy layer beneath selectSlot that enables the system to learn which agent slot performs best for each task type, starting with static preset selection and progressing to evidence-based routing through the River contextual bandit algorithm.",
+      "provenance": {
+        "source_file": ".planning/quick/382-implement-tier-0-policy-interface-and-ti/382-PLAN.md",
+        "milestone": "quick-382"
+      }
+    },
+    {
       "id": "RSN-01",
       "text": "Hazard model applies FMEA (Severity x Occurrence x Detection = RPN) to L2 operational model states and transitions",
       "category": "Reasoning",
@@ -6141,5 +6177,5 @@
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
   "last_sync": "2026-03-31T09:45:23.686Z",
-  "frozen_at": "2026-04-06T07:17:59.088Z"
+  "frozen_at": "2026-04-07T09:24:58.362Z"
 }

@@ -121,9 +121,20 @@ Quick mode uses the same system with a shorter path:
 - Quick tasks live in `.planning/quick/` separate from planned phases
 - Updates STATE.md tracking (not ROADMAP.md)
 
-Use when you know exactly what to do and the task is small enough to not need research or verification.
+**Flags:**
 
-Usage: `/nf:quick`
+| Flag | Effect |
+|------|--------|
+| `--full` | Enables plan-checking, verification, formal scope scan, and quorum review |
+| `--delegate {slot}` | Delegates task to a specific slot (e.g., `codex-1`, `gemini-1`). Slot must be subprocess with file access |
+| `--force-quorum` | Forces quorum review even without `--full` |
+
+**Examples:**
+- `/nf:quick` -- default quick mode, minimal ceremony
+- `/nf:quick --full` -- with verification and formal checks
+- `/nf:quick --delegate codex-1` -- delegate to Codex
+- `/nf:quick --full --delegate gemini-1` -- full mode delegated to Gemini
+
 Result: Creates `.planning/quick/NNN-slug/PLAN.md`, `.planning/quick/NNN-slug/SUMMARY.md`
 
 ### Roadmap Management

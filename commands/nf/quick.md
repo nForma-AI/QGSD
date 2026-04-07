@@ -1,7 +1,7 @@
 ---
 name: nf:quick
 description: Execute a quick task with GSD guarantees (atomic commits, state tracking) but skip optional agents
-argument-hint: "[--full]"
+argument-hint: "[--full] [--delegate {slot}] [--force-quorum]"
 allowed-tools:
   - Read
   - Write
@@ -31,6 +31,10 @@ Quick mode is the same system with a shorter path:
 - Quorum reviews VERIFICATION.md after passing (can downgrade to "Needs Review")
 
 Use when you want quality guarantees with formal correctness properties, without full milestone ceremony.
+
+**`--delegate {slot}` flag:** Delegates the entire task to a specific quorum slot (e.g., `codex-1`, `gemini-1`). The slot name is passed as a routing hint to PresetPolicy, which will prefer that slot if it is eligible (subprocess with file access). If the slot is ineligible, falls back to default routing.
+
+**`--force-quorum` flag:** Forces quorum review even in non-full mode.
 </objective>
 
 <execution_context>
