@@ -220,6 +220,17 @@ Each plan produces 2-4 commits (tasks + metadata). Clear, granular, bisectable.
 
 </anti_patterns>
 
+<pre_commit_checklist>
+## Pre-Commit Checklist
+
+Before every commit:
+- [ ] Review staged changes (`git diff --staged`)
+- [ ] Check for secrets (passwords, API keys, tokens, .env files)
+- [ ] Run test suite
+- [ ] Run linting and type checking
+- [ ] Commit message explains the why, not just the what
+</pre_commit_checklist>
+
 <commit_strategy_rationale>
 
 ## Why Per-Task Commits?

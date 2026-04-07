@@ -263,6 +263,18 @@ When a plan creates NEW artifacts (bin/ scripts, hooks, data files, workflows), 
 
 **Good pattern:** Plan has Task 1: "Create bin/analyze-foo.cjs" and Task 2: "Wire analyze-foo into nf-solve.cjs autoClose()" with verify: `grep 'analyze-foo' bin/nf-solve.cjs`
 
+<adr_suggestion>
+## ADR Task Suggestion
+
+When a plan involves an architectural decision (new library, new pattern, system boundary change, data model redesign), consider adding a task or sub-step to capture the decision as an ADR-style note:
+- Context: what changed and why
+- Decision: the chosen approach
+- Alternatives considered: what was rejected
+- Consequences: what follows from this decision
+
+Place the ADR in the most relevant existing doc (README, CONTRIBUTING, USER-GUIDE, or a dedicated `docs/decisions/` directory if the project uses one). Do not create standalone ADR files unless the project already has an ADR convention.
+</adr_suggestion>
+
 </task_breakdown>
 
 <dependency_graph>

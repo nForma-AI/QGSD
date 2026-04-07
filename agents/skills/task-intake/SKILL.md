@@ -1,3 +1,8 @@
+---
+name: nf:task-intake
+description: Converts rough requests into issue-ready structured output with title, scope, acceptance criteria, difficulty, and routing.
+---
+
 # task-intake skill
 
 Purpose
