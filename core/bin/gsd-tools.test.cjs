@@ -4354,6 +4354,47 @@ describe('default_milestone config feature', () => {
     assert.strictEqual(data.default_milestone_used, false, `DM-TC-07: expected default_milestone_used=false, got ${data.default_milestone_used}`);
   });
 
+  test('DM-TC-09: default_milestone empty string falls back to STATE.md', () => {
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'config.json'),
+      JSON.stringify({ default_milestone: '' })
+    );
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'STATE.md'),
+      'Milestone: v0.41 — milestone\n'
+    );
+    const result = runGsdTools('init quick "test task" --raw', tmpDir);
+    assert.ok(result.success, `init quick failed: ${result.error}`);
+    const data = JSON.parse(result.output);
+    assert.strictEqual(data.chosen_milestone, 'v0.41', `DM-TC-09: expected chosen_milestone=v0.41, got ${data.chosen_milestone}`);
+    assert.strictEqual(data.default_milestone_used, false, `DM-TC-09: expected default_milestone_used=false, got ${data.default_milestone_used}`);
+  });
+
+  test('DM-TC-10: phase-plan-index populates chosen_milestone from config', () => {
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'config.json'),
+      JSON.stringify({ default_milestone: 'v0.42 PhaseTest' })
+    );
+    const phaseDir = path.join(tmpDir, '.planning', 'phases', '03-api');
+    fs.mkdirSync(phaseDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(phaseDir, '03-01-PLAN.md'),
+      `---
+wave: 1
+autonomous: true
+objective: Test milestone context
+---
+
+## Task 1: Placeholder
+`
+    );
+    const result = runGsdTools('phase-plan-index 03 --raw', tmpDir);
+    assert.ok(result.success, `phase-plan-index failed: ${result.error}`);
+    const data = JSON.parse(result.output);
+    assert.strictEqual(data.chosen_milestone, 'v0.42', `DM-TC-10: expected chosen_milestone=v0.42, got ${data.chosen_milestone}`);
+    assert.strictEqual(data.default_milestone_used, true, `DM-TC-10: expected default_milestone_used=true, got ${data.default_milestone_used}`);
+  });
+
   test('DM-TC-08: config-ensure-section includes default_milestone in template', () => {
     // Ensure tmpDir has no config.json
     const configPath = path.join(tmpDir, '.planning', 'config.json');
