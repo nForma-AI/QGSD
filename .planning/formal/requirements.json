@@ -1932,6 +1932,18 @@
       }
     },
     {
+      "id": "GUARD-01",
+      "text": "When --full flag is set, quick workflow enforces formal modeling steps with MUST_NOT_SKIP annotations, anti-urgency guardrails, baseline tooling checks, and post-execution audit gates (does not apply to default quick mode without --full)",
+      "category": "Formal Modeling Guardrails",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Agents skip 8/10 formal modeling steps in /nf:quick --full due to urgency bias and context fatigue. GUARD-01 adds enforcement mechanisms making skips detectable and logged. Scoped to --full mode only; default quick mode per SOLVE-02 is unaffected.",
+      "provenance": {
+        "source_file": ".planning/quick/375-issue-47-agents-skip-formal-modeling/375-PLAN.md",
+        "milestone": "quick-375"
+      }
+    },
+    {
       "id": "GUIDE-01",
       "text": "User Guide updated with TUI screenshots cross-referenced to feature descriptions",
       "category": "User Guide",

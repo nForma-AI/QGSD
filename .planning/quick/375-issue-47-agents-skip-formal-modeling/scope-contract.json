@@ -1,0 +1,24 @@
+{
+  "bugfix/issue-47-agents-skip-formal-modeling": {
+    "task_id": 375,
+    "task_description": "issue-47-agents-skip-formal-modeling",
+    "approach": "Add hard gates, MUST_NOT_SKIP markers, advisory baseline presence checks, and anti-urgency guardrails to the /nf:quick --full workflow to prevent agents from bypassing formal modeling verification steps.",
+    "out_of_scope": [
+      "Modifying the formal model files themselves (.tla, .als, .prism files)",
+      "Changing the core formal verification tools (TLC, Alloy, PRISM runtimes)",
+      "Implementing new formal modeling capabilities beyond the existing quick --full pathway",
+      "Updating quick mode without --full flag (gates apply to --full mode only)"
+    ],
+    "classification": {
+      "type": "bug_fix",
+      "confidence": 0.95,
+      "routed_through_debug": false
+    },
+    "risk_level": "high",
+    "risk_reason": "Workflow file modification (core/workflows/quick.md) to add hard gates and formal modeling enforcement across multiple steps, combined with potential formal model file changes.",
+    "branches_affected": ["bugfix/issue-47-agents-skip-formal-modeling"],
+    "created_at": "2026-04-05T18:36:31.023Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}
