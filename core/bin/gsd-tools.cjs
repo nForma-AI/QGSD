@@ -190,6 +190,7 @@ function loadConfig(cwd) {
     nyquist_validation: true,
     model_tier_planner: 'opus',   // Planner agents (gsd-planner, gsd-roadmapper) default to opus
     model_tier_worker: 'haiku',   // Worker agents (researcher, checker, executor) default to haiku
+    default_milestone: null,
   };
 
   try {
@@ -230,6 +231,7 @@ function loadConfig(cwd) {
       model_tier_planner: get('model_tier_planner') ?? defaults.model_tier_planner,
       model_tier_worker: get('model_tier_worker') ?? defaults.model_tier_worker,
       model_overrides: get('model_overrides') || {},
+      default_milestone: get('default_milestone') ?? defaults.default_milestone,
     };
   } catch {
     return defaults;
@@ -681,6 +683,8 @@ function cmdConfigEnsureSection(cwd, raw) {
       verifier: true,
       nyquist_validation: true,
     },
+    // Allow projects to set a default milestone when ROADMAP.md / STATE.md are absent
+    default_milestone: null,
     parallelization: true,
     brave_search: hasBraveSearch,
   };
@@ -2009,6 +2013,24 @@ function cmdPhasePlanIndex(cwd, phase, raw) {
     incomplete,
     has_checkpoints: hasCheckpoints,
   };
+
+  // Populate milestone context — expose chosen_milestone and whether default was used
+  try {
+    const milestone = getMilestoneInfo(cwd);
+    if (milestone && milestone.version) {
+      result.chosen_milestone = milestone.version;
+      result.chosen_milestone_name = milestone.name;
+      try {
+        const cfg = loadConfig(cwd);
+        if (cfg && cfg.default_milestone && typeof cfg.default_milestone === 'string') {
+          const dm = cfg.default_milestone.trim();
+          if (dm && dm.toLowerCase() !== 'auto') {
+            result.default_milestone_used = true;
+          }
+        }
+      } catch {}
+    }
+  } catch {}
 
   output(result, raw);
 }
@@ -4573,6 +4595,23 @@ function generateSlugInternal(text) {
 }
 
 function getMilestoneInfo(cwd) {
+  // Prefer project config default_milestone when present (allows work without ROADMAP.md)
+  try {
+    const cfg = loadConfig(cwd);
+    if (cfg && cfg.default_milestone && typeof cfg.default_milestone === 'string') {
+      const dm = cfg.default_milestone.trim();
+      if (dm && dm.toLowerCase() !== 'auto') {
+        // Accept formats: "v0.9", "v0.9 Name...", or "v0.9: Name"
+        const m = dm.match(/^(v?\d+\.\d+)(?:[:\s-]+(.+))?$/i);
+        if (m) {
+          const ver = m[1].toLowerCase().startsWith('v') ? m[1].toLowerCase() : 'v' + m[1];
+          const name = m[2] ? m[2].trim() : 'milestone';
+          return { version: ver, name };
+        }
+      }
+    }
+  } catch {}
+
   // 1. Try STATE.md — authoritative source for current milestone
   try {
     const state = fs.readFileSync(path.join(cwd, '.planning', 'STATE.md'), 'utf-8');
@@ -4930,12 +4969,34 @@ function cmdInitQuick(cwd, description, raw) {
     roadmap_exists: pathExistsInternal(cwd, '.planning/ROADMAP.md'),
     planning_exists: pathExistsInternal(cwd, '.planning'),
 
+    // Milestone context (may come from config.default_milestone or STATE/ROADMAP)
+    chosen_milestone: null,
+    default_milestone_used: false,
+
     // Branch detection
     current_branch: currentBranch,
     is_protected: isProtected,
     quick_branch_name: quickBranchName,
     protected_branches: protectedBranches,
   };
+
+  // Populate milestone context (only if a real source exists: config, STATE.md, or ROADMAP.md)
+  try {
+    // Check if a real milestone source exists
+    const hasConfig = config.default_milestone && typeof config.default_milestone === 'string' && config.default_milestone.trim() && config.default_milestone.trim().toLowerCase() !== 'auto';
+    const hasState = pathExistsInternal(cwd, '.planning/STATE.md');
+    const hasRoadmap = pathExistsInternal(cwd, '.planning/ROADMAP.md');
+
+    if (hasConfig || hasState || hasRoadmap) {
+      const milestone = getMilestoneInfo(cwd);
+      if (milestone && milestone.version) {
+        result.chosen_milestone = milestone.version;
+        if (hasConfig) {
+          result.default_milestone_used = true;
+        }
+      }
+    }
+  } catch {}
 
   output(result, raw);
 }

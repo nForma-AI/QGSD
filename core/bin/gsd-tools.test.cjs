@@ -4251,3 +4251,120 @@ describe('TIER: resolveModelInternal tier lookup', () => {
     assert.strictEqual(data.model, 'haiku', `TIER-03d: expected haiku worker fallback, got ${data.model}`);
   });
 });
+
+describe('default_milestone config feature', () => {
+  let tmpDir;
+
+  beforeEach(() => {
+    tmpDir = createTempProject();
+  });
+
+  afterEach(() => {
+    cleanup(tmpDir);
+  });
+
+  test('DM-TC-01: default_milestone "v0.42 My Milestone" populates init quick output', () => {
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'config.json'),
+      JSON.stringify({ default_milestone: 'v0.42 My Milestone' })
+    );
+    const result = runGsdTools('init quick "test task" --raw', tmpDir);
+    assert.ok(result.success, `init quick failed: ${result.error}`);
+    const data = JSON.parse(result.output);
+    assert.strictEqual(data.chosen_milestone, 'v0.42', `DM-TC-01: expected chosen_milestone=v0.42, got ${data.chosen_milestone}`);
+    assert.strictEqual(data.default_milestone_used, true, `DM-TC-01: expected default_milestone_used=true, got ${data.default_milestone_used}`);
+  });
+
+  test('DM-TC-02: default_milestone null falls back to STATE.md', () => {
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'config.json'),
+      JSON.stringify({ default_milestone: null })
+    );
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'STATE.md'),
+      'Milestone: v0.41 — milestone\n'
+    );
+    const result = runGsdTools('init quick "test task" --raw', tmpDir);
+    assert.ok(result.success, `init quick failed: ${result.error}`);
+    const data = JSON.parse(result.output);
+    assert.strictEqual(data.chosen_milestone, 'v0.41', `DM-TC-02: expected chosen_milestone=v0.41, got ${data.chosen_milestone}`);
+    assert.strictEqual(data.default_milestone_used, false, `DM-TC-02: expected default_milestone_used=false, got ${data.default_milestone_used}`);
+  });
+
+  test('DM-TC-03: default_milestone "auto" is treated as not-set', () => {
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'config.json'),
+      JSON.stringify({ default_milestone: 'auto' })
+    );
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'STATE.md'),
+      'Milestone: v0.41 — milestone\n'
+    );
+    const result = runGsdTools('init quick "test task" --raw', tmpDir);
+    assert.ok(result.success, `init quick failed: ${result.error}`);
+    const data = JSON.parse(result.output);
+    assert.strictEqual(data.chosen_milestone, 'v0.41', `DM-TC-03: expected chosen_milestone=v0.41, got ${data.chosen_milestone}`);
+    assert.strictEqual(data.default_milestone_used, false, `DM-TC-03: expected default_milestone_used=false, got ${data.default_milestone_used}`);
+  });
+
+  test('DM-TC-04: default_milestone without v-prefix normalizes correctly', () => {
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'config.json'),
+      JSON.stringify({ default_milestone: '0.42' })
+    );
+    const result = runGsdTools('init quick "test task" --raw', tmpDir);
+    assert.ok(result.success, `init quick failed: ${result.error}`);
+    const data = JSON.parse(result.output);
+    assert.strictEqual(data.chosen_milestone, 'v0.42', `DM-TC-04: expected chosen_milestone=v0.42, got ${data.chosen_milestone}`);
+  });
+
+  test('DM-TC-05: default_milestone with colon format "v0.42: Release"', () => {
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'config.json'),
+      JSON.stringify({ default_milestone: 'v0.42: Release' })
+    );
+    const result = runGsdTools('init quick "test task" --raw', tmpDir);
+    assert.ok(result.success, `init quick failed: ${result.error}`);
+    const data = JSON.parse(result.output);
+    assert.strictEqual(data.chosen_milestone, 'v0.42', `DM-TC-05: expected chosen_milestone=v0.42, got ${data.chosen_milestone}`);
+  });
+
+  test('DM-TC-06: default_milestone takes priority over STATE.md', () => {
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'config.json'),
+      JSON.stringify({ default_milestone: 'v0.99 Override' })
+    );
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'STATE.md'),
+      'Milestone: v0.41 — milestone\n'
+    );
+    const result = runGsdTools('init quick "test task" --raw', tmpDir);
+    assert.ok(result.success, `init quick failed: ${result.error}`);
+    const data = JSON.parse(result.output);
+    assert.strictEqual(data.chosen_milestone, 'v0.99', `DM-TC-06: expected chosen_milestone=v0.99, got ${data.chosen_milestone}`);
+    assert.strictEqual(data.default_milestone_used, true, `DM-TC-06: expected default_milestone_used=true, got ${data.default_milestone_used}`);
+  });
+
+  test('DM-TC-07: no config and no STATE.md yields null chosen_milestone', () => {
+    // Already have .planning/phases created by createTempProject, no config.json, no STATE.md
+    const result = runGsdTools('init quick "test task" --raw', tmpDir);
+    assert.ok(result.success, `init quick failed: ${result.error}`);
+    const data = JSON.parse(result.output);
+    assert.strictEqual(data.chosen_milestone, null, `DM-TC-07: expected chosen_milestone=null, got ${data.chosen_milestone}`);
+    assert.strictEqual(data.default_milestone_used, false, `DM-TC-07: expected default_milestone_used=false, got ${data.default_milestone_used}`);
+  });
+
+  test('DM-TC-08: config-ensure-section includes default_milestone in template', () => {
+    // Ensure tmpDir has no config.json
+    const configPath = path.join(tmpDir, '.planning', 'config.json');
+    if (fs.existsSync(configPath)) {
+      fs.unlinkSync(configPath);
+    }
+    const result = runGsdTools('config-ensure-section --raw', tmpDir);
+    assert.ok(result.success, `config-ensure-section failed: ${result.error}`);
+    assert.strictEqual(result.output, 'created', `DM-TC-08: expected 'created' output`);
+    // Now read the created config file and check for default_milestone
+    const createdConfig = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+    assert.ok(createdConfig.hasOwnProperty('default_milestone'), `DM-TC-08: default_milestone key not found in created config.json`);
+  });
+});
