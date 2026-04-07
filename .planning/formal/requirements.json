@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-04-06T11:52:32.757Z",
-  "content_hash": "2df7f9c75c6fc3ba",
+  "aggregated_at": "2026-04-07T06:10:32.850Z",
+  "content_hash": "a1fd220b93f72fbb",
   "requirements": [
     {
       "id": "ACT-01",
@@ -1431,6 +1431,18 @@
       "provenance": {
         "source_file": ".planning/quick/374-make-api-slots-backup-only-dispatch-to-a/374-PLAN.md",
         "milestone": "quick-374"
+      }
+    },
+    {
+      "id": "DISP-07",
+      "text": "Quorum dispatcher Mode C delegates structured coding tasks to external agent CLI slots (codex, gemini, opencode, copilot) via coding-task-router.cjs, with status-to-verdict mapping (SUCCESS->APPROVE, PARTIAL->FLAG, FAILED->REJECT, UNKNOWN->FLAG) for integration into the quorum voting path",
+      "category": "Quorum & Dispatch",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Quick task 380 implemented coding task delegation as the foundational layer for Issue #60. Previously quorum slots only handled review/voting (Mode A for questions, Mode B for execution review). Mode C enables external agents to receive and execute actual coding work with structured result collection.",
+      "provenance": {
+        "source_file": ".planning/quick/380-delegate-quorum-slot-coding-to-external-/380-PLAN.md",
+        "milestone": "quick-380"
       }
     },
     {
@@ -6129,5 +6141,5 @@
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
   "last_sync": "2026-03-31T09:45:23.686Z",
-  "frozen_at": "2026-04-06T11:52:32.757Z"
+  "frozen_at": "2026-04-07T06:10:32.851Z"
 }
