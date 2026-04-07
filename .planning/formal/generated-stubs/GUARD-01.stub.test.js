@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // @requirement GUARD-01
-// Structural test: hook system provides three code-quality guardrails:
-// 1. PostToolUse hook for auto-format (fail-open)
-// 2. Stop hook that warns about leftover console.log (non-blocking)
-// 3. Modular .claude/rules/ directory with convention files
+// Structural test: quick workflow enforces formal modeling steps in --full mode
+// with MUST_NOT_SKIP annotations, anti-urgency guardrails, baseline tooling checks,
+// and post-execution audit gates.
+// Full test suite: bin/quick-workflow-guardrails.test.cjs
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
@@ -11,44 +11,29 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const ROOT = path.join(__dirname, '..', '..', '..');
+const WORKFLOW = path.join(ROOT, 'core', 'workflows', 'quick.md');
 
-test('GUARD-01: nf-console-guard.js Stop hook exists and warns about console.log', () => {
-  const hookPath = path.join(ROOT, 'hooks', 'nf-console-guard.js');
-  assert.ok(fs.existsSync(hookPath),
-    'hooks/nf-console-guard.js must exist');
-  const content = fs.readFileSync(hookPath, 'utf8');
-  assert.match(content, /console\.log/,
-    'must detect console.log statements');
-  assert.match(content, /warn|advisory/i,
-    'must produce warnings (not blocks)');
-  assert.match(content, /process\.exit\(0\)/,
-    'must exit 0 (fail-open, never blocks)');
+test('GUARD-01: quick.md contains MUST_NOT_SKIP annotations (>= 5)', () => {
+  const content = fs.readFileSync(WORKFLOW, 'utf8');
+  const matches = content.match(/MUST_NOT_SKIP/g);
+  assert.ok(matches && matches.length >= 5,
+    `Expected >= 5 MUST_NOT_SKIP annotations, found ${matches ? matches.length : 0}`);
 });
 
-test('GUARD-01: nf-console-guard.js is also in hooks/dist/', () => {
-  const distPath = path.join(ROOT, 'hooks', 'dist', 'nf-console-guard.js');
-  assert.ok(fs.existsSync(distPath),
-    'hooks/dist/nf-console-guard.js must exist for install sync');
+test('GUARD-01: quick.md contains ANTI-URGENCY GUARDRAIL', () => {
+  const content = fs.readFileSync(WORKFLOW, 'utf8');
+  assert.ok(content.includes('ANTI-URGENCY GUARDRAIL'),
+    'must contain ANTI-URGENCY GUARDRAIL in executor constraints');
 });
 
-test('GUARD-01: .claude/rules/ directory has project convention files', () => {
-  const rulesDir = path.join(ROOT, '.claude', 'rules');
-  assert.ok(fs.existsSync(rulesDir),
-    '.claude/rules/ directory must exist');
-  const files = fs.readdirSync(rulesDir);
-  assert.ok(files.length > 0,
-    '.claude/rules/ must contain at least one convention file');
-  // Verify at least one .md file for conventions
-  const mdFiles = files.filter(f => f.endsWith('.md'));
-  assert.ok(mdFiles.length > 0,
-    '.claude/rules/ must contain .md convention files');
+test('GUARD-01: no silent skip clauses remain', () => {
+  const content = fs.readFileSync(WORKFLOW, 'utf8');
+  assert.ok(!content.includes('skip silently (fail-open)'),
+    'must not contain "skip silently (fail-open)" — all skips must be logged');
 });
 
-test('GUARD-01: hooks use fail-open pattern (try/catch + exit 0)', () => {
-  const hookPath = path.join(ROOT, 'hooks', 'nf-console-guard.js');
-  const content = fs.readFileSync(hookPath, 'utf8');
-  assert.match(content, /try\s*\{/,
-    'must use try/catch for fail-open');
-  assert.match(content, /catch/,
-    'must have catch block');
+test('GUARD-01: Step 5.9 and Step 6.1 exist', () => {
+  const content = fs.readFileSync(WORKFLOW, 'utf8');
+  assert.ok(content.includes('Step 5.9'), 'Step 5.9 baseline check must exist');
+  assert.ok(content.includes('Step 6.1'), 'Step 6.1 audit gate must exist');
 });
