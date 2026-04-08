@@ -218,13 +218,14 @@ test('RiverPolicy.recommend returns null when insufficient samples', () => {
   const rewardsPath = tmpPath('river-insufficient.jsonl');
   const statePath = tmpPath('river-insufficient-state.json');
   try {
-    // Write only 3 rewards (below minSamples of 10)
+    // Write only 3 rewards per arm (below minSamples of 10)
     const recorder = new mod.RewardRecorder({ rewardsPath });
     for (let i = 0; i < 3; i++) {
       recorder.record({ taskType: 'implement', slot: 'codex-1', reward: 0.9 });
+      recorder.record({ taskType: 'implement', slot: 'gemini-1', reward: 0.5 });
     }
 
-    const policy = new mod.RiverPolicy({ rewardsPath, statePath, config: { minSamples: 10 } });
+    const policy = new mod.RiverPolicy({ rewardsPath, statePath, config: { minSamples: 10, minExplore: 1, epsilon: 0 } });
     const result = policy.recommend('implement', PROVIDERS);
 
     assert.strictEqual(result.recommendation, null);
@@ -241,8 +242,8 @@ test('RiverPolicy.recommend returns best arm when confidence gate passes', () =>
   try {
     const recorder = new mod.RewardRecorder({ rewardsPath });
 
-    // Write 12 high rewards for gemini-1 and 12 low for codex-1
-    for (let i = 0; i < 12; i++) {
+    // Write 25 high rewards for gemini-1 and 25 low for codex-1
+    for (let i = 0; i < 25; i++) {
       recorder.record({ taskType: 'implement', slot: 'gemini-1', reward: 0.95 });
       recorder.record({ taskType: 'implement', slot: 'codex-1', reward: 0.5 });
     }
@@ -250,7 +251,7 @@ test('RiverPolicy.recommend returns best arm when confidence gate passes', () =>
     const policy = new mod.RiverPolicy({
       rewardsPath,
       statePath,
-      config: { minSamples: 10, rewardMargin: 0.15, stabilityWindow: 5, cooldownMs: 0 },
+      config: { minSamples: 10, minExplore: 1, epsilon: 0, rewardMargin: 0.15, stabilityWindow: 5, cooldownMs: 0 },
     });
     const result = policy.recommend('implement', PROVIDERS);
 
@@ -270,7 +271,7 @@ test('RiverPolicy incumbent bias: does not override when margin insufficient', (
     const recorder = new mod.RewardRecorder({ rewardsPath });
 
     // gemini-1 slightly better than codex-1 but within margin
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 25; i++) {
       recorder.record({ taskType: 'implement', slot: 'gemini-1', reward: 0.82 });
       recorder.record({ taskType: 'implement', slot: 'codex-1', reward: 0.78 });
     }
@@ -278,7 +279,7 @@ test('RiverPolicy incumbent bias: does not override when margin insufficient', (
     const policy = new mod.RiverPolicy({
       rewardsPath,
       statePath,
-      config: { minSamples: 10, rewardMargin: 0.15, stabilityWindow: 5, cooldownMs: 0 },
+      config: { minSamples: 10, minExplore: 1, epsilon: 0, rewardMargin: 0.15, stabilityWindow: 5, cooldownMs: 0 },
     });
     const result = policy.recommend('implement', PROVIDERS);
 
@@ -320,7 +321,7 @@ test('selectSlotWithPolicy shadow mode logs but does not override', () => {
   const statePath = tmpPath('swp-shadow-state.json');
   try {
     const recorder = new mod.RewardRecorder({ rewardsPath });
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 25; i++) {
       recorder.record({ taskType: 'implement', slot: 'gemini-1', reward: 0.95 });
       recorder.record({ taskType: 'implement', slot: 'codex-1', reward: 0.5 });
     }
@@ -332,7 +333,7 @@ test('selectSlotWithPolicy shadow mode logs but does not override', () => {
         new mod.RiverPolicy({
           rewardsPath,
           statePath,
-          config: { minSamples: 10, rewardMargin: 0.15, stabilityWindow: 5, cooldownMs: 0 },
+          config: { minSamples: 10, minExplore: 1, epsilon: 0, rewardMargin: 0.15, stabilityWindow: 5, cooldownMs: 0 },
         }),
       ],
     });
@@ -348,13 +349,227 @@ test('selectSlotWithPolicy shadow mode logs but does not override', () => {
   }
 });
 
+// ── RiverPolicy Q-learning TESTS ───────────────────────────────────────────
+
+test('RiverPolicy Q-learning: Q-values update incrementally after new rewards', () => {
+  assert.ok(mod);
+  const rewardsPath = tmpPath('q-incremental.jsonl');
+  const statePath = tmpPath('q-incremental-state.json');
+  try {
+    const recorder = new mod.RewardRecorder({ rewardsPath });
+
+    // Record 5 high rewards for gemini-1 and 5 low for codex-1
+    for (let i = 0; i < 5; i++) {
+      recorder.record({ taskType: 'implement', slot: 'gemini-1', reward: 0.9 });
+      recorder.record({ taskType: 'implement', slot: 'codex-1', reward: 0.3 });
+    }
+
+    const policy = new mod.RiverPolicy({
+      rewardsPath,
+      statePath,
+      config: { minSamples: 1, minExplore: 1, epsilon: 0, learningRate: 0.1, decayRate: 0.01, rewardMargin: 0.01, cooldownMs: 0 },
+    });
+    // Call recommend() which triggers _updateQValues
+    policy.recommend('implement', PROVIDERS);
+
+    // Verify Q-table: Q(gemini-1) > Q(codex-1)
+    const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
+    assert.ok(state.qTable, 'state should have qTable');
+    assert.ok(state.qTable.implement, 'qTable should have implement taskType');
+    assert.ok(state.qTable.implement['gemini-1'].q > state.qTable.implement['codex-1'].q,
+      `Q(gemini-1)=${state.qTable.implement['gemini-1'].q} should be > Q(codex-1)=${state.qTable.implement['codex-1'].q}`);
+    assert.strictEqual(state.qTable.implement['gemini-1'].visits, 5);
+    assert.strictEqual(state.qTable.implement['codex-1'].visits, 5);
+  } finally {
+    cleanUp(rewardsPath, statePath);
+  }
+});
+
+test('RiverPolicy Q-learning: learning rate decays with visits', () => {
+  assert.ok(mod);
+  const rewardsPath = tmpPath('q-decay.jsonl');
+  const statePath = tmpPath('q-decay-state.json');
+  try {
+    const recorder = new mod.RewardRecorder({ rewardsPath });
+
+    // Record 30 rewards for a single slot, all the same value
+    // Track Q-value delta: early updates should move Q more than later ones
+    const policy = new mod.RiverPolicy({
+      rewardsPath,
+      statePath,
+      config: { minSamples: 1, minExplore: 1, epsilon: 0, learningRate: 0.5, decayRate: 0.05, rewardMargin: 0.01, cooldownMs: 0 },
+    });
+
+    // Record 10 rewards with value 1.0
+    for (let i = 0; i < 10; i++) {
+      recorder.record({ taskType: 'test', slot: 'codex-1', reward: 1.0 });
+    }
+    policy.recommend('test', PROVIDERS);
+    const state1 = JSON.parse(fs.readFileSync(statePath, 'utf8'));
+    const q1 = state1.qTable.test['codex-1'].q;
+
+    // Record 20 more rewards with value 0.0 (should move Q down, but slower)
+    for (let i = 0; i < 20; i++) {
+      recorder.record({ taskType: 'test', slot: 'codex-1', reward: 0.0 });
+    }
+    policy.recommend('test', PROVIDERS);
+    const state2 = JSON.parse(fs.readFileSync(statePath, 'utf8'));
+    const q2 = state2.qTable.test['codex-1'].q;
+
+    // Q should have moved toward 0 but not fully (decay slows learning)
+    assert.ok(q1 > q2, `Q after good rewards (${q1}) should be > Q after bad rewards (${q2})`);
+    assert.ok(q2 > 0, `Q should not reach 0 due to learning rate decay (got ${q2})`);
+    assert.strictEqual(state2.qTable.test['codex-1'].visits, 30);
+  } finally {
+    cleanUp(rewardsPath, statePath);
+  }
+});
+
+test('RiverPolicy Q-learning: epsilon exploration defers to preset', () => {
+  assert.ok(mod);
+  const rewardsPath = tmpPath('q-epsilon.jsonl');
+  const statePath = tmpPath('q-epsilon-state.json');
+  try {
+    const recorder = new mod.RewardRecorder({ rewardsPath });
+
+    // Record enough rewards to pass minExplore
+    for (let i = 0; i < 25; i++) {
+      recorder.record({ taskType: 'implement', slot: 'codex-1', reward: 0.9 });
+      recorder.record({ taskType: 'implement', slot: 'gemini-1', reward: 0.5 });
+    }
+
+    // epsilon=1.0 means always explore
+    const policy = new mod.RiverPolicy({
+      rewardsPath,
+      statePath,
+      config: { minSamples: 1, minExplore: 1, epsilon: 1.0, learningRate: 0.1, decayRate: 0.01, rewardMargin: 0.01, cooldownMs: 0 },
+    });
+    const result = policy.recommend('implement', PROVIDERS);
+
+    assert.strictEqual(result.recommendation, null, 'epsilon=1.0 should always defer (null recommendation)');
+    assert.strictEqual(result.reason, 'river:exploring');
+  } finally {
+    cleanUp(rewardsPath, statePath);
+  }
+});
+
+test('RiverPolicy Q-learning: minExplore forces exploration for unvisited arms', () => {
+  assert.ok(mod);
+  const rewardsPath = tmpPath('q-minexplore.jsonl');
+  const statePath = tmpPath('q-minexplore-state.json');
+  try {
+    const recorder = new mod.RewardRecorder({ rewardsPath });
+
+    // Record rewards for codex-1 only — gemini-1 has zero visits
+    for (let i = 0; i < 30; i++) {
+      recorder.record({ taskType: 'implement', slot: 'codex-1', reward: 0.9 });
+    }
+
+    const policy = new mod.RiverPolicy({
+      rewardsPath,
+      statePath,
+      config: { minSamples: 1, minExplore: 20, epsilon: 0, learningRate: 0.1, decayRate: 0.01, rewardMargin: 0.01, cooldownMs: 0 },
+    });
+    const result = policy.recommend('implement', PROVIDERS);
+
+    assert.strictEqual(result.recommendation, null, 'should return null when unvisited arm exists');
+    assert.strictEqual(result.reason, 'river:exploring', 'reason should be river:exploring');
+  } finally {
+    cleanUp(rewardsPath, statePath);
+  }
+});
+
+test('RiverPolicy Q-learning: backward compat with old state format', () => {
+  assert.ok(mod);
+  const rewardsPath = tmpPath('q-backcompat.jsonl');
+  const statePath = tmpPath('q-backcompat-state.json');
+  try {
+    // Write old-format state file (no qTable)
+    fs.writeFileSync(statePath, JSON.stringify({ promotions: { implement: 0 } }), 'utf8');
+
+    const recorder = new mod.RewardRecorder({ rewardsPath });
+    for (let i = 0; i < 5; i++) {
+      recorder.record({ taskType: 'implement', slot: 'codex-1', reward: 0.9 });
+    }
+
+    const policy = new mod.RiverPolicy({
+      rewardsPath,
+      statePath,
+      config: { minSamples: 1, minExplore: 1, epsilon: 0, learningRate: 0.1, decayRate: 0.01, rewardMargin: 0.01, cooldownMs: 0 },
+    });
+
+    // Should not throw, and should work by initializing qTable
+    let result;
+    assert.doesNotThrow(() => {
+      result = policy.recommend('implement', PROVIDERS);
+    }, 'should not throw with old state format');
+
+    // Verify qTable was created
+    const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
+    assert.ok(state.qTable, 'qTable should be created on first load');
+    assert.ok(state.qTable.implement, 'qTable.implement should exist');
+    // Old promotions should still be preserved
+    assert.ok(state.promotions, 'old promotions should be preserved');
+  } finally {
+    cleanUp(rewardsPath, statePath);
+  }
+});
+
+test('RiverPolicy Q-learning: lastProcessedIdx prevents re-processing rewards', () => {
+  assert.ok(mod);
+  const rewardsPath = tmpPath('q-lastidx.jsonl');
+  const statePath = tmpPath('q-lastidx-state.json');
+  try {
+    const recorder = new mod.RewardRecorder({ rewardsPath });
+
+    // Record initial batch of rewards
+    for (let i = 0; i < 5; i++) {
+      recorder.record({ taskType: 'implement', slot: 'codex-1', reward: 1.0 });
+    }
+
+    const policy = new mod.RiverPolicy({
+      rewardsPath,
+      statePath,
+      config: { minSamples: 1, minExplore: 1, epsilon: 0, learningRate: 0.5, decayRate: 0, rewardMargin: 0.01, cooldownMs: 0 },
+    });
+
+    policy.recommend('implement', PROVIDERS);
+    const state1 = JSON.parse(fs.readFileSync(statePath, 'utf8'));
+    const q1 = state1.qTable.implement['codex-1'].q;
+    const idx1 = state1.lastProcessedIdx.implement;
+    assert.strictEqual(idx1, 5, 'lastProcessedIdx should be 5 after first batch');
+
+    // Call recommend again without new rewards — Q should not change
+    policy.recommend('implement', PROVIDERS);
+    const state2 = JSON.parse(fs.readFileSync(statePath, 'utf8'));
+    const q2 = state2.qTable.implement['codex-1'].q;
+    assert.strictEqual(q2, q1, 'Q-value should not change without new rewards');
+
+    // Record new rewards with different value
+    for (let i = 0; i < 5; i++) {
+      recorder.record({ taskType: 'implement', slot: 'codex-1', reward: 0.0 });
+    }
+
+    policy.recommend('implement', PROVIDERS);
+    const state3 = JSON.parse(fs.readFileSync(statePath, 'utf8'));
+    const q3 = state3.qTable.implement['codex-1'].q;
+    const idx3 = state3.lastProcessedIdx.implement;
+    assert.strictEqual(idx3, 10, 'lastProcessedIdx should be 10 after second batch');
+    assert.ok(q3 < q1, `Q after bad rewards (${q3}) should be less than Q after good rewards (${q1})`);
+  } finally {
+    cleanUp(rewardsPath, statePath);
+  }
+});
+
+// ── selectSlotWithPolicy TESTS (continued) ─────────────────────────────────
+
 test('selectSlotWithPolicy with shadowMode:false promotes River when gate passes', () => {
   assert.ok(mod);
   const rewardsPath = tmpPath('swp-promote.jsonl');
   const statePath = tmpPath('swp-promote-state.json');
   try {
     const recorder = new mod.RewardRecorder({ rewardsPath });
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 25; i++) {
       recorder.record({ taskType: 'implement', slot: 'gemini-1', reward: 0.95 });
       recorder.record({ taskType: 'implement', slot: 'codex-1', reward: 0.5 });
     }
@@ -366,7 +581,7 @@ test('selectSlotWithPolicy with shadowMode:false promotes River when gate passes
         new mod.RiverPolicy({
           rewardsPath,
           statePath,
-          config: { minSamples: 10, rewardMargin: 0.15, stabilityWindow: 5, cooldownMs: 0 },
+          config: { minSamples: 10, minExplore: 1, epsilon: 0, rewardMargin: 0.15, stabilityWindow: 5, cooldownMs: 0 },
         }),
       ],
     });

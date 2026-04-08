@@ -157,17 +157,25 @@ class RewardRecorder {
   }
 }
 
-// ─── RiverPolicy (Tier 1 — contextual bandit) ─────────────────────────────
+// ─── RiverPolicy (Tier 1 — Q-learning with confidence gating) ─────────────
 /**
- * Contextual bandit with confidence gating, incumbent bias, and cooldown.
- * Runs in shadow mode by default — observes but does not override preset.
+ * Q-learning policy with Bellman updates, epsilon-greedy exploration,
+ * learning rate decay, and confidence gating (minSamples, rewardMargin,
+ * stability, incumbent bias, cooldown).
+ *
+ * Q-table structure in state file:
+ *   {
+ *     qTable: { "<taskType>": { "<slotName>": { q: number, visits: number, lastUpdate: ISO } } },
+ *     lastProcessedIdx: { "<taskType>": number },
+ *     promotions: { ... }
+ *   }
  */
 class RiverPolicy {
   /**
    * @param {object} [opts]
    * @param {string} [opts.statePath]    - Path to state JSON file
    * @param {string} [opts.rewardsPath]  - Path to rewards JSONL file
-   * @param {object} [opts.config]       - Bandit configuration overrides
+   * @param {object} [opts.config]       - Configuration overrides
    */
   constructor(opts = {}) {
     this._statePath = opts.statePath || path.join(process.cwd(), '.nf-river-state.json');
@@ -178,7 +186,68 @@ class RiverPolicy {
       stabilityWindow: 5,
       cooldownMs: 300000,
       shadowMode: true,
+      learningRate: 0.1,
+      decayRate: 0.01,
+      epsilon: 0.15,
+      minExplore: 20,
     }, opts.config || {});
+  }
+
+  /**
+   * Update Q-values for a given taskType using unprocessed rewards.
+   * Bellman update: Q(s,a) = Q(s,a) + alpha * (reward - Q(s,a))
+   * where alpha = learningRate / (1 + visits * decayRate)
+   *
+   * @param {string} taskType
+   * @param {Array}  eligibleNames - array of eligible slot names
+   * @returns {object} state - the updated state object
+   * @private
+   */
+  _updateQValues(taskType, eligibleNames) {
+    const state = this._loadState();
+
+    // Initialize qTable and lastProcessedIdx if missing (backward compat)
+    if (!state.qTable) state.qTable = {};
+    if (!state.lastProcessedIdx) state.lastProcessedIdx = {};
+    if (!state.qTable[taskType]) state.qTable[taskType] = {};
+
+    // Ensure all eligible arms have entries
+    for (const name of eligibleNames) {
+      if (!state.qTable[taskType][name]) {
+        state.qTable[taskType][name] = { q: 0, visits: 0, lastUpdate: new Date().toISOString() };
+      }
+    }
+
+    // Read all rewards for this taskType
+    const recorder = new RewardRecorder({ rewardsPath: this._rewardsPath });
+    const rewards = recorder.readRewards(taskType);
+
+    const lastIdx = state.lastProcessedIdx[taskType] || 0;
+
+    // Process only new rewards
+    for (let i = lastIdx; i < rewards.length; i++) {
+      const entry = rewards[i];
+      const slotName = entry.slot;
+      if (!state.qTable[taskType][slotName]) {
+        state.qTable[taskType][slotName] = { q: 0, visits: 0, lastUpdate: new Date().toISOString() };
+      }
+
+      const arm = state.qTable[taskType][slotName];
+      const reward = entry.reward || 0;
+
+      // Decaying learning rate: alpha = learningRate / (1 + visits * decayRate)
+      const alpha = this._config.learningRate / (1 + arm.visits * this._config.decayRate);
+
+      // Bellman update (single-state Q-learning: no discount factor needed)
+      arm.q = arm.q + alpha * (reward - arm.q);
+      arm.visits += 1;
+      arm.lastUpdate = entry.timestamp || new Date().toISOString();
+    }
+
+    state.lastProcessedIdx[taskType] = rewards.length;
+    this._saveState(state);
+
+    return state;
   }
 
   /**
@@ -198,67 +267,84 @@ class RiverPolicy {
       return makePolicyResult({ reason: 'river:no-eligible-providers' });
     }
 
-    // Load rewards for this taskType
-    const recorder = new RewardRecorder({ rewardsPath: this._rewardsPath });
-    const rewards = recorder.readRewards(taskType);
+    const eligibleNames = eligible.map(p => p.name);
 
-    if (rewards.length === 0) {
+    // Run Q-value updates with any new rewards
+    const state = this._updateQValues(taskType, eligibleNames);
+    const qTableForTask = (state.qTable && state.qTable[taskType]) || {};
+
+    // Check if we have any reward data at all
+    const totalVisits = Object.values(qTableForTask).reduce((s, arm) => s + (arm.visits || 0), 0);
+    if (totalVisits === 0) {
       return makePolicyResult({ reason: 'river:no-reward-data' });
     }
 
-    // Compute per-arm statistics
-    const armStats = {};
-    for (const provider of eligible) {
-      const armRewards = rewards.filter(r => r.slot === provider.name);
-      const count = armRewards.length;
-      if (count === 0) {
-        armStats[provider.name] = { mean: 0, count: 0, stability: 0 };
-        continue;
+    // Epsilon-greedy exploration: if any eligible arm has fewer than minExplore visits,
+    // defer to preset for forced exploration
+    for (const name of eligibleNames) {
+      const arm = qTableForTask[name];
+      if (!arm || arm.visits < this._config.minExplore) {
+        return makePolicyResult({ reason: 'river:exploring' });
       }
-
-      const sum = armRewards.reduce((s, r) => s + (r.reward || 0), 0);
-      const mean = sum / count;
-
-      // Recent stability: 1 - stddev of last N rewards
-      const window = this._config.stabilityWindow;
-      const recentRewards = armRewards.slice(-window).map(r => r.reward || 0);
-      let stability = 1.0;
-      if (recentRewards.length >= 2) {
-        const recentMean = recentRewards.reduce((s, v) => s + v, 0) / recentRewards.length;
-        const variance = recentRewards.reduce((s, v) => s + (v - recentMean) ** 2, 0) / recentRewards.length;
-        const stddev = Math.sqrt(variance);
-        stability = Math.max(0, 1 - stddev);
-      }
-
-      armStats[provider.name] = { mean, count, stability };
     }
 
-    // Find best and second-best arms
-    const sorted = Object.entries(armStats)
-      .filter(([, s]) => s.count > 0)
-      .sort((a, b) => b[1].mean - a[1].mean);
+    // With probability epsilon, defer to preset for exploration diversity
+    if (Math.random() < this._config.epsilon) {
+      return makePolicyResult({ reason: 'river:exploring' });
+    }
 
-    if (sorted.length === 0) {
+    // Select arm with highest Q-value
+    const armEntries = eligibleNames
+      .map(name => [name, qTableForTask[name] || { q: 0, visits: 0 }])
+      .filter(([, arm]) => arm.visits > 0)
+      .sort((a, b) => b[1].q - a[1].q);
+
+    if (armEntries.length === 0) {
       return makePolicyResult({ reason: 'river:no-arm-data' });
     }
 
-    const [bestName, bestStats] = sorted[0];
-    const secondBestMean = sorted.length > 1 ? sorted[1][1].mean : 0;
+    const [bestName, bestArm] = armEntries[0];
+    const secondBestQ = armEntries.length > 1 ? armEntries[1][1].q : 0;
+
+    // Compute per-arm statistics for confidence gates (stability from raw rewards)
+    const recorder = new RewardRecorder({ rewardsPath: this._rewardsPath });
+    const rewards = recorder.readRewards(taskType);
+    const armStats = {};
+    for (const name of eligibleNames) {
+      const armRewards = rewards.filter(r => r.slot === name);
+      const count = armRewards.length;
+      const qEntry = qTableForTask[name] || { q: 0, visits: 0 };
+
+      let stability = 1.0;
+      if (count >= 2) {
+        const window = this._config.stabilityWindow;
+        const recentRewards = armRewards.slice(-window).map(r => r.reward || 0);
+        if (recentRewards.length >= 2) {
+          const recentMean = recentRewards.reduce((s, v) => s + v, 0) / recentRewards.length;
+          const variance = recentRewards.reduce((s, v) => s + (v - recentMean) ** 2, 0) / recentRewards.length;
+          stability = Math.max(0, 1 - Math.sqrt(variance));
+        }
+      }
+
+      armStats[name] = { q: qEntry.q, count, stability, visits: qEntry.visits };
+    }
+
+    const bestStats = armStats[bestName];
 
     // Confidence gate checks
     if (bestStats.count < this._config.minSamples) {
       return makePolicyResult({
-        confidence: bestStats.mean,
+        confidence: bestStats.q,
         evidenceCount: bestStats.count,
         recentStability: bestStats.stability,
         reason: `river:insufficient-samples (${bestStats.count} < ${this._config.minSamples})`,
       });
     }
 
-    const margin = bestStats.mean - secondBestMean;
+    const margin = bestStats.q - secondBestQ;
     if (margin < this._config.rewardMargin) {
       return makePolicyResult({
-        confidence: bestStats.mean,
+        confidence: bestStats.q,
         evidenceCount: bestStats.count,
         recentStability: bestStats.stability,
         reason: `river:margin-insufficient (${margin.toFixed(3)} < ${this._config.rewardMargin})`,
@@ -267,7 +353,7 @@ class RiverPolicy {
 
     if (bestStats.stability < 0.7) {
       return makePolicyResult({
-        confidence: bestStats.mean,
+        confidence: bestStats.q,
         evidenceCount: bestStats.count,
         recentStability: bestStats.stability,
         reason: `river:stability-low (${bestStats.stability.toFixed(3)} < 0.7)`,
@@ -279,10 +365,10 @@ class RiverPolicy {
     if (presetWinner && presetWinner !== bestName) {
       const presetStats = armStats[presetWinner];
       if (presetStats && presetStats.count > 0) {
-        const incumbentMargin = bestStats.mean - presetStats.mean;
+        const incumbentMargin = bestStats.q - presetStats.q;
         if (incumbentMargin < this._config.rewardMargin) {
           return makePolicyResult({
-            confidence: bestStats.mean,
+            confidence: bestStats.q,
             evidenceCount: bestStats.count,
             recentStability: bestStats.stability,
             reason: `incumbent-bias:margin-insufficient (${incumbentMargin.toFixed(3)} < ${this._config.rewardMargin})`,
@@ -292,12 +378,11 @@ class RiverPolicy {
     }
 
     // Cooldown check
-    const state = this._loadState();
     const lastPromotion = (state.promotions && state.promotions[taskType]) || 0;
     if (Date.now() - lastPromotion < this._config.cooldownMs) {
       return makePolicyResult({
         recommendation: bestName,
-        confidence: bestStats.mean,
+        confidence: bestStats.q,
         evidenceCount: bestStats.count,
         recentStability: bestStats.stability,
         reason: 'river:in-cooldown',
@@ -311,7 +396,7 @@ class RiverPolicy {
 
     return makePolicyResult({
       recommendation: bestName,
-      confidence: bestStats.mean,
+      confidence: bestStats.q,
       evidenceCount: bestStats.count,
       recentStability: bestStats.stability,
       reason: 'river:confidence-gate-passed',
