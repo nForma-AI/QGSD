@@ -50,7 +50,7 @@ Plans:
 
 Plans:
 - [ ] 055-01-PLAN.md — --seed-files support in close-formal-gaps + coderlm R->F discovery in solve-remediate section 3a
-- [ ] 055-02-PLAN.md — formal-test-sync --enrich-recipes via findTests/peek + wire into solve-remediate section 3b
+- [x] 055-02-PLAN.md — formal-test-sync --enrich-recipes via findTests/peek + wire into solve-remediate section 3b (COMPLETE)
 
 ### Phase 56: Diagnostic Enrichment
 **Goal**: Heatmap ranking and reverse discovery layers produce evidence-backed prioritization by incorporating call-graph frequency data into their scoring

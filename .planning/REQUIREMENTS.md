@@ -16,7 +16,7 @@ Requirements for deep coderlm integration into the solve loop. Every integration
 ### Remediation Enrichment
 
 - [ ] **CREM-01**: R→F dispatch passes `getImplementation()` + `getCallers()` results as `--seed-files` to `/nf:close-formal-gaps` so generated formal specs match actual code structure
-- [ ] **CREM-02**: F→T stub generation uses `findTests()` + `peek()` to pre-populate test stub recipes with observed test patterns from the codebase (assert patterns, setup code)
+- [x] **CREM-02**: F→T stub generation uses `findTests()` + `peek()` to pre-populate test stub recipes with observed test patterns from the codebase (assert patterns, setup code)
 - [ ] **CREM-03**: Git heatmap hot-zone ranking uses `getCallers()` frequency (callee count) alongside git churn score — files with more callers are prioritized for formal modeling
 - [ ] **CREM-04**: Reverse discovery (C→R, T→R) candidates are enriched with `getCallers()` call counts as evidence for quorum — modules with 0 callers are flagged as likely dead code
 
@@ -45,7 +45,7 @@ Requirements for deep coderlm integration into the solve loop. Every integration
 | CADP-02 | Phase 54 | **Shipped** |
 | CADP-03 | Phase 54 | **Shipped** |
 | CREM-01 | Phase 55 | Pending |
-| CREM-02 | Phase 55 | Pending |
+| CREM-02 | Phase 55 | **Shipped** |
 | CREM-03 | Phase 56 | Pending |
 | CREM-04 | Phase 56 | Pending |
 | CDIAG-01 | Phase 54 | **Shipped** |
