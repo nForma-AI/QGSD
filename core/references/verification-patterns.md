@@ -632,3 +632,12 @@ Key principles:
 - Error handling: fix broken environment before checkpoint, never present checkpoint with failed setup
 
 </checkpoint_automation_reference>
+
+## Slicing Strategies
+
+When decomposing large changes into verifiable increments:
+- **Vertical slices** (preferred): one complete stack path per increment (data -> logic -> interface)
+- **Contract-first**: define interfaces/types first, then implement behind them
+- **Risk-first**: tackle uncertain or risky elements before dependent work
+
+Each slice must leave the system buildable and existing tests passing.

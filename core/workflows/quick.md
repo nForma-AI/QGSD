@@ -15,7 +15,12 @@ Parse `$ARGUMENTS` for:
 - `--full` flag → store as `$FULL_MODE` (true/false)
 - `--no-branch` flag → store as `$NO_BRANCH` (default: false)
 - `--force-quorum` flag → store as `$FORCE_QUORUM` (default: false). Forces medium-or-higher quorum fan-out regardless of risk classifier output.
+- `--delegate {slot-name}` flag → store as `$DELEGATE_SLOT` (string or null). The value is the next token after `--delegate`.
 - Remaining text → use as `$DESCRIPTION` if non-empty
+
+**Delegate flag validation:**
+- If `--delegate` is present without a value (next token is missing or starts with `--`): error: "Error: --delegate requires a slot name (e.g., --delegate codex-1)"
+- If `--delegate` and `--full` are both present: error: "Error: --delegate and --full cannot be used together. --delegate performs full delegation to the external agent."
 
 If `$DESCRIPTION` is empty after parsing, prompt user interactively:
 
@@ -38,6 +43,15 @@ If `$FULL_MODE`:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Plan checking + verification enabled
+```
+
+If `$DELEGATE_SLOT`:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ nForma ► QUICK TASK (DELEGATE MODE)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+◆ Delegating to: ${DELEGATE_SLOT}
 ```
 
 ---
@@ -69,6 +83,8 @@ Parse from init JSON: `current_branch`, `is_protected`, `quick_branch_name`, `pr
 ---
 
 **Step 2.7: Derive approach and write scope contract (INTENT-01, INTENT-02, INTENT-03)**
+
+<!-- MUST_NOT_SKIP: This step is MANDATORY when $FULL_MODE is true. The orchestrator MUST spawn the 3 Haiku subagents (approach, classification, risk). Do NOT substitute your own judgment for "obvious" classifications. -->
 
 This step is automatic (non-modal per INTENT-03). No user dialog or confirmation.
 
@@ -291,6 +307,27 @@ Store `$APPROACH_BLOCK` for use in Step 5 (planner spawn). The planner prompt in
 
 ---
 
+**Step 2.8: Validate delegate slot (only when `$DELEGATE_SLOT` is set)**
+
+Skip this step if `$DELEGATE_SLOT` is null.
+
+1. Read `bin/providers.json`, parse the `providers` array.
+2. Find the entry where `name === $DELEGATE_SLOT`.
+3. If not found: error listing valid subprocess slot names:
+   ```
+   Error: Unknown slot '${DELEGATE_SLOT}'. Available subprocess slots: codex-1, gemini-1, opencode-1, copilot-1, ...
+   ```
+   (List all entries from providers.json where `type === 'subprocess'`.)
+4. If found but `type !== 'subprocess'` OR `has_file_access !== true`: error:
+   ```
+   Error: Slot '${DELEGATE_SLOT}' is not a file-access subprocess provider. Delegation requires a full CLI agent.
+   ```
+5. Store the validated slot as `$VALIDATED_DELEGATE_SLOT`.
+
+Log: `"Step 2.8: Delegate slot validated — ${VALIDATED_DELEGATE_SLOT}"`
+
+---
+
 **Step 3: Create task directory**
 
 ```bash
@@ -319,6 +356,8 @@ Store `$QUICK_DIR` for use in orchestration.
 ---
 
 **Step 4.5: Formal scope scan (only when `$FULL_MODE`)**
+
+<!-- MUST_NOT_SKIP: This step is MANDATORY when $FULL_MODE is true. Skipping this step violates the --full contract. If tooling is missing, log a WARNING and continue -- but do NOT silently omit the step. -->
 
 Skip this step entirely if NOT `$FULL_MODE`.
 
@@ -351,7 +390,123 @@ Store `$FORMAL_SPEC_CONTEXT` for use in steps 5, 5.5, 6.5.
 
 ---
 
+**If `$DELEGATE_SLOT` is set:** Skip Steps 5, 5.5, 5.7, 5.8, 6, 6.3, 6.5, 6.7. Instead, execute the delegate branch (Steps 5D and 6D) below, then jump to the completion banner.
+
+Step 4.5 (formal scope scan) is also skipped for delegate mode — the external agent handles its own formal checks.
+
+---
+
+**Step 5D: Dispatch to external agent via Mode C (only when `$DELEGATE_SLOT` is set)**
+
+Display:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ nForma ► DELEGATING TO ${DELEGATE_SLOT}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Task: ${DESCRIPTION}
+  Repo: $(pwd)
+  Timeout: 300000ms
+```
+
+Build the delegation prompt using the `buildCodingPrompt` format from `bin/coding-task-router.cjs`. The task description should include:
+- The original `$DESCRIPTION`
+- The derived approach from `$APPROACH_BLOCK.approach`
+- Instruction: "You are a full Claude Code instance with nForma installed. Execute this task completely: implement, test, and commit. Return your result in the structured format."
+
+Dispatch via CLI:
+```bash
+DELEGATE_RESULT=$(node bin/coding-task-router.cjs \
+  --slot "${VALIDATED_DELEGATE_SLOT}" \
+  --task "${DESCRIPTION}. Approach: ${APPROACH_BLOCK.approach}. You are a full Claude Code instance with nForma installed. Execute this task completely: implement, test, and commit. Return your result in the structured format." \
+  --cwd "$(pwd)" \
+  --timeout 300000 2>&1)
+DELEGATE_EXIT=$?
+```
+
+Parse the JSON result. Extract: `status`, `filesModified`, `summary`, `latencyMs`.
+
+**Route on status:**
+
+| Status | Action |
+|--------|--------|
+| SUCCESS | Display success banner, proceed to Step 6D (recording) |
+| PARTIAL | Display partial banner with summary, proceed to Step 6D (recording) |
+| FAILED | Display failure with summary, proceed to Step 6D (recording — do NOT retry) |
+| UNAVAIL | Display error: "Slot ${DELEGATE_SLOT} is unavailable: ${summary}". Proceed to Step 6D (recording) |
+
+---
+
+**Step 6D: Record delegate result (only when `$DELEGATE_SLOT` is set)**
+
+1. Create `${QUICK_DIR}/${next_num}-SUMMARY.md` with delegate-specific template:
+
+```markdown
+# Quick Task ${next_num} Summary (Delegated)
+
+## Task
+${DESCRIPTION}
+
+## Delegation
+- Slot: ${VALIDATED_DELEGATE_SLOT}
+- Status: ${status}
+- Latency: ${latencyMs}ms
+- Files modified: ${filesModified.join(', ') || 'none reported'}
+
+## Result
+${summary}
+```
+
+2. Update STATE.md "Quick Tasks Completed" table with status mapped from delegate result:
+   - SUCCESS -> "Delegated (OK)"
+   - PARTIAL -> "Delegated (Partial)"
+   - FAILED -> "Delegated (Failed)"
+   - UNAVAIL -> "Delegated (Unavail)"
+
+3. Commit PLAN.md + SUMMARY.md + STATE.md atomically:
+```bash
+node ~/.claude/nf/bin/gsd-tools.cjs commit "docs(quick-${next_num}): delegate ${DESCRIPTION}" \
+  --files ${QUICK_DIR}/${next_num}-PLAN.md ${QUICK_DIR}/${next_num}-SUMMARY.md .planning/STATE.md
+```
+
+4. Display completion banner:
+```
+---
+
+nForma > QUICK TASK COMPLETE (DELEGATED)
+
+Quick Task ${next_num}: ${DESCRIPTION}
+Delegated to: ${VALIDATED_DELEGATE_SLOT}
+Status: ${status}
+Latency: ${latencyMs}ms
+Summary: ${QUICK_DIR}/${next_num}-SUMMARY.md
+Commit: ${commit_hash}
+Branch: ${CREATED_BRANCH || current_branch}
+${CREATED_BRANCH ? '-> Ready for PR' : ''}
+
+---
+
+Ready for next task: /nf:quick
+```
+
+5. Run: `node ~/.claude/nf/bin/gsd-tools.cjs activity-clear`
+
+**Important implementation notes:**
+- Steps 2 (init), 2.5 (branching), 2.7 (scope contract), 2.8 (slot validation), 3 (task dir), 4 (quick dir) all still run for delegate mode. This ensures local tracking is preserved.
+- Step 4.5 (formal scope scan) is skipped for delegate mode (the external agent handles its own formal checks).
+- Step 5.7 (quorum review of plan) is skipped because there is no local plan to review — the external agent does its own planning.
+- The delegate branch terminates with the completion banner — there is no shared post-Step-6 cleanup to rejoin.
+
+**Invariant compliance:**
+- EventualConsensus (quorum): Not violated — quorum is skipped because there is no local plan artifact to review. The delegate is a full agent that runs its own quorum if needed.
+- RouteCLiveness (planningstate): Not affected — delegate mode creates STATE.md entries just like normal mode.
+- No direct MCP calls are made — delegation goes through `coding-task-router.cjs` which uses `call-quorum-slot.cjs` subprocess dispatch (R3.2 compliant).
+
+---
+
 **Step 5: Spawn planner (quick mode)**
+
+<!-- MUST_NOT_SKIP: This step is MANDATORY. The orchestrator MUST spawn the nf-planner subagent. Do NOT write code directly — the planner creates the plan, the executor implements it. Skipping this step collapses the plan-execute separation that makes verification possible. -->
 
 **If `$FULL_MODE`:** Use `quick-full` mode with stricter constraints.
 
@@ -437,6 +592,8 @@ If plan not found, error: "Planner failed to create ${next_num}-PLAN.md"
 ---
 
 **Step 5.5: Plan-checker loop (only when `$FULL_MODE`)**
+
+<!-- MUST_NOT_SKIP: This step is MANDATORY when $FULL_MODE is true. The orchestrator MUST spawn the plan-checker subagent. Do NOT skip because "the plan looks fine" — the checker catches issues the planner misses. -->
 
 Skip this step entirely if NOT `$FULL_MODE`.
 
@@ -549,6 +706,8 @@ Offer: 1) Force proceed, 2) Abort
 ---
 
 **Step 5.7: Quorum review of plan with R3.6 (required by R3.1 + R3.6)**
+
+<!-- MUST_NOT_SKIP: This step is MANDATORY regardless of mode (R3.1). The orchestrator MUST dispatch quorum slot-workers. Do NOT skip because "quorum slots are probably unavailable" or "the plan already passed the checker" — quorum catches different issues than the checker. If all slots are UNAVAIL, the fail-open path handles it. -->
 
 This step is MANDATORY regardless of `--full` mode. R3.1 requires quorum for any planning output from `/nf:quick`. R3.6 wraps this in an improvement-iteration loop (up to 10 iterations).
 
@@ -763,6 +922,8 @@ If the signal is absent, the delimiters don't match, or JSON.parse would fail: s
 
 **Step 5.8: Debug routing (ROUTE-02, ROUTE-03)**
 
+<!-- MUST_NOT_SKIP: When classification is bug_fix with confidence >= 0.7, this step is MANDATORY. The orchestrator MUST spawn /nf:debug. Do NOT skip because "I already understand the bug" — the debug pipeline extracts formal constraints that the executor needs. If the subagent errors or times out, the fail-open path handles it. -->
+
 Route bug_fix tasks through /nf:debug before execution. Feature and refactor tasks skip this step entirely.
 
 **Skip if:** `$CLASSIFICATION.type` is NOT `bug_fix`, OR `$CLASSIFICATION.confidence` is below 0.7.
@@ -828,6 +989,36 @@ Store debug output variables for use in Step 6.
 
 ---
 
+**Step 5.9: Formal tooling baseline check (only when `$FULL_MODE`)**
+
+Skip this step entirely if NOT `$FULL_MODE`.
+
+<!-- MUST_NOT_SKIP: This step is MANDATORY when $FULL_MODE is true. -->
+
+Check that required formal tooling scripts exist before executor spawn:
+
+```bash
+FORMAL_TOOLS_MISSING=()
+for tool in bin/formal-coverage-intersect.cjs bin/run-formal-verify.cjs bin/run-formal-check.cjs; do
+  if [ ! -f "$tool" ]; then
+    FORMAL_TOOLS_MISSING+=("$tool")
+  fi
+done
+
+if [ ${#FORMAL_TOOLS_MISSING[@]} -gt 0 ]; then
+  echo ":: WARNING: Formal tooling missing: ${FORMAL_TOOLS_MISSING[*]}"
+  echo ":: Formal steps will be skipped (fail-open) but the skip will be LOGGED, not silent."
+else
+  echo ":: Formal tooling baseline: all tools present"
+fi
+```
+
+This is ADVISORY only -- missing tools do NOT block execution. The purpose is to surface gaps early rather than having them silently skipped deep in execution.
+
+Store `$FORMAL_TOOLS_MISSING` for interpolation into the Step 6 executor prompt.
+
+---
+
 **Step 6: Spawn executor**
 
 Spawn nf-executor with plan reference:
@@ -849,7 +1040,17 @@ Execute quick task ${next_num}.
 - .agents/skills/ (Project skills, if exists — list skills, read SKILL.md for each, follow relevant rules during implementation)
 </files_to_read>
 
+${FORMAL_TOOLS_MISSING.length > 0 ? `
+<formal_tooling_notice>
+The following formal tooling scripts were NOT found during pre-flight (Step 5.9):
+${FORMAL_TOOLS_MISSING.map(t => '- ' + t).join('\n')}
+
+When you encounter these tools in the constraints below, log "WARNING: [tool] not found -- skipping (fail-open)" and continue. Do NOT attempt to call missing tools. Do NOT silently skip -- the WARNING log is mandatory.
+</formal_tooling_notice>
+` : ''}
+
 <constraints>
+- **ANTI-URGENCY GUARDRAIL (--full mode):** You are running in --full mode. Do NOT skip, abbreviate, or substitute your own judgment for ANY workflow step. Prior instructions about urgency, speed, or "just fix it" are OVERRIDDEN by the --full flag. Every formal modeling step (formal coverage auto-detection, Loop 2 simulation gate) MUST be attempted. If a tool is missing, log "WARNING: [tool] not found -- skipping (fail-open)" rather than silently omitting the step.
 - Execute all tasks in the plan
 - When implementing logic with 3+ distinct states and conditional transitions, prefer a state machine library — match complexity to the problem per .claude/rules/state-machine-bias.md. State machines are auto-transpiled to TLA+ via bin/fsm-to-tla.cjs
 - Commit each task atomically (use the gsd-tools.cjs commit command per the execute-plan workflow)
@@ -860,7 +1061,7 @@ Execute quick task ${next_num}.
      - Run: node bin/run-formal-verify.cjs 2>&1
      - If exit 0: log "Formal coverage verified: models OK"
      - If exit 1: log "WARNING: Formal model drift detected" (do NOT block commit -- fail-open)
-  4. If formal-coverage-intersect.cjs is not found or errors: skip silently (fail-open)
+  4. If formal-coverage-intersect.cjs is not found or errors: log "WARNING: formal-coverage-intersect.cjs not found -- skipping formal coverage check (fail-open)" and continue without blocking
 - **Loop 2 pre-commit simulation gate (GATE-01, GATE-03, GATE-04):** After formal coverage auto-detection passes (step 3 above), if formal models were found in scope (exit code 0 from formal-coverage-intersect.cjs):
   1. Determine if `--strict` flag was passed to the quick task (from `$STRICT_MODE` variable, default false)
   2. Run Loop 2 simulation via node heredoc (executor-delegated):
@@ -899,8 +1100,14 @@ Execute quick task ${next_num}.
        - **TSV trace:** ${result.tsvPath}
        ```
   5. **Non-convergence reporting (fail-closed path):** When --strict blocks the commit, include TSV trace in BLOCKED message: `"TSV trace at ${result.tsvPath} shows iteration history"`
-  6. If solution-simulation-loop.cjs is not found, module loading fails, or simulateSolutionLoop throws: skip silently (fail-open). Log `"Loop 2 simulation: skipped (module unavailable)"`.
-- If formal-coverage-intersect.cjs found NO intersections (exit code non-zero or not found): skip Loop 2 entirely — no log, no error, silent completion (GATE-03).
+  7. **Loop 2 SUMMARY.md reporting (--full mode, MANDATORY):** When `$FULL_MODE` is true, Loop 2 results MUST always be recorded in SUMMARY.md regardless of outcome:
+     - **Converged:** Under "## Formal Modeling", add: `### Loop 2 Simulation\n- **Status:** Converged\n- **Iterations:** ${result.iterations.length}\n- **TSV trace:** ${result.tsvPath}`
+     - **Non-converged (fail-open):** Use the existing "## Issues Encountered" format (item 4 above).
+     - **Skipped (tool unavailable):** Under "## Formal Modeling", add: `### Loop 2 Simulation\n- **Status:** Skipped (tool unavailable)\n- **Reason:** solution-simulation-loop.cjs not found`
+     - **Not applicable (no intersections):** Under "## Formal Modeling", add: `### Loop 2 Simulation\n- **Status:** Not applicable (no formal coverage intersections)`
+     This ensures the Step 6.1 audit gate can reliably grep SUMMARY.md for Loop 2 evidence.
+  6. If solution-simulation-loop.cjs is not found, module loading fails, or simulateSolutionLoop throws: log "WARNING: solution-simulation-loop.cjs not found or errored -- skipping Loop 2 simulation (fail-open)". Do NOT skip silently.
+- If formal-coverage-intersect.cjs found NO intersections (exit code non-zero): skip Loop 2 entirely — log "INFO: No formal coverage intersections found -- Loop 2 not needed (GATE-03)." If the tool was not found, log "WARNING: formal-coverage-intersect.cjs not found -- skipping Loop 2 (fail-open, GATE-03)."
 - If the plan declares `formal_artifacts: update` or `formal_artifacts: create`, execute those formal file changes and include the .planning/formal/ files in the atomic commit for that task (alongside the implementation files)
 - Formal/ files must never be committed separately — always include in the task's atomic commit
 - Create summary at: ${QUICK_DIR}/${next_num}-SUMMARY.md
@@ -979,7 +1186,39 @@ Ready for next task: /nf:quick
 
 ---
 
+**Step 6.1: Post-execution formal loop audit (only when `$FULL_MODE`)**
+
+Skip this step entirely if NOT `$FULL_MODE`.
+
+<!-- MUST_NOT_SKIP: This step is MANDATORY when $FULL_MODE is true. -->
+
+After the executor returns, audit its output for evidence that formal modeling steps were attempted:
+
+```bash
+# Read the executor's summary
+SUMMARY_CONTENT=$(cat "${QUICK_DIR}/${next_num}-SUMMARY.md" 2>/dev/null)
+
+# Check for formal step execution evidence
+FORMAL_COVERAGE_RAN=$(echo "$SUMMARY_CONTENT" | grep -c "formal-coverage-intersect\|Formal coverage verified\|formal coverage")
+LOOP2_RAN=$(echo "$SUMMARY_CONTENT" | grep -c "Loop 2\|solution-simulation-loop\|CONVERGED\|Non-converged\|Skipped (tool unavailable)\|Not applicable")
+
+if [ "$FORMAL_COVERAGE_RAN" -eq 0 ] && [ ${#FORMAL_TOOLS_MISSING[@]} -eq 0 ]; then
+  echo ":: AUDIT WARNING: Formal coverage auto-detection appears to have been skipped despite tools being available."
+  echo ":: This may indicate the executor bypassed formal modeling steps."
+fi
+
+if [ "$LOOP2_RAN" -eq 0 ] && [ ${#FORMAL_TOOLS_MISSING[@]} -eq 0 ]; then
+  echo ":: AUDIT WARNING: Loop 2 simulation gate appears to have been skipped despite tools being available."
+fi
+```
+
+These warnings are ADVISORY -- they do not block completion. They surface to the user that formal steps may have been skipped so the user can decide whether to re-run.
+
+---
+
 **Step 6.3: Post-execution formal check (only when `$FULL_MODE` AND `$FORMAL_SPEC_CONTEXT` non-empty)**
+
+<!-- MUST_NOT_SKIP: This step is MANDATORY when $FULL_MODE is true. Skipping this step violates the --full contract. If tooling is missing, log a WARNING and continue -- but do NOT silently omit the step. -->
 
 Skip this step entirely if NOT `$FULL_MODE` or `$FORMAL_SPEC_CONTEXT` is empty.
 
@@ -1028,6 +1267,8 @@ Set `$FORMAL_CHECK_RESULT = null`. Continue to Step 6.5 without blocking.
 ---
 
 **Step 6.5: Verification (only when `$FULL_MODE`)**
+
+<!-- MUST_NOT_SKIP: This step is MANDATORY when $FULL_MODE is true. Skipping this step violates the --full contract. If tooling is missing, log a WARNING and continue -- but do NOT silently omit the step. -->
 
 Skip this step entirely if NOT `$FULL_MODE`.
 
@@ -1360,6 +1601,19 @@ Ready for next task: /nf:quick
 - [ ] (--full) User is asked to approve, edit, or skip the drafted requirement
 - [ ] (--full) If approved: duplicate ID check, semantic conflict check (Haiku), then write to .planning/formal/requirements.json with unfreeze/re-freeze lifecycle
 - [ ] (--full) Elevated requirement uses provenance { source_file: quick plan path, milestone: "quick-NNN" }
+- [ ] `--delegate` flag parsed from arguments when present
+- [ ] `--delegate` and `--full` are mutually exclusive
+- [ ] Delegate slot validated against providers.json (subprocess + has_file_access)
+- [ ] Mode C dispatch via coding-task-router.cjs for delegate tasks
+- [ ] Delegate result recorded in SUMMARY.md and STATE.md
+- [ ] Steps 5-6 skipped for delegate mode (no local plan, no local execution)
+- [ ] (--full) MUST_NOT_SKIP annotations present on orchestrator steps 2.7, 5, 5.5, 5.7, 5.8 AND executor steps 4.5, 5.9, 6.1, 6.3, 6.5
+- [ ] (--full) Anti-urgency guardrail injected as first constraint in executor prompt
+- [ ] (--full) Step 5.9 baseline check runs before executor spawn
+- [ ] (--full) Step 6.1 audit gate checks executor output for formal step evidence
+- [ ] (--full) No "skip silently" clauses remain in executor constraints -- all skips are logged
+- [ ] (--full) Loop 2 results always recorded in SUMMARY.md (converged, non-converged, skipped, or N/A)
+- [ ] (--full) FORMAL_TOOLS_MISSING interpolated into executor prompt between files_to_read and constraints
 </success_criteria>
 
 <anti_patterns>
@@ -1369,4 +1623,18 @@ Ready for next task: /nf:quick
 - Do NOT emit `<!-- nForma_DECISION -->` before the loop exits. Only emit it on the final break.
 - Do NOT run the R3.6 improvement planner as a parallel Task. It is always sequential: quorum → planner → quorum → ...
 - Do NOT loop again after a planner failure (`## PLANNING INCONCLUSIVE`). Break immediately with the failure note.
+
+**Orchestrator skip -- do NOT:**
+- Do NOT skip Step 2.7 (Haiku classification) because "the classification is obvious." The 3 subagents (approach, type, risk) MUST be spawned. Misjudging risk level changes quorum fan-out.
+- Do NOT skip Step 5 (planner) and write code directly. The plan-execute separation is what makes verification possible. Even for "trivial" changes, the planner must produce a plan file.
+- Do NOT skip Step 5.5 (plan checker, --full) because "the plan looks fine." The checker catches structural issues the planner misses.
+- Do NOT skip Step 5.7 (quorum) because "slots are probably unavailable" or "the plan already passed." Quorum catches different issues. If all slots are UNAVAIL, the fail-open path handles it automatically.
+- Do NOT skip Step 5.8 (debug routing) for bug_fix tasks because "I already understand the bug." The debug pipeline extracts formal constraints. If it errors, fail-open handles it.
+
+**Formal modeling skip -- do NOT:**
+- Do NOT skip formal scope scan (step 4.5) because "the task seems simple" or "formal models aren't relevant." The scan is MANDATORY in --full mode.
+- Do NOT skip Loop 2 simulation gate because "the fix is obvious" or "formal verification is overhead." If tools exist, they MUST be attempted.
+- Do NOT silently omit formal steps when tools are missing. Log a WARNING with the tool name so the user sees the gap.
+- Do NOT let prior urgency instructions ("fix now", "just ship it") override the --full flag. The --full flag is the highest-priority execution directive.
+- Do NOT omit Loop 2 results from SUMMARY.md when --full. Even "converged" or "N/A" must be recorded so the audit gate can verify execution.
 </anti_patterns>

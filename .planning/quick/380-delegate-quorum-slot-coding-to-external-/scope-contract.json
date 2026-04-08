@@ -1,0 +1,25 @@
+{
+  "feature/issue-60-delegate-quorum-slot-coding": {
+    "task_id": 380,
+    "task_description": "Delegate quorum slot coding to external agents via quorum-slot-dispatch.cjs",
+    "approach": "Build quorum-slot-dispatch.cjs to delegate coding work to external agent CLIs via a standardized contract, creating the foundational routing adapter and CLI integration layer.",
+    "out_of_scope": [
+      "Q-learning loop implementation and performance-based routing optimization",
+      "Agent registry with persistent storage and configuration management",
+      "Learning loop training data collection and feedback mechanisms",
+      "Multi-agent comparison benchmarks and telemetry aggregation",
+      "Interactive demo application and UI for agent selection"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.92,
+      "routed_through_debug": false
+    },
+    "risk_level": "high",
+    "risk_reason": "Extending quorum slot dispatch with external agent CLI invocation is a multi-file architectural change affecting core dispatch infrastructure with tight coupling to requirements, rate-limiting, and prompt construction systems",
+    "branches_affected": ["feature/issue-60-delegate-quorum-slot-coding"],
+    "created_at": "2026-04-06T19:15:37.374Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

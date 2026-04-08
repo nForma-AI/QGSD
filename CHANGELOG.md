@@ -6,6 +6,32 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.41.17] - 2026-04-08 — Config-driven milestones
+
+### Added
+- `feat(config)`: `default_milestone` field in `.planning/config.json` allows projects to specify a milestone without requiring STATE.md or ROADMAP.md — enables milestone workflows in early-stage projects (#64)
+- 10 tests covering all `default_milestone` code paths: config parsing, format normalization, priority ordering, "auto" bypass, empty string fallback, and `phase-plan-index` population
+- Requirement CONF-10 elevated to formal requirements
+
+### Fixed
+- `fix(gsd-tools)`: `cmdInitQuick()` now populates `chosen_milestone` and `default_milestone_used` fields (were declared but never set)
+
+## [0.41.16] - 2026-04-07 — The skills gap is now a skills overlap
+
+### Added
+- Six packaged skills ship with nForma out of the box: `nf:task-intake`, `nf:idea-refine`, `nf:code-review-and-quality`, `nf:security-and-hardening`, `nf:documentation-and-adrs`, and `nf:shipping-and-launch` — best practices from [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills), now fluent in nForma's workflow language
+- Checklist registry (`core/references/checklist-registry.json`) + `bin/checklist-match.cjs` — type a task description, get the right checklist back, no manual routing required
+- Upstream guidance gaps closed: accessibility, API design, performance, security, TDD, testing patterns, verification patterns, and git integration checklists all now speak to nForma-specific concerns
+
+### Changed
+- Packaged skill commands trimmed to the essential six; removed skills' guidance folded into core workflow references so nothing is lost, just better placed
+- Checklist routing in `nf:quick` now driven by the registry instead of hardcoded conditions
+
+## [0.41.15] - 2026-04-07 — Automatic test reuse in verify-work
+
+### Added
+- `feat(verify-work)`: `present_test` step now auto-discovers and runs framework-native tests (Playwright first, Jest fallback) via `maintain-tests discover` + `maintain-tests run-batch` before presenting to user — UAT completes automatically when all discovered tests pass, falls back to manual checkpoint when tests fail or no tests are found
+
 ## [0.41.14] - 2026-04-06 — Dist-tag alignment automation
 
 ### Fixed

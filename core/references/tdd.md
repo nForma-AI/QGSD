@@ -261,3 +261,23 @@ Each phase involves reading files, running commands, analyzing output. The back-
 
 Single feature focus ensures full quality throughout the cycle.
 </context_budget>
+
+<prove_it_pattern>
+## The Prove-It Pattern (for bugs)
+
+1. Write a test that reproduces the exact failure
+2. Confirm it fails
+3. Fix the bug
+4. Confirm the test passes
+5. The test now prevents regression forever
+</prove_it_pattern>
+
+<anti_patterns>
+## TDD Anti-Patterns
+
+- Writing tests after implementation (that's verification, not TDD)
+- Testing private methods directly
+- Mocking everything instead of using real implementations where feasible
+- Skipping the RED step (if the test passes before you write code, the test is wrong)
+- Over-testing obvious code (getters, simple constructors)
+</anti_patterns>

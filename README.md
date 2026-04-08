@@ -946,6 +946,31 @@ lmn012o feat(08-02): create registration endpoint
 
 ## Commands
 
+## Packaged Skills
+
+nForma ships 6 reusable packaged skills under `agents/skills/` for work that sits between the larger slash-command workflows.
+
+Typical lifecycle:
+
+`idea-refine -> task-intake -> /nf:new-project or /nf:quick --full -> /nf:verify-work -> code-review-and-quality -> shipping-and-launch`
+
+Current packaged skills:
+
+| Skill | Purpose |
+|---|---|
+| `idea-refine` | Converge a vague idea into a focused direction |
+| `task-intake` | Turn rough input into issue-ready JSON |
+| `code-review-and-quality` | Run a reusable merge-readiness review |
+| `api-and-interface-design` | Contract-first API and interface design |
+| `deprecation-and-migration` | Safe deprecation and migration planning |
+| `shipping-and-launch` | Prepare rollout, monitoring, rollback, and launch gates |
+
+Each packaged skill can be invoked either directly or through an `nf:` alias. Example: `/task-intake` and `/nf:task-intake` both route to the same skill.
+
+See [docs/agent-skills.md](docs/agent-skills.md) for routing guidance and the upstream gap analysis.
+
+---
+
 ### Core Workflow
 
 | Command | What it does |

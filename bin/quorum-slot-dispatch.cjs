@@ -487,6 +487,28 @@ function formatRequirementsSection(requirements) {
   return lines.join('\n');
 }
 
+// ─── Mode C prompt construction (delegates to coding-task-router.cjs) ───────
+
+/**
+ * buildModeCPrompt — constructs the Mode C coding task delegation prompt.
+ *
+ * Delegates to coding-task-router.cjs's buildCodingPrompt() to keep prompt
+ * construction centralized. This wrapper maintains the pattern established
+ * by buildModeAPrompt/buildModeBPrompt.
+ *
+ * @param {object} opts
+ * @param {string}  opts.repoDir
+ * @param {string}  opts.task
+ * @param {string[]} [opts.files]
+ * @param {string[]} [opts.constraints]
+ * @param {string}  [opts.context]
+ * @returns {string}
+ */
+function buildModeCPrompt({ repoDir, task, files, constraints, context }) {
+  const { buildCodingPrompt } = require(path.join(__dirname, 'coding-task-router.cjs'));
+  return buildCodingPrompt({ task, repoDir, files, constraints, context });
+}
+
 // ─── Pure prompt-construction functions ──────────────────────────────────────
 
 /**
@@ -1391,6 +1413,8 @@ async function main() {
   const timeoutArg         = getArg('--timeout');
   const cwd                = getArg('--cwd') || process.cwd();
   const quorumInvocationIdArg = getArg('--quorum-invocation-id') || null;
+  const filesArg              = getArg('--files') || null;
+  const constraintsArg        = getArg('--constraints') || null;
 
   if (!slot) {
     process.stderr.write('[quorum-slot-dispatch] --slot is required\n');
@@ -1515,6 +1539,17 @@ async function main() {
 
   const buildPromptForProvider = (provider) => {
     const hasFileAccess = provider ? provider.has_file_access !== false : true;
+    if (mode === 'C') {
+      const parsedFiles = filesArg ? filesArg.split(',').map(f => f.trim()).filter(Boolean) : [];
+      const parsedConstraints = constraintsArg ? constraintsArg.split(',').map(c => c.trim()).filter(Boolean) : [];
+      return buildModeCPrompt({
+        repoDir,
+        task: question,
+        files: parsedFiles,
+        constraints: parsedConstraints,
+        context: reviewContext,
+      });
+    }
     if (mode === 'B') {
       return buildModeBPrompt({
         round,
@@ -1783,7 +1818,19 @@ async function main() {
       unavailMessage: output.slice(0, 500)
     });
   } else {
-    let verdict        = parseVerdict(output, mode);
+    let verdict;
+    let codingResult = null;
+
+    if (mode === 'C') {
+      // Mode C: parse coding result and derive verdict from status
+      const { parseCodingResult } = require(path.join(__dirname, 'coding-task-router.cjs'));
+      codingResult = parseCodingResult(output);
+      const statusVerdictMap = { SUCCESS: 'APPROVE', PARTIAL: 'FLAG', FAILED: 'REJECT', UNKNOWN: 'FLAG' };
+      verdict = statusVerdictMap[codingResult.status] || 'FLAG';
+    } else {
+      verdict = parseVerdict(output, mode);
+    }
+
     // TRUNC-03: distinguish truncation-derived FLAG from genuine FLAG
     if (verdict === 'FLAG' && parseVerdict.lastTruncationNote) {
       verdict = 'FLAG_TRUNCATED';
@@ -1881,6 +1928,7 @@ async function main() {
 module.exports = {
     buildModeAPrompt,
     buildModeBPrompt,
+    buildModeCPrompt,
     formatDiagnosticForPrompt,
     parseVerdict,
     parseReasoning,

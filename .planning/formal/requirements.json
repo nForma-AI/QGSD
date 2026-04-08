@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-04-06T11:52:32.757Z",
-  "content_hash": "2df7f9c75c6fc3ba",
+  "aggregated_at": "2026-04-07T21:24:39.823Z",
+  "content_hash": "e3837a4c3e69b0e2",
   "requirements": [
     {
       "id": "ACT-01",
@@ -806,6 +806,16 @@
       "category_raw": "Config Extensions"
     },
     {
+      "id": "CONF-10",
+      "text": "Projects can set `default_milestone` in `.planning/config.json` to specify the default milestone for quick tasks and phase operations, eliminating the need for STATE.md or ROADMAP.md to be present.",
+      "category": "Configuration",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Quick task 380 (issue #64) implemented support for a `default_milestone` config field that enables milestone workflows in early-stage projects without requiring existing milestone tracking files. The feature accepts multiple formats (v0.9, 0.9, v0.9 Name, v0.9: Name) and prioritizes config.default_milestone over STATE.md/ROADMAP.md when present.",
+      "source_file": ".planning/quick/380-issue-64-make-auto-the-default-for-miles/380-PLAN.md",
+      "milestone": "quick-380"
+    },
+    {
       "id": "CONST-01",
       "text": "When Claude receives a prompt that appears to involve editing existing code or files, nForma injects an edit-in-place constraint into `additionalContext` — defaulting Claude to editing existing files rather than creating new ones",
       "category": "Constraint Injection",
@@ -1434,6 +1444,30 @@
       }
     },
     {
+      "id": "DISP-07",
+      "text": "Quorum dispatcher Mode C delegates structured coding tasks to external agent CLI slots (codex, gemini, opencode, copilot) via coding-task-router.cjs, with status-to-verdict mapping (SUCCESS->APPROVE, PARTIAL->FLAG, FAILED->REJECT, UNKNOWN->FLAG) for integration into the quorum voting path",
+      "category": "Quorum & Dispatch",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Quick task 380 implemented coding task delegation as the foundational layer for Issue #60. Previously quorum slots only handled review/voting (Mode A for questions, Mode B for execution review). Mode C enables external agents to receive and execute actual coding work with structured result collection.",
+      "provenance": {
+        "source_file": ".planning/quick/380-delegate-quorum-slot-coding-to-external-/380-PLAN.md",
+        "milestone": "quick-380"
+      }
+    },
+    {
+      "id": "DISP-08",
+      "text": "/nf:quick --delegate {slot-name} flag enables full task delegation to named external agent CLI slots via Mode C dispatch, bypassing local planning and execution while preserving scope contract tracking and result recording in STATE.md.",
+      "category": "Quorum & Dispatch",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Quick task 381 adds the --delegate flag to the /nf:quick workflow, providing a user-facing interface to Mode C dispatch (established in DISP-07). The flag validates the target slot against providers.json, ensures it is a subprocess provider with file access, and routes the task through coding-task-router.cjs for execution by the external agent.",
+      "provenance": {
+        "source_file": ".planning/quick/381-add-delegate-flag-to-nf-quick-for-full-t/381-PLAN.md",
+        "milestone": "quick-381"
+      }
+    },
+    {
       "id": "DIST-01",
       "text": "The npm `@next` dist-tag SHALL never point to a version older than `@latest`. After every stable publish to `@latest`, the `@next` dist-tag MUST be aligned to the same or a newer version.",
       "category": "Release & Distribution",
@@ -1905,6 +1939,18 @@
       "provenance": {
         "source_file": ".planning/milestones/v0.37-REQUIREMENTS.md",
         "milestone": "unknown"
+      }
+    },
+    {
+      "id": "GUARD-01",
+      "text": "When --full flag is set, quick workflow enforces formal modeling steps with MUST_NOT_SKIP annotations, anti-urgency guardrails, baseline tooling checks, and post-execution audit gates (does not apply to default quick mode without --full)",
+      "category": "Formal Modeling Guardrails",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Agents skip 8/10 formal modeling steps in /nf:quick --full due to urgency bias and context fatigue. GUARD-01 adds enforcement mechanisms making skips detectable and logged. Scoped to --full mode only; default quick mode per SOLVE-02 is unaffected.",
+      "provenance": {
+        "source_file": ".planning/quick/375-issue-47-agents-skip-formal-modeling/375-PLAN.md",
+        "milestone": "quick-375"
       }
     },
     {
@@ -4089,6 +4135,18 @@
       ]
     },
     {
+      "id": "ROUTE-05",
+      "text": "selectSlot delegates to pluggable 3-tier policy interface enabling learned slot routing via PresetPolicy (Tier 0) and RiverPolicy (Tier 1) contextual bandit with confidence gates.",
+      "category": "Token Optimization & Model Routing",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Quick task 382 implements a policy layer beneath selectSlot that enables the system to learn which agent slot performs best for each task type, starting with static preset selection and progressing to evidence-based routing through the River contextual bandit algorithm.",
+      "provenance": {
+        "source_file": ".planning/quick/382-implement-tier-0-policy-interface-and-ti/382-PLAN.md",
+        "milestone": "quick-382"
+      }
+    },
+    {
       "id": "RSN-01",
       "text": "Hazard model applies FMEA (Severity x Occurrence x Detection = RPN) to L2 operational model states and transitions",
       "category": "Reasoning",
@@ -6129,5 +6187,5 @@
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
   "last_sync": "2026-03-31T09:45:23.686Z",
-  "frozen_at": "2026-04-06T11:52:32.757Z"
+  "frozen_at": "2026-04-07T21:24:39.823Z"
 }
