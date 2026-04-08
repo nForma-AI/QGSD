@@ -60,10 +60,11 @@ Plans:
   1. Git heatmap hot-zone ranking incorporates getCallers callee count alongside git churn score -- files with more callers appear higher in the prioritized list for formal modeling, even if their git churn is moderate
   2. Reverse discovery (C->R, T->R) candidates include getCallers call counts as evidence in their quorum context -- modules with 0 callers are explicitly flagged as likely dead code
   3. When coderlm is unavailable, heatmap ranking uses git churn alone and reverse discovery uses its existing heuristics -- no errors, no missing candidates, solve loop residuals are unchanged from pre-integration behavior
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 56-01: TBD
+- [ ] 056-01-PLAN.md — Heatmap callee-count enrichment: computePriority callee_count arg + sweepGitHeatmap getCallers integration (CREM-03)
+- [ ] 056-02-PLAN.md — Reverse discovery dead-code evidence: sweepCtoR/sweepTtoR caller_count + dead_code_flag + report annotation (CREM-04)
 
 ### Phase 57: Accuracy & Safety
 **Goal**: Scope scan and incremental filter layers use call-graph data to prevent incorrect layer skips and missed formal models, preserving solve convergence correctness
@@ -87,6 +88,6 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 54. Adapter Foundation | 3/3 | Complete | 2026-04-08 |
-| 55. Remediation Enrichment | 1/2 | In Progress | - |
-| 56. Diagnostic Enrichment | 0/? | Not started | - |
+| 55. Remediation Enrichment | 2/2 | Complete | 2026-04-08 |
+| 56. Diagnostic Enrichment | 0/2 | Not started | - |
 | 57. Accuracy & Safety | 0/? | Not started | - |
