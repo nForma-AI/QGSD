@@ -268,7 +268,17 @@ If ~/.claude/nf-bin/formal-test-sync.cjs does not exist, fall back to bin/formal
 
 Log: `"F->T phase 1: formal-test-sync generated {N} stubs"`
 
-**Phase 1b — Validate recipes:** After stubs are generated, count recipe files and check completeness:
+**Phase 1a — Enrich recipes with observed test patterns (CREM-02):** After stubs are generated, run formal-test-sync with `--enrich-recipes` to augment recipe JSON sidecars with assert patterns observed in existing tests via coderlm. This is fail-open — if coderlm is unavailable, enrichment is skipped silently and recipes remain as-is.
+
+```bash
+node $([ -f "$HOME/.claude/nf-bin/formal-test-sync.cjs" ] && echo "$HOME/.claude/nf-bin/formal-test-sync.cjs" || echo "bin/formal-test-sync.cjs") --project-root=$(pwd) --report-only --enrich-recipes
+```
+
+Note on flag interaction: `--report-only` suppresses stub file writes only; it does NOT suppress recipe JSON mutations. `--enrich-recipes` writes `observed_test_patterns` into recipe JSON regardless of `--report-only`. This is the intended behavior — recipe enrichment is a metadata update, not a stub generation. Verify this is working as expected: after Phase 1a, recipe JSON files should contain `observed_test_patterns` but no new `.test.cjs` stub files should be created.
+
+Log: `"F->T phase 1a: recipe enrichment complete (see stderr for coderlm stats — enriched/skipped/errors)"`
+
+**Phase 1b — Validate recipes:** After stubs are generated and recipes enriched, count recipe files and check completeness:
 ```bash
 node -e "
 const fs = require('fs');
@@ -346,6 +356,10 @@ Incomplete recipes (missing source_files or definition) produce lower-quality te
      <action>
    For each stub:
    1. Read .planning/formal/generated-stubs/{ID}.stub.recipe.json
+   1b. If recipe.observed_test_patterns.assert_patterns is a non-empty array, use the assert_patterns and setup_patterns
+       as concrete examples to follow. Prefer these observed patterns over generic boilerplate.
+       Example: if observed assert_patterns include "assert.strictEqual(result.status, 'ok')",
+       model your assertions on the same style.
    2. Read the stub file (.stub.test.js)
    3. Use recipe.formal_property.definition as the property under test
    4. Import from recipe.import_hint (adjust relative path if needed)
