@@ -27,6 +27,7 @@ See: .planning/PROJECT.md
 | 383 | Wire task-intake routing into PresetPolicy, update nf:quick command metadata with delegate flag, add delegation docs | 2026-04-07 | 40ef3ab3 | Verified | [383-wire-task-intake-routing-into-presetpoli](./quick/383-wire-task-intake-routing-into-presetpoli/) |
 | 384 | Fully integrate River ML library and Q-learning for quorum slot delegation | 2026-04-08 | 6bf32b45 | Verified | [384-issue-73](./quick/384-issue-73/) |
 | 385 | Add River ML phase indicator to nf-statusline.js | 2026-04-08 | 32ca7b5e | Pending | [385-add-river-ml-phase-indicator-to-nf-statu](./quick/385-add-river-ml-phase-indicator-to-nf-statu/) |
+| 386 | Add E2E test for River ML learning loop and surface shadow recommendations in status line | 2026-04-08 | 017878fb | Pending | [386-add-e2e-test-for-river-ml-learning-loop-](./quick/386-add-e2e-test-for-river-ml-learning-loop-/) |
 
 ## Session Log
 
@@ -44,3 +45,6 @@ See: .planning/PROJECT.md
 - 2026-04-07 - Completed quick task 383: Wire task-intake routing into PresetPolicy, update command metadata, add delegation docs
 - 2026-04-08 - Completed quick task 384: Fully integrate River ML library and Q-learning for quorum slot delegation
 - 2026-04-08 - Completed quick task 385: Add River ML phase indicator to nf-statusline.js
+- 2026-04-08 - Completed quick task 386: Add E2E test for River ML learning loop and surface shadow recommendations
+
+Last activity: 2026-04-08
