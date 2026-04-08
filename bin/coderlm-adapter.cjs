@@ -4,12 +4,15 @@
  * coderlm-adapter.cjs — HTTP adapter for coderlm symbol/call graph server
  *
  * Provides health checks and symbol query methods with timeout and error handling.
- * All methods return result objects (never throw) following fail-open pattern.
+ * All methods return result objects (never throw) following fail-open pattern (CADP-02).
+ *
+ * v0.42: LRU cache (CADP-01), per-session metrics (CADP-03), call-site hardening (CADP-02).
  */
 
 const http = require('http');
 const https = require('https');
 const { spawnSync } = require('child_process');
+const { createLRUCache } = require('./coderlm-cache.cjs');
 
 const DEFAULT_HOST = 'http://localhost:8787';
 const DEFAULT_TIMEOUT_QUERY = 5000;
@@ -105,6 +108,11 @@ function createAdapter(opts = {}) {
   const timeout = opts.timeout !== undefined ? opts.timeout : DEFAULT_TIMEOUT_QUERY;
   const healthTimeout = opts.healthTimeout !== undefined ? opts.healthTimeout : DEFAULT_TIMEOUT_HEALTH;
 
+  // CADP-01: LRU cache for query results (100 entries, 5-min TTL, per-adapter-instance)
+  const _cache = createLRUCache(100, 5 * 60 * 1000);
+  // CADP-03: Per-session metrics (accumulated across all query calls on this adapter)
+  const _metrics = { queryCount: 0, totalLatencyMs: 0 };
+
   const adapter = {
     /**
      * Async health check — checks if coderlm server is responding.
@@ -114,30 +122,36 @@ function createAdapter(opts = {}) {
       if (!enabled) {
         return { healthy: false, latencyMs: 0, error: 'disabled' };
       }
-      const start = Date.now();
-      const result = await httpGet(host + '/health', healthTimeout);
-      const latencyMs = Date.now() - start;
-      if (result.error) {
-        return { healthy: false, latencyMs, error: result.error };
+      try {
+        const start = Date.now();
+        const result = await httpGet(host + '/health', healthTimeout);
+        const latencyMs = Date.now() - start;
+        if (result.error) {
+          return { healthy: false, latencyMs, error: result.error };
+        }
+        if (result.status === 200) {
+          return { healthy: true, latencyMs };
+        }
+        return { healthy: false, latencyMs, error: 'HTTP ' + result.status };
+      } catch (e) {
+        return { healthy: false, latencyMs: 0, error: e.message }; // CADP-02: never throw
       }
-      if (result.status === 200) {
-        return { healthy: true, latencyMs };
-      }
-      return { healthy: false, latencyMs, error: 'HTTP ' + result.status };
     },
 
     /**
      * Synchronous health check using spawnSync pattern.
      * Spawns a node process to perform async HTTP check and parse result from stdout.
+     * Health checks are NOT cached (always fresh) and do NOT count toward metrics.
      * @returns {{healthy: boolean, latencyMs: number, error?: string}}
      */
     healthSync() {
       if (!enabled) {
         return { healthy: false, latencyMs: 0, error: 'disabled' };
       }
-      const parsed = parseUrl(host);
-      const port = parsed.port || (parsed.protocol === 'https:' ? 443 : 80);
-      const script = `
+      try {
+        const parsed = parseUrl(host);
+        const port = parsed.port || (parsed.protocol === 'https:' ? 443 : 80);
+        const script = `
 const http = require('http');
 const https = require('https');
 const protocol = ${JSON.stringify(parsed.protocol)};
@@ -178,7 +192,6 @@ async function check() {
 }
 check().then(r => console.log(JSON.stringify(r)));
 `;
-      try {
         const result = spawnSync('node', ['-e', script], {
           timeout: healthTimeout + 1000,
           encoding: 'utf8',
@@ -189,12 +202,13 @@ check().then(r => console.log(JSON.stringify(r)));
         }
         return { healthy: false, latencyMs: 0, error: 'sync-spawn-failed' };
       } catch (e) {
-        return { healthy: false, latencyMs: 0, error: 'sync-spawn-failed' };
+        return { healthy: false, latencyMs: 0, error: 'sync-spawn-failed' }; // CADP-02: never throw
       }
     },
 
     /**
-     * Get callers of a symbol.
+     * Get callers of a symbol (async).
+     * Checks cache first; on miss, fetches from server and caches result.
      * @param {string} symbol - Symbol name
      * @param {string} file - File path
      * @returns {Promise<{callers?: string[], error?: string}>}
@@ -203,25 +217,43 @@ check().then(r => console.log(JSON.stringify(r)));
       if (!enabled) {
         return { error: 'disabled' };
       }
-      const url = host + '/callers?symbol=' + encodeURIComponent(symbol) + '&file=' + encodeURIComponent(file);
-      const result = await httpGet(url, timeout);
-      if (result.error) {
-        return { error: result.error };
-      }
-      if (result.status === 200) {
-        try {
-          const parsed = JSON.parse(result.body);
-          return { callers: parsed.callers || [] };
-        } catch {
-          return { error: 'parse' };
+      const cacheKey = JSON.stringify({ method: 'getCallers', symbol, file });
+      const cached = _cache.get(cacheKey);
+      if (cached !== undefined) return cached; // cache hit (counted by _cache stats)
+      const start = Date.now();
+      try {
+        const url = host + '/callers?symbol=' + encodeURIComponent(symbol) + '&file=' + encodeURIComponent(file);
+        const result = await httpGet(url, timeout);
+        _metrics.queryCount++;
+        _metrics.totalLatencyMs += Date.now() - start;
+        if (result.error) {
+          const out = { error: result.error };
+          _cache.set(cacheKey, out);
+          return out;
         }
+        if (result.status === 200) {
+          try {
+            const parsed = JSON.parse(result.body);
+            const out = { callers: parsed.callers || [] };
+            _cache.set(cacheKey, out);
+            return out;
+          } catch {
+            const out = { error: 'parse' };
+            return out;
+          }
+        }
+        return { error: 'HTTP ' + result.status };
+      } catch (e) {
+        _metrics.queryCount++;
+        _metrics.totalLatencyMs += Date.now() - start;
+        return { error: e.message }; // CADP-02: never throw
       }
-      return { error: 'HTTP ' + result.status };
     },
 
     /**
      * Synchronous wrapper for getCallers using spawnSync pattern.
-     * Spawns a node process to perform async HTTP GET to /callers endpoint.
+     * Checks cache first; on miss, spawns node process to perform async HTTP GET.
+     * Tracks queryCount and totalLatencyMs for CADP-03 session metrics.
      * @param {string} symbol - Symbol name
      * @param {string} file - File path
      * @returns {{callers?: string[], error?: string}}
@@ -230,9 +262,14 @@ check().then(r => console.log(JSON.stringify(r)));
       if (!enabled) {
         return { error: 'disabled' };
       }
-      const parsed = parseUrl(host);
-      const port = parsed.port || (parsed.protocol === 'https:' ? 443 : 80);
-      const script = `
+      const cacheKey = JSON.stringify({ method: 'getCallersSync', symbol, file });
+      const cached = _cache.get(cacheKey);
+      if (cached !== undefined) return cached; // cache hit
+      const start = Date.now();
+      try {
+        const parsed = parseUrl(host);
+        const port = parsed.port || (parsed.protocol === 'https:' ? 443 : 80);
+        const script = `
 const http = require('http');
 const https = require('https');
 const protocol = ${JSON.stringify(parsed.protocol)};
@@ -286,28 +323,33 @@ async function getCallers() {
 }
 getCallers().then(r => console.log(JSON.stringify(r)));
 `;
-      try {
         const result = spawnSync('node', ['-e', script], {
           timeout: timeout + 1000,
           encoding: 'utf8',
         });
+        _metrics.queryCount++;
+        _metrics.totalLatencyMs += Date.now() - start;
         if (result.status === 0 && result.stdout) {
-          const parsed = JSON.parse(result.stdout.trim());
-          return parsed;
+          const out = JSON.parse(result.stdout.trim());
+          _cache.set(cacheKey, out);
+          return out;
         }
         return { error: 'sync-spawn-failed' };
       } catch (e) {
-        return { error: 'sync-spawn-failed' };
+        _metrics.queryCount++;
+        _metrics.totalLatencyMs += Date.now() - start;
+        return { error: e.message || 'sync-spawn-failed' }; // CADP-02: never throw
       }
     },
 
     /**
      * Synchronous wrapper for getImplementation using spawnSync pattern.
-     * Spawns a node process to perform async HTTP GET to /implementation endpoint.
+     * Checks cache first; on miss, spawns node process to perform async HTTP GET.
+     * Tracks queryCount and totalLatencyMs for CADP-03 session metrics.
      *
      * Pre-flight note: the live /implementation endpoint returns { file, line } (not a nested
      * `implementation` object). This matches the shape parsed by the async getImplementation()
-     * method above. Response does NOT include a callers array, so queryEdgesSync falls back to
+     * method. Response does NOT include a callers array, so queryEdgesSync falls back to
      * getCallersSync for caller discovery.
      *
      * @param {string} symbol - Symbol name
@@ -317,9 +359,14 @@ getCallers().then(r => console.log(JSON.stringify(r)));
       if (!enabled) {
         return { error: 'disabled' };
       }
-      const parsed = parseUrl(host);
-      const port = parsed.port || (parsed.protocol === 'https:' ? 443 : 80);
-      const script = `
+      const cacheKey = JSON.stringify({ method: 'getImplementationSync', symbol });
+      const cached = _cache.get(cacheKey);
+      if (cached !== undefined) return cached; // cache hit
+      const start = Date.now();
+      try {
+        const parsed = parseUrl(host);
+        const port = parsed.port || (parsed.protocol === 'https:' ? 443 : 80);
+        const script = `
 const http = require('http');
 const https = require('https');
 const protocol = ${JSON.stringify(parsed.protocol)};
@@ -373,23 +420,28 @@ async function getImplementation() {
 }
 getImplementation().then(r => console.log(JSON.stringify(r)));
 `;
-      try {
         const result = spawnSync('node', ['-e', script], {
           timeout: timeout + 1000,
           encoding: 'utf8',
         });
+        _metrics.queryCount++;
+        _metrics.totalLatencyMs += Date.now() - start;
         if (result.status === 0 && result.stdout) {
-          const parsed = JSON.parse(result.stdout.trim());
-          return parsed;
+          const out = JSON.parse(result.stdout.trim());
+          _cache.set(cacheKey, out);
+          return out;
         }
         return { error: 'sync-spawn-failed' };
       } catch (e) {
-        return { error: 'sync-spawn-failed' };
+        _metrics.queryCount++;
+        _metrics.totalLatencyMs += Date.now() - start;
+        return { error: e.message || 'sync-spawn-failed' }; // CADP-02: never throw
       }
     },
 
     /**
-     * Get implementation location of a symbol.
+     * Get implementation location of a symbol (async).
+     * Checks cache first; on miss, fetches from server and caches result.
      * @param {string} symbol - Symbol name
      * @returns {Promise<{file?: string, line?: number, error?: string}>}
      */
@@ -397,24 +449,39 @@ getImplementation().then(r => console.log(JSON.stringify(r)));
       if (!enabled) {
         return { error: 'disabled' };
       }
-      const url = host + '/implementation?symbol=' + encodeURIComponent(symbol);
-      const result = await httpGet(url, timeout);
-      if (result.error) {
-        return { error: result.error };
-      }
-      if (result.status === 200) {
-        try {
-          const parsed = JSON.parse(result.body);
-          return { file: parsed.file, line: parsed.line };
-        } catch {
-          return { error: 'parse' };
+      const cacheKey = JSON.stringify({ method: 'getImplementation', symbol });
+      const cached = _cache.get(cacheKey);
+      if (cached !== undefined) return cached; // cache hit
+      const start = Date.now();
+      try {
+        const url = host + '/implementation?symbol=' + encodeURIComponent(symbol);
+        const result = await httpGet(url, timeout);
+        _metrics.queryCount++;
+        _metrics.totalLatencyMs += Date.now() - start;
+        if (result.error) {
+          return { error: result.error };
         }
+        if (result.status === 200) {
+          try {
+            const parsed = JSON.parse(result.body);
+            const out = { file: parsed.file, line: parsed.line };
+            _cache.set(cacheKey, out);
+            return out;
+          } catch {
+            return { error: 'parse' };
+          }
+        }
+        return { error: 'HTTP ' + result.status };
+      } catch (e) {
+        _metrics.queryCount++;
+        _metrics.totalLatencyMs += Date.now() - start;
+        return { error: e.message }; // CADP-02: never throw
       }
-      return { error: 'HTTP ' + result.status };
     },
 
     /**
-     * Find tests for a file.
+     * Find tests for a file (async).
+     * Checks cache first; on miss, fetches from server and caches result.
      * @param {string} file - File path
      * @returns {Promise<{tests?: string[], error?: string}>}
      */
@@ -422,24 +489,39 @@ getImplementation().then(r => console.log(JSON.stringify(r)));
       if (!enabled) {
         return { error: 'disabled' };
       }
-      const url = host + '/tests?file=' + encodeURIComponent(file);
-      const result = await httpGet(url, timeout);
-      if (result.error) {
-        return { error: result.error };
-      }
-      if (result.status === 200) {
-        try {
-          const parsed = JSON.parse(result.body);
-          return { tests: parsed.tests || [] };
-        } catch {
-          return { error: 'parse' };
+      const cacheKey = JSON.stringify({ method: 'findTests', file });
+      const cached = _cache.get(cacheKey);
+      if (cached !== undefined) return cached; // cache hit
+      const start = Date.now();
+      try {
+        const url = host + '/tests?file=' + encodeURIComponent(file);
+        const result = await httpGet(url, timeout);
+        _metrics.queryCount++;
+        _metrics.totalLatencyMs += Date.now() - start;
+        if (result.error) {
+          return { error: result.error };
         }
+        if (result.status === 200) {
+          try {
+            const parsed = JSON.parse(result.body);
+            const out = { tests: parsed.tests || [] };
+            _cache.set(cacheKey, out);
+            return out;
+          } catch {
+            return { error: 'parse' };
+          }
+        }
+        return { error: 'HTTP ' + result.status };
+      } catch (e) {
+        _metrics.queryCount++;
+        _metrics.totalLatencyMs += Date.now() - start;
+        return { error: e.message }; // CADP-02: never throw
       }
-      return { error: 'HTTP ' + result.status };
     },
 
     /**
-     * Peek at file content between line numbers.
+     * Peek at file content between line numbers (async).
+     * Checks cache first; on miss, fetches from server and caches result.
      * @param {string} file - File path
      * @param {number} startLine - Start line (inclusive)
      * @param {number} endLine - End line (inclusive)
@@ -449,22 +531,63 @@ getImplementation().then(r => console.log(JSON.stringify(r)));
       if (!enabled) {
         return { error: 'disabled' };
       }
-      const url = host + '/peek?file=' + encodeURIComponent(file) +
-                  '&start=' + encodeURIComponent(startLine) +
-                  '&end=' + encodeURIComponent(endLine);
-      const result = await httpGet(url, timeout);
-      if (result.error) {
-        return { error: result.error };
-      }
-      if (result.status === 200) {
-        try {
-          const parsed = JSON.parse(result.body);
-          return { lines: parsed.lines || [] };
-        } catch {
-          return { error: 'parse' };
+      const cacheKey = JSON.stringify({ method: 'peek', file, startLine, endLine });
+      const cached = _cache.get(cacheKey);
+      if (cached !== undefined) return cached; // cache hit
+      const start = Date.now();
+      try {
+        const url = host + '/peek?file=' + encodeURIComponent(file) +
+                    '&start=' + encodeURIComponent(startLine) +
+                    '&end=' + encodeURIComponent(endLine);
+        const result = await httpGet(url, timeout);
+        _metrics.queryCount++;
+        _metrics.totalLatencyMs += Date.now() - start;
+        if (result.error) {
+          return { error: result.error };
         }
+        if (result.status === 200) {
+          try {
+            const parsed = JSON.parse(result.body);
+            const out = { lines: parsed.lines || [] };
+            _cache.set(cacheKey, out);
+            return out;
+          } catch {
+            return { error: 'parse' };
+          }
+        }
+        return { error: 'HTTP ' + result.status };
+      } catch (e) {
+        _metrics.queryCount++;
+        _metrics.totalLatencyMs += Date.now() - start;
+        return { error: e.message }; // CADP-02: never throw
       }
-      return { error: 'HTTP ' + result.status };
+    },
+
+    /**
+     * Get per-session metrics accumulated since adapter creation or last resetCache().
+     * Used by nf-solve.cjs to emit CADP-03 diagnostic output to stderr.
+     * @returns {{ queryCount: number, cacheHits: number, cacheMisses: number, cacheHitRate: number, totalLatencyMs: number, avgLatencyMs: number }}
+     */
+    getSessionMetrics() {
+      const cacheStats = _cache.stats();
+      return {
+        queryCount: _metrics.queryCount,
+        cacheHits: cacheStats.hits,
+        cacheMisses: cacheStats.misses,
+        cacheHitRate: cacheStats.hitRate,
+        totalLatencyMs: _metrics.totalLatencyMs,
+        avgLatencyMs: _metrics.queryCount > 0 ? _metrics.totalLatencyMs / _metrics.queryCount : 0,
+      };
+    },
+
+    /**
+     * Reset the LRU cache and all session metrics.
+     * Called at the start of each solve session (CADP-01: cleared at loop start).
+     */
+    resetCache() {
+      _cache.reset();
+      _metrics.queryCount = 0;
+      _metrics.totalLatencyMs = 0;
     },
   };
 

@@ -5860,6 +5860,12 @@ function main() {
 
   const cycleDetector = new CycleDetector();
 
+  // CADP-01: Create adapter once per solve run (accumulates metrics across all iterations).
+  // resetCache() clears stale data from previous runs before the loop starts.
+  // Hoisted here so metrics are non-zero after sync-path queries in queryEdgesSync.
+  const _solveAdapter = createAdapter({ enabled: true });
+  _solveAdapter.resetCache(); // CADP-01: cleared at loop start
+
   for (let i = 1; i <= maxIterations; i++) {
     process.stderr.write(TAG + ' Iteration ' + i + '/' + maxIterations + '\n');
 
@@ -5926,7 +5932,7 @@ function main() {
         try {
           const lifecycle = ensureRunning({ port: 8787, indexPath: ROOT });
           if (lifecycle.ok) {
-            const adapter = createAdapter({ enabled: true });
+            const adapter = _solveAdapter; // reuse hoisted adapter (accumulates metrics, CADP-03)
             const healthResult = adapter.healthSync();
             if (healthResult.healthy) {
               touchLastQuery();  // Update idle timer
@@ -6013,6 +6019,19 @@ function main() {
 
     prevTotal = effectiveTotal;
   }
+
+  // CADP-03: Emit coderlm session metrics to stderr after solve loop exits
+  try {
+    if (_solveAdapter && typeof _solveAdapter.getSessionMetrics === 'function') {
+      const m = _solveAdapter.getSessionMetrics();
+      process.stderr.write(
+        TAG + ' coderlm session metrics: ' +
+        m.queryCount + ' queries, ' +
+        (m.cacheHitRate * 100).toFixed(1) + '% cache hit rate, ' +
+        m.totalLatencyMs + 'ms total latency\n'
+      );
+    }
+  } catch (e) { /* fail-open */ }
 
   const finalResidual = iterations[iterations.length - 1].residual;
 
