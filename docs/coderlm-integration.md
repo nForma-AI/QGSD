@@ -8,19 +8,16 @@ When coderlm is unavailable, nf:solve falls back seamlessly to existing hypothes
 
 ## Environment Variables
 
-### `NF_CODERLM_ENABLED`
+### `NF_CODERLM_ENABLED` (DEPRECATED)
 
-Enables coderlm integration in nf:solve.
+> **Deprecated as of task #383.** coderlm now self-enables via the lifecycle module.
+> The `NF_CODERLM_ENABLED` env var is no longer required. The adapter defaults to
+> `enabled=true` and the lifecycle module handles binary download and process management.
+> This variable is retained for backward compatibility but has no effect.
 
-- **Default:** `false` (unset)
-- **Accepted values:** `'true'`, `'false'` (case-sensitive string, not boolean)
-- **Effect:** When `'true'`, nf:solve attempts to connect to the coderlm server during wave computation
-
-Example:
-```bash
-export NF_CODERLM_ENABLED='true'
-node bin/nf-solve.cjs
-```
+- **Default:** Ignored (adapter defaults to enabled)
+- **Previous behavior:** When `'true'`, nf:solve attempted to connect to the coderlm server
+- **Current behavior:** coderlm auto-starts on first nf:solve run; set `enabled: false` in adapter options to disable programmatically
 
 ### `NF_CODERLM_HOST`
 
@@ -32,12 +29,27 @@ The HTTP URL of the coderlm server.
 
 Example:
 ```bash
-export NF_CODERLM_ENABLED='true'
 export NF_CODERLM_HOST='http://coderlm-prod:8787'
 node bin/nf-solve.cjs
 ```
 
 ## Running a Local coderlm Server
+
+### Automatic Lifecycle (Recommended)
+
+coderlm is now managed automatically by nf:solve. On first run, the binary is
+downloaded from GitHub Releases to `~/.claude/nf-bin/coderlm`. The server starts
+on-demand and stops after 5 minutes of idle.
+
+Manual control:
+- `/nf:coderlm start`  -- Start the server
+- `/nf:coderlm stop`   -- Stop the server
+- `/nf:coderlm status` -- Check status
+- `/nf:coderlm update` -- Update to latest release
+
+The manual build-from-source workflow below is still supported for development.
+
+### Build from Source
 
 The coderlm server is a Rust binary maintained in the [coderlm repository](https://github.com/nForma-AI/coderlm). To run it locally:
 
@@ -59,10 +71,8 @@ The coderlm server is a Rust binary maintained in the [coderlm repository](https
    # Expected response: {"status":"healthy"}
    ```
 
-4. **Enable in nf:solve**:
+4. **Run nf:solve** (coderlm auto-detects the running server):
    ```bash
-   export NF_CODERLM_ENABLED='true'
-   export NF_CODERLM_HOST='http://localhost:8787'
    node bin/nf-solve.cjs
    ```
 
@@ -76,40 +86,80 @@ The coderlm server is a Rust binary maintained in the [coderlm repository](https
 │  - Auto-close with fallback support                 │
 └──────────────────────┬──────────────────────────────┘
                        │ uses
-       ┌───────────────┴────────────────┐
-       │                                │
-┌──────▼──────────────────┐  ┌──────────▼────────────────┐
-│  coderlm-adapter        │  │  solve-wave-dag          │
-│ (bin/coderlm-adapter    │  │  (bin/solve-wave-dag     │
-│  .cjs)                  │  │   .cjs)                  │
-│ - HTTP client           │  │ - computeWaves:          │
-│ - Health checks         │  │   hypothesis-driven      │
-│ - Query methods:        │  │ - computeWavesFromGraph: │
-│   * getCallers          │  │   graph-driven (via SCC  │
-│   * getImplementation   │  │   collapsing)            │
-│   * findTests           │  └──────────┬───────────────┘
-│   * peek                │             │
-└──────┬─────────────────┘             │
-       │                               │
-       │ HTTP                    Returns
-       │                          wave objects
-┌──────▼──────────────────────────────────┐
+       ┌───────────────┼────────────────┐
+       │               │                │
+┌──────▼──────────┐ ┌──▼──────────────┐ ┌▼─────────────────────┐
+│ coderlm-        │ │ coderlm-adapter │ │ solve-wave-dag       │
+│ lifecycle       │ │ (bin/coderlm-   │ │ (bin/solve-wave-dag  │
+│ (bin/coderlm-   │ │  adapter.cjs)   │ │  .cjs)               │
+│  lifecycle.cjs) │ │ - HTTP client   │ │ - computeWaves:      │
+│ - ensureRunning │ │ - Health checks │ │   hypothesis-driven  │
+│ - ensureBinary  │ │ - Query methods │ │ - computeWavesFromGraph│
+│ - stop          │ │   * getCallers  │ │   graph-driven (SCC) │
+│ - checkIdleStop │ │   * findTests   │ └──────────────────────┘
+└──────┬──────────┘ └──────┬──────────┘
+       │ spawn/stop        │ HTTP
+       │                   │
+┌──────▼───────────────────▼──────────────┐
 │        coderlm Server (Rust binary)     │
+│ ~/.claude/nf-bin/coderlm                │
 │ - Indexed symbol/call graph             │
 │ - Query endpoints (/callers, etc.)      │
 │ - Health endpoint (/health)             │
+│ - PID: ~/.claude/nf-bin/coderlm.pid     │
 └─────────────────────────────────────────┘
+
+Flow: nf:solve -> coderlm-lifecycle (ensureRunning) -> coderlm-adapter (queries)
+                                                    -> coderlm binary (spawn/stop)
 ```
 
 ## Fallback Behavior
 
-When coderlm is unavailable or disabled, nf:solve uses `LAYER_DEPS` heuristics:
+When coderlm is unavailable, nf:solve uses `LAYER_DEPS` heuristics:
 
-1. **Disabled** (`NF_CODERLM_ENABLED` not set or `'false'`): coderlm check is skipped
-2. **Unhealthy** (health check fails): Falls back to hypothesis-driven waves
+1. **Binary unavailable** (download failed, unsupported platform): coderlm is skipped, falls back to heuristic waves
+2. **Unhealthy** (health check fails after start): Falls back to hypothesis-driven waves
 3. **Error** (exception during integration): Falls back to hypothesis-driven waves
 
 The existing `computeWaves()` function is unchanged and remains the fallback path for all scenarios.
+
+## Lifecycle Management
+
+The `coderlm-lifecycle.cjs` module manages the full lifecycle of the coderlm binary and server process.
+
+### File Locations
+
+| File | Path | Purpose |
+|---|---|---|
+| Binary | `~/.claude/nf-bin/coderlm` | The coderlm server executable |
+| PID file | `~/.claude/nf-bin/coderlm.pid` | Tracks running server process |
+| Last-query | `~/.claude/nf-bin/coderlm.lastquery` | Timestamp of last query (for idle detection) |
+
+### Auto-download
+
+On first use (or after `update`), the binary is downloaded from the [nForma-AI/coderlm](https://github.com/nForma-AI/coderlm/releases) GitHub Releases via the `gh` CLI. Platform detection selects the correct binary:
+
+| Platform | Architecture | Asset Name |
+|---|---|---|
+| macOS | Apple Silicon (arm64) | `coderlm-darwin-arm64` |
+| macOS | Intel (x64) | `coderlm-darwin-x64` |
+| Linux | x86_64 | `coderlm-linux-x64` |
+| Linux | ARM64 | `coderlm-linux-arm64` |
+
+### Idle Timeout
+
+The server automatically stops after **5 minutes** of inactivity (no queries). The idle timer is reset each time nf:solve successfully queries the coderlm server. The `checkIdleStop()` function runs at the end of each nf:solve iteration.
+
+### Exported Functions
+
+| Function | Description |
+|---|---|
+| `ensureBinary()` | Idempotent binary download; preserves user-placed binaries |
+| `ensureRunning(opts)` | Start server if not running; handles stale PIDs and zombie processes |
+| `stop()` | Graceful shutdown with SIGTERM, escalating to SIGKILL after 3s |
+| `status()` | Report binary, process, health, and idle state |
+| `touchLastQuery()` | Reset the idle timer |
+| `checkIdleStop()` | Stop server if idle > 5 minutes |
 
 ## Testing
 
@@ -156,10 +206,9 @@ Expected output includes:
 
 ### End-to-End Testing
 
-With a local coderlm server running on port 8787:
+coderlm auto-starts during nf:solve. To test with a specific server:
 
 ```bash
-export NF_CODERLM_ENABLED='true'
 export NF_CODERLM_HOST='http://localhost:8787'
 node bin/nf-solve.cjs --report-only
 ```
@@ -197,7 +246,7 @@ const adapter = createAdapter({
 - `host` (string): Server URL, defaults to `process.env.NF_CODERLM_HOST` or `http://localhost:8787`
 - `timeout` (number): Query timeout in ms, default 5000
 - `healthTimeout` (number): Health check timeout in ms, default 2000
-- `enabled` (boolean): Enable adapter, defaults to `process.env.NF_CODERLM_ENABLED === 'true'`
+- `enabled` (boolean): Enable adapter, defaults to `true` (lifecycle module manages availability)
 
 ### adapter.health()
 
@@ -277,25 +326,30 @@ if (result.error) {
 
 ## Integration with nf:solve
 
-In `bin/nf-solve.cjs`, the coderlm integration happens during wave computation:
+In `bin/nf-solve.cjs`, the coderlm integration happens during wave computation via the lifecycle module:
 
 ```javascript
 // INSIDE THE AUTO-CLOSE LOOP
-if (process.env.NF_CODERLM_ENABLED === 'true') {
-  const adapter = createAdapter();
+// coderlm auto-start lifecycle (replaces NF_CODERLM_ENABLED gate)
+const lifecycle = ensureRunning({ port: 8787, indexPath: ROOT });
+if (lifecycle.ok) {
+  const adapter = createAdapter({ enabled: true });
   const healthResult = adapter.healthSync();
   if (healthResult.healthy) {
-    // coderlm server is available
-    // TODO: Query for inter-layer edges and call computeWavesFromGraph
-    process.stderr.write(TAG + ' coderlm graph-driven wave ordering available\n');
-  } else {
-    // Fall back to hypothesis-driven waves
-    process.stderr.write(TAG + ' coderlm unhealthy, falling back\n');
+    touchLastQuery();  // Reset idle timer
+    // Query for inter-layer edges and call computeWavesFromGraph
+    const edges = queryEdgesSync(adapter, activeLayerKeys);
+    const graphWaves = computeWavesFromGraph(graph, priorityWeights);
   }
 }
 
-// Fallback: always use hypothesis-driven waves
-const computedWaves = computeWaves(residual, priorityWeights);
+// Fallback: always use hypothesis-driven waves if coderlm unavailable
+if (!waveOrder) {
+  const computedWaves = computeWaves(residual, priorityWeights);
+}
+
+// After wave dispatch
+checkIdleStop();  // Stop coderlm if idle > 5 min
 ```
 
 ## Performance Considerations
@@ -327,13 +381,18 @@ curl http://localhost:8787/health
 
 **Fix**: Check network latency or increase timeout via adapter options in nf-solve.cjs.
 
-### Disabled
+### Binary Download Failed
 
-If `NF_CODERLM_ENABLED` is not `'true'` (e.g., `'false'`, unset, or any other value), coderlm is silently skipped.
+If the coderlm binary cannot be downloaded (network issues, `gh` not installed, auth required):
 
-**Fix**: Set the env var explicitly:
+```
+[nf-solve] coderlm lifecycle: download-failed, falling back to heuristic waves
+```
+
+**Fix**: Ensure `gh` CLI is installed and authenticated:
 ```bash
-export NF_CODERLM_ENABLED='true'
+gh auth status
+gh release download --repo nForma-AI/coderlm --pattern "coderlm-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | sed 's/x86_64/x64/;s/aarch64/arm64/')"
 ```
 
 ## Binary Distribution
