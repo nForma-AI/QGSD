@@ -188,6 +188,10 @@ process.stdin.on('end', () => {
             ? ' \x1b[32mRiver: active\x1b[0m'
             : ' \x1b[36mRiver: exploring\x1b[0m';
         }
+        // Shadow recommendation takes visual priority when present
+        if (riverState.lastShadow && typeof riverState.lastShadow.recommendation === 'string' && riverState.lastShadow.recommendation) {
+          riverIndicator = ` \x1b[33mRiver: ${riverState.lastShadow.recommendation} (shadow)\x1b[0m`;
+        }
       }
     } catch (_e) {
       // Fail-silent: no state file or malformed JSON → no indicator

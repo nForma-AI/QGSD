@@ -376,3 +376,90 @@ test('TC20: Empty qTable produces no River indicator', () => {
     fs.rmSync(tempDir, { recursive: true, force: true });
   }
 });
+
+// --- Shadow Recommendation Display Tests ---
+
+// TC21: Shadow recommendation displayed when lastShadow present
+test('TC21: Shadow recommendation displayed when lastShadow present', () => {
+  const tempDir = makeTempDir('tc21');
+  const stateFile = path.join(tempDir, '.nf-river-state.json');
+  fs.writeFileSync(stateFile, JSON.stringify({
+    qTable: {
+      implement: {
+        'codex-1': { q: 0.8, visits: 25 },
+        'gemini-1': { q: 0.6, visits: 30 },
+      },
+    },
+    lastShadow: {
+      recommendation: 'gemini-1',
+      confidence: 0.85,
+      taskType: 'implement',
+    },
+  }), 'utf8');
+
+  try {
+    const { stdout, exitCode } = runHook({
+      model: { display_name: 'M' },
+      workspace: { current_dir: tempDir },
+    });
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.ok(stdout.includes('River: gemini-1 (shadow)'), 'stdout must include "River: gemini-1 (shadow)"');
+    assert.ok(stdout.includes('\x1b[33m'), 'stdout must include yellow ANSI code');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// TC22: No shadow — falls back to River: active
+test('TC22: No shadow falls back to River: active', () => {
+  const tempDir = makeTempDir('tc22');
+  const stateFile = path.join(tempDir, '.nf-river-state.json');
+  fs.writeFileSync(stateFile, JSON.stringify({
+    qTable: {
+      implement: {
+        'codex-1': { q: 0.8, visits: 25 },
+        'gemini-1': { q: 0.6, visits: 30 },
+      },
+    },
+  }), 'utf8');
+
+  try {
+    const { stdout, exitCode } = runHook({
+      model: { display_name: 'M' },
+      workspace: { current_dir: tempDir },
+    });
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.ok(stdout.includes('River: active'), 'stdout must include "River: active" (not shadow)');
+    assert.ok(!stdout.includes('shadow'), 'stdout must NOT include "shadow"');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// TC23: Shadow with empty recommendation falls back to normal indicator
+test('TC23: Shadow with null recommendation falls back to normal indicator', () => {
+  const tempDir = makeTempDir('tc23');
+  const stateFile = path.join(tempDir, '.nf-river-state.json');
+  fs.writeFileSync(stateFile, JSON.stringify({
+    qTable: {
+      implement: {
+        'codex-1': { q: 0.8, visits: 25 },
+        'gemini-1': { q: 0.6, visits: 30 },
+      },
+    },
+    lastShadow: { recommendation: null },
+  }), 'utf8');
+
+  try {
+    const { stdout, exitCode } = runHook({
+      model: { display_name: 'M' },
+      workspace: { current_dir: tempDir },
+    });
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.ok(stdout.includes('River: active') || stdout.includes('River: exploring'),
+      'stdout must include "River: active" or "River: exploring" (not shadow)');
+    assert.ok(!stdout.includes('shadow'), 'stdout must NOT include "shadow"');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
