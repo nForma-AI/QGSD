@@ -5,6 +5,8 @@
   "content_hash": "cefeccf5ea531ffe773f702aefba446f114fe38a5da7a8ed3d9ffff7e49f9ca9",
   "aggregated_at": "2026-04-08T13:25:41.839Z",
   "content_hash": "701be42d5fb38ca118e3c316b1efd0d71d8ab7e5aff459ec6f6ac69ea1e70362",
+  "aggregated_at": "2026-04-08T17:39:58.342Z",
+  "content_hash": "0c2dbdc60da020a0326a02ea75f6e5ea70ecf20300542b62fdaa44e53d78607b",
   "requirements": [
     {
       "id": "ACT-01",
@@ -2705,6 +2707,18 @@
       "provenance": {
         "source_file": ".planning/quick/384-fix-nf-mcp-repair-to-call-mcp-tools-dire/384-PLAN.md",
         "milestone": "quick-384"
+      }
+    },
+    {
+      "id": "MCP-08",
+      "text": "nf:mcp-repair discovers slot names dynamically from ~/.claude.json mcpServers at runtime instead of using hardcoded enumeration, allowing the tool to work with any slot configuration.",
+      "category": "MCP & Agents",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "The previous implementation of nf:mcp-repair hardcoded 10 specific slot names (codex-1, gemini-1, opencode-1, copilot-1, claude-1..6) in both the allowed-tools frontmatter and the Step 1 diagnostic call list. Users with different slot counts or renamed slots experienced silent failures. This requirement ensures the repair tool dynamically reads ~/.claude.json mcpServers keys at session startup and adapts its diagnostic workflow to whatever slots are actually configured, making it portable across environments.",
+      "provenance": {
+        "source_file": ".planning/quick/385-make-nf-mcp-repair-discover-slot-names-d/385-PLAN.md",
+        "milestone": "quick-385"
       }
     },
     {
@@ -6241,6 +6255,7 @@
   "source": ".planning/REQUIREMENTS.md",
   "last_sync": "2026-03-31T09:45:23.686Z",
   "frozen_at": "2026-04-08T14:28:34.788Z"
+  "frozen_at": "2026-04-08T17:39:58.342Z"
 }
   "frozen_at": "2026-04-07T09:26:46.148Z"
   "frozen_at": "2026-04-08T13:25:41.840Z"
