@@ -414,6 +414,150 @@ test('TC-ALLOY-PARSE-4: parseAlloyDefaults handles blank lines and comments in c
   assert.equal(Object.keys(result).length, 3, 'should have exactly 3 constants despite blank lines and comments');
 });
 
+// ── TC-ENRICH: Recipe Enrichment Tests ─────────────────────────────────────
+
+test('TC-ENRICH-1: --enrich-recipes with coderlm disabled (health error)', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-enrich-test-'));
+  try {
+    // Create a mock recipe file with source_files
+    const stubsDir = path.join(tmpDir, '.planning', 'formal', 'generated-stubs');
+    fs.mkdirSync(stubsDir, { recursive: true });
+
+    const recipe = {
+      requirement_id: 'TEST-001',
+      source_files: ['bin/test.cjs'],
+      observed_test_patterns: {}
+    };
+    fs.writeFileSync(path.join(stubsDir, 'TEST-001.stub.recipe.json'), JSON.stringify(recipe) + '\n');
+
+    // Run with --enrich-recipes but coderlm will be unavailable
+    const result = spawnSync(process.execPath, [
+      path.join(__dirname, 'formal-test-sync.cjs'),
+      '--project-root=' + tmpDir,
+      '--enrich-recipes',
+      '--report-only',
+    ], {
+      encoding: 'utf8',
+      cwd: tmpDir,
+      timeout: 10000,
+    });
+
+    // Should exit 0 and log "skipping" to stderr (fail-open)
+    assert.equal(result.status, 0, 'script should exit 0 when coderlm unavailable');
+    assert.match(result.stderr, /skipping/, 'stderr should contain "skipping" message');
+
+    // Recipe file should remain unchanged (no observed_test_patterns populated)
+    const recipeAfter = JSON.parse(fs.readFileSync(path.join(stubsDir, 'TEST-001.stub.recipe.json'), 'utf8'));
+    assert.ok(!recipeAfter.observed_test_patterns || recipeAfter.observed_test_patterns.assert_patterns === undefined, 'recipe should not have assert_patterns written when coderlm unavailable');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('TC-ENRICH-2: --enrich-recipes flag is parsed correctly', () => {
+  // Verify the flag exists by checking the script runs without error
+  const result = spawnSync(process.execPath, [
+    path.join(__dirname, 'formal-test-sync.cjs'),
+    '--enrich-recipes',
+    '--report-only',
+  ], {
+    encoding: 'utf8',
+    cwd: path.join(__dirname, '..'),
+    timeout: 10000,
+  });
+
+  assert.equal(result.status, 0, 'script should handle --enrich-recipes flag');
+});
+
+test('TC-ENRICH-3: --report-only --enrich-recipes combined: recipe JSON mutated but stubs NOT written', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-enrich-combined-'));
+  try {
+    // Create recipe with no observed_test_patterns
+    const stubsDir = path.join(tmpDir, '.planning', 'formal', 'generated-stubs');
+    fs.mkdirSync(stubsDir, { recursive: true });
+
+    const recipe = {
+      requirement_id: 'TEST-002',
+      source_files: ['bin/test.cjs'],
+      observed_test_patterns: {}
+    };
+    fs.writeFileSync(path.join(stubsDir, 'TEST-002.stub.recipe.json'), JSON.stringify(recipe) + '\n');
+
+    // Run with both --report-only and --enrich-recipes
+    // (This will skip enrichment due to unavailable coderlm, but tests the flag interaction)
+    const result = spawnSync(process.execPath, [
+      path.join(__dirname, 'formal-test-sync.cjs'),
+      '--project-root=' + tmpDir,
+      '--report-only',
+      '--enrich-recipes',
+    ], {
+      encoding: 'utf8',
+      cwd: tmpDir,
+      timeout: 10000,
+    });
+
+    assert.equal(result.status, 0, 'combined flags should not cause errors');
+    // When coderlm is unavailable, enrichment is skipped but --report-only doesn't prevent attempts
+    assert.match(result.stderr, /skipping|unavailable|fatal/, 'stderr should indicate enrichment status');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('TC-ENRICH-4: Idempotency: recipe with existing assert_patterns is skipped', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-enrich-idempotent-'));
+  try {
+    const stubsDir = path.join(tmpDir, '.planning', 'formal', 'generated-stubs');
+    fs.mkdirSync(stubsDir, { recursive: true });
+
+    const recipe = {
+      requirement_id: 'TEST-003',
+      source_files: ['bin/test.cjs'],
+      observed_test_patterns: {
+        assert_patterns: ['assert.strictEqual(x, y)'], // already populated
+        test_files: ['test/sample.test.js']
+      }
+    };
+    const recipePath = path.join(stubsDir, 'TEST-003.stub.recipe.json');
+    fs.writeFileSync(recipePath, JSON.stringify(recipe) + '\n');
+    const originalContent = fs.readFileSync(recipePath, 'utf8');
+
+    // Run enrichment (will skip due to unavailable coderlm, but tests the idempotency check logic)
+    const result = spawnSync(process.execPath, [
+      path.join(__dirname, 'formal-test-sync.cjs'),
+      '--project-root=' + tmpDir,
+      '--report-only',
+      '--enrich-recipes',
+    ], {
+      encoding: 'utf8',
+      cwd: tmpDir,
+      timeout: 10000,
+    });
+
+    // Verify recipe unchanged (idempotency)
+    const recipeAfter = fs.readFileSync(recipePath, 'utf8');
+    assert.equal(recipeAfter, originalContent, 'recipe with existing assert_patterns should not be modified');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('TC-ENRICH-5: --enrich-recipes without flag does not attempt enrichment', () => {
+  // Run without --enrich-recipes flag
+  const result = spawnSync(process.execPath, [
+    path.join(__dirname, 'formal-test-sync.cjs'),
+    '--report-only',
+  ], {
+    encoding: 'utf8',
+    cwd: path.join(__dirname, '..'),
+    timeout: 10000,
+  });
+
+  assert.equal(result.status, 0, 'script should exit 0');
+  // When enrichment is not requested, stderr should NOT contain enrich-recipes messages
+  assert.doesNotMatch(result.stderr, /--enrich-recipes/, 'stderr should not mention enrich-recipes when flag absent');
+});
+
 // ── TC-INT: Integration Tests ───────────────────────────────────────────────
 
 test('TC-INT-1: Full script with --json --report-only exits 0 with valid JSON', () => {

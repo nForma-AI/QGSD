@@ -40,6 +40,7 @@ const args = process.argv.slice(2);
 const reportOnly = args.includes('--report-only');
 const dryRun = args.includes('--dry-run');
 const jsonMode = args.includes('--json');
+const enrichRecipes = args.includes('--enrich-recipes');
 let stubsDir = path.join(ROOT, '.planning', 'formal', 'generated-stubs');
 
 for (const arg of args) {
@@ -672,6 +673,144 @@ test('TODO: implement test for ${requirement_id} — ${property}', () => {
   return stubs;
 }
 
+// ── Recipe Enrichment ───────────────────────────────────────────────────────
+
+/**
+ * Enrich recipe JSON files with observed test patterns from coderlm findTests/peek.
+ * For each recipe file with non-empty source_files and no existing assert_patterns:
+ * - Query coderlm.findTests() for each source file (max 3)
+ * - Peek at each found test file (max 5 per source, 100 lines per peek)
+ * - Extract assert/expect/describe/beforeEach patterns
+ * - Write observed_test_patterns field back to recipe JSON
+ *
+ * Idempotency: skip recipes where observed_test_patterns.assert_patterns is already
+ * a non-empty array (NOT where test_files.length > 0 — test_files presence alone
+ * does not indicate successful pattern extraction).
+ *
+ * @param {Object} adapter - coderlm adapter instance with findTests() and peek() methods
+ * @returns {Promise<{enriched: number, skipped: number, errors: number}>}
+ */
+async function enrichRecipesWithTestPatterns(adapter) {
+  let enriched = 0;
+  let skipped = 0;
+  let errors = 0;
+
+  if (!fs.existsSync(stubsDir)) {
+    process.stderr.write(TAG + ' --enrich-recipes: stubsDir does not exist, skipping\n');
+    return { enriched: 0, skipped: 0, errors: 0 };
+  }
+
+  try {
+    const files = fs.readdirSync(stubsDir);
+    const recipeFiles = files.filter(f => f.endsWith('.stub.recipe.json'));
+
+    for (const recipeFile of recipeFiles) {
+      try {
+        const recipePath = path.join(stubsDir, recipeFile);
+        const recipeContent = JSON.parse(fs.readFileSync(recipePath, 'utf8'));
+
+        // Idempotency check: skip if assert_patterns already populated (non-empty array)
+        if (
+          recipeContent.observed_test_patterns &&
+          Array.isArray(recipeContent.observed_test_patterns.assert_patterns) &&
+          recipeContent.observed_test_patterns.assert_patterns.length > 0
+        ) {
+          skipped++;
+          continue;
+        }
+
+        // Skip recipes with no source files
+        const sourceFiles = recipeContent.source_files || [];
+        if (sourceFiles.length === 0) {
+          skipped++;
+          continue;
+        }
+
+        // Collect test patterns from source files (max 3)
+        const testFiles = [];
+        const assertPatterns = [];
+        const setupPatterns = [];
+
+        for (let si = 0; si < Math.min(sourceFiles.length, 3); si++) {
+          const sourceFile = sourceFiles[si];
+
+          // Skip non-file entries (module names with no path separator or extension)
+          if (!sourceFile.includes('/') && !sourceFile.endsWith('.cjs') && !sourceFile.endsWith('.js')) {
+            process.stderr.write(TAG + ' --enrich-recipes: skipping non-file source entry: ' + sourceFile + '\n');
+            continue;
+          }
+
+          // Query findTests for this source file (async)
+          const testsResult = await adapter.findTests(sourceFile);
+          if (testsResult.error) {
+            process.stderr.write(TAG + ' --enrich-recipes: findTests error for ' + sourceFile + ': ' + testsResult.error + '\n');
+            continue;
+          }
+
+          const foundTests = testsResult.tests || [];
+          // Peek at up to 5 test files per source (100 lines each)
+          for (let ti = 0; ti < Math.min(foundTests.length, 5); ti++) {
+            const testFile = foundTests[ti];
+            testFiles.push(testFile);
+
+            // Peek at test file: first 100 lines
+            let peekResult = await adapter.peek(testFile, 1, 100);
+            if (peekResult.error) {
+              process.stderr.write(TAG + ' --enrich-recipes: peek error for ' + testFile + ': ' + peekResult.error + '\n');
+              continue;
+            }
+
+            const lines = peekResult.lines || [];
+            const content100 = lines.join('\n');
+
+            // Extract patterns: assert, expect, describe, beforeEach
+            const assertMatches = content100.match(/.*(?:\.assert\.|assert\.|expect\(|describe\(|beforeEach\().*$/gm) || [];
+            assertPatterns.push(...assertMatches);
+
+            // If no assert patterns found in first 100 lines, try two-pass strategy
+            if (assertPatterns.length === 0) {
+              // Pass 1: peek lines 1-30 for setup patterns
+              const setupResult = await adapter.peek(testFile, 1, 30);
+              if (!setupResult.error && setupResult.lines) {
+                const setupContent = setupResult.lines.join('\n');
+                const setupMatches = setupContent.match(/.*(?:const|require|import).*$/gm) || [];
+                setupPatterns.push(...setupMatches);
+              }
+
+              // Pass 2: peek lines 31-150 for assertion patterns
+              const assertResult = await adapter.peek(testFile, 31, 150);
+              if (!assertResult.error && assertResult.lines) {
+                const assertContent = assertResult.lines.join('\n');
+                const assertMatches2 = assertContent.match(/.*(?:\.assert\.|assert\.|expect\(|describe\(|beforeEach\().*$/gm) || [];
+                assertPatterns.push(...assertMatches2);
+              }
+            }
+          }
+        }
+
+        // Write observed_test_patterns to recipe
+        if (!recipeContent.observed_test_patterns) {
+          recipeContent.observed_test_patterns = {};
+        }
+        recipeContent.observed_test_patterns.test_files = testFiles;
+        recipeContent.observed_test_patterns.assert_patterns = [...new Set(assertPatterns)]; // deduplicate
+        recipeContent.observed_test_patterns.setup_patterns = [...new Set(setupPatterns)]; // deduplicate
+
+        fs.writeFileSync(recipePath, JSON.stringify(recipeContent, null, 2) + '\n', 'utf8');
+        enriched++;
+      } catch (err) {
+        process.stderr.write(TAG + ' --enrich-recipes: error processing ' + recipeFile + ': ' + err.message + '\n');
+        errors++;
+      }
+    }
+  } catch (err) {
+    process.stderr.write(TAG + ' --enrich-recipes: error reading stubs directory: ' + err.message + '\n');
+    errors++;
+  }
+
+  return { enriched, skipped, errors };
+}
+
 // ── Output Writers ───────────────────────────────────────────────────────────
 
 /**
@@ -793,6 +932,30 @@ module.exports = { parseAlloyDefaults, extractPropertyDefinition, findSourceFile
 
 // ── Entry point ──────────────────────────────────────────────────────────────
 
+// Synchronous main — must run (and call process.exit on error) before any async work.
 if (require.main === module) {
   main();
+
+  // Async enrichment tail — only runs if --enrich-recipes flag is set.
+  // main() has already completed by this point.
+  if (enrichRecipes) {
+    (async () => {
+      const { createAdapter } = require('./coderlm-adapter.cjs');
+      const adapter = createAdapter({ enabled: true });
+      // Health check — skip if coderlm unavailable (fail-open)
+      const health = adapter.healthSync();
+      if (health.error) {
+        process.stderr.write(TAG + ' --enrich-recipes: coderlm unavailable (' + health.error + '), skipping\n');
+        return;
+      }
+      try {
+        const result = await enrichRecipesWithTestPatterns(adapter);
+        process.stderr.write(TAG + ' --enrich-recipes: enriched=' + result.enriched + ' skipped=' + result.skipped + ' errors=' + result.errors + '\n');
+      } catch (e) {
+        process.stderr.write(TAG + ' --enrich-recipes failed (non-fatal): ' + e.message + '\n');
+      }
+    })().catch(e => {
+      process.stderr.write(TAG + ' --enrich-recipes fatal: ' + e.message + '\n');
+    });
+  }
 }
