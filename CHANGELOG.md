@@ -6,6 +6,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.41.17] - 2026-04-08 — Config-driven milestones
+
+### Added
+- `feat(config)`: `default_milestone` field in `.planning/config.json` allows projects to specify a milestone without requiring STATE.md or ROADMAP.md — enables milestone workflows in early-stage projects (#64)
+- 10 tests covering all `default_milestone` code paths: config parsing, format normalization, priority ordering, "auto" bypass, empty string fallback, and `phase-plan-index` population
+- Requirement CONF-10 elevated to formal requirements
+
+### Fixed
+- `fix(gsd-tools)`: `cmdInitQuick()` now populates `chosen_milestone` and `default_milestone_used` fields (were declared but never set)
+
 ## [0.41.16] - 2026-04-07 — The skills gap is now a skills overlap
 
 ### Added
