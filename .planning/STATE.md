@@ -10,25 +10,25 @@ See: .planning/PROJECT.md (updated 2026-04-07)
 ## Current Position
 
 Phase: 55 (2 of 4) — Remediation Enrichment
-Plan: 1 of 4 in current phase (055-02 complete)
-Status: Phase 055 Plan 02 complete — recipe enrichment implemented
-Last activity: 2026-04-08 — Phase 055 Plan 02 executed (enrichRecipesWithTestPatterns, observe test patterns)
+Plan: 2 of 4 in current phase (055-01 complete)
+Status: Phase 055 Plan 01 complete — seed-files integration implemented
+Last activity: 2026-04-08 — Phase 055 Plan 01 executed (coderlm seed-file discovery, formal spec enrichment)
 
 Progress: [████......] 30%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
+- Total plans completed: 5
 - Average duration: ~1 session
-- Total execution time: ~0.6 hours
+- Total execution time: ~0.7 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 54. Adapter Foundation | 3/3 | 0.5h | ~10m |
-| 55. Remediation Enrichment | 1/4 | 0.1h | ~6m |
+| 55. Remediation Enrichment | 1/4 | 0.2h | ~12m |
 | 56. Diagnostic Enrichment | 0/? | - | - |
 | 57. Accuracy & Safety | 0/? | - | - |
 
@@ -43,6 +43,9 @@ Progress: [████......] 30%
 - Phase 054 decision: /implementation endpoint returns { file, line } only (no callers array); queryEdgesSync falls back to getCallersSync for caller discovery with path.resolve() comparison
 - Phase 054 decision: LAYER_SYMBOL_MAP contains only 4 entries (distinct scripts with named exports); l3_to_tc excluded (no named exports), inline handlers excluded
 - Phase 054 decision: adapter created once per solve run (_solveAdapter) and reused across iterations for accurate session metrics
+- Phase 055 decision (Plan 01): Symbol hint for coderlm queries derived from requirement ID (stripped dashes, lowercase) when requirement text unavailable
+- Phase 055 decision (Plan 01): Per-requirement dispatch for seeded R->F gaps (individual call per requirement prevents caller context cross-contamination)
+- Phase 055 decision (Plan 01): Coderlm unavailability gates via health check — failure routes to batch dispatch, preserving pre-integration behavior
 - Phase 055 decision (Plan 02): Recipe enrichment runs in async tail AFTER main() completes (not wrapping main) to preserve process.exit() timing
 - Phase 055 decision (Plan 02): Idempotency check on assert_patterns.length > 0 (not test_files.length) for re-runnable partial enrichment
 
@@ -57,7 +60,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-08
-Stopped at: Phase 055 Plan 02 complete (enrichRecipesWithTestPatterns implemented)
+Stopped at: Phase 055 Plan 01 complete (seed-files integration with coderlm)
 Resume file: None
 
 ## Quick Tasks Completed

@@ -49,7 +49,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 055-01-PLAN.md — --seed-files support in close-formal-gaps + coderlm R->F discovery in solve-remediate section 3a
+- [x] 055-01-PLAN.md — --seed-files support in close-formal-gaps + coderlm R->F discovery in solve-remediate section 3a (COMPLETE)
 - [x] 055-02-PLAN.md — formal-test-sync --enrich-recipes via findTests/peek + wire into solve-remediate section 3b (COMPLETE)
 
 ### Phase 56: Diagnostic Enrichment
@@ -86,7 +86,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 54. Adapter Foundation | 0/3 | Not started | - |
-| 55. Remediation Enrichment | 0/2 | Not started | - |
+| 54. Adapter Foundation | 3/3 | Complete | 2026-04-08 |
+| 55. Remediation Enrichment | 1/2 | In Progress | - |
 | 56. Diagnostic Enrichment | 0/? | Not started | - |
 | 57. Accuracy & Safety | 0/? | Not started | - |
