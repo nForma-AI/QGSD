@@ -471,6 +471,47 @@ function checkIdleStop() {
   }
 }
 
+// ── reindex ──────────────────────────────────────────────────────────────────
+
+/**
+ * Trigger a coderlm server reindex via POST /reindex.
+ * Called after autoClose() modifies files so subsequent solve iterations query current state (CDIAG-04).
+ * Fail-open: never throws to callers. Returns { ok: true } on success, { error: string } on failure.
+ * @param {Object} [opts]
+ * @param {number} [opts.port=8787] - Server port
+ * @returns {{ok: boolean, error?: string}}
+ */
+function reindex(opts) {
+  try {
+    opts = opts || {};
+    const port = opts.port || DEFAULT_PORT;
+    const script = `
+const http = require('http');
+const req = http.request(
+  { hostname: 'localhost', port: ${JSON.stringify(port)}, path: '/reindex', method: 'POST' },
+  (res) => {
+    let body = '';
+    res.on('data', d => { body += d; });
+    res.on('end', () => {
+      try { process.stdout.write(JSON.stringify({ status: res.statusCode, body })); }
+      catch (e) { process.stdout.write(JSON.stringify({ status: res.statusCode, body: '' })); }
+    });
+  }
+);
+req.on('error', (e) => { process.stdout.write(JSON.stringify({ error: e.message })); });
+req.end();
+`;
+    const r = spawnSync('node', ['-e', script], { encoding: 'utf8', timeout: 5000 });
+    if (!r.stdout) return { error: 'no response' };
+    const result = JSON.parse(r.stdout);
+    if (result.error) return { error: result.error };
+    if (result.status >= 200 && result.status < 300) return { ok: true };
+    return { error: 'reindex failed: status ' + result.status };
+  } catch (e) {
+    return { error: e.message }; // fail-open
+  }
+}
+
 // ── CLI interface ────────────────────────────────────────────────────────────
 
 if (require.main === module) {
@@ -528,6 +569,7 @@ module.exports = {
   status,
   touchLastQuery,
   checkIdleStop,
+  reindex,
   // Test helpers
   _setPaths,
   getPlatformBinaryName,
