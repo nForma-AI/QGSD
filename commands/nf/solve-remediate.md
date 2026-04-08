@@ -184,17 +184,76 @@ Extract the list of uncovered requirement IDs from `residual_vector.r_to_f.detai
 
 **Cascade budget check:** If `cascade_budget.r_to_f_limit` is a number and the uncovered list has more IDs than the limit, truncate the list to the first `r_to_f_limit` IDs. Log: `"Cascade budget: dispatching {r_to_f_limit} of {total} R→F gaps (F→T has pending work)"`. The remaining IDs will be addressed in subsequent iterations as downstream layers clear. If `r_to_f_limit` is null or missing, dispatch all IDs (no limit).
 
-If the (possibly truncated) list has 10 or fewer IDs, dispatch:
-```
-/nf:close-formal-gaps --batch --ids=REQ-01,REQ-02,...
+**Coderlm seed-file discovery and dispatch (CREM-01):**
+
+For each uncovered requirement ID (after applying cascade budget truncation), run the following node snippet to collect seed files via coderlm's synchronous API:
+
+```bash
+node -e "
+const _nfBin = (n) => { const p = require('path').join(require('os').homedir(), '.claude/nf-bin', n); return require('fs').existsSync(p) ? p : './bin/' + n; };
+const { createAdapter } = require(_nfBin('coderlm-adapter.cjs'));
+const adapter = createAdapter({ enabled: true });
+
+// Health check — skip entirely if server not responding
+const health = adapter.healthSync();
+if (health.error) {
+  process.stdout.write(JSON.stringify({ seed_files: [], skipped: true, reason: health.error }));
+  process.exit(0);
+}
+
+const reqId = process.argv[1];
+const seedSet = new Set();
+
+// Parse the requirement text to extract a function name heuristic.
+// getImplementation expects a symbol name (function/class), NOT a requirement ID string.
+// Strategy: use the first camelCase or snake_case token from the requirement description
+// that looks like a function name (length >= 4, starts with lowercase letter).
+// Fall back to the requirement ID stripped of dashes if no such token is found.
+function extractSymbolHint(id) {
+  // e.g. 'CREM-01' -> 'crem01' (last-resort fallback)
+  return id.replace(/-/g, '').toLowerCase();
+}
+
+// Attempt with symbol hint derived from requirement text (caller must pass as argv[2] if known)
+const symbolHint = process.argv[2] || extractSymbolHint(reqId);
+
+const impl = adapter.getImplementationSync(symbolHint);
+if (impl && impl.file && !impl.error) {
+  seedSet.add(impl.file);
+  // getCallersSync(symbolHint, impl.file) — first arg is the function name symbol, second arg scopes the search to the implementation file
+  const callers = adapter.getCallersSync(symbolHint, impl.file);
+  if (callers && callers.callers && !callers.error) {
+    for (const c of callers.callers.slice(0, 3)) {
+      if (c.file) seedSet.add(c.file);
+    }
+  }
+}
+
+process.stdout.write(JSON.stringify({ seed_files: [...seedSet], skipped: false }));
+" -- \"\$REQ_ID\" \"\$SYMBOL_HINT\" 2>/dev/null || echo '{"seed_files":[],"skipped":true,"reason":"node error"}'
 ```
 
-If the list has more than 10 IDs, dispatch:
+For each requirement ID:
+1. Set `REQ_ID` to the requirement ID (e.g., "REQ-01")
+2. Set `SYMBOL_HINT` to the function name derived from the requirement text (if available from the traceability matrix or roadmap requirement text), otherwise leave empty to use the fallback.
+3. Run the node snippet above. Parse the JSON output.
+4. If `seed_files` is non-empty: set `SEED_FILES_ARG="--seed-files=$(IFS=,; echo "${seed_files[*]}")"` and dispatch individually:
+   ```
+   /nf:close-formal-gaps --ids=$REQ_ID $SEED_FILES_ARG
+   ```
+   Log: `"R->F [$REQ_ID]: coderlm seed discovery: ${#seed_files[@]} seed files — dispatching individually"`
+5. If `seed_files` is empty (coderlm unavailable OR no implementation found):
+   - Accumulate the ID into `$BATCH_IDS`
+   - Log: `"R->F [$REQ_ID]: no seed files (skipped=${skipped}) — adding to batch"`
+
+After the per-requirement loop, if `$BATCH_IDS` is non-empty, run the existing batch dispatch:
 ```
-/nf:close-formal-gaps --batch --all
+/nf:close-formal-gaps --batch --ids=$BATCH_IDS
 ```
 
-Log: `"Dispatching R->F remediation: close-formal-gaps for {N} uncovered requirements"`
+This preserves the existing batch behavior for all requirements when coderlm is unavailable, while scoping seed-enriched dispatches to individual requirements to prevent cross-contamination.
+
+Note: `$SEED_FILES_ARG` is empty string when coderlm is unavailable — requirements accumulate in `$BATCH_IDS` and the existing batch dispatch fires, preserving pre-integration behavior exactly (fail-open, CADP-02).
 
 Wait for the skill to complete. If it fails, log the failure and continue to the next gap type.
 
