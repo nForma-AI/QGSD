@@ -32,6 +32,7 @@ See: .planning/PROJECT.md
 | 381 | Wire coderlm adapter queries into nf-solve to populate dependency graph edges from active residual layers | 2026-04-07 | pending | Pending | [381-wire-coderlm-adapter-queries-into-nf-sol](./quick/381-wire-coderlm-adapter-queries-into-nf-sol/) |
 | 381 | Wire coderlm adapter queries into nf-solve to populate dependency graph edges from active residual layers | 2026-04-07 | 9e56913e | Verified | [381-wire-coderlm-adapter-queries-into-nf-sol](./quick/381-wire-coderlm-adapter-queries-into-nf-sol/) |
 | 382 | Set up coderlm cross-compilation CI | 2026-04-08 | 0f515fa2 | Pending | [382-set-up-coderlm-cross-compilation-ci](./quick/382-set-up-coderlm-cross-compilation-ci/) |
+| 383 | Implement coderlm lazy lifecycle management | 2026-04-08 | 67302123 | Pending | [383-implement-coderlm-lazy-lifecycle-managem](./quick/383-implement-coderlm-lazy-lifecycle-managem/) |
 
 ## Session Log
 
@@ -55,3 +56,4 @@ See: .planning/PROJECT.md
 Last activity: 2026-04-08
 - 2026-04-07: Completed quick task 381: Wire coderlm adapter queries into nf-solve dependency graph
 - 2026-04-08: Completed quick task 382: Set up coderlm cross-compilation CI
+- 2026-04-08 - Completed quick task 383: Implement coderlm lazy lifecycle management

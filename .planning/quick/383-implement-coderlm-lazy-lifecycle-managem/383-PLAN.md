@@ -135,8 +135,8 @@ function getPlatformBinaryName() {
 7. Wrap entire function in try/catch, return `{ ok: false, error: 'unexpected', detail: e.message }` on any exception.
 
 **ensureRunning(opts)** — Start server if not already running. opts: `{ port, indexPath }`.
-1. Check if process is already running: read PID_PATH, if exists, check `process.kill(pid, 0)` to verify process is alive. If alive, do a quick health check via HTTP GET to HEALTH_URL (use the existing httpGet-like pattern from adapter or spawnSync curl). If healthy, return `{ ok: true, pid, source: 'already-running' }`.
-2. If PID file exists but process is dead, clean up stale PID file (LivenessProperty1 — no dangling PID).
+1. Check if process is already running: read PID_PATH, if exists, check `process.kill(pid, 0)` to verify process is alive. If alive, do a quick health check via HTTP GET to HEALTH_URL (use the existing httpGet-like pattern from adapter or spawnSync curl). If healthy, return `{ ok: true, pid, source: 'already-running' }`. **If PID alive but health check fails (zombie PID):** clean up PID file and fall through to spawn a fresh process (addresses LivenessProperty1 — zombie processes must not block restart).
+2. If PID file exists but process is dead (kill returns ESRCH), clean up stale PID file (LivenessProperty1 — no dangling PID).
 3. Call ensureBinary(). If not ok, return its error.
 4. Determine indexPath: `opts.indexPath || process.cwd()`.
 5. Spawn: `child_process.spawn(BINARY_PATH, ['--port', String(port || DEFAULT_PORT), '--index-path', indexPath], { detached: true, stdio: ['ignore', 'ignore', 'ignore'] })`. Call `child.unref()`.
@@ -189,7 +189,8 @@ Create tests using node:test. Since we cannot actually download or spawn coderlm
 3. **ensureBinary idempotency**: If BINARY_PATH already exists (mock by checking the logic flow), the function should return `{ ok: true, source: 'cached' }` without attempting download. Test by creating a temp file at the expected path and verifying the cached path.
 4. **PID file lifecycle**: Write a PID file, verify status() reads it; delete PID file, verify status() reports not-running. Verify stop() cleans up PID file even if the process does not exist (ESRCH handling).
 5. **touchLastQuery and checkIdleStop**: Write a lastquery timestamp, verify checkIdleStop does NOT stop when within timeout. Write an old timestamp (Date.now() - 6 * 60 * 1000), verify checkIdleStop WOULD trigger stop (mock the actual kill).
-6. **CLI dispatch**: Verify `require.main === module` guard exists (grep test).
+6. **Zombie PID handling**: Test the case where PID file exists, process.kill(pid, 0) succeeds (process alive), but HTTP health check fails. ensureRunning() should clean up the stale PID and spawn a fresh process instead of returning success.
+7. **CLI dispatch**: Verify `require.main === module` guard exists (grep test).
 7. **Fail-open contracts**: Each exported function wrapped in try/catch and returns error object rather than throwing.
 
 Use temp directories (os.tmpdir) for test isolation where PID/binary paths are involved. Override paths via an internal `_setPaths(dir)` test helper if needed, or use environment variable overrides for test isolation.
@@ -245,7 +246,7 @@ Replace with (preserving the surrounding try/catch and fallback structure):
 try {
   const lifecycle = ensureRunning({ port: 8787, indexPath: ROOT });
   if (lifecycle.ok) {
-    const adapter = createAdapter({ enabled: true });
+    const adapter = createAdapter();
     const healthResult = adapter.healthSync();
     if (healthResult.healthy) {
       touchLastQuery();  // Update idle timer
