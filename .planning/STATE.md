@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-04-08)
 Phase: 56 (3 of 4) — Diagnostic Enrichment
 Plan: Not started
 Status: Ready to plan
-Last activity: 2026-04-08 — Phase 055 complete (CREM-01, CREM-02 shipped)
+Last activity: 2026-04-08 — Quick task 385 complete (dynamic slot discovery in nf:mcp-repair)
 
 Progress: [████████████████████] 100/99 plans (101%)
 
@@ -111,3 +111,4 @@ Last activity: 2026-04-08
 - 2026-04-08: Completed quick task 382: Set up coderlm cross-compilation CI
 - 2026-04-08 - Completed quick task 383: Implement coderlm lazy lifecycle management
 | 384 | Fix nf:mcp-repair to call MCP tools directly instead of via sub-agents | 2026-04-08 | 758b4b32 | Pending | [384-fix-nf-mcp-repair-to-call-mcp-tools-dire](.planning/quick/384-fix-nf-mcp-repair-to-call-mcp-tools-dire/) |
+| 385 | Make nf:mcp-repair discover slot names dynamically from ~/.claude.json mcpServers instead of hardcoding them | 2026-04-08 | {commit_hash} | Pending | [385-make-nf-mcp-repair-discover-slot-names-d](./quick/385-make-nf-mcp-repair-discover-slot-names-d/) |
