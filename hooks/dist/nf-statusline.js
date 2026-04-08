@@ -161,6 +161,38 @@ process.stdin.on('end', () => {
       }
     }
 
+    // River ML phase indicator
+    let riverIndicator = '';
+    try {
+      const riverPath = path.join(dir, '.nf-river-state.json');
+      const riverRaw = fs.readFileSync(riverPath, 'utf8');
+      const riverState = JSON.parse(riverRaw);
+      const qTable = riverState && riverState.qTable;
+      if (qTable && typeof qTable === 'object') {
+        const RIVER_MIN_EXPLORE = 20;
+        let hasArms = false;
+        let allAbove = true;
+        for (const taskType of Object.keys(qTable)) {
+          const arms = qTable[taskType];
+          if (arms && typeof arms === 'object') {
+            for (const armName of Object.keys(arms)) {
+              hasArms = true;
+              if ((arms[armName].visits || 0) < RIVER_MIN_EXPLORE) {
+                allAbove = false;
+              }
+            }
+          }
+        }
+        if (hasArms) {
+          riverIndicator = allAbove
+            ? ' \x1b[32mRiver: active\x1b[0m'
+            : ' \x1b[36mRiver: exploring\x1b[0m';
+        }
+      }
+    } catch (_e) {
+      // Fail-silent: no state file or malformed JSON → no indicator
+    }
+
     // nForma update available?
     let gsdUpdate = '';
     const cacheFile = path.join(homeDir, '.claude', 'cache', 'nf-update-check.json');
@@ -176,9 +208,9 @@ process.stdin.on('end', () => {
     // Output
     const dirname = path.basename(dir);
     if (task) {
-      process.stdout.write(`${gsdUpdate}\x1b[2m${model}\x1b[0m │ \x1b[1m${task}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}`);
+      process.stdout.write(`${gsdUpdate}\x1b[2m${model}\x1b[0m │ \x1b[1m${task}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}${riverIndicator}`);
     } else {
-      process.stdout.write(`${gsdUpdate}\x1b[2m${model}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}`);
+      process.stdout.write(`${gsdUpdate}\x1b[2m${model}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}${riverIndicator}`);
     }
   } catch (e) {
     if (e instanceof SyntaxError) {
