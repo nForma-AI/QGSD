@@ -5,29 +5,29 @@
 See: .planning/PROJECT.md (updated 2026-04-07)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement
-**Current focus:** v0.42 Phase 54 — Adapter Foundation
+**Current focus:** v0.42 Phase 55 — Remediation Enrichment
 
 ## Current Position
 
-Phase: 54 (1 of 4) — Adapter Foundation
+Phase: 55 (2 of 4) — Remediation Enrichment
 Plan: 0 of ? in current phase
-Status: Ready to plan
-Last activity: 2026-04-07 — Roadmap created for v0.42
+Status: Phase 54 complete — ready to plan phase 55
+Last activity: 2026-04-08 — Phase 054 adapter-foundation executed (3/3 plans complete)
 
-Progress: [..........] 0%
+Progress: [███.......] 25%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
-- Average duration: -
-- Total execution time: 0 hours
+- Total plans completed: 3
+- Average duration: ~1 session
+- Total execution time: ~0.5 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 54. Adapter Foundation | 0/? | - | - |
+| 54. Adapter Foundation | 3/3 | 0.5h | ~10m |
 | 55. Remediation Enrichment | 0/? | - | - |
 | 56. Diagnostic Enrichment | 0/? | - | - |
 | 57. Accuracy & Safety | 0/? | - | - |
@@ -40,6 +40,9 @@ Progress: [..........] 0%
 - v0.42 scope: work with existing 4 coderlm query methods only (getCallers, getImplementation, findTests, peek)
 - v0.42 scope: in-memory LRU cache only, no persistent disk cache
 - Pre-work: Quick tasks 380-383 established coderlm adapter, graph-driven computeWaves, cross-compilation CI, and lazy lifecycle management
+- Phase 054 decision: /implementation endpoint returns { file, line } only (no callers array); queryEdgesSync falls back to getCallersSync for caller discovery with path.resolve() comparison
+- Phase 054 decision: LAYER_SYMBOL_MAP contains only 4 entries (distinct scripts with named exports); l3_to_tc excluded (no named exports), inline handlers excluded
+- Phase 054 decision: adapter created once per solve run (_solveAdapter) and reused across iterations for accurate session metrics
 
 ### Pending Todos
 
