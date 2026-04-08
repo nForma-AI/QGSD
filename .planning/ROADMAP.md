@@ -31,11 +31,12 @@
   3. `queryEdgesSync()` in nf-solve.cjs resolves symbol-level function call edges via getImplementation instead of file-name string matching -- edges for a changed function connect to its actual callers, not all importers of its module
   4. After remediation modifies or creates files, the coderlm server is re-indexed before the next solve iteration begins, so subsequent queries reflect the current codebase state
   5. Solve session stderr output reports total coderlm query count, cache hit rate percentage, and aggregate query latency -- enabling diagnosis of whether coderlm is helping or adding overhead
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 54-01: TBD
-- [ ] 54-02: TBD
+- [ ] 054-01-PLAN.md — TDD: LRU cache module (bin/coderlm-cache.cjs) with 100-entry capacity, 5min TTL, hit/miss stats, reset
+- [ ] 054-02-PLAN.md — Symbol-precision queryEdgesSync via getImplementation + coderlm reindex after autoClose
+- [ ] 054-03-PLAN.md — Wire LRU cache + session metrics into coderlm-adapter.cjs, emit diagnostics to stderr
 
 ### Phase 55: Remediation Enrichment
 **Goal**: Remediation dispatch produces higher-quality formal specs and test stubs by seeding them with actual code structure and observed test patterns from the codebase
@@ -85,7 +86,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 54. Adapter Foundation | 0/? | Not started | - |
+| 54. Adapter Foundation | 0/3 | Not started | - |
 | 55. Remediation Enrichment | 0/? | Not started | - |
 | 56. Diagnostic Enrichment | 0/? | Not started | - |
 | 57. Accuracy & Safety | 0/? | Not started | - |
