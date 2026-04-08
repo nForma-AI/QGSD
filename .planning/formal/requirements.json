@@ -3,6 +3,8 @@
   "content_hash": "f7bd3e745e920a0fc7132450da00117b13ddd42957f9968394a59ac47aff98d7",
   "aggregated_at": "2026-04-07T09:26:46.147Z",
   "content_hash": "cefeccf5ea531ffe773f702aefba446f114fe38a5da7a8ed3d9ffff7e49f9ca9",
+  "aggregated_at": "2026-04-08T13:25:41.839Z",
+  "content_hash": "701be42d5fb38ca118e3c316b1efd0d71d8ab7e5aff459ec6f6ac69ea1e70362",
   "requirements": [
     {
       "id": "ACT-01",
@@ -2692,6 +2694,18 @@
         ".planning/formal/alloy/mcp-detection.als"
       ],
       "category_raw": "MCP Server Detection"
+    },
+    {
+      "id": "MCP-07",
+      "text": "nf:mcp-repair calls all MCP identity, health_check, and deep_health_check tools directly in the orchestrator, never via Task() sub-agents which lack access to the parent session's MCP servers.",
+      "category": "MCP & Agents",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Sub-agents spawned via the Agent/Task tool do not inherit the parent session's MCP servers, causing all MCP calls inside Task() blocks to silently fail or throw 'tool not found'. The fix ensures nf:mcp-repair issues all 30 MCP tool calls (identity, health_check, and deep_health_check for each of 10 slots) directly in the main orchestrator context where MCP servers are accessible.",
+      "provenance": {
+        "source_file": ".planning/quick/384-fix-nf-mcp-repair-to-call-mcp-tools-dire/384-PLAN.md",
+        "milestone": "quick-384"
+      }
     },
     {
       "id": "MCPENV-01",
@@ -6229,3 +6243,4 @@
   "frozen_at": "2026-04-08T14:28:34.788Z"
 }
   "frozen_at": "2026-04-07T09:26:46.148Z"
+  "frozen_at": "2026-04-08T13:25:41.840Z"
