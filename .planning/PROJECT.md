@@ -10,7 +10,19 @@ Profile: cli
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
-## Current Milestone: None — ready for `/nf:new-milestone`
+## Current Milestone: v0.42 — Deep coderlm Solve Integration
+
+**Goal:** Wire coderlm's call graph queries (getCallers, getImplementation, findTests, peek) into 7 high-value solve layers so the convergence loop makes evidence-based decisions instead of static heuristics — with fail-open fallback everywhere so coderlm remains 100% optional.
+
+**Target features:**
+- Adapter LRU caching to amortize query costs across iterations
+- Wave ordering symbol precision via getImplementation
+- R→F seed files via getCallers/getImplementation for spec generation context
+- F→T test pattern discovery via findTests/peek for realistic stubs
+- Heatmap caller ranking via getCallers frequency
+- Reverse discovery evidence via getCallers for C→R/T→R quorum context
+- Scope scan call-graph layer via getCallers backward walk
+- Incremental filter transitive deps via getCallers for skip-layer safety
 
 ## Shipped: v0.41 — Unified Autoresearch Execution Pipeline (2026-03-25)
 

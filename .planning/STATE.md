@@ -6,9 +6,10 @@ See: .planning/PROJECT.md
 
 ## Position
 
-**Milestone:** v0.41 milestone
-**Current phase:** (determining...)
-**Status:** Resuming
+**Milestone:** v0.42 — Deep coderlm Solve Integration
+**Current phase:** Not started (defining requirements)
+**Status:** Defining requirements
+**Last activity:** 2026-04-08 — Milestone v0.42 started
 
 ## Quick Tasks Completed
 
