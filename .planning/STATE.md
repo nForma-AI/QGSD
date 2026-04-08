@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-04-08)
 Phase: 56 (3 of 4) — Diagnostic Enrichment
 Plan: Not started
 Status: Ready to plan
-Last activity: 2026-04-08 — Quick task 385 complete (dynamic slot discovery in nf:mcp-repair)
+Last activity: 2026-04-08 — Quick task 387 complete (River ML dot-style statusline indicator)
 
 Progress: [████████████████████] 100/99 plans (101%)
 
@@ -113,3 +113,4 @@ Last activity: 2026-04-08
 | 384 | Fix nf:mcp-repair to call MCP tools directly instead of via sub-agents | 2026-04-08 | 758b4b32 | Pending | [384-fix-nf-mcp-repair-to-call-mcp-tools-dire](.planning/quick/384-fix-nf-mcp-repair-to-call-mcp-tools-dire/) |
 | 385 | Make nf:mcp-repair discover slot names dynamically from ~/.claude.json mcpServers instead of hardcoding them | 2026-04-08 | 77b238ed | Verified | [385-make-nf-mcp-repair-discover-slot-names-d](./quick/385-make-nf-mcp-repair-discover-slot-names-d/) |
 | 386 | Add coderlm status indicator to nf-statusline.js | 2026-04-08 | bebd81eb | Verified | [386-add-coderlm-status-indicator-to-nf-statu](./quick/386-add-coderlm-status-indicator-to-nf-statu/) |
+| 387 | Improve River ML statusline indicator to use compact dot-style visual matching coderlm indicator pattern | 2026-04-08 | 380dd967 | Pending | [387-improve-river-ml-statusline-indicator-to](./quick/387-improve-river-ml-statusline-indicator-to/) |
