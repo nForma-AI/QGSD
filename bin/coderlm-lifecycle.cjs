@@ -24,6 +24,7 @@ const BINARY_DIR = path.join(os.homedir(), '.claude', 'nf-bin');
 const BINARY_PATH = path.join(BINARY_DIR, 'coderlm');
 const PID_PATH = path.join(BINARY_DIR, 'coderlm.pid');
 const LASTQUERY_PATH = path.join(BINARY_DIR, 'coderlm.lastquery');
+const STATE_PATH = path.join(BINARY_DIR, 'coderlm.state.json');
 const DEFAULT_PORT = 8787;
 const IDLE_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
 const GITHUB_REPO = 'nForma-AI/coderlm';
@@ -36,6 +37,7 @@ let _binaryDir = BINARY_DIR;
 let _binaryPath = BINARY_PATH;
 let _pidPath = PID_PATH;
 let _lastqueryPath = LASTQUERY_PATH;
+let _statePath = STATE_PATH;
 let _healthUrl = HEALTH_URL;
 
 /**
@@ -48,11 +50,13 @@ function _setPaths(dir) {
     _binaryPath = path.join(dir, 'coderlm');
     _pidPath = path.join(dir, 'coderlm.pid');
     _lastqueryPath = path.join(dir, 'coderlm.lastquery');
+    _statePath = path.join(dir, 'coderlm.state.json');
   } else {
     _binaryDir = BINARY_DIR;
     _binaryPath = BINARY_PATH;
     _pidPath = PID_PATH;
     _lastqueryPath = LASTQUERY_PATH;
+    _statePath = STATE_PATH;
   }
 }
 
@@ -177,6 +181,18 @@ function ensureBinary() {
   }
 }
 
+// ── _writeState ───────────────────────────────────────────────────────────────
+
+/**
+ * Write coderlm.state.json as a secondary state signal. Fail-open.
+ * @param {Object} state - State object to serialize
+ */
+function _writeState(state) {
+  try {
+    fs.writeFileSync(_statePath, JSON.stringify(state));
+  } catch (e) { /* fail-open */ }
+}
+
 // ── ensureRunning ────────────────────────────────────────────────────────────
 
 /**
@@ -215,6 +231,7 @@ function ensureRunning(opts) {
         // Process alive — check health to detect zombie PID
         const health = healthCheckSync(healthUrl, 2000);
         if (health.healthy) {
+          _writeState({ running: true, pid: existingPid, ts: Date.now() });
           return { ok: true, pid: existingPid, source: 'already-running' };
         }
         // Zombie PID: process alive but unhealthy — clean up and respawn
@@ -266,9 +283,11 @@ function ensureRunning(opts) {
     }
 
     if (healthy) {
+      _writeState({ running: true, pid: child.pid, ts: Date.now() });
       return { ok: true, pid: child.pid, source: 'started' };
     }
     // Still ok=true because process was spawned — caller should retry health check
+    _writeState({ running: true, pid: child.pid, ts: Date.now(), warning: 'unhealthy' });
     return { ok: true, pid: child.pid, source: 'started-unhealthy', warning: 'server spawned but health check timed out' };
   } catch (e) {
     return { ok: false, error: 'unexpected', detail: e.message };
@@ -290,6 +309,7 @@ function stop() {
       const pidStr = fs.readFileSync(_pidPath, 'utf8').trim();
       pid = parseInt(pidStr, 10);
     } catch (e) {
+      _writeState({ running: false, pid: null, ts: Date.now() });
       return { ok: true, status: 'not-running' };
     }
 
@@ -297,6 +317,7 @@ function stop() {
       // Invalid PID file — clean up
       try { fs.unlinkSync(_pidPath); } catch (e) { /* ignore */ }
       try { fs.unlinkSync(_lastqueryPath); } catch (e) { /* ignore */ }
+      _writeState({ running: false, pid: null, ts: Date.now() });
       return { ok: true, status: 'not-running' };
     }
 
@@ -308,6 +329,7 @@ function stop() {
         // Process already dead — clean up (LivenessProperty1)
         try { fs.unlinkSync(_pidPath); } catch (e2) { /* ignore */ }
         try { fs.unlinkSync(_lastqueryPath); } catch (e2) { /* ignore */ }
+        _writeState({ running: false, pid: null, ts: Date.now() });
         return { ok: true, status: 'already-dead' };
       }
       throw e;
@@ -336,11 +358,13 @@ function stop() {
     try { fs.unlinkSync(_pidPath); } catch (e) { /* ignore */ }
     try { fs.unlinkSync(_lastqueryPath); } catch (e) { /* ignore */ }
 
+    _writeState({ running: false, pid: null, ts: Date.now() });
     return { ok: true, status: 'stopped' };
   } catch (e) {
     // Even on unexpected error, attempt cleanup (LivenessProperty1)
     try { fs.unlinkSync(_pidPath); } catch (e2) { /* ignore */ }
     try { fs.unlinkSync(_lastqueryPath); } catch (e2) { /* ignore */ }
+    _writeState({ running: false, pid: null, ts: Date.now() });
     return { ok: false, error: e.message };
   }
 }
@@ -572,5 +596,6 @@ module.exports = {
   reindex,
   // Test helpers
   _setPaths,
+  get _statePath() { return _statePath; },
   getPlatformBinaryName,
 };
