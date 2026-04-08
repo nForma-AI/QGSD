@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-04-07T09:24:58.362Z",
-  "content_hash": "535327adb9754ce0",
+  "aggregated_at": "2026-04-07T21:24:39.823Z",
+  "content_hash": "e3837a4c3e69b0e2",
   "requirements": [
     {
       "id": "ACT-01",
@@ -804,6 +804,16 @@
         ".planning/formal/alloy/config-two-layer.als"
       ],
       "category_raw": "Config Extensions"
+    },
+    {
+      "id": "CONF-10",
+      "text": "Projects can set `default_milestone` in `.planning/config.json` to specify the default milestone for quick tasks and phase operations, eliminating the need for STATE.md or ROADMAP.md to be present.",
+      "category": "Configuration",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Quick task 380 (issue #64) implemented support for a `default_milestone` config field that enables milestone workflows in early-stage projects without requiring existing milestone tracking files. The feature accepts multiple formats (v0.9, 0.9, v0.9 Name, v0.9: Name) and prioritizes config.default_milestone over STATE.md/ROADMAP.md when present.",
+      "source_file": ".planning/quick/380-issue-64-make-auto-the-default-for-miles/380-PLAN.md",
+      "milestone": "quick-380"
     },
     {
       "id": "CONST-01",
@@ -6177,5 +6187,5 @@
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
   "last_sync": "2026-03-31T09:45:23.686Z",
-  "frozen_at": "2026-04-07T09:24:58.362Z"
+  "frozen_at": "2026-04-07T21:24:39.823Z"
 }
