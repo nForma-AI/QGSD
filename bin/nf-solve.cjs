@@ -57,7 +57,7 @@ const { measureHypotheses } = require('./hypothesis-measure.cjs')._pure;
 const { loadHypothesisTransitions, computeLayerPriorityWeights } = require('./hypothesis-layer-map.cjs');
 const { computeWaves, computeWavesFromGraph } = require('./solve-wave-dag.cjs');
 const { createAdapter } = require('./coderlm-adapter.cjs');
-const { ensureRunning, touchLastQuery, checkIdleStop } = require('./coderlm-lifecycle.cjs');
+const { ensureRunning, touchLastQuery, checkIdleStop, reindex } = require('./coderlm-lifecycle.cjs');
 
 const TAG = '[nf-solve]';
 let ROOT = process.cwd();
@@ -150,54 +150,102 @@ const LAYER_SCRIPT_MAP = {
 };
 
 /**
+ * Maps layer keys to their primary exported symbol names.
+ * Derived from actual module.exports of each distinct (non-inline) layer script.
+ * Inline handlers (pointing to bin/nf-solve.cjs) are excluded — no distinct symbol to query.
+ * l3_to_tc is excluded — bin/generate-traceability-matrix.cjs exports no named symbols.
+ *
+ * Symbol names verified via: node -e "const m = require('./bin/<script>'); console.log(Object.keys(m))"
+ */
+const LAYER_SYMBOL_MAP = {
+  f_to_t: 'classifyTestStrategy',      // bin/formal-test-sync.cjs primary export
+  git_heatmap: 'computePriority',       // bin/git-heatmap.cjs primary export
+  hazard_model: 'generateHazardModel',  // bin/hazard-model.cjs primary export
+  per_model_gates: 'computeAggregate',  // bin/compute-per-model-gates.cjs primary export
+};
+
+/**
  * Query coderlm for inter-layer dependency edges based on active layer scripts.
+ *
+ * Uses getImplementationSync for symbol-level precision (CDIAG-01): resolves the actual
+ * implementation file for each layer's primary symbol, then queries getCallersSync to get
+ * the callers of that symbol.
+ *
+ * Fallback note: /implementation endpoint returns { file, line } without a callers array.
+ * So we use getImplementationSync to confirm the symbol is resolvable (symbol-level precision
+ * for the target), then getCallersSync(symbol, implementationFile) to get symbol-level callers.
+ * This is more precise than the previous approach (file-basename string matching) because
+ * callers are filtered to the specific function, not all importers of the module.
+ *
+ * Reverse lookup uses path.resolve() comparison (not substring matching) to avoid false
+ * matches on similar filenames (CADP-02 compliance).
+ *
  * @param {Object} adapter - coderlm adapter instance
  * @param {string[]} activeLayerKeys - Array of layer keys with residual > 0
  * @returns {Array<{from: string, to: string}>} Array of discovered edges
  */
 function queryEdgesSync(adapter, activeLayerKeys) {
-  const edges = [];
+  try {
+    const edges = [];
 
-  // Build reverse map: script file -> [layer keys that use it]
-  const scriptToLayers = {};
-  for (const key of activeLayerKeys) {
-    const script = LAYER_SCRIPT_MAP[key];
-    if (!script) continue;
-    if (!scriptToLayers[script]) scriptToLayers[script] = [];
-    scriptToLayers[script].push(key);
-  }
+    // Build reverse map: resolved script path -> [layer keys that use it]
+    const scriptToLayers = {};
+    for (const key of activeLayerKeys) {
+      const script = LAYER_SCRIPT_MAP[key];
+      if (!script) continue;
+      const resolved = path.resolve(script);
+      if (!scriptToLayers[resolved]) scriptToLayers[resolved] = [];
+      scriptToLayers[resolved].push(key);
+    }
 
-  // For each unique script file among active layers, query callers
-  const queriedScripts = new Set();
-  for (const key of activeLayerKeys) {
-    const script = LAYER_SCRIPT_MAP[key];
-    if (!script || queriedScripts.has(script)) continue;
-    queriedScripts.add(script);
+    // For each active layer that has a known primary symbol, query symbol-level callers
+    for (const key of activeLayerKeys) {
+      const symbol = LAYER_SYMBOL_MAP[key];
+      if (!symbol) continue; // inline handler or no known symbol — skip
 
-    // Query coderlm for callers of this script's main export
-    const basename = path.basename(script, '.cjs');
-    const result = adapter.getCallersSync(basename, script);
-    if (result.error || !result.callers) continue;
+      const script = LAYER_SCRIPT_MAP[key];
+      if (!script) continue;
 
-    // Map caller file paths back to layer keys
-    const targetLayers = scriptToLayers[script] || [];
-    for (const callerFile of result.callers) {
-      // Find which active layer this caller belongs to
-      for (const otherKey of activeLayerKeys) {
-        const otherScript = LAYER_SCRIPT_MAP[otherKey];
-        if (otherScript && callerFile.includes(path.basename(otherScript))) {
-          // otherKey's script calls into this script -> edge from otherKey to each target layer
-          for (const target of targetLayers) {
-            if (target !== otherKey) {
-              edges.push({ from: otherKey, to: target });
+      try {
+        // Step 1: Use getImplementationSync to confirm symbol resolves (symbol-level precision)
+        // The response is { file, line } — no callers array (pre-flight verified).
+        const implResult = adapter.getImplementationSync(symbol);
+        // Use implementation file if available, otherwise fall back to the script path
+        const queryFile = (implResult && implResult.file) ? implResult.file : script;
+
+        // Step 2: Use getCallersSync with the resolved symbol + file for caller discovery
+        // This gives symbol-level callers (not all importers of the module)
+        const callersResult = adapter.getCallersSync(symbol, queryFile);
+        if (callersResult.error || !callersResult.callers) continue;
+
+        // Step 3: Map caller files back to layer keys using path.resolve() comparison
+        const targetLayers = scriptToLayers[path.resolve(script)] || [];
+        for (const callerFile of callersResult.callers) {
+          const resolvedCaller = path.resolve(callerFile);
+          for (const otherKey of activeLayerKeys) {
+            const otherScript = LAYER_SCRIPT_MAP[otherKey];
+            if (!otherScript) continue;
+            // Use exact path.resolve() comparison — NOT substring/includes matching
+            if (resolvedCaller === path.resolve(otherScript)) {
+              for (const target of targetLayers) {
+                if (target !== otherKey) {
+                  edges.push({ from: otherKey, to: target });
+                }
+              }
             }
           }
         }
+      } catch (innerErr) {
+        // fail-open per CADP-02: skip this layer's edges on any per-symbol error
+        continue;
       }
     }
-  }
 
-  return edges;
+    return edges;
+  } catch (e) {
+    // fail-open: any top-level exception returns empty edges (CADP-02)
+    return [];
+  }
 }
 
 // ── CLI flags ────────────────────────────────────────────────────────────────
@@ -5941,6 +5989,22 @@ function main() {
       const closeResult = autoClose(residual, oscillatingSet, waveOrder);
       iterations[iterations.length - 1].actions = closeResult.actions_taken;
       iterations[iterations.length - 1].wave_order = waveOrder;
+
+      // CDIAG-04: Re-index coderlm only when autoClose actually modified files.
+      // Guard: actions_taken.length > 0 indicates remediation wrote/changed files.
+      // Fail-open: reindex errors are logged to stderr and never bubble to caller.
+      if (closeResult.actions_taken && closeResult.actions_taken.length > 0) {
+        try {
+          const reindexResult = reindex({ port: 8787 });
+          if (reindexResult.ok) {
+            process.stderr.write(TAG + ' coderlm reindexed after remediation\n');
+          } else {
+            process.stderr.write(TAG + ' coderlm reindex skipped: ' + (reindexResult.error || 'unavailable') + '\n');
+          }
+        } catch (e) {
+          process.stderr.write(TAG + ' coderlm reindex failed (non-fatal): ' + e.message + '\n');
+        }
+      }
 
       checkIdleStop();  // Stop coderlm if idle > 5 min
     } else {
