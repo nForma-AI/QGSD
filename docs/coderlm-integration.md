@@ -336,6 +336,37 @@ If `NF_CODERLM_ENABLED` is not `'true'` (e.g., `'false'`, unset, or any other va
 export NF_CODERLM_ENABLED='true'
 ```
 
+## Binary Distribution
+
+Pre-built coderlm binaries are published to GitHub Releases in the [coderlm repository](https://github.com/nForma-AI/coderlm/releases) via CI. The release workflow cross-compiles for four platforms:
+
+| Binary Asset | Target | Runner |
+|---|---|---|
+| `coderlm-darwin-arm64` | macOS Apple Silicon (aarch64) | macos-latest |
+| `coderlm-darwin-x64` | macOS Intel (x86_64) | macos-13 |
+| `coderlm-linux-x64` | Linux x86_64 | ubuntu-latest |
+| `coderlm-linux-arm64` | Linux ARM64 (aarch64) | ubuntu-latest + cross |
+
+Releases are triggered automatically when a version tag (`v*`) is pushed to the coderlm repo.
+
+To download the binary for your platform:
+
+```bash
+# Determine platform
+OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+ARCH=$(uname -m | sed 's/x86_64/x64/;s/aarch64/arm64/')
+
+# Download latest release
+gh release download --repo nForma-AI/coderlm --pattern "coderlm-${OS}-${ARCH}" --output coderlm
+chmod +x coderlm
+```
+
+Each binary is accompanied by a SHA256 checksum file for integrity verification:
+
+```bash
+sha256sum -c coderlm-darwin-arm64.sha256
+```
+
 ## Future Enhancements
 
 1. **Full graph-driven integration**: Implement `computeWavesFromGraph` call with actual inter-layer edge queries
