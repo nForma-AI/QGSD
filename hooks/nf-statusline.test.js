@@ -242,3 +242,137 @@ test('TC14: 200K session with 15K tokens shows green (below 20K threshold)', () 
   assert.ok(stdout.includes('15K'), 'stdout must include 15K tokens');
   assert.ok(stdout.includes('\x1b[32m'), 'stdout must include green ANSI code');
 });
+
+// --- River ML Phase Indicator Tests ---
+
+// TC15: River exploring — arm with visits below minExplore
+test('TC15: River exploring when arm visits below minExplore', () => {
+  const tempDir = makeTempDir('tc15');
+  const stateFile = path.join(tempDir, '.nf-river-state.json');
+  fs.writeFileSync(stateFile, JSON.stringify({
+    qTable: {
+      implement: {
+        'codex-1': { q: 0.5, visits: 5 },
+        'gemini-1': { q: 0.3, visits: 2 },
+      },
+    },
+  }), 'utf8');
+
+  try {
+    const { stdout, exitCode } = runHook({
+      model: { display_name: 'M' },
+      workspace: { current_dir: tempDir },
+    });
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.ok(stdout.includes('River: exploring'), 'stdout must include "River: exploring"');
+    assert.ok(stdout.includes('\x1b[36m'), 'stdout must include cyan ANSI code');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// TC16: River active — all arms above minExplore
+test('TC16: River active when all arms above minExplore', () => {
+  const tempDir = makeTempDir('tc16');
+  const stateFile = path.join(tempDir, '.nf-river-state.json');
+  fs.writeFileSync(stateFile, JSON.stringify({
+    qTable: {
+      implement: {
+        'codex-1': { q: 0.8, visits: 25 },
+        'gemini-1': { q: 0.6, visits: 30 },
+      },
+    },
+  }), 'utf8');
+
+  try {
+    const { stdout, exitCode } = runHook({
+      model: { display_name: 'M' },
+      workspace: { current_dir: tempDir },
+    });
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.ok(stdout.includes('River: active'), 'stdout must include "River: active"');
+    assert.ok(stdout.includes('\x1b[32m'), 'stdout must include green ANSI code');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// TC17: No state file — no River indicator
+test('TC17: No state file means no River indicator', () => {
+  const tempDir = makeTempDir('tc17');
+
+  try {
+    const { stdout, exitCode } = runHook({
+      model: { display_name: 'M' },
+      workspace: { current_dir: tempDir },
+    });
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.ok(!stdout.includes('River:'), 'stdout must NOT include "River:"');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// TC18: Malformed state file — no River indicator (fail-silent)
+test('TC18: Malformed state file produces no River indicator', () => {
+  const tempDir = makeTempDir('tc18');
+  const stateFile = path.join(tempDir, '.nf-river-state.json');
+  fs.writeFileSync(stateFile, 'not valid json', 'utf8');
+
+  try {
+    const { stdout, exitCode } = runHook({
+      model: { display_name: 'M' },
+      workspace: { current_dir: tempDir },
+    });
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.ok(!stdout.includes('River:'), 'stdout must NOT include "River:"');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// TC19: Mixed task types — one exploring, one active
+test('TC19: Mixed task types shows exploring when any arm below minExplore', () => {
+  const tempDir = makeTempDir('tc19');
+  const stateFile = path.join(tempDir, '.nf-river-state.json');
+  fs.writeFileSync(stateFile, JSON.stringify({
+    qTable: {
+      implement: {
+        'codex-1': { q: 0.8, visits: 25 },
+        'gemini-1': { q: 0.6, visits: 30 },
+      },
+      review: {
+        'codex-1': { q: 0.1, visits: 3 },
+      },
+    },
+  }), 'utf8');
+
+  try {
+    const { stdout, exitCode } = runHook({
+      model: { display_name: 'M' },
+      workspace: { current_dir: tempDir },
+    });
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.ok(stdout.includes('River: exploring'), 'stdout must include "River: exploring"');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// TC20: Empty qTable — no River indicator
+test('TC20: Empty qTable produces no River indicator', () => {
+  const tempDir = makeTempDir('tc20');
+  const stateFile = path.join(tempDir, '.nf-river-state.json');
+  fs.writeFileSync(stateFile, JSON.stringify({ qTable: {} }), 'utf8');
+
+  try {
+    const { stdout, exitCode } = runHook({
+      model: { display_name: 'M' },
+      workspace: { current_dir: tempDir },
+    });
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.ok(!stdout.includes('River:'), 'stdout must NOT include "River:"');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
