@@ -9,9 +9,9 @@ Requirements for deep coderlm integration into the solve loop. Every integration
 
 ### Adapter Infrastructure
 
-- [ ] **CADP-01**: coderlm adapter caches query results in an LRU cache (100 entries, 5min TTL) to amortize costs across solve iterations — cache is cleared at convergence loop start
-- [ ] **CADP-02**: Every coderlm call site in nf-solve.cjs and solve-remediate.md is wrapped in try/catch returning the existing heuristic fallback result, never throwing to callers
-- [ ] **CADP-03**: coderlm query count, cache hit rate, and total query latency are tracked per solve session and reported in stderr diagnostic output
+- [x] **CADP-01**: coderlm adapter caches query results in an LRU cache (100 entries, 5min TTL) to amortize costs across solve iterations — cache is cleared at convergence loop start *(Phase 54)*
+- [x] **CADP-02**: Every coderlm call site in nf-solve.cjs and solve-remediate.md is wrapped in try/catch returning the existing heuristic fallback result, never throwing to callers *(Phase 54)*
+- [x] **CADP-03**: coderlm query count, cache hit rate, and total query latency are tracked per solve session and reported in stderr diagnostic output *(Phase 54)*
 
 ### Remediation Enrichment
 
@@ -22,10 +22,10 @@ Requirements for deep coderlm integration into the solve loop. Every integration
 
 ### Diagnostic & Infrastructure
 
-- [ ] **CDIAG-01**: `queryEdgesSync()` in nf-solve.cjs uses `getImplementation()` for symbol-level edge discovery instead of file-name string matching — edges reflect actual function calls, not module imports
+- [x] **CDIAG-01**: `queryEdgesSync()` in nf-solve.cjs uses `getImplementation()` for symbol-level edge discovery instead of file-name string matching — edges reflect actual function calls, not module imports *(Phase 54)*
 - [ ] **CDIAG-02**: `formal-scope-scan.cjs` includes a Layer 2.5 call-graph discovery step that walks `getCallers()` backward from changed files to find affected formal models
 - [ ] **CDIAG-03**: `solve-incremental-filter.cjs` uses `getCallers()` transitive dependency data to prevent incorrect layer skips — if a changed file is called by a layer script, that layer is not skipped
-- [ ] **CDIAG-04**: coderlm server is re-indexed between solve iterations (after remediation creates/modifies files) so the call graph reflects the current state of the codebase
+- [x] **CDIAG-04**: coderlm server is re-indexed between solve iterations (after remediation creates/modifies files) so the call graph reflects the current state of the codebase *(Phase 54)*
 
 ## Out of Scope
 
@@ -41,17 +41,17 @@ Requirements for deep coderlm integration into the solve loop. Every integration
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CADP-01 | Phase 54 | Pending |
-| CADP-02 | Phase 54 | Pending |
-| CADP-03 | Phase 54 | Pending |
+| CADP-01 | Phase 54 | **Shipped** |
+| CADP-02 | Phase 54 | **Shipped** |
+| CADP-03 | Phase 54 | **Shipped** |
 | CREM-01 | Phase 55 | Pending |
 | CREM-02 | Phase 55 | Pending |
 | CREM-03 | Phase 56 | Pending |
 | CREM-04 | Phase 56 | Pending |
-| CDIAG-01 | Phase 54 | Pending |
+| CDIAG-01 | Phase 54 | **Shipped** |
 | CDIAG-02 | Phase 57 | Pending |
 | CDIAG-03 | Phase 57 | Pending |
-| CDIAG-04 | Phase 54 | Pending |
+| CDIAG-04 | Phase 54 | **Shipped** |
 
 **Coverage:**
 - v0.42 requirements: 11 total
@@ -60,4 +60,4 @@ Requirements for deep coderlm integration into the solve loop. Every integration
 
 ---
 *Requirements defined: 2026-04-08*
-*Last updated: 2026-04-07 after roadmap creation*
+*Last updated: 2026-04-08 after Phase 54 completion*
