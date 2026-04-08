@@ -7,6 +7,8 @@
   "content_hash": "701be42d5fb38ca118e3c316b1efd0d71d8ab7e5aff459ec6f6ac69ea1e70362",
   "aggregated_at": "2026-04-08T17:39:58.342Z",
   "content_hash": "0c2dbdc60da020a0326a02ea75f6e5ea70ecf20300542b62fdaa44e53d78607b",
+  "aggregated_at": "2026-04-08T18:40:18.064Z",
+  "content_hash": "5be4111c79449624465823aa6eb95b62c531375007bb6c18532cf87c95836507",
   "requirements": [
     {
       "id": "ACT-01",
@@ -3119,6 +3121,18 @@
       "formal_models": [
         ".planning/formal/alloy/observability-analysis.als"
       ]
+    },
+    {
+      "id": "OBS-09",
+      "text": "nf-statusline renders a green ● coderlm indicator when the coderlm server process is running, reads PID liveness via process.kill(pid, 0), and renders nothing (fail-open) when the PID file is absent or process is dead.",
+      "category": "Observability & Diagnostics",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Developers need runtime visibility into coderlm server status directly in the Claude statusline. The indicator serves as a quick visual check that the symbol server is available and running without requiring separate commands or manual PID inspection.",
+      "provenance": {
+        "source_file": ".planning/quick/386-add-coderlm-status-indicator-to-nf-statu/386-PLAN.md",
+        "milestone": "quick-386"
+      }
     },
     {
       "id": "ORCH-01",
@@ -6256,6 +6270,7 @@
   "last_sync": "2026-03-31T09:45:23.686Z",
   "frozen_at": "2026-04-08T14:28:34.788Z"
   "frozen_at": "2026-04-08T17:39:58.342Z"
+  "frozen_at": "2026-04-08T18:40:18.064Z"
 }
   "frozen_at": "2026-04-07T09:26:46.148Z"
   "frozen_at": "2026-04-08T13:25:41.840Z"
