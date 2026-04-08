@@ -903,6 +903,28 @@ test('Mode C: buildModeCPrompt with files array includes FILES section', () => {
   assert.ok(prompt.includes('src/session.js'), 'missing second file entry');
 });
 
+// ── Mode C reward recording wiring test ──────────────────────────────────────
+
+test('Mode C dispatch records routing reward after completion: recordRoutingReward is wired', () => {
+  assert.ok(mod, 'module not loaded');
+  // Structural verification: confirm recordRoutingReward is imported in quorum-slot-dispatch.cjs
+  const fs = require('fs');
+  const dispatchSource = fs.readFileSync(path.resolve(__dirname, './quorum-slot-dispatch.cjs'), 'utf8');
+  assert.ok(dispatchSource.includes('recordRoutingReward'),
+    'quorum-slot-dispatch.cjs must import recordRoutingReward');
+  assert.ok(dispatchSource.includes("require(path.join(__dirname, 'coding-task-router.cjs')).recordRoutingReward"),
+    'recordRoutingReward must be imported from coding-task-router.cjs');
+  // Verify the reward recording call site exists in Mode C path
+  assert.ok(dispatchSource.includes('rewardMap'),
+    'quorum-slot-dispatch.cjs must contain rewardMap for status->reward mapping');
+  assert.ok(dispatchSource.includes('SUCCESS: 1.0'),
+    'rewardMap must map SUCCESS to 1.0');
+  assert.ok(dispatchSource.includes('PARTIAL: 0.5'),
+    'rewardMap must map PARTIAL to 0.5');
+  assert.ok(dispatchSource.includes('FAILED: 0.0'),
+    'rewardMap must map FAILED to 0.0');
+});
+
 test('Mode C: buildModeCPrompt delegates to coding-task-router (not re-inlined)', () => {
   assert.ok(mod, 'module not loaded');
   // Verify that buildModeCPrompt produces the same output format as coding-task-router
