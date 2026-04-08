@@ -93,11 +93,14 @@ function httpGet(url, timeout) {
  * @param {string} opts.host - Server URL (default: NF_CODERLM_HOST or http://localhost:8787)
  * @param {number} opts.timeout - Query timeout in ms (default: 5000)
  * @param {number} opts.healthTimeout - Health check timeout in ms (default: 2000)
- * @param {boolean} opts.enabled - Whether adapter is enabled (default: NF_CODERLM_ENABLED === 'true')
+ * @param {boolean} opts.enabled - Whether adapter is enabled (default: true)
  * @returns {Object} Adapter object with health() and query methods
  */
 function createAdapter(opts = {}) {
-  const enabled = opts.enabled !== undefined ? opts.enabled : (process.env.NF_CODERLM_ENABLED === 'true');
+  // Default: enabled=true — lifecycle module manages server availability.
+  // NF_CODERLM_ENABLED env var is no longer required (self-enabling with fail-open).
+  // Pass enabled:false explicitly to disable for testing.
+  const enabled = opts.enabled !== undefined ? opts.enabled : true;
   const host = opts.host || process.env.NF_CODERLM_HOST || DEFAULT_HOST;
   const timeout = opts.timeout !== undefined ? opts.timeout : DEFAULT_TIMEOUT_QUERY;
   const healthTimeout = opts.healthTimeout !== undefined ? opts.healthTimeout : DEFAULT_TIMEOUT_HEALTH;

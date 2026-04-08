@@ -57,6 +57,7 @@ const { measureHypotheses } = require('./hypothesis-measure.cjs')._pure;
 const { loadHypothesisTransitions, computeLayerPriorityWeights } = require('./hypothesis-layer-map.cjs');
 const { computeWaves, computeWavesFromGraph } = require('./solve-wave-dag.cjs');
 const { createAdapter } = require('./coderlm-adapter.cjs');
+const { ensureRunning, touchLastQuery, checkIdleStop } = require('./coderlm-lifecycle.cjs');
 
 const TAG = '[nf-solve]';
 let ROOT = process.cwd();
@@ -5872,13 +5873,15 @@ function main() {
       // HTARGET-01/02: Compute hypothesis-driven wave dispatch order
       let waveOrder = null;
       try {
-        // Try coderlm graph-driven wave computation first (optional, fail-open)
-        if (process.env.NF_CODERLM_ENABLED === 'true') {
-          try {
-            const adapter = createAdapter();
+        // coderlm auto-start lifecycle (replaces NF_CODERLM_ENABLED gate)
+        // Fail-open: if ensureRunning fails, falls through to heuristic waves
+        try {
+          const lifecycle = ensureRunning({ port: 8787, indexPath: ROOT });
+          if (lifecycle.ok) {
+            const adapter = createAdapter({ enabled: true });
             const healthResult = adapter.healthSync();
             if (healthResult.healthy) {
-              // coderlm server is reachable; attempt graph-driven ordering
+              touchLastQuery();  // Update idle timer
               process.stderr.write(TAG + ' coderlm server healthy, attempting graph-driven wave ordering\n');
 
               // Collect active layers (residual > 0)
@@ -5890,8 +5893,6 @@ function main() {
               }
 
               if (activeLayerKeys.length > 0) {
-                // Build dependency graph from active residual layers
-                // Query coderlm for inter-layer dependency edges
                 const discoveredEdges = queryEdgesSync(adapter, activeLayerKeys);
                 process.stderr.write(TAG + ' coderlm discovered ' + discoveredEdges.length + ' inter-layer edge(s)\n');
 
@@ -5900,7 +5901,6 @@ function main() {
                   edges: discoveredEdges
                 };
 
-                // Compute wave ordering using graph-driven variant
                 const transitions = loadHypothesisTransitions(ROOT);
                 const priorityWeights = computeLayerPriorityWeights(transitions);
                 const graphWaves = computeWavesFromGraph(graph, priorityWeights);
@@ -5912,11 +5912,13 @@ function main() {
                 }
               }
             } else {
-              process.stderr.write(TAG + ' coderlm unhealthy (' + healthResult.error + '), falling back to heuristic waves\n');
+              process.stderr.write(TAG + ' coderlm unhealthy after start (' + healthResult.error + '), falling back to heuristic waves\n');
             }
-          } catch (e) {
-            process.stderr.write(TAG + ' WARNING: coderlm integration failed: ' + e.message + ', falling back\n');
+          } else {
+            process.stderr.write(TAG + ' coderlm lifecycle: ' + (lifecycle.error || 'unavailable') + ', falling back to heuristic waves\n');
           }
+        } catch (e) {
+          process.stderr.write(TAG + ' WARNING: coderlm integration failed: ' + e.message + ', falling back\n');
         }
 
         // Fall through to hypothesis-driven wave computation if coderlm path didn't produce a result (always available as fallback)
@@ -5939,6 +5941,8 @@ function main() {
       const closeResult = autoClose(residual, oscillatingSet, waveOrder);
       iterations[iterations.length - 1].actions = closeResult.actions_taken;
       iterations[iterations.length - 1].wave_order = waveOrder;
+
+      checkIdleStop();  // Stop coderlm if idle > 5 min
     } else {
       break; // report-only = single sweep, no loop
     }
