@@ -112,3 +112,4 @@ Last activity: 2026-04-08
 - 2026-04-08 - Completed quick task 383: Implement coderlm lazy lifecycle management
 | 384 | Fix nf:mcp-repair to call MCP tools directly instead of via sub-agents | 2026-04-08 | 758b4b32 | Pending | [384-fix-nf-mcp-repair-to-call-mcp-tools-dire](.planning/quick/384-fix-nf-mcp-repair-to-call-mcp-tools-dire/) |
 | 385 | Make nf:mcp-repair discover slot names dynamically from ~/.claude.json mcpServers instead of hardcoding them | 2026-04-08 | 77b238ed | Verified | [385-make-nf-mcp-repair-discover-slot-names-d](./quick/385-make-nf-mcp-repair-discover-slot-names-d/) |
+| 386 | Add coderlm status indicator to nf-statusline.js | 2026-04-08 | bebd81eb | Pending | [386-add-coderlm-status-indicator-to-nf-statu](./quick/386-add-coderlm-status-indicator-to-nf-statu/) |
