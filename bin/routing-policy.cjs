@@ -464,6 +464,21 @@ function selectSlotWithPolicy(taskType, providers, opts = {}) {
           `[routing-policy] shadow: river recommends ${result.recommendation} for ${taskType} (confidence: ${result.confidence.toFixed(3)})\n`
         );
         shadow = result;
+        // Persist shadow recommendation to state file for statusline consumption
+        try {
+          const riverPolicy = policies.find(p => p instanceof RiverPolicy);
+          if (riverPolicy) {
+            let state = {};
+            try { state = JSON.parse(fs.readFileSync(riverPolicy._statePath, 'utf8')); } catch (_) {}
+            state.lastShadow = {
+              recommendation: result.recommendation,
+              confidence: result.confidence,
+              taskType: taskType,
+              timestamp: new Date().toISOString(),
+            };
+            fs.writeFileSync(riverPolicy._statePath, JSON.stringify(state, null, 2) + '\n', 'utf8');
+          }
+        } catch (_) { /* fail-open */ }
         // Return preset result with shadow info
         return {
           slot: presetResult.recommendation,
@@ -481,6 +496,19 @@ function selectSlotWithPolicy(taskType, providers, opts = {}) {
       };
     }
   }
+
+  // Clear any stale shadow recommendation from state
+  try {
+    const riverPolicy = policies.find(p => p instanceof RiverPolicy);
+    if (riverPolicy) {
+      let state = {};
+      try { state = JSON.parse(fs.readFileSync(riverPolicy._statePath, 'utf8')); } catch (_) {}
+      if (state.lastShadow) {
+        delete state.lastShadow;
+        fs.writeFileSync(riverPolicy._statePath, JSON.stringify(state, null, 2) + '\n', 'utf8');
+      }
+    }
+  } catch (_) { /* fail-open */ }
 
   // Default: preset wins
   return {

@@ -594,3 +594,120 @@ test('selectSlotWithPolicy with shadowMode:false promotes River when gate passes
     cleanUp(rewardsPath, statePath);
   }
 });
+
+// ── E2E Learning Loop Tests ────────────────────────────────────────────────
+
+test('E2E learning loop: rewards -> Q-table update -> routing preference shift -> shadow recommendation', () => {
+  assert.ok(mod);
+  const rewardsPath = tmpPath('e2e-loop.jsonl');
+  const statePath = tmpPath('e2e-loop-state.json');
+  try {
+    // Step 1-2: Record 25 high rewards for gemini-1 and 25 low rewards for codex-1
+    const recorder = new mod.RewardRecorder({ rewardsPath });
+    for (let i = 0; i < 25; i++) {
+      recorder.record({ taskType: 'implement', slot: 'gemini-1', reward: 0.95 });
+      recorder.record({ taskType: 'implement', slot: 'codex-1', reward: 0.4 });
+    }
+
+    // Step 3: Create RiverPolicy with test config
+    const riverPolicy = new mod.RiverPolicy({
+      rewardsPath,
+      statePath,
+      config: { minSamples: 10, minExplore: 1, epsilon: 0, rewardMargin: 0.15, stabilityWindow: 5, cooldownMs: 0, shadowMode: true },
+    });
+
+    // Step 4: Call selectSlotWithPolicy in shadow mode
+    const result = mod.selectSlotWithPolicy('implement', PROVIDERS, {
+      shadowMode: true,
+      policies: [new mod.PresetPolicy(), riverPolicy],
+    });
+
+    // Step 5: Assert shadow mode behavior
+    assert.strictEqual(result.slot, 'codex-1', 'preset wins in shadow mode');
+    assert.strictEqual(result.tier, 0, 'tier should be 0 (preset)');
+    assert.ok(result.shadow !== null, 'shadow result should exist');
+    assert.strictEqual(result.shadow.recommendation, 'gemini-1', 'River prefers gemini-1 due to higher rewards');
+    assert.ok(result.shadow.confidence > 0, 'shadow confidence should be positive');
+
+    // Step 6: Read state file and verify Q-table and lastShadow
+    const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
+    assert.ok(state.qTable.implement['gemini-1'].q > state.qTable.implement['codex-1'].q,
+      `Q(gemini-1)=${state.qTable.implement['gemini-1'].q} should be > Q(codex-1)=${state.qTable.implement['codex-1'].q}`);
+    assert.strictEqual(state.qTable.implement['gemini-1'].visits, 25);
+    assert.ok(state.lastShadow, 'state should contain lastShadow');
+    assert.strictEqual(state.lastShadow.recommendation, 'gemini-1');
+    assert.ok(state.lastShadow.confidence > 0, 'lastShadow confidence should be positive');
+
+    // Step 7: Record 30 MORE rewards with reversed quality
+    for (let i = 0; i < 30; i++) {
+      recorder.record({ taskType: 'implement', slot: 'codex-1', reward: 1.0 });
+      recorder.record({ taskType: 'implement', slot: 'gemini-1', reward: 0.1 });
+    }
+
+    // Step 8: Call selectSlotWithPolicy again with fresh RiverPolicy
+    const riverPolicy2 = new mod.RiverPolicy({
+      rewardsPath,
+      statePath,
+      config: { minSamples: 10, minExplore: 1, epsilon: 0, rewardMargin: 0.15, stabilityWindow: 5, cooldownMs: 0, shadowMode: true },
+    });
+    const result2 = mod.selectSlotWithPolicy('implement', PROVIDERS, {
+      shadowMode: true,
+      policies: [new mod.PresetPolicy(), riverPolicy2],
+    });
+
+    // Step 9: Verify preference shifted
+    const state2 = JSON.parse(fs.readFileSync(statePath, 'utf8'));
+    assert.ok(state2.qTable.implement['codex-1'].q > state2.qTable.implement['gemini-1'].q,
+      `After shift: Q(codex-1)=${state2.qTable.implement['codex-1'].q} should be > Q(gemini-1)=${state2.qTable.implement['gemini-1'].q}`);
+
+    // codex-1 is both the preset winner AND the River recommendation now.
+    // River recommends codex-1, but codex-1 is already the preset winner (first eligible subprocess).
+    // Due to incumbent bias, when River's best (codex-1) IS the incumbent, the margin check
+    // against itself is 0 which is < rewardMargin, so River returns null recommendation.
+    // This means shadow will be null (no shadow needed when River agrees with preset).
+    // Either shadow is null OR shadow.recommendation is codex-1 — both are valid.
+    if (result2.shadow) {
+      assert.strictEqual(result2.shadow.recommendation, 'codex-1',
+        'If shadow exists, River should now prefer codex-1');
+    }
+    // result2.slot is always codex-1 (preset winner)
+    assert.strictEqual(result2.slot, 'codex-1', 'preset still wins in shadow mode');
+  } finally {
+    cleanUp(rewardsPath, statePath);
+  }
+});
+
+test('selectSlotWithPolicy clears lastShadow when River has no recommendation', () => {
+  assert.ok(mod);
+  const rewardsPath = tmpPath('clear-shadow.jsonl');
+  const statePath = tmpPath('clear-shadow-state.json');
+  try {
+    // Step 1-2: Write state file with stale lastShadow, no rewards
+    fs.writeFileSync(statePath, JSON.stringify({
+      qTable: {},
+      lastShadow: {
+        recommendation: 'gemini-1',
+        confidence: 0.9,
+        taskType: 'implement',
+        timestamp: new Date().toISOString(),
+      },
+    }, null, 2) + '\n', 'utf8');
+
+    // Step 3: Call selectSlotWithPolicy with RiverPolicy that has no reward data
+    const riverPolicy = new mod.RiverPolicy({
+      rewardsPath,
+      statePath,
+      config: { minSamples: 10, minExplore: 1, epsilon: 0 },
+    });
+    mod.selectSlotWithPolicy('implement', PROVIDERS, {
+      shadowMode: true,
+      policies: [new mod.PresetPolicy(), riverPolicy],
+    });
+
+    // Step 4: Read state file and assert lastShadow is cleared
+    const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
+    assert.strictEqual(state.lastShadow, undefined, 'stale lastShadow should be cleared');
+  } finally {
+    cleanUp(rewardsPath, statePath);
+  }
+});
