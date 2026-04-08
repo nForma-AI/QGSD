@@ -209,12 +209,27 @@ process.stdin.on('end', () => {
       } catch (e) {}
     }
 
+    // coderlm server status indicator
+    let coderlmIndicator = '';
+    try {
+      const pidFile = path.join(homeDir, '.claude', 'nf-bin', 'coderlm.pid');
+      const pidStr = fs.readFileSync(pidFile, 'utf8').trim();
+      const pid = parseInt(pidStr, 10);
+      if (!isNaN(pid)) {
+        process.kill(pid, 0); // throws ESRCH if dead
+        coderlmIndicator = '\x1b[32m● coderlm\x1b[0m';
+      }
+    } catch (e) {
+      coderlmIndicator = '';
+    }
+    const coderlmPart = coderlmIndicator ? coderlmIndicator + ' │ ' : '';
+
     // Output
     const dirname = path.basename(dir);
     if (task) {
-      process.stdout.write(`${gsdUpdate}\x1b[2m${model}\x1b[0m │ \x1b[1m${task}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}${riverIndicator}`);
+      process.stdout.write(`${gsdUpdate}${coderlmPart}\x1b[2m${model}\x1b[0m │ \x1b[1m${task}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}${riverIndicator}`);
     } else {
-      process.stdout.write(`${gsdUpdate}\x1b[2m${model}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}${riverIndicator}`);
+      process.stdout.write(`${gsdUpdate}${coderlmPart}\x1b[2m${model}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}${riverIndicator}`);
     }
   } catch (e) {
     if (e instanceof SyntaxError) {
