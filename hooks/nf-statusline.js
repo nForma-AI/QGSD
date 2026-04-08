@@ -185,12 +185,12 @@ process.stdin.on('end', () => {
         }
         if (hasArms) {
           riverIndicator = allAbove
-            ? ' \x1b[32mRiver: active\x1b[0m'
-            : ' \x1b[36mRiver: exploring\x1b[0m';
+            ? ' \x1b[32m● River\x1b[0m'
+            : ' \x1b[36m● River\x1b[0m';
         }
         // Shadow recommendation takes visual priority when present
         if (riverState.lastShadow && typeof riverState.lastShadow.recommendation === 'string' && riverState.lastShadow.recommendation) {
-          riverIndicator = ` \x1b[33mRiver: ${riverState.lastShadow.recommendation} (shadow)\x1b[0m`;
+          riverIndicator = ` \x1b[33m● River: ${riverState.lastShadow.recommendation}\x1b[0m`;
         }
       }
     } catch (_e) {

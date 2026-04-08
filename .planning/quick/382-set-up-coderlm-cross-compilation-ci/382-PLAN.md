@@ -6,6 +6,8 @@ wave: 1
 depends_on: []
 files_modified:
   - .planning/quick/382-set-up-coderlm-cross-compilation-ci/coderlm-ci-release.yml
+  - .planning/quick/382-set-up-coderlm-cross-compilation-ci/DEPLOY-INSTRUCTIONS.md
+  - docs/coderlm-integration.md
 autonomous: true
 formal_artifacts: none
 requirements: [INTENT-01]

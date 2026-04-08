@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-07T19:14:13.391Z",
+    "generated_at": "2026-04-08T08:08:46.391Z",
     "generator_version": "1.1",
     "data_sources": {
       "annotations": {
@@ -12,7 +12,7 @@
         "used_as_fallback": 6
       },
       "check_results": {
-        "entry_count": 238
+        "entry_count": 245
       },
       "unit_test_coverage": {
         "available": true,
@@ -11923,42 +11923,42 @@
           "model_file": ".planning/formal/tla/NFAccountManager.tla",
           "property_name": "TypeOK",
           "source": "annotation",
-          "latest_result": "error",
+          "latest_result": "pass",
           "check_id": "prism:oauth-rotation"
         },
         {
           "model_file": ".planning/formal/prism/oauth-rotation.props",
           "property_name": "P=? [ F s=1 ]",
           "source": "annotation",
-          "latest_result": "error",
+          "latest_result": "pass",
           "check_id": "prism:oauth-rotation"
         },
         {
           "model_file": ".planning/formal/prism/oauth-rotation.props",
           "property_name": "P=? [ F s=0 ]",
           "source": "annotation",
-          "latest_result": "error",
+          "latest_result": "pass",
           "check_id": "prism:oauth-rotation"
         },
         {
           "model_file": ".planning/formal/prism/oauth-rotation.props",
           "property_name": "R{\"rotations\"}=? [ F s<=1 ]",
           "source": "annotation",
-          "latest_result": "error",
+          "latest_result": "pass",
           "check_id": "prism:oauth-rotation"
         },
         {
           "model_file": ".planning/formal/petri/account-manager-petri-net.dot",
           "property_name": "(model-level)",
           "source": "model-registry",
-          "latest_result": "error",
+          "latest_result": "pass",
           "check_id": "prism:oauth-rotation"
         },
         {
           "model_file": ".planning/formal/prism/oauth-rotation.pm",
           "property_name": "(model-level)",
           "source": "model-registry",
-          "latest_result": "error",
+          "latest_result": "pass",
           "check_id": "prism:oauth-rotation"
         }
       ],
@@ -11986,7 +11986,7 @@
           "model_file": ".planning/formal/petri/account-manager-petri-net.dot",
           "property_name": "(model-level)",
           "source": "model-registry",
-          "latest_result": "error",
+          "latest_result": "pass",
           "check_id": "prism:oauth-rotation"
         }
       ],
@@ -12614,21 +12614,21 @@
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "DeliberationBounded",
           "source": "annotation",
-          "latest_result": "error",
+          "latest_result": "pass",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "DeliberationBounded",
           "source": "annotation",
-          "latest_result": "error",
+          "latest_result": "pass",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/prism/quorum.props",
           "property_name": "P=? [ F<=9 s=1 ]",
           "source": "annotation",
-          "latest_result": "error",
+          "latest_result": "pass",
           "check_id": "prism:quorum"
         }
       ],
@@ -12649,21 +12649,21 @@
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "EventualConsensus",
           "source": "annotation",
-          "latest_result": "error",
+          "latest_result": "pass",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "EventualConsensus",
           "source": "annotation",
-          "latest_result": "error",
+          "latest_result": "pass",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/prism/quorum.props",
           "property_name": "P=? [ F s=1 ]",
           "source": "annotation",
-          "latest_result": "error",
+          "latest_result": "pass",
           "check_id": "prism:quorum"
         }
       ]
@@ -12675,14 +12675,14 @@
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "EventualConsensus",
           "source": "annotation",
-          "latest_result": "error",
+          "latest_result": "pass",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "EventualConsensus",
           "source": "annotation",
-          "latest_result": "error",
+          "latest_result": "pass",
           "check_id": "prism:quorum"
         }
       ],
@@ -13448,7 +13448,7 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "AllChecksEventuallyRun",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "inconclusive",
           "check_id": "ci:liveness-fairness-lint"
         }
       ],
@@ -13469,8 +13469,8 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteRedaction",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "ci:trace-redaction"
         }
       ],
       "unit_test_coverage": {
@@ -13490,14 +13490,14 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteRedaction",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "ci:trace-redaction"
         },
         {
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "AllChecksEventuallyRun",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "inconclusive",
           "check_id": "ci:liveness-fairness-lint"
         }
       ],
@@ -13518,8 +13518,8 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteRedaction",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "ci:trace-redaction"
         },
         {
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
@@ -13546,14 +13546,14 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteLiveness",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "inconclusive",
           "check_id": "ci:liveness-fairness-lint"
         },
         {
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "LivenessNeverFail",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "inconclusive",
           "check_id": "ci:liveness-fairness-lint"
         }
       ],
@@ -13574,14 +13574,14 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteLiveness",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "inconclusive",
           "check_id": "ci:liveness-fairness-lint"
         },
         {
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "AllChecksEventuallyRun",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "inconclusive",
           "check_id": "ci:liveness-fairness-lint"
         }
       ],
@@ -18826,29 +18826,29 @@
           "model_file": ".planning/formal/prism/mcp-availability.props",
           "property_name": "S=? [ \"min_quorum_available\" ]",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "prism:mcp-availability"
         },
         {
           "model_file": ".planning/formal/prism/mcp-availability.props",
           "property_name": "S=? [ \"total_outage\" ]",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "prism:mcp-availability"
         },
         {
           "model_file": ".planning/formal/prism/mcp-availability.props",
           "property_name": "S=? [ \"majority_available\" ]",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "prism:mcp-availability"
         },
         {
           "model_file": ".planning/formal/prism/mcp-availability.pm",
           "property_name": "(model-level)",
           "source": "model-registry",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "prism:mcp-availability"
         }
       ],
       "unit_test_coverage": {
@@ -18868,15 +18868,15 @@
           "model_file": ".planning/formal/prism/mcp-availability.props",
           "property_name": "S=? [ \"total_outage\" ]",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "prism:mcp-availability"
         },
         {
           "model_file": ".planning/formal/prism/mcp-availability.pm",
           "property_name": "(model-level)",
           "source": "model-registry",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "prism:mcp-availability"
         }
       ],
       "unit_test_coverage": {
@@ -19022,28 +19022,28 @@
           "model_file": ".planning/formal/prism/quorum.props",
           "property_name": "P=? [ F s=1 ]",
           "source": "annotation",
-          "latest_result": "error",
+          "latest_result": "pass",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/prism/quorum.props",
           "property_name": "R{\"rounds\"}=? [ F s=1 ]",
           "source": "annotation",
-          "latest_result": "error",
+          "latest_result": "pass",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/prism/quorum.props",
           "property_name": "P=? [ F<=9 s=1 ]",
           "source": "annotation",
-          "latest_result": "error",
+          "latest_result": "pass",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/prism/quorum.props",
           "property_name": "P=? [ F<=10 s=1 ]",
           "source": "annotation",
-          "latest_result": "error",
+          "latest_result": "pass",
           "check_id": "prism:quorum"
         }
       ]
@@ -28014,7 +28014,7 @@
         "CRED-01"
       ],
       "source": "annotation",
-      "latest_result": "error",
+      "latest_result": "pass",
       "check_id": "prism:oauth-rotation"
     },
     ".planning/formal/tla/NFAccountManager.tla::ActiveIsPoolMember": {
@@ -28459,7 +28459,7 @@
         "LOOP-01"
       ],
       "source": "annotation",
-      "latest_result": "error",
+      "latest_result": "pass",
       "check_id": "prism:quorum"
     },
     ".planning/formal/tla/NFQuorum.tla::DeliberationMonotone": {
@@ -28480,7 +28480,7 @@
         "RECV-01"
       ],
       "source": "annotation",
-      "latest_result": "error",
+      "latest_result": "pass",
       "check_id": "prism:quorum"
     },
     ".planning/formal/tla/NFQuorum_xstate.tla::TypeOK": {
@@ -29193,8 +29193,8 @@
         "REDACT-03"
       ],
       "source": "annotation",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "ci:trace-redaction"
     },
     ".planning/formal/tla/QGSDCIChecks.tla::CompleteLiveness": {
       "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
@@ -29204,7 +29204,7 @@
         "LIVE-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "inconclusive",
       "check_id": "ci:liveness-fairness-lint"
     },
     ".planning/formal/tla/QGSDCIChecks.tla::RedactionNeverInconclusive": {
@@ -29224,7 +29224,7 @@
         "LIVE-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "inconclusive",
       "check_id": "ci:liveness-fairness-lint"
     },
     ".planning/formal/tla/QGSDCIChecks.tla::AllChecksEventuallyRun": {
@@ -29236,7 +29236,7 @@
         "LIVE-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "inconclusive",
       "check_id": "ci:liveness-fairness-lint"
     },
     ".planning/formal/tla/QGSDCheckpointGate.tla::TypeOK": {
@@ -29911,7 +29911,7 @@
         "LOOP-01"
       ],
       "source": "annotation",
-      "latest_result": "error",
+      "latest_result": "pass",
       "check_id": "prism:quorum"
     },
     ".planning/formal/tla/QGSDQuorum.tla::DeliberationMonotone": {
@@ -29932,7 +29932,7 @@
         "RECV-01"
       ],
       "source": "annotation",
-      "latest_result": "error",
+      "latest_result": "pass",
       "check_id": "prism:quorum"
     },
     ".planning/formal/tla/QGSDQuorum_xstate.tla::TypeOK": {
@@ -32963,8 +32963,8 @@
         "MCPENV-04"
       ],
       "source": "annotation",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "prism:mcp-availability"
     },
     ".planning/formal/prism/mcp-availability.props::S=? [ \"total_outage\" ]": {
       "model_file": ".planning/formal/prism/mcp-availability.props",
@@ -32974,8 +32974,8 @@
         "FAIL-01"
       ],
       "source": "annotation",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "prism:mcp-availability"
     },
     ".planning/formal/prism/mcp-availability.props::S=? [ \"majority_available\" ]": {
       "model_file": ".planning/formal/prism/mcp-availability.props",
@@ -32984,8 +32984,8 @@
         "MCPENV-04"
       ],
       "source": "annotation",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "prism:mcp-availability"
     },
     ".planning/formal/prism/oauth-rotation.props::P=? [ F s=1 ]": {
       "model_file": ".planning/formal/prism/oauth-rotation.props",
@@ -32994,7 +32994,7 @@
         "CRED-01"
       ],
       "source": "annotation",
-      "latest_result": "error",
+      "latest_result": "pass",
       "check_id": "prism:oauth-rotation"
     },
     ".planning/formal/prism/oauth-rotation.props::P=? [ F s=0 ]": {
@@ -33004,7 +33004,7 @@
         "CRED-01"
       ],
       "source": "annotation",
-      "latest_result": "error",
+      "latest_result": "pass",
       "check_id": "prism:oauth-rotation"
     },
     ".planning/formal/prism/oauth-rotation.props::R{\"rotations\"}=? [ F s<=1 ]": {
@@ -33014,7 +33014,7 @@
         "CRED-01"
       ],
       "source": "annotation",
-      "latest_result": "error",
+      "latest_result": "pass",
       "check_id": "prism:oauth-rotation"
     },
     ".planning/formal/prism/observability-delivery.props::S=? [ \"full_delivery\" ]": {
@@ -33076,7 +33076,7 @@
         "QUORUM-04"
       ],
       "source": "annotation",
-      "latest_result": "error",
+      "latest_result": "pass",
       "check_id": "prism:quorum"
     },
     ".planning/formal/prism/quorum.props::R{\"rounds\"}=? [ F s=1 ]": {
@@ -33086,7 +33086,7 @@
         "PRM-01"
       ],
       "source": "annotation",
-      "latest_result": "error",
+      "latest_result": "pass",
       "check_id": "prism:quorum"
     },
     ".planning/formal/prism/quorum.props::P=? [ F<=9 s=1 ]": {
@@ -33097,7 +33097,7 @@
         "LOOP-01"
       ],
       "source": "annotation",
-      "latest_result": "error",
+      "latest_result": "pass",
       "check_id": "prism:quorum"
     },
     ".planning/formal/prism/quorum.props::P=? [ F<=10 s=1 ]": {
@@ -33107,7 +33107,7 @@
         "PRM-01"
       ],
       "source": "annotation",
-      "latest_result": "error",
+      "latest_result": "pass",
       "check_id": "prism:quorum"
     },
     ".planning/formal/petri/account-manager-petri-net.dot::(model-level)": {
@@ -33118,7 +33118,7 @@
         "CRED-02"
       ],
       "source": "model-registry",
-      "latest_result": "error",
+      "latest_result": "pass",
       "check_id": "prism:oauth-rotation"
     },
     ".planning/formal/petri/quorum-petri-net.dot::(model-level)": {
@@ -33151,8 +33151,8 @@
         "FAIL-01"
       ],
       "source": "model-registry",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "prism:mcp-availability"
     },
     ".planning/formal/prism/oauth-rotation.pm::(model-level)": {
       "model_file": ".planning/formal/prism/oauth-rotation.pm",
@@ -33161,7 +33161,7 @@
         "CRED-01"
       ],
       "source": "model-registry",
-      "latest_result": "error",
+      "latest_result": "pass",
       "check_id": "prism:oauth-rotation"
     },
     ".planning/formal/prism/observability-delivery.pm::(model-level)": {
@@ -36992,8 +36992,8 @@
   },
   "coverage_preservation": {
     "baseline_found": true,
-    "baseline_date": "2026-04-07T18:44:19.758Z",
-    "requirements_checked": 569,
+    "baseline_date": "2026-04-08T07:12:42.980Z",
+    "requirements_checked": 574,
     "regressions": [],
     "summary": {
       "total_regressions": 0,

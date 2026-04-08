@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-07T19:04:05.858Z",
+  "generated_at": "2026-04-08T12:13:56.596Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -214,6 +214,15 @@
         {
           "test_file": ".planning/formal/generated-stubs/BML-01.stub.test.js",
           "test_name": "BML-01 — TypeOK: behavioral verification"
+        }
+      ]
+    },
+    "BML-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/BML-02.stub.test.js",
+          "test_name": "BML-02: MaxThreeCheckers — default cap is 3 (maxModels=undefined)"
         }
       ]
     },
@@ -2595,6 +2604,33 @@
         }
       ]
     },
+    "ROUTE-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/ROUTE-02.stub.test.js",
+          "test_name": "ROUTE-02: BugFixRoutesToDebug — scope-contract files with bug_fix type have routed_through_debug field"
+        }
+      ]
+    },
+    "ROUTE-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/ROUTE-03.stub.test.js",
+          "test_name": "ROUTE-03: NonBugRoutesToNormal — feature/refactor tasks have routed_through_debug=false"
+        }
+      ]
+    },
+    "ROUTE-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/ROUTE-04.stub.test.js",
+          "test_name": "ROUTE-04: StoredBeforeRouting — scope-contract.json files exist on disk (storage occurred)"
+        }
+      ]
+    },
     "RSN-01": {
       "covered": true,
       "test_cases": [
@@ -3926,22 +3962,6 @@
           "test_name": "XPLAT-02 — Bool: structural verification"
         }
       ]
-    },
-    "BML-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ROUTE-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ROUTE-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ROUTE-04": {
-      "covered": false,
-      "test_cases": []
     },
     "DBG-01": {
       "covered": false,
