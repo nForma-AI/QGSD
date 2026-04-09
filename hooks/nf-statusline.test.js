@@ -297,8 +297,8 @@ test('TC16: River active when all arms above minExplore', () => {
   }
 });
 
-// TC17: No state file — no River indicator
-test('TC17: No state file means no River indicator', () => {
+// TC17: No state file — idle River indicator (tools line shows dim · River)
+test('TC17: No state file shows idle River (no active indicator form)', () => {
   const tempDir = makeTempDir('tc17');
 
   try {
@@ -307,14 +307,15 @@ test('TC17: No state file means no River indicator', () => {
       workspace: { current_dir: tempDir },
     });
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    // stdout must NOT include 'River:' shadow form — tools line shows dim · River not ● River
     assert.ok(!stdout.includes('River:'), 'stdout must NOT include "River:"');
   } finally {
     fs.rmSync(tempDir, { recursive: true, force: true });
   }
 });
 
-// TC18: Malformed state file — no River indicator (fail-silent)
-test('TC18: Malformed state file produces no River indicator', () => {
+// TC18: Malformed state file — idle River indicator (fail-open fallback)
+test('TC18: Malformed state file shows idle River (fail-open fallback)', () => {
   const tempDir = makeTempDir('tc18');
   const stateFile = path.join(tempDir, '.nf-river-state.json');
   fs.writeFileSync(stateFile, 'not valid json', 'utf8');
@@ -326,6 +327,7 @@ test('TC18: Malformed state file produces no River indicator', () => {
     });
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
     assert.ok(!stdout.includes('River:'), 'stdout must NOT include "River:"');
+    assert.ok(stdout.includes('River'), 'stdout must include River as fail-open fallback');
   } finally {
     fs.rmSync(tempDir, { recursive: true, force: true });
   }
@@ -459,6 +461,89 @@ test('TC23: Shadow with null recommendation falls back to normal indicator', () 
     assert.ok(stdout.includes('● River'),
       'stdout must include "● River" (not shadow)');
     assert.ok(!stdout.includes('shadow'), 'stdout must NOT include "shadow"');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// --- Tools Status Second Line Tests ---
+
+// TC24: coderlm binary absent → no coderlm in tools line
+test('TC24: coderlm binary absent means coderlm omitted from tools line', () => {
+  const tempHome = makeTempDir('tc24');
+  const tempDir = makeTempDir('tc24-dir');
+  // Do NOT create ~/.claude/nf-bin/coderlm — binary absent
+  try {
+    const { stdout, exitCode } = runHook(
+      { model: { display_name: 'M' }, workspace: { current_dir: tempDir } },
+      { HOME: tempHome }
+    );
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.ok(!stdout.includes('coderlm'), 'stdout must NOT include coderlm when binary absent');
+    assert.ok(stdout.includes('River'), 'stdout must include River (always shown)');
+  } finally {
+    fs.rmSync(tempHome, { recursive: true, force: true });
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// TC25: coderlm binary present but no PID file → dim · coderlm
+test('TC25: coderlm binary present but no PID → dim indicator', () => {
+  const tempHome = makeTempDir('tc25');
+  const tempDir = makeTempDir('tc25-dir');
+  const binDir = path.join(tempHome, '.claude', 'nf-bin');
+  fs.mkdirSync(binDir, { recursive: true });
+  fs.writeFileSync(path.join(binDir, 'coderlm'), '#!/bin/sh\n', 'utf8');
+  // No .pid file → not alive
+  try {
+    const { stdout, exitCode } = runHook(
+      { model: { display_name: 'M' }, workspace: { current_dir: tempDir } },
+      { HOME: tempHome }
+    );
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.ok(stdout.includes('coderlm'), 'stdout must include coderlm when binary present');
+    assert.ok(stdout.includes('\x1b[2m· coderlm\x1b[0m'), 'stdout must include dim coderlm indicator');
+  } finally {
+    fs.rmSync(tempHome, { recursive: true, force: true });
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// TC27: coderlm binary present AND PID alive → bright green ● coderlm
+test('TC27: coderlm binary present with alive PID shows green active indicator', () => {
+  const tempHome = makeTempDir('tc27');
+  const tempDir = makeTempDir('tc27-dir');
+  const binDir = path.join(tempHome, '.claude', 'nf-bin');
+  fs.mkdirSync(binDir, { recursive: true });
+  fs.writeFileSync(path.join(binDir, 'coderlm'), '#!/bin/sh\n', 'utf8');
+  // Use current process PID — guaranteed alive
+  fs.writeFileSync(path.join(binDir, 'coderlm.pid'), String(process.pid), 'utf8');
+  try {
+    const { stdout, exitCode } = runHook(
+      { model: { display_name: 'M' }, workspace: { current_dir: tempDir } },
+      { HOME: tempHome }
+    );
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.ok(stdout.includes('\x1b[32m● coderlm\x1b[0m'), 'stdout must include green active coderlm indicator');
+  } finally {
+    fs.rmSync(tempHome, { recursive: true, force: true });
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// TC26: embed package present → dim · embed in tools line
+test('TC26: embed package present shows dim embed indicator', () => {
+  const tempDir = makeTempDir('tc26');
+  const pkgDir = path.join(tempDir, 'node_modules', '@huggingface', 'transformers');
+  fs.mkdirSync(pkgDir, { recursive: true });
+  try {
+    const { stdout, exitCode } = runHook({
+      model: { display_name: 'M' },
+      workspace: { current_dir: tempDir },
+    });
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.ok(stdout.includes('embed'), 'stdout must include embed indicator when package present');
+    assert.ok(stdout.includes('\x1b[2m· embed\x1b[0m'), 'stdout must include dim embed indicator');
   } finally {
     fs.rmSync(tempDir, { recursive: true, force: true });
   }

@@ -29,6 +29,84 @@ function detectContextSize(data) {
   return null;
 }
 
+function buildToolsLine(homeDir, dir) {
+  const parts = [];
+
+  // 1. coderlm indicator
+  try {
+    const coderlmBin = path.join(homeDir, '.claude', 'nf-bin', 'coderlm');
+    if (fs.existsSync(coderlmBin)) {
+      // Binary present — check if PID is alive
+      let alive = false;
+      try {
+        const pidFile = path.join(homeDir, '.claude', 'nf-bin', 'coderlm.pid');
+        const pidStr = fs.readFileSync(pidFile, 'utf8').trim();
+        const pid = parseInt(pidStr, 10);
+        if (!isNaN(pid)) {
+          process.kill(pid, 0); // throws ESRCH if dead
+          alive = true;
+        }
+      } catch (_e) {}
+      parts.push(alive
+        ? '\x1b[32m● coderlm\x1b[0m'
+        : '\x1b[2m· coderlm\x1b[0m');
+    }
+    // Binary missing → omit entirely
+  } catch (_e) {}
+
+  // 2. River indicator — always shown (built-in capability, not an external binary)
+  // Absence of state file = idle (not uninstalled); always emits at least · River
+  try {
+    const riverPath = path.join(dir, '.nf-river-state.json');
+    if (fs.existsSync(riverPath)) {
+      // State file present — derive indicator text
+      const riverRaw = fs.readFileSync(riverPath, 'utf8');
+      const riverState = JSON.parse(riverRaw);
+      const qTable = riverState && riverState.qTable;
+      let toolsRiver = '\x1b[2m· River\x1b[0m'; // default dim until q-table confirms active
+      if (qTable && typeof qTable === 'object') {
+        const RIVER_MIN_EXPLORE = 20;
+        let hasArms = false;
+        let allAbove = true;
+        for (const taskType of Object.keys(qTable)) {
+          const arms = qTable[taskType];
+          if (arms && typeof arms === 'object') {
+            for (const armName of Object.keys(arms)) {
+              hasArms = true;
+              if ((arms[armName].visits || 0) < RIVER_MIN_EXPLORE) allAbove = false;
+            }
+          }
+        }
+        if (hasArms) {
+          toolsRiver = allAbove
+            ? '\x1b[32m● River\x1b[0m'
+            : '\x1b[36m● River\x1b[0m';
+        }
+        if (riverState.lastShadow && typeof riverState.lastShadow.recommendation === 'string' && riverState.lastShadow.recommendation) {
+          toolsRiver = `\x1b[33m● River: ${riverState.lastShadow.recommendation}\x1b[0m`;
+        }
+      }
+      parts.push(toolsRiver);
+    } else {
+      parts.push('\x1b[2m· River\x1b[0m');
+    }
+  } catch (_e) {
+    parts.push('\x1b[2m· River\x1b[0m');
+  }
+
+  // 3. embed indicator
+  // Note: embed has no runtime active signal — always dim when installed.
+  try {
+    const transformersPath = path.join(dir, 'node_modules', '@huggingface', 'transformers');
+    if (fs.existsSync(transformersPath)) {
+      parts.push('\x1b[2m· embed\x1b[0m');
+    }
+    // Not installed → omit entirely
+  } catch (_e) {}
+
+  return parts.join(' \x1b[2m│\x1b[0m ');
+}
+
 // Read JSON from stdin
 let input = '';
 process.stdin.setEncoding('utf8');
@@ -224,13 +302,21 @@ process.stdin.on('end', () => {
     }
     const coderlmPart = coderlmIndicator ? coderlmIndicator + ' │ ' : '';
 
-    // Output
+    // Output (tools line is assembled and written after the main line)
     const dirname = path.basename(dir);
     if (task) {
       process.stdout.write(`${gsdUpdate}${coderlmPart}\x1b[2m${model}\x1b[0m │ \x1b[1m${task}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}${riverIndicator}`);
     } else {
       process.stdout.write(`${gsdUpdate}${coderlmPart}\x1b[2m${model}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}${riverIndicator}`);
     }
+
+    // Tools status second line
+    try {
+      const toolsLine = buildToolsLine(homeDir, dir);
+      if (toolsLine) {
+        process.stdout.write('\n' + toolsLine);
+      }
+    } catch (_e) {}
   } catch (e) {
     if (e instanceof SyntaxError) {
       process.stderr.write('[nf] WARNING: nf-statusline: malformed JSON on stdin: ' + e.message + '\n');
