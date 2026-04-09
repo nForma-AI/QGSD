@@ -122,3 +122,4 @@ Last activity: 2026-04-09 — Completed quick task 393: Rewrite nf:mcp-status to
 | 391 | Add auto-install steps for River and embed to install.js with statusline updates | 2026-04-09 | 2918e75c | Verified | [391-add-auto-install-steps-for-river-python-](./quick/391-add-auto-install-steps-for-river-python-/) |
 | 393 | Rewrite nf:mcp-status to be fully dynamic | 2026-04-09 | 3dcaabff | Pending | [393-rewrite-nf-mcp-status-to-be-fully-dynami](./quick/393-rewrite-nf-mcp-status-to-be-fully-dynami/) |
 | 394 | Fix hardcoded slot names in mcp-restart.md and mcp-set-model.md | 2026-04-09 | 75c8fdd1 | Verified | [394-fix-hardcoded-slot-names-in-mcp-restart-](./quick/394-fix-hardcoded-slot-names-in-mcp-restart-/) |
+| 395 | Dynamic slot validation in mcp-update, fix codex-cli-1 refs in restart/set-model/quorum-test | 2026-04-09 | bad70b6d | Verified | [395-dynamic-slots-mcp-update-fix-refs](./quick/395-dynamic-slots-mcp-update-fix-refs/) |
