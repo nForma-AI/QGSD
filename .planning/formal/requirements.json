@@ -1,5 +1,5 @@
 {
-  "aggregated_at": "2026-04-09T06:27:13.153649Z",
+  "aggregated_at": "2026-04-09T07:18:03.894Z",
   "requirements": [
     {
       "id": "ACT-01",
@@ -2263,6 +2263,16 @@
         ".planning/formal/tla/QGSDInstallerIdempotency.tla"
       ],
       "category_raw": "Installer Extensions"
+    },
+    {
+      "id": "INST-11",
+      "text": "Installer automatically downloads and installs coderlm binary to ~/.claude/nf-bin/coderlm when missing on install",
+      "category": "Installer & CLI",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Users need the coderlm binary available as part of the standard install flow to avoid lifecycle errors on first use. Without automatic download, users must manually fetch coderlm, adding friction and causing breakage when the binary is missing.",
+      "source_file": ".planning/quick/389-make-install-js-automatically-download-a/389-PLAN.md",
+      "milestone": "quick-389"
     },
     {
       "id": "INTENT-01",
@@ -6268,6 +6278,6 @@
       }
     }
   ],
-  "content_hash": "64d094090fbef08c",
-  "frozen_at": "2026-04-09T06:27:13.154725Z"
+  "content_hash": "6fa6f13b525805c549e59cf4dbd2eb8ed1080aca16ac138a9882c4884fe4c7fd",
+  "frozen_at": "2026-04-09T07:18:03.894Z"
 }
