@@ -1,5 +1,5 @@
 {
-  "aggregated_at": "2026-04-09T11:51:17.832Z",
+  "aggregated_at": "2026-04-09T19:03:55.797Z",
   "requirements": [
     {
       "id": "ACT-01",
@@ -2734,6 +2734,16 @@
         "source_file": "manual",
         "milestone": "v0.42"
       }
+    },
+    {
+      "id": "MCP-10",
+      "text": "MCP server dynamically detects installed CLI providers at startup and excludes slots whose binaries are not found, using deduplication and fail-open logic to handle errors gracefully.",
+      "category": "MCP & Agents",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Slots defined in providers.json but not installed on the user's machine produce confusing errors at dispatch time. Dynamic CLI detection at server startup filters the active provider list to only slots with reachable binaries; HTTP-only slots are always included; deduplication avoids repeated fs checks for shared binaries (e.g. ccr-1..ccr-6); fails open on unexpected errors.",
+      "source_file": ".planning/quick/395-make-providers-slot-list-dynamic-detect-/395-PLAN.md",
+      "milestone": "quick-395"
     },
     {
       "id": "MCPENV-01",
@@ -6289,6 +6299,6 @@
       }
     }
   ],
-  "content_hash": "208c0ef9a97c88e61ce077e4bd281fde6f57779de460fbe28d8dcba0c60631f6",
-  "frozen_at": "2026-04-09T11:51:17.834Z"
+  "content_hash": "f7123c37efcfefd813d2f3a3d9ac14402ec90418f42e15a8dc2aa69854175d67",
+  "frozen_at": "2026-04-09T19:03:55.799Z"
 }
