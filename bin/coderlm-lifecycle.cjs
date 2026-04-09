@@ -148,34 +148,48 @@ function ensureBinary() {
       // Binary does not exist or is not executable — proceed to download
     }
 
-    // Determine platform binary name
-    const binaryName = getPlatformBinaryName();
-    if (!binaryName) {
-      return { ok: false, error: 'unsupported-platform' };
-    }
-
     // Ensure binary directory exists
     fs.mkdirSync(_binaryDir, { recursive: true });
 
-    // Download via gh CLI (handles auth, redirects, latest release)
-    const ghResult = spawnSync('gh', [
-      'release', 'download',
-      '--repo', GITHUB_REPO,
-      '--pattern', binaryName,
-      '--output', _binaryPath,
-      '--clobber',
-    ], {
-      timeout: 10000,
-      encoding: 'utf8',
-    });
+    // Build from source via git clone + cargo build
+    process.stderr.write('Building coderlm from source (requires Rust)...\n');
 
-    if (ghResult.status === 0) {
+    const tmpDir = path.join(os.tmpdir(), 'coderlm-build-' + Date.now());
+    try {
+      // Step 1: git clone
+      const cloneResult = spawnSync('git', [
+        'clone', '--depth', '1',
+        'https://github.com/JaredStewart/coderlm.git',
+        tmpDir,
+      ], { timeout: 60000, encoding: 'utf8' });
+
+      if (cloneResult.status !== 0 || cloneResult.error) {
+        const detail = (cloneResult.stderr || (cloneResult.error && cloneResult.error.message) || '').trim().slice(0, 200);
+        return { ok: false, error: 'build-failed', detail: detail || 'git clone failed' };
+      }
+
+      // Step 2: cargo build --release in server/ subdir
+      const buildResult = spawnSync('cargo', ['build', '--release'], {
+        cwd: path.join(tmpDir, 'server'),
+        timeout: 300000,
+        encoding: 'utf8',
+      });
+
+      if (buildResult.status !== 0 || buildResult.error) {
+        const detail = (buildResult.stderr || (buildResult.error && buildResult.error.message) || '').trim().slice(0, 200);
+        return { ok: false, error: 'build-failed', detail: detail || 'cargo build failed' };
+      }
+
+      // Step 3: copy binary
+      const builtBinary = path.join(tmpDir, 'server', 'target', 'release', 'coderlm-server');
+      fs.copyFileSync(builtBinary, _binaryPath);
       fs.chmodSync(_binaryPath, 0o755);
-      return { ok: true, path: _binaryPath, source: 'downloaded' };
-    }
 
-    const detail = (ghResult.stderr || '').trim().slice(0, 200);
-    return { ok: false, error: 'download-failed', detail: detail };
+      return { ok: true, path: _binaryPath, source: 'built' };
+    } finally {
+      // Step 4: cleanup temp clone (fail-open)
+      try { spawnSync('rm', ['-rf', tmpDir], { timeout: 10000 }); } catch (_) {}
+    }
   } catch (e) {
     return { ok: false, error: 'unexpected', detail: e.message };
   }

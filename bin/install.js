@@ -2601,6 +2601,48 @@ function install(isGlobal, runtime = 'claude') {
     }
   }
 
+  // Install River ML library via pip3 if not already importable (fail-open)
+  {
+    const { spawnSync: _spawnRiver } = require('child_process');
+    try {
+      const riverCheck = _spawnRiver('python3', ['-c', 'import river'], { timeout: 3000 });
+      if (riverCheck.status !== 0) {
+        console.log(`  ${cyan}↓${reset} Installing River ML (pip3)...`);
+        const riverInstall = _spawnRiver('pip3', ['install', 'river', '--user'], { timeout: 60000 });
+        if (riverInstall.status === 0) {
+          console.log(`  ${green}✓${reset} River ML installed`);
+        } else {
+          const errOut = riverInstall.stderr ? riverInstall.stderr.toString().slice(0, 120) : '';
+          console.log(`  ${yellow}⚠${reset} River ML install skipped: pip3 returned non-zero${errOut ? ' (' + errOut + ')' : ''}`);
+        }
+      }
+      // status === 0: River already importable — skip silently
+    } catch (e) {
+      // python3 not found or timed out — skip silently (fail-open)
+    }
+  }
+
+  // Install @huggingface/transformers to nf-bin if not already present (fail-open)
+  {
+    const { spawnSync: _spawnEmbed } = require('child_process');
+    try {
+      const transformersGlobalPath = path.join(os.homedir(), '.claude', 'nf-bin', 'node_modules', '@huggingface', 'transformers');
+      if (!fs.existsSync(transformersGlobalPath)) {
+        console.log(`  ${cyan}↓${reset} Installing @huggingface/transformers...`);
+        const embedInstall = _spawnEmbed('npm', ['install', '--prefix', path.join(os.homedir(), '.claude', 'nf-bin'), '@huggingface/transformers'], { timeout: 120000 });
+        if (embedInstall.status === 0) {
+          console.log(`  ${green}✓${reset} @huggingface/transformers installed`);
+        } else {
+          const errOut = embedInstall.stderr ? embedInstall.stderr.toString().slice(0, 120) : '';
+          console.log(`  ${yellow}⚠${reset} @huggingface/transformers install skipped: npm returned non-zero${errOut ? ' (' + errOut + ')' : ''}`);
+        }
+      }
+      // Already present — skip silently
+    } catch (e) {
+      // Unexpected error — skip silently (fail-open)
+    }
+  }
+
   // Validate hook path references point to real targets
   const hooksDestValidation = path.join(targetDir, 'hooks');
   if (fs.existsSync(hooksDestValidation)) {

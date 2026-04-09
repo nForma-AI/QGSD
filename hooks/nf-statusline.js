@@ -5,6 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const { spawnSync } = require('child_process');
 const { loadConfig, shouldRunHook, validateHookInput } = require('./config-loader');
 
 // Detect context window size from data
@@ -54,50 +55,55 @@ function buildToolsLine(homeDir, dir) {
     // Binary missing → omit entirely
   } catch (_e) {}
 
-  // 2. River indicator — always shown (built-in capability, not an external binary)
-  // Absence of state file = idle (not uninstalled); always emits at least · River
+  // 2. River indicator — only shown when python3 can import river
   try {
-    const riverPath = path.join(dir, '.nf-river-state.json');
-    if (fs.existsSync(riverPath)) {
-      // State file present — derive indicator text
-      const riverRaw = fs.readFileSync(riverPath, 'utf8');
-      const riverState = JSON.parse(riverRaw);
-      const qTable = riverState && riverState.qTable;
-      let toolsRiver = '\x1b[2m· River\x1b[0m'; // default dim until q-table confirms active
-      if (qTable && typeof qTable === 'object') {
-        const RIVER_MIN_EXPLORE = 20;
-        let hasArms = false;
-        let allAbove = true;
-        for (const taskType of Object.keys(qTable)) {
-          const arms = qTable[taskType];
-          if (arms && typeof arms === 'object') {
-            for (const armName of Object.keys(arms)) {
-              hasArms = true;
-              if ((arms[armName].visits || 0) < RIVER_MIN_EXPLORE) allAbove = false;
+    let riverImportable = false;
+    try {
+      const riverCheck = spawnSync('python3', ['-c', 'import river'], { timeout: 3000 });
+      riverImportable = riverCheck.status === 0;
+    } catch (_e) {}
+
+    if (riverImportable) {
+      const riverPath = path.join(dir, '.nf-river-state.json');
+      let toolsRiver = '\x1b[2m· River\x1b[0m'; // installed but idle
+      try {
+        if (fs.existsSync(riverPath)) {
+          const riverRaw = fs.readFileSync(riverPath, 'utf8');
+          const riverState = JSON.parse(riverRaw);
+          const qTable = riverState && riverState.qTable;
+          if (qTable && typeof qTable === 'object') {
+            const RIVER_MIN_EXPLORE = 20;
+            let hasArms = false;
+            let allAbove = true;
+            for (const taskType of Object.keys(qTable)) {
+              const arms = qTable[taskType];
+              if (arms && typeof arms === 'object') {
+                for (const armName of Object.keys(arms)) {
+                  hasArms = true;
+                  if ((arms[armName].visits || 0) < RIVER_MIN_EXPLORE) allAbove = false;
+                }
+              }
+            }
+            if (hasArms) {
+              toolsRiver = allAbove
+                ? '\x1b[32m● River\x1b[0m'
+                : '\x1b[36m● River\x1b[0m';
+            }
+            if (riverState.lastShadow && typeof riverState.lastShadow.recommendation === 'string' && riverState.lastShadow.recommendation) {
+              toolsRiver = `\x1b[33m● River: ${riverState.lastShadow.recommendation}\x1b[0m`;
             }
           }
         }
-        if (hasArms) {
-          toolsRiver = allAbove
-            ? '\x1b[32m● River\x1b[0m'
-            : '\x1b[36m● River\x1b[0m';
-        }
-        if (riverState.lastShadow && typeof riverState.lastShadow.recommendation === 'string' && riverState.lastShadow.recommendation) {
-          toolsRiver = `\x1b[33m● River: ${riverState.lastShadow.recommendation}\x1b[0m`;
-        }
-      }
+      } catch (_e) {}
       parts.push(toolsRiver);
-    } else {
-      parts.push('\x1b[2m· River\x1b[0m');
     }
-  } catch (_e) {
-    parts.push('\x1b[2m· River\x1b[0m');
-  }
+    // River not importable → omit entirely
+  } catch (_e) {}
 
   // 3. embed indicator
   // Note: embed has no runtime active signal — always dim when installed.
   try {
-    const transformersPath = path.join(dir, 'node_modules', '@huggingface', 'transformers');
+    const transformersPath = path.join(homeDir, '.claude', 'nf-bin', 'node_modules', '@huggingface', 'transformers');
     if (fs.existsSync(transformersPath)) {
       parts.push('\x1b[2m· embed\x1b[0m');
     }

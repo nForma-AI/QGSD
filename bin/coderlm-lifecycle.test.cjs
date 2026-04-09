@@ -21,12 +21,13 @@ function cleanupDir(dir) {
 // ── Module exports ───────────────────────────────────────────────────────────
 
 describe('Module exports', () => {
-  it('exports all 6 required functions', () => {
+  it('exports all 7 required functions', () => {
     const exports = Object.keys(lifecycle).sort().filter(k => !k.startsWith('_') && k !== 'getPlatformBinaryName');
     assert.deepStrictEqual(exports, [
       'checkIdleStop',
       'ensureBinary',
       'ensureRunning',
+      'reindex',
       'status',
       'stop',
       'touchLastQuery',
