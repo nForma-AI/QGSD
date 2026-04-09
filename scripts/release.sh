@@ -150,7 +150,8 @@ echo ""
 
 # --- 7. Extract changelog section for tag body ---
 # Grab everything between ## [VERSION] and the next ## [
-CHANGELOG_BODY=$(awk "/^## \[${VERSION}\]/{found=1; next} /^## \[/{if(found) exit} found{print}" CHANGELOG.md)
+# Use base version for prereleases (0.41.18 not 0.41.18-rc.1)
+CHANGELOG_BODY=$(awk "/^## \[${CHANGELOG_VERSION}\]/{found=1; next} /^## \[/{if(found) exit} found{print}" CHANGELOG.md || true)
 
 if [[ -z "$CHANGELOG_BODY" ]]; then
   CHANGELOG_BODY="Release ${VERSION}"
@@ -164,7 +165,8 @@ if [[ -n "$RELEASE_TITLE" ]]; then
   TAG_TITLE="${TAG} — ${RELEASE_TITLE}"
 else
   # Try to extract subtitle from changelog line: ## [VERSION] - date — Subtitle
-  CHANGELOG_LINE=$(grep "^## \[${VERSION}\]" CHANGELOG.md | head -1)
+  # Use base version (strip -rc.N) since prereleases share the same changelog entry
+  CHANGELOG_LINE=$(grep "^## \[${CHANGELOG_VERSION}\]" CHANGELOG.md | head -1 || true)
   SUBTITLE=$(echo "$CHANGELOG_LINE" | sed -n 's/.*— *//p')
   if [[ -n "$SUBTITLE" ]]; then
     TAG_TITLE="${TAG} — ${SUBTITLE}"
