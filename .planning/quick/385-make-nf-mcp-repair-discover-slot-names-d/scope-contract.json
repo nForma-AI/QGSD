@@ -1,0 +1,25 @@
+{
+  "feature/issue-58-integrate-coderlm-adapter": {
+    "task_id": 385,
+    "task_description": "Make nf:mcp-repair discover slot names dynamically from ~/.claude.json mcpServers instead of hardcoding them",
+    "approach": "Update nf:mcp-repair to dynamically discover slot names and corresponding MCP tool names from ~/.claude.json mcpServers instead of hardcoding the allowed-tools list and Step 1 direct MCP tool calls.",
+    "out_of_scope": [
+      "Changing the overall 4-step diagnosis workflow structure or classification logic",
+      "Implementing persistent slot name caching or state files",
+      "Modifying bin/providers.json file structure",
+      "Creating a general-purpose slot discovery utility outside of mcp-repair.md",
+      "Converting the skill to use Task() sub-agents"
+    ],
+    "classification": {
+      "type": "refactor",
+      "confidence": 0.92,
+      "routed_through_debug": false
+    },
+    "risk_level": "medium",
+    "risk_reason": "Updates mcp-repair.md workflow to dynamically discover MCP tool names from ~/.claude.json mcpServers, affecting Step 1 diagnosis and Step 4 auto-repair logic across 3+ locations.",
+    "branches_affected": ["feature/issue-58-integrate-coderlm-adapter"],
+    "created_at": "2026-04-08T17:21:46.171Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}
