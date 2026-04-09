@@ -103,12 +103,14 @@ echo "Branch:   $(git branch --show-current)"
 echo ""
 
 # --- 3. Validate CHANGELOG entry ---
-if ! grep -q "## \[${VERSION}\]" CHANGELOG.md; then
-  echo "ERROR: CHANGELOG.md has no entry for [${VERSION}]"
-  echo "Add a ## [${VERSION}] - $(date +%Y-%m-%d) section before releasing."
+# For prereleases (e.g. 0.41.18-rc.1), check for the base version entry (0.41.18)
+CHANGELOG_VERSION="${VERSION%%-*}"
+if ! grep -q "## \[${CHANGELOG_VERSION}\]" CHANGELOG.md; then
+  echo "ERROR: CHANGELOG.md has no entry for [${CHANGELOG_VERSION}]"
+  echo "Add a ## [${CHANGELOG_VERSION}] - $(date +%Y-%m-%d) section before releasing."
   exit 1
 fi
-echo "CHANGELOG: found entry for [${VERSION}]"
+echo "CHANGELOG: found entry for [${CHANGELOG_VERSION}]"
 
 # --- 4. Check tag doesn't exist ---
 if git tag -l "$TAG" | grep -q "$TAG"; then
