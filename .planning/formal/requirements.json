@@ -1,5 +1,5 @@
 {
-  "aggregated_at": "2026-04-07T21:24:39.823Z",
+  "aggregated_at": "2026-04-09T08:04:05.589Z",
   "content_hash": "e3837a4c3e69b0e2",
   "requirements": [
     {
@@ -6182,6 +6182,123 @@
         "source_file": ".planning/milestones/v0.35-REQUIREMENTS.md",
         "milestone": "unknown"
       }
+    },
+    {
+      "id": "DEBT-07",
+      "text": "Formalize constraint extraction for debug invariants in propose-debug-invariants.cjs",
+      "category": "Technical Debt",
+      "tier": "engineering",
+      "phase": "unknown",
+      "status": "Open",
+      "provenance": {
+        "source_file": ".planning/quick/384-standardize-process-resolve-technical-de/384-AUDIT.md",
+        "milestone": "v0.41"
+      },
+      "category_raw": "Code Markers"
+    },
+    {
+      "id": "DEBT-08",
+      "text": "Add future instrumentation source for per-file trace data in formalization-candidates.cjs",
+      "category": "Technical Debt",
+      "tier": "engineering",
+      "phase": "unknown",
+      "status": "Open",
+      "provenance": {
+        "source_file": ".planning/quick/384-standardize-process-resolve-technical-de/384-AUDIT.md",
+        "milestone": "v0.41"
+      },
+      "category_raw": "Code Markers"
+    },
+    {
+      "id": "DEBT-09",
+      "text": "Standardize JSON read/write serialization patterns across bin/ scripts (aggregate-requirements.cjs, check-provider-health.cjs, call-quorum-slot.cjs, telemetry-collector.cjs, verify-formal-results.cjs)",
+      "category": "Technical Debt",
+      "tier": "engineering",
+      "phase": "unknown",
+      "status": "Open",
+      "provenance": {
+        "source_file": ".planning/quick/384-standardize-process-resolve-technical-de/384-AUDIT.md",
+        "milestone": "v0.41"
+      },
+      "category_raw": "Logic Patterns"
+    },
+    {
+      "id": "DEBT-10",
+      "text": "Standardize path resolution: consolidate _nfBin helper usage across bin/ module imports (solve-inline-dispatch.cjs, observe-pipeline.cjs, and others)",
+      "category": "Technical Debt",
+      "tier": "engineering",
+      "phase": "unknown",
+      "status": "Open",
+      "provenance": {
+        "source_file": ".planning/quick/384-standardize-process-resolve-technical-de/384-AUDIT.md",
+        "milestone": "v0.41"
+      },
+      "category_raw": "Logic Patterns"
+    },
+    {
+      "id": "DEBT-11",
+      "text": "Reduce empty catch block proliferation: replace silent catch (_) {} with explicit logging or error propagation in check-provider-health.cjs, call-quorum-slot.cjs, nForma.cjs",
+      "category": "Technical Debt",
+      "tier": "engineering",
+      "phase": "unknown",
+      "status": "Open",
+      "provenance": {
+        "source_file": ".planning/quick/384-standardize-process-resolve-technical-de/384-AUDIT.md",
+        "milestone": "v0.41"
+      },
+      "category_raw": "Logic Patterns"
+    },
+    {
+      "id": "DEBT-12",
+      "text": "Create formal model for shell-safe prompt delivery (stdin piping, no escaping required)",
+      "category": "Technical Debt",
+      "tier": "engineering",
+      "phase": "unknown",
+      "status": "Open",
+      "provenance": {
+        "source_file": ".planning/quick/384-standardize-process-resolve-technical-de/384-AUDIT.md",
+        "milestone": "v0.41"
+      },
+      "category_raw": "Formal Verification Gap"
+    },
+    {
+      "id": "DEBT-13",
+      "text": "Create formal model for quorum slot model deduplication (diversity guarantee)",
+      "category": "Technical Debt",
+      "tier": "engineering",
+      "phase": "unknown",
+      "status": "Open",
+      "provenance": {
+        "source_file": ".planning/quick/384-standardize-process-resolve-technical-de/384-AUDIT.md",
+        "milestone": "v0.41"
+      },
+      "category_raw": "Formal Verification Gap"
+    },
+    {
+      "id": "DEBT-14",
+      "text": "Create formal model for net_residual computation (FP subtraction from raw sweep residuals)",
+      "category": "Technical Debt",
+      "tier": "engineering",
+      "phase": "unknown",
+      "status": "Open",
+      "provenance": {
+        "source_file": ".planning/quick/384-standardize-process-resolve-technical-de/384-AUDIT.md",
+        "milestone": "v0.41"
+      },
+      "category_raw": "Formal Verification Gap"
+    },
+    {
+      "id": "DEBT-15",
+      "text": "Create formal model for solve convergence layer-transition sweeps (L1->L2, L2->L3, L3->TC)",
+      "category": "Technical Debt",
+      "tier": "engineering",
+      "phase": "unknown",
+      "status": "Open",
+      "provenance": {
+        "source_file": ".planning/quick/384-standardize-process-resolve-technical-de/384-AUDIT.md",
+        "milestone": "v0.41"
+      },
+      "category_raw": "Formal Verification Gap"
     }
   ],
   "schema_version": "1",
