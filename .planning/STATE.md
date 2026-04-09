@@ -25,7 +25,10 @@ See: .planning/PROJECT.md
 | 381 | Create checklist registry JSON + matching script | 2026-04-07 | 0c515031 | Pending | [381-create-checklist-registry-json-with-trig](./quick/381-create-checklist-registry-json-with-trig/) |
 | 382 | Implement Tier 0 policy interface and Tier 1 River bandit layer for routing authority ladder in selectSlot | 2026-04-07 | 1fc88449 | Verified | [382-implement-tier-0-policy-interface-and-ti](./quick/382-implement-tier-0-policy-interface-and-ti/) |
 | 383 | Wire task-intake routing into PresetPolicy, update nf:quick command metadata with delegate flag, add delegation docs | 2026-04-07 | 40ef3ab3 | Verified | [383-wire-task-intake-routing-into-presetpoli](./quick/383-wire-task-intake-routing-into-presetpoli/) |
+| 384 | Fully integrate River ML library and Q-learning for quorum slot delegation | 2026-04-08 | 6bf32b45 | Verified | [384-issue-73](./quick/384-issue-73/) |
 | 384 | Standardize Process: Resolve Technical Debt as Required Gaps | 2026-04-09 | efa213dc | Verified | [384-standardize-process-resolve-technical-de](./quick/384-standardize-process-resolve-technical-de/) |
+| 385 | Add River ML phase indicator to nf-statusline.js | 2026-04-08 | 32ca7b5e | Pending | [385-add-river-ml-phase-indicator-to-nf-statu](./quick/385-add-river-ml-phase-indicator-to-nf-statu/) |
+| 386 | Add E2E test for River ML learning loop and surface shadow recommendations in status line | 2026-04-08 | 017878fb | Verified | [386-add-e2e-test-for-river-ml-learning-loop-](./quick/386-add-e2e-test-for-river-ml-learning-loop-/) |
 
 ## Session Log
 
@@ -41,4 +44,9 @@ See: .planning/PROJECT.md
 - 2026-04-07: Completed quick task 381: Create checklist registry JSON + matching script
 - 2026-04-07 - Completed quick task 382: Implement Tier 0 policy interface and Tier 1 River bandit layer for routing authority ladder in selectSlot
 - 2026-04-07 - Completed quick task 383: Wire task-intake routing into PresetPolicy, update command metadata, add delegation docs
+- 2026-04-08 - Completed quick task 384: Fully integrate River ML library and Q-learning for quorum slot delegation
+- 2026-04-08 - Completed quick task 385: Add River ML phase indicator to nf-statusline.js
+- 2026-04-08 - Completed quick task 386: Add E2E test for River ML learning loop and surface shadow recommendations
 - 2026-04-09 - Completed quick task 384: Standardize tech debt items as required engineering tasks in requirements.json
+
+Last activity: 2026-04-09

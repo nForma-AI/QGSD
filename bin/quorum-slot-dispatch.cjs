@@ -34,6 +34,14 @@ const path       = require('path');
 const os         = require('os');
 const planningPaths = require('./planning-paths.cjs');
 
+// ─── Routing reward recording (fail-open) ───────────────────────────────────
+let recordRoutingReward;
+try {
+  recordRoutingReward = require(path.join(__dirname, 'coding-task-router.cjs')).recordRoutingReward;
+} catch (_) {
+  recordRoutingReward = () => {};  // fail-open
+}
+
 // ─── Per-provider rate-limit semaphore (SOLVE-10) ───────────────────────────
 // Prevents concurrent API-backed slots from cascading rate-limit failures
 // when multiple slots hit the same provider (e.g., 6 api-* slots → Together.xyz).
@@ -1827,6 +1835,28 @@ async function main() {
       codingResult = parseCodingResult(output);
       const statusVerdictMap = { SUCCESS: 'APPROVE', PARTIAL: 'FLAG', FAILED: 'REJECT', UNKNOWN: 'FLAG' };
       verdict = statusVerdictMap[codingResult.status] || 'FLAG';
+
+      // Record routing reward for Q-learning loop (fail-open)
+      try {
+        const rewardMap = { SUCCESS: 1.0, PARTIAL: 0.5, FAILED: 0.0, UNKNOWN: 0.25 };
+        const rewardValue = rewardMap[codingResult.status] || 0.25;
+        if (recordRoutingReward && dispatchSlot) {
+          // Derive taskType from question keywords; default to 'implement'
+          const qLower = (question || '').toLowerCase();
+          const taskType = qLower.includes('fix') ? 'fix'
+            : qLower.includes('refactor') ? 'refactor'
+            : qLower.includes('test') ? 'test'
+            : 'implement';
+          recordRoutingReward({
+            taskType,
+            slot: dispatchSlot,
+            reward: rewardValue,
+            latencyMs: 0,
+          });
+        }
+      } catch (_) {
+        // Fail-open: reward recording must never block dispatch
+      }
     } else {
       verdict = parseVerdict(output, mode);
     }

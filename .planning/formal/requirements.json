@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-04-09T08:11:39.387Z",
-  "content_hash": "3799d6cc5762cd4b576bf43f2701e6c84ce55dedff498a33e02b69a58be09539",
+  "aggregated_at": "2026-04-09T12:34:12.319Z",
+  "content_hash": "e346d502ae71dfc5961e3d4ffad3b843e80e54ec50cf877ca735777547971079",
   "requirements": [
     {
       "id": "ACT-01",
@@ -4276,6 +4276,28 @@
       }
     },
     {
+      "id": "ROUTE-06",
+      "text": "RiverPolicy implements Q-learning with Bellman updates, epsilon-greedy exploration, and learning rate decay to optimize slot selection based on historical task outcomes.",
+      "category": "Token Optimization & Model Routing",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Quick task 384 replaces the simple mean-reward bandit in RiverPolicy with a proper Q-learning algorithm that tracks state-action values (Q-table) per task type and slot, enabling evidence-based slot selections that improve over time. The closed-loop reward recording wired into quorum-slot-dispatch.cjs ensures task outcomes automatically feed back into Q-value updates.",
+      "provenance": {
+        "source_file": ".planning/quick/384-issue-73/384-PLAN.md",
+        "milestone": "quick-384"
+      }
+    },
+    {
+      "id": "ROUTE-07",
+      "text": "E2E learning loop test validates full River ML pipeline (rewards recorded → Q-table updated → learned preference → shadow recommendation) and nf-statusline displays shadow recommendations with confidence",
+      "category": "Token Optimization & Model Routing",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Quick task 386 delivered end-to-end testing infrastructure proving River ML's complete learning cycle works correctly, plus visibility into shadow-mode recommendations in the developer's statusline so they can monitor what River would recommend if promoted from shadow mode.",
+      "source_file": ".planning/quick/386-add-e2e-test-for-river-ml-learning-loop-/386-PLAN.md",
+      "milestone": "quick-386"
+    },
+    {
       "id": "RSN-01",
       "text": "Hazard model applies FMEA (Severity x Occurrence x Detection = RPN) to L2 operational model states and transitions",
       "category": "Reasoning",
@@ -6316,5 +6338,5 @@
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
   "last_sync": "2026-03-31T09:45:23.686Z",
-  "frozen_at": "2026-04-09T08:11:39.388Z"
+  "frozen_at": "2026-04-09T12:34:12.319Z"
 }
