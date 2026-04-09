@@ -1,0 +1,24 @@
+{
+  "feature/issue-77-standardize-process-resolve": {
+    "task_id": 384,
+    "task_description": "Standardize Process: Resolve Technical Debt as Required Gaps",
+    "approach": "Identify all technical debt items in the codebase and convert them into standardized required engineering tasks with documentation artifacts and consistent logic patterns.",
+    "out_of_scope": [
+      "Implementing fixes for identified tech debt items — only documentation and standardization",
+      "Refactoring or modifying existing code beyond task creation",
+      "Changing milestone or release planning based on tech debt findings",
+      "Prioritizing or ranking the severity of individual tech debt items"
+    ],
+    "classification": {
+      "type": "refactor",
+      "confidence": 0.85,
+      "routed_through_debug": false
+    },
+    "risk_level": "high",
+    "risk_reason": "Task involves standardizing technical debt process and converting identified tech debt items into required engineering tasks with documentation artifacts, which will necessarily modify requirements.json and formal model files (.planning/formal/) in the process, triggering high-risk guardrails.",
+    "branches_affected": ["feature/issue-77-standardize-process-resolve"],
+    "created_at": "2026-04-09T07:51:37.091Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

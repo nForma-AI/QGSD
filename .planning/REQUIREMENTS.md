@@ -45,6 +45,20 @@ Requirements for Unified Autoresearch Execution Pipeline. Each maps to roadmap p
 - **LOOP-01**: Cross-session TSV history persistence (learn from prior solve sessions)
 - **LOOP-02**: Composite quality score for refinement sessions (penalizes vacuous models)
 
+### Technical Debt Requirements
+
+Standardized technical debt items identified in audit (Quick Task 384):
+
+- [ ] **DEBT-07**: Formalize constraint extraction for debug invariants in propose-debug-invariants.cjs
+- [ ] **DEBT-08**: Add future instrumentation source for per-file trace data in formalization-candidates.cjs
+- [ ] **DEBT-09**: Standardize JSON read/write serialization patterns across bin/ scripts
+- [ ] **DEBT-10**: Standardize path resolution: consolidate _nfBin helper usage across bin/ modules
+- [ ] **DEBT-11**: Reduce empty catch block proliferation in check-provider-health.cjs, call-quorum-slot.cjs, nForma.cjs
+- [ ] **DEBT-12**: Create formal model for shell-safe prompt delivery (stdin piping, no escaping)
+- [ ] **DEBT-13**: Create formal model for quorum slot model deduplication (diversity guarantee)
+- [ ] **DEBT-14**: Create formal model for net_residual computation (FP subtraction from raw sweep residuals)
+- [ ] **DEBT-15**: Create formal model for solve convergence layer-transition sweeps (L1->L2, L2->L3, L3->TC)
+
 ## Out of Scope
 
 | Feature | Reason |
@@ -74,12 +88,22 @@ Requirements for Unified Autoresearch Execution Pipeline. Each maps to roadmap p
 | DEPR-01 | Phase 53 | Pending |
 | DEPR-02 | Phase 53 | Pending |
 | DEPR-03 | Phase 53 | Pending |
+| DEBT-07 | Quick 384 | Open |
+| DEBT-08 | Quick 384 | Open |
+| DEBT-09 | Quick 384 | Open |
+| DEBT-10 | Quick 384 | Open |
+| DEBT-11 | Quick 384 | Open |
+| DEBT-12 | Quick 384 | Open |
+| DEBT-13 | Quick 384 | Open |
+| DEBT-14 | Quick 384 | Open |
+| DEBT-15 | Quick 384 | Open |
 
 **Coverage:**
 - v0.41 requirements: 16 total
 - Mapped to phases: 16
+- Technical debt items: 9 total
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-25*
-*Last updated: 2026-03-25 after roadmap creation*
+*Last updated: 2026-04-09 after technical debt audit (Quick Task 384)*
