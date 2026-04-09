@@ -27,7 +27,7 @@ const LASTQUERY_PATH = path.join(BINARY_DIR, 'coderlm.lastquery');
 const STATE_PATH = path.join(BINARY_DIR, 'coderlm.state.json');
 const DEFAULT_PORT = 8787;
 const IDLE_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
-const GITHUB_REPO = 'nForma-AI/coderlm';
+const GITHUB_REPO = 'JaredStewart/coderlm';
 const HEALTH_URL = 'http://localhost:8787/health';
 const STARTUP_WAIT_MS = 3000; // max wait for server to become healthy after spawn
 
