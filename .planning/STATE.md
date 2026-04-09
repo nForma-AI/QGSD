@@ -106,7 +106,7 @@ Resume file: None
 - 2026-04-08 - Completed quick task 385: Add River ML phase indicator to nf-statusline.js
 - 2026-04-08 - Completed quick task 386: Add E2E test for River ML learning loop and surface shadow recommendations
 
-Last activity: 2026-04-09 — Completed quick task 391: Add auto-install steps for River and embed to install.js with statusline updates
+Last activity: 2026-04-09 — Completed quick task 393: Rewrite nf:mcp-status to be fully dynamic
 - 2026-04-07: Completed quick task 381: Wire coderlm adapter queries into nf-solve dependency graph
 - 2026-04-08: Completed quick task 382: Set up coderlm cross-compilation CI
 - 2026-04-08 - Completed quick task 383: Implement coderlm lazy lifecycle management
@@ -120,3 +120,4 @@ Last activity: 2026-04-09 — Completed quick task 391: Add auto-install steps f
 | 389 | Make install.js automatically download and install the coderlm binary... | 2026-04-09 | bf0931c2 | Verified | [389-make-install-js-automatically-download-a](./quick/389-make-install-js-automatically-download-a/) |
 | 390 | Update ensureBinary() to build coderlm from source via git clone + cargo build | 2026-04-09 | 644142c6 | Verified | [390-update-ensurebinary-in-bin-coderlm-lifec](./quick/390-update-ensurebinary-in-bin-coderlm-lifec/) |
 | 391 | Add auto-install steps for River and embed to install.js with statusline updates | 2026-04-09 | 2918e75c | Verified | [391-add-auto-install-steps-for-river-python-](./quick/391-add-auto-install-steps-for-river-python-/) |
+| 393 | Rewrite nf:mcp-status to be fully dynamic | 2026-04-09 | 3dcaabff | Pending | [393-rewrite-nf-mcp-status-to-be-fully-dynami](./quick/393-rewrite-nf-mcp-status-to-be-fully-dynami/) |
