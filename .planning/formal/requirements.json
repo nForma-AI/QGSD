@@ -1,14 +1,5 @@
 {
-  "aggregated_at": "2026-04-08T14:28:34.785Z",
-  "content_hash": "f7bd3e745e920a0fc7132450da00117b13ddd42957f9968394a59ac47aff98d7",
-  "aggregated_at": "2026-04-07T09:26:46.147Z",
-  "content_hash": "cefeccf5ea531ffe773f702aefba446f114fe38a5da7a8ed3d9ffff7e49f9ca9",
-  "aggregated_at": "2026-04-08T13:25:41.839Z",
-  "content_hash": "701be42d5fb38ca118e3c316b1efd0d71d8ab7e5aff459ec6f6ac69ea1e70362",
-  "aggregated_at": "2026-04-08T17:39:58.342Z",
-  "content_hash": "0c2dbdc60da020a0326a02ea75f6e5ea70ecf20300542b62fdaa44e53d78607b",
-  "aggregated_at": "2026-04-08T18:40:18.064Z",
-  "content_hash": "5be4111c79449624465823aa6eb95b62c531375007bb6c18532cf87c95836507",
+  "aggregated_at": "2026-04-09T06:27:13.153649Z",
   "requirements": [
     {
       "id": "ACT-01",
@@ -3132,6 +3123,18 @@
       "provenance": {
         "source_file": ".planning/quick/386-add-coderlm-status-indicator-to-nf-statu/386-PLAN.md",
         "milestone": "quick-386"
+      }
+    },
+    {
+      "id": "OBS-10",
+      "text": "nf-statusline renders compact dot-style River ML indicators using green ● for active state, cyan ● for exploring state, and yellow ● with recommendation text for shadow state.",
+      "category": "Observability & Diagnostics",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "The River ML service-health status was previously displayed with verbose text indicators (River: active, River: exploring, etc.) that were visually inconsistent with the coderlm indicator pattern. This requirement updates the River indicator to use the same compact dot-style format as coderlm, improving visual consistency in the statusline and making service health status more scannable at a glance.",
+      "provenance": {
+        "source_file": ".planning/quick/387-improve-river-ml-statusline-indicator-to/387-PLAN.md",
+        "milestone": "quick-387"
       }
     },
     {
@@ -6265,12 +6268,6 @@
       }
     }
   ],
-  "schema_version": "1",
-  "source": ".planning/REQUIREMENTS.md",
-  "last_sync": "2026-03-31T09:45:23.686Z",
-  "frozen_at": "2026-04-08T14:28:34.788Z"
-  "frozen_at": "2026-04-08T17:39:58.342Z"
-  "frozen_at": "2026-04-08T18:40:18.064Z"
+  "content_hash": "64d094090fbef08c",
+  "frozen_at": "2026-04-09T06:27:13.154725Z"
 }
-  "frozen_at": "2026-04-07T09:26:46.148Z"
-  "frozen_at": "2026-04-08T13:25:41.840Z"
