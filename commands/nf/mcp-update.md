@@ -20,9 +20,7 @@ If `$TARGET` is missing, print usage and stop:
 ```
 Usage: /nf:mcp-update <agent|all>
 
-Valid agents:
-  codex-cli-1, gemini-cli-1, opencode-1, copilot-1,
-  claude-1, claude-2, claude-3, claude-4, claude-5, claude-6
+Valid agents: read dynamically from ~/.claude.json (run without arguments to list)
 
 Use "all" to update all configured agents sequentially.
 ```
@@ -31,20 +29,29 @@ Use "all" to update all configured agents sequentially.
 
 If `$TARGET` is not `"all"`:
 
-Check `$TARGET` against the known agent list:
-```
-codex-cli-1, gemini-cli-1, opencode-1, copilot-1,
-claude-1, claude-2, claude-3, claude-4, claude-5, claude-6
+Run this Bash command to get valid slots from `~/.claude.json`:
+
+```bash
+node << 'NF_EVAL'
+const fs=require('fs'),os=require('os'),path=require('path');
+const SKIP=['canopy','sentry'];
+try {
+  const cfg=JSON.parse(fs.readFileSync(path.join(os.homedir(),'.claude.json'),'utf8'));
+  const slots=Object.keys(cfg.mcpServers||{}).filter(s=>!SKIP.includes(s));
+  console.log(JSON.stringify(slots));
+} catch(e) {
+  console.log('[]');
+}
+NF_EVAL
 ```
 
-If not in the list, print an error and stop:
+Parse the output as `$VALID_SLOTS` (JSON array of strings).
+
+If `$TARGET` is not in `$VALID_SLOTS`, print an error and stop:
 ```
 Error: Unknown agent "$TARGET"
 
-Valid agents:
-  codex-cli-1   gemini-cli-1   opencode-1   copilot-1
-  claude-1      claude-2       claude-3     claude-4
-  claude-5      claude-6
+Valid agents: <$VALID_SLOTS joined with spaces>
 
 Use "all" to update all configured agents.
 ```
@@ -55,48 +62,30 @@ Run this inline node script via Bash to read the install configuration:
 
 **For single agent:**
 ```bash
-node -e "
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-
-const claudeJsonPath = path.join(os.homedir(), '.claude.json');
+AGENT="$TARGET" node << 'NF_EVAL'
+const fs=require('fs'),path=require('path'),os=require('os');
+const claudeJsonPath=path.join(os.homedir(),'.claude.json');
 let claudeJson;
-try {
-  claudeJson = JSON.parse(fs.readFileSync(claudeJsonPath, 'utf8'));
-} catch (e) {
-  console.error('Error: Cannot read ~/.claude.json: ' + e.message);
-  process.exit(1);
-}
-
-const servers = claudeJson.mcpServers || {};
-const agent = process.env.AGENT;
-const serverConfig = servers[agent];
-
-if (!serverConfig) {
-  console.error('Error: Agent \"' + agent + '\" is not configured in ~/.claude.json mcpServers');
-  process.exit(2);
-}
-
-const command = serverConfig.command;
-const args = serverConfig.args || [];
-
+try { claudeJson=JSON.parse(fs.readFileSync(claudeJsonPath,'utf8')); }
+catch(e) { process.stderr.write('Error: Cannot read ~/.claude.json: '+e.message+'\n'); process.exit(1); }
+const servers=claudeJson.mcpServers||{};
+const agent=process.env.AGENT;
+const serverConfig=servers[agent];
+if(!serverConfig){ process.stderr.write('Error: Agent "'+agent+'" is not configured in ~/.claude.json mcpServers\n'); process.exit(2); }
+const command=serverConfig.command;
+const args=serverConfig.args||[];
 let result;
-if (command === 'npx' || command === 'npm') {
-  // npm/npx-based: package name is last arg (skip flags like -y)
-  const packageName = args[args.length - 1];
-  result = { type: 'npm', package: packageName };
-} else if (command === 'node' && args.length > 0) {
-  // local node path: args[0] = /path/to/repo/dist/index.js
-  const distIndexPath = args[0];
-  const repoDir = path.dirname(path.dirname(distIndexPath));
-  result = { type: 'local', repoDir };
+if(command==='npx'||command==='npm'){
+  const packageName=args[args.length-1];
+  result={type:'npm',package:packageName};
+} else if(command==='node'&&args.length>0){
+  const repoDir=path.dirname(path.dirname(args[0]));
+  result={type:'local',repoDir};
 } else {
-  result = { type: 'unknown', command, args };
+  result={type:'unknown',command,args};
 }
-
-process.stdout.write(JSON.stringify(result) + '\n');
-" AGENT="$TARGET"
+process.stdout.write(JSON.stringify(result)+'\n');
+NF_EVAL
 ```
 
 Store output as `$INSTALL_INFO`.
@@ -153,57 +142,35 @@ If `$TARGET` is `"all"`, skip Steps 2–5 and run this instead:
 **6a. Build update task list via inline node script:**
 
 ```bash
-node -e "
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-
-const KNOWN_AGENTS = [
-  'codex-cli-1', 'gemini-cli-1', 'opencode-1', 'copilot-1',
-  'claude-1', 'claude-2', 'claude-3', 'claude-4', 'claude-5', 'claude-6'
-];
-
-const claudeJsonPath = path.join(os.homedir(), '.claude.json');
-const claudeJson = JSON.parse(fs.readFileSync(claudeJsonPath, 'utf8'));
-const servers = claudeJson.mcpServers || {};
-
-const tasks = [];
-const seenKeys = new Set();
-
-for (const agent of KNOWN_AGENTS) {
-  const cfg = servers[agent];
-  if (!cfg) {
-    tasks.push({ agent, type: 'not_configured' });
-    continue;
-  }
-  const cmd = cfg.command;
-  const args = cfg.args || [];
-
-  if (cmd === 'npx' || cmd === 'npm') {
-    const pkg = args[args.length - 1];
-    const key = 'npm:' + pkg;
-    if (seenKeys.has(key)) {
-      tasks.push({ agent, type: 'npm', package: pkg, deduplicated: true });
-    } else {
-      seenKeys.add(key);
-      tasks.push({ agent, type: 'npm', package: pkg, deduplicated: false });
-    }
-  } else if (cmd === 'node' && args.length > 0) {
-    const repoDir = path.dirname(path.dirname(args[0]));
-    const key = 'local:' + repoDir;
-    if (seenKeys.has(key)) {
-      tasks.push({ agent, type: 'local', repoDir, deduplicated: true });
-    } else {
-      seenKeys.add(key);
-      tasks.push({ agent, type: 'local', repoDir, deduplicated: false });
-    }
+node << 'NF_EVAL'
+const fs=require('fs'),path=require('path'),os=require('os');
+const SKIP=['canopy','sentry'];
+const claudeJsonPath=path.join(os.homedir(),'.claude.json');
+const claudeJson=JSON.parse(fs.readFileSync(claudeJsonPath,'utf8'));
+const servers=claudeJson.mcpServers||{};
+const KNOWN_AGENTS=Object.keys(servers).filter(s=>!SKIP.includes(s));
+const tasks=[];
+const seenKeys=new Set();
+for(const agent of KNOWN_AGENTS){
+  const cfg=servers[agent];
+  const cmd=cfg.command;
+  const args=cfg.args||[];
+  if(cmd==='npx'||cmd==='npm'){
+    const pkg=args[args.length-1];
+    const key='npm:'+pkg;
+    if(seenKeys.has(key)){ tasks.push({agent,type:'npm',package:pkg,deduplicated:true}); }
+    else { seenKeys.add(key); tasks.push({agent,type:'npm',package:pkg,deduplicated:false}); }
+  } else if(cmd==='node'&&args.length>0){
+    const repoDir=path.dirname(path.dirname(args[0]));
+    const key='local:'+repoDir;
+    if(seenKeys.has(key)){ tasks.push({agent,type:'local',repoDir,deduplicated:true}); }
+    else { seenKeys.add(key); tasks.push({agent,type:'local',repoDir,deduplicated:false}); }
   } else {
-    tasks.push({ agent, type: 'unknown', command: cmd });
+    tasks.push({agent,type:'unknown',command:cmd});
   }
 }
-
-process.stdout.write(JSON.stringify(tasks) + '\n');
-"
+process.stdout.write(JSON.stringify(tasks)+'\n');
+NF_EVAL
 ```
 
 **6b. For each task in the list, sequentially:**
@@ -217,20 +184,18 @@ process.stdout.write(JSON.stringify(tasks) + '\n');
 ```
 Update results:
 
-  codex-cli-1   npm install -g codex-mcp-server      ✓ UPDATED
-  gemini-cli-1  npm install -g @tuannvm/gemini-...   ✓ UPDATED
-  opencode-1    git pull + build in /code/opencode   ✓ UPDATED
-  copilot-1     git pull + build in /code/copilot    ✓ UPDATED
-  claude-1      git pull + build in /code/claude-m   ✓ UPDATED
-  claude-2      (shared repo with claude-1)          ⚡ SKIPPED
-  claude-3      (shared repo)                        ⚡ SKIPPED
-  claude-4      (shared repo)                        ⚡ SKIPPED
-  claude-5      (shared repo)                        ⚡ SKIPPED
-  claude-6      (shared repo)                        ⚡ SKIPPED
+  codex-1     npm install -g codex-mcp-server      ✓ UPDATED
+  gemini-1    npm install -g @tuannvm/gemini-...   ✓ UPDATED
+  opencode-1  git pull + build in /code/opencode   ✓ UPDATED
+  copilot-1   git pull + build in /code/copilot    ✓ UPDATED
+  ccr-1       git pull + build in /code/QGSD       ✓ UPDATED
+  ccr-2       (shared repo with ccr-1)             ⚡ SKIPPED
+  ccr-3       (shared repo)                        ⚡ SKIPPED
+  ...
 
 To load new binaries, restart updated agents:
-  /nf:mcp-restart codex-cli-1
-  /nf:mcp-restart gemini-cli-1
+  /nf:mcp-restart codex-1
+  /nf:mcp-restart gemini-1
   /nf:mcp-restart opencode-1
   (etc. — list only agents that were UPDATED, not SKIPPED)
 ```

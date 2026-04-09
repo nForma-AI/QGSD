@@ -1,23 +1,26 @@
 ---
 name: nf:mcp-restart
-description: Restart a quorum agent's MCP server process — kills the running process and waits for Claude Code to reconnect automatically
-argument-hint: "<agent>"
+description: Restart a quorum agent's MCP server process — kills the running process and waits for Claude Code to reconnect automatically. Use "broken" to auto-detect and restart all non-responding agents.
+argument-hint: "<agent|broken>"
 allowed-tools:
   - Bash
-  - mcp__codex-cli-1__identity
-  - mcp__gemini-cli-1__identity
+  - mcp__codex-1__identity
+  - mcp__gemini-1__identity
   - mcp__opencode-1__identity
   - mcp__copilot-1__identity
   - mcp__claude-1__identity
-  - mcp__claude-2__identity
-  - mcp__claude-3__identity
-  - mcp__claude-4__identity
-  - mcp__claude-5__identity
-  - mcp__claude-6__identity
+  - mcp__ccr-1__identity
+  - mcp__ccr-2__identity
+  - mcp__ccr-3__identity
+  - mcp__ccr-4__identity
+  - mcp__ccr-5__identity
+  - mcp__ccr-6__identity
 ---
 
 <objective>
 Restart a named quorum agent's MCP server process. Reads `~/.claude.json` to identify the running process, kills it, and waits for Claude Code to automatically reconnect. Claude Code manages MCP server lifecycles — when a child process dies, Claude Code restarts it automatically. After killing the process, this command waits 2 seconds and calls the agent's identity tool to confirm reconnection.
+
+Special argument `"broken"`: probes all configured agents via their identity tools, collects the ones that fail or don't respond, and restarts them all sequentially.
 </objective>
 
 <process>
@@ -28,76 +31,76 @@ Parse `$ARGUMENTS` as one token: `$AGENT`.
 
 If `$AGENT` is missing, print usage and stop:
 ```
-Usage: /nf:mcp-restart <agent>
+Usage: /nf:mcp-restart <agent|broken>
 
-Valid agents:
-  codex-cli-1, gemini-cli-1, opencode-1, copilot-1,
-  claude-1, claude-2, claude-3, claude-4, claude-5, claude-6
+  broken   — probe all agents and restart any that are not responding
+
+Valid agents (read from ~/.claude.json):
 ```
+Then run:
+```bash
+node << 'NF_EVAL'
+const fs=require('fs'),os=require('os'),path=require('path');
+const SKIP=['canopy','sentry'];
+try {
+  const cfg=JSON.parse(fs.readFileSync(path.join(os.homedir(),'.claude.json'),'utf8'));
+  const slots=Object.keys(cfg.mcpServers||{}).filter(s=>!SKIP.includes(s));
+  console.log('  '+slots.join('  '));
+} catch(e) { console.log('  (cannot read ~/.claude.json)'); }
+NF_EVAL
+```
+Stop.
+
+If `$AGENT` is `"broken"`, jump to **[Broken Mode]** below.
 
 ## Step 2 — Validate agent name
 
-Check `$AGENT` against the known agent list:
-```
-codex-cli-1, gemini-cli-1, opencode-1, copilot-1,
-claude-1, claude-2, claude-3, claude-4, claude-5, claude-6
+Run this to get valid slots:
+```bash
+node << 'NF_EVAL'
+const fs=require('fs'),os=require('os'),path=require('path');
+const SKIP=['canopy','sentry'];
+try {
+  const cfg=JSON.parse(fs.readFileSync(path.join(os.homedir(),'.claude.json'),'utf8'));
+  const slots=Object.keys(cfg.mcpServers||{}).filter(s=>!SKIP.includes(s));
+  console.log(JSON.stringify(slots));
+} catch(e) { console.log('[]'); }
+NF_EVAL
 ```
 
-If not in the list, print an error and stop:
+Parse output as `$VALID_SLOTS`. If `$AGENT` is not in `$VALID_SLOTS`, print error and stop:
 ```
 Error: Unknown agent "$AGENT"
 
-Valid agents:
-  codex-cli-1   gemini-cli-1   opencode-1   copilot-1
-  claude-1      claude-2       claude-3     claude-4
-  claude-5      claude-6
+Valid agents: <$VALID_SLOTS joined with spaces>
 ```
 
 ## Step 3 — Read process identity from ~/.claude.json
 
-Run this inline node script via Bash:
-
 ```bash
-node -e "
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-
-const claudeJsonPath = path.join(os.homedir(), '.claude.json');
+AGENT="$AGENT" node << 'NF_EVAL'
+const fs=require('fs'),path=require('path'),os=require('os');
+const claudeJsonPath=path.join(os.homedir(),'.claude.json');
 let claudeJson;
-try {
-  claudeJson = JSON.parse(fs.readFileSync(claudeJsonPath, 'utf8'));
-} catch (e) {
-  console.error('Error: Cannot read ~/.claude.json: ' + e.message);
-  process.exit(1);
-}
-
-const servers = claudeJson.mcpServers || {};
-const agent = process.env.AGENT;
-const serverConfig = servers[agent];
-
-if (!serverConfig) {
-  console.error('Error: Agent \"' + agent + '\" is not configured in ~/.claude.json mcpServers');
-  process.exit(2);
-}
-
-const command = serverConfig.command;
-const args = serverConfig.args || [];
-
+try { claudeJson=JSON.parse(fs.readFileSync(claudeJsonPath,'utf8')); }
+catch(e) { process.stderr.write('Error: Cannot read ~/.claude.json: '+e.message+'\n'); process.exit(1); }
+const servers=claudeJson.mcpServers||{};
+const agent=process.env.AGENT;
+const serverConfig=servers[agent];
+if(!serverConfig){ process.stderr.write('Error: Agent "'+agent+'" is not configured in ~/.claude.json mcpServers\n'); process.exit(2); }
+const command=serverConfig.command;
+const args=serverConfig.args||[];
 let result;
-if (command === 'node' && args.length > 0) {
-  // local node path: kill by matching argv path
-  result = { type: 'local', processPath: args[0] };
-} else if (command === 'npx' || command === 'npm') {
-  // npx-based: kill by package name (matches both npm exec and node child)
-  const packageName = args[args.length - 1];
-  result = { type: 'npx', packageName };
+if(command==='node'&&args.length>0){
+  result={type:'local',processPath:args[0]};
+} else if(command==='npx'||command==='npm'){
+  const packageName=args[args.length-1];
+  result={type:'npx',packageName};
 } else {
-  result = { type: 'unknown', command };
+  result={type:'unknown',command};
 }
-
-process.stdout.write(JSON.stringify(result) + '\n');
-" AGENT="$AGENT"
+process.stdout.write(JSON.stringify(result)+'\n');
+NF_EVAL
 ```
 
 Store output as `$PROCESS_INFO`.
@@ -154,7 +157,7 @@ Call the identity tool for `$AGENT` — one sequential call:
 
 `mcp__<$AGENT>__identity`
 
-(Replace hyphens in the agent name with hyphens as-is: `codex-cli-1` → `mcp__codex-cli-1__identity`)
+(Replace hyphens in the agent name with hyphens as-is: `codex-1` → `mcp__codex-1__identity`)
 
 **If identity tool returns successfully:**
 Parse response. Print:
@@ -171,6 +174,97 @@ Print:
 ```
 Processes killed. Claude Code is reconnecting to $AGENT.
 Check status in a few seconds: /nf:mcp-status
+```
+
+---
+
+## [Broken Mode] — Detect and restart all non-responding agents
+
+**BM-1. Get all configured agent slots:**
+
+```bash
+node << 'NF_EVAL'
+const fs=require('fs'),os=require('os'),path=require('path');
+const SKIP=['canopy','sentry'];
+try {
+  const cfg=JSON.parse(fs.readFileSync(path.join(os.homedir(),'.claude.json'),'utf8'));
+  const slots=Object.keys(cfg.mcpServers||{}).filter(s=>!SKIP.includes(s));
+  console.log(JSON.stringify(slots));
+} catch(e) { console.log('[]'); }
+NF_EVAL
+```
+
+Store as `$ALL_SLOTS`.
+
+Print:
+```
+Broken mode — probing <N> agents for identity response...
+```
+
+**BM-2. Probe each agent sequentially:**
+
+For each slot in `$ALL_SLOTS`, call its identity tool:
+
+`mcp__<slot>__identity`
+
+Record result as one of:
+- `ok` — identity tool returned successfully
+- `broken` — tool call errored, timed out, or tool is not available in this session
+
+Build `$BROKEN_SLOTS` list (slots that returned `broken`).
+
+Print probe summary table:
+```
+  codex-1     ✓ ok
+  gemini-1    ✓ ok
+  ccr-1       ✗ broken
+  ccr-2       ✗ broken
+  ...
+```
+
+If `$BROKEN_SLOTS` is empty:
+```
+All agents healthy — nothing to restart.
+```
+Stop.
+
+**BM-3. Confirm before restarting (if shared process detected):**
+
+Check if any broken slot shares a `processPath` with a healthy slot by running:
+
+```bash
+node << 'NF_EVAL'
+const fs=require('fs'),path=require('path'),os=require('os');
+const cfg=JSON.parse(fs.readFileSync(path.join(os.homedir(),'.claude.json'),'utf8'));
+const servers=cfg.mcpServers||{};
+const results={};
+for(const [name,srv] of Object.entries(servers)){
+  const args=srv.args||[];
+  if(srv.command==='node'&&args.length>0) results[name]=args[0];
+  else if(srv.command==='npx'||srv.command==='npm') results[name]=args[args.length-1];
+}
+process.stdout.write(JSON.stringify(results)+'\n');
+NF_EVAL
+```
+
+If any broken slot shares a process path/package with a healthy slot, print a warning:
+```
+Warning: <broken-slot> shares its process with <healthy-slot>.
+Killing it will briefly interrupt <healthy-slot> too (Claude Code will reconnect automatically).
+```
+
+**BM-4. Restart broken slots sequentially:**
+
+For each slot in `$BROKEN_SLOTS`, run Steps 3–6 above (read config → kill → wait → verify), treating `$AGENT` as the current slot.
+
+**BM-5. Print final summary:**
+
+```
+━━━ RESTART SUMMARY ━━━
+
+  Restarted:  <N> slot(s) — <slot names>
+  Responding: <list of slots confirmed via identity>
+  Pending:    <list of slots that didn't respond yet — check /nf:mcp-status>
 ```
 
 </process>
