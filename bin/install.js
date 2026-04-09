@@ -28,6 +28,17 @@ const CLI_INSTALL_HINTS = {
   ccr:      'npm install -g @musistudio/claude-code-router',
 };
 
+// Lazy require: coderlm-lifecycle.cjs is an optional sibling module. Deferring
+// the require() prevents install.js from failing at startup if the module is
+// absent (e.g., partial install or future removal of the feature).
+let _coderlmLifecycle = null;
+function getCoderlmLifecycle() {
+  if (!_coderlmLifecycle) {
+    try { _coderlmLifecycle = require('./coderlm-lifecycle.cjs'); } catch (e) { /* not available */ }
+  }
+  return _coderlmLifecycle;
+}
+
 // Get version from package.json
 const pkg = require('../package.json');
 
@@ -2558,6 +2569,35 @@ function install(isGlobal, runtime = 'claude') {
         }
       }
       log(`  ${green}✓${reset} Restored nf/bin (was symlink) with merged contents`);
+    }
+  }
+
+  // Download coderlm binary to nf-bin/ if not already present (fail-open)
+  {
+    const lifecycle = getCoderlmLifecycle();
+    if (lifecycle) {
+      // Idempotency check: if coderlm already installed, skip silently
+      try {
+        fs.accessSync(path.join(os.homedir(), '.claude', 'nf-bin', 'coderlm'), fs.constants.X_OK);
+        // Already installed — no-op
+      } catch (e) {
+        // NOTE: this outer try/catch is ONLY for fs.accessSync (detect missing binary).
+        // Only act on ENOENT (file truly absent) — other errors (EACCES, EISDIR, etc.)
+        // mean the binary path exists but is inaccessible; skip silently to preserve
+        // idempotency and avoid spurious installs.
+        // Do NOT wrap ensureBinary() in this catch — it handles its own errors internally.
+        if (e.code === 'ENOENT') {
+          console.log(`  ${cyan}↓${reset} Installing coderlm...`);
+          const result = lifecycle.ensureBinary();
+          if (result.ok && result.source !== 'cached') {
+            console.log(`  ${green}✓${reset} coderlm installed`);
+          } else if (!result.ok) {
+            const detail = typeof result.detail === 'string' ? result.detail : '';
+            console.log(`  ${yellow}⚠${reset} coderlm download skipped: ${result.error}${detail ? ' (' + detail.slice(0, 80) + ')' : ''}`);
+          }
+        }
+        // Other errors (EACCES, EISDIR, etc.) — assume binary exists, skip silently
+      }
     }
   }
 

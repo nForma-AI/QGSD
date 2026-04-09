@@ -333,6 +333,45 @@ describe('CLI dispatch', () => {
   });
 });
 
+// ── Integration contract: behavior expected by install.js ────────────────────
+
+describe('ensureBinary() install.js contract', () => {
+  it('returns ok:true with source:cached when binary already exists', () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-lifecycle-contract-'));
+    try {
+      const { _setPaths, ensureBinary } = require('./coderlm-lifecycle.cjs');
+      _setPaths(tmp);
+      // Place a mock executable binary
+      const binPath = path.join(tmp, 'coderlm');
+      fs.writeFileSync(binPath, '#!/bin/sh\n');
+      fs.chmodSync(binPath, 0o755);
+      const result = ensureBinary();
+      assert.strictEqual(result.ok, true);
+      assert.strictEqual(result.source, 'cached');
+    } finally {
+      fs.rmSync(tmp, { recursive: true, force: true });
+      const { _setPaths } = require('./coderlm-lifecycle.cjs');
+      _setPaths(); // reset
+    }
+  });
+
+  it('returns ok:false (not ok:undefined) on download failure — install.js relies on result.ok boolean', () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-lifecycle-contract-'));
+    try {
+      const { _setPaths, ensureBinary } = require('./coderlm-lifecycle.cjs');
+      _setPaths(tmp);
+      // No binary present, gh CLI will fail (not authenticated or not present in CI)
+      const result = ensureBinary();
+      // result.ok must be a boolean (true or false), never undefined
+      assert.ok(typeof result.ok === 'boolean', 'result.ok must be boolean');
+    } finally {
+      fs.rmSync(tmp, { recursive: true, force: true });
+      const { _setPaths } = require('./coderlm-lifecycle.cjs');
+      _setPaths();
+    }
+  });
+});
+
 // ── Fail-open contracts ──────────────────────────────────────────────────────
 
 describe('Fail-open contracts', () => {
