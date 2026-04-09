@@ -8,6 +8,7 @@ allowed-tools:
   - mcp__codex-1__identity
   - mcp__gemini-1__identity
   - mcp__opencode-1__identity
+  - mcp__opencode-2__identity
   - mcp__copilot-1__identity
   - mcp__claude-1__identity
   - mcp__claude-2__identity
@@ -15,20 +16,33 @@ allowed-tools:
   - mcp__claude-4__identity
   - mcp__claude-5__identity
   - mcp__claude-6__identity
+  - mcp__ccr-1__identity
+  - mcp__ccr-2__identity
+  - mcp__ccr-3__identity
+  - mcp__ccr-4__identity
+  - mcp__ccr-5__identity
+  - mcp__ccr-6__identity
+  - mcp__codex-1__health_check
+  - mcp__gemini-1__health_check
+  - mcp__opencode-1__health_check
+  - mcp__opencode-2__health_check
+  - mcp__copilot-1__health_check
   - mcp__claude-1__health_check
   - mcp__claude-2__health_check
   - mcp__claude-3__health_check
   - mcp__claude-4__health_check
   - mcp__claude-5__health_check
   - mcp__claude-6__health_check
-  - mcp__codex-1__health_check
-  - mcp__gemini-1__health_check
-  - mcp__opencode-1__health_check
-  - mcp__copilot-1__health_check
+  - mcp__ccr-1__health_check
+  - mcp__ccr-2__health_check
+  - mcp__ccr-3__health_check
+  - mcp__ccr-4__health_check
+  - mcp__ccr-5__health_check
+  - mcp__ccr-6__health_check
 ---
 
 <objective>
-Display a clean status table of all connected MCP quorum agents plus the Claude orchestrator. For CLI agents (codex-1, gemini-1, opencode-1, copilot-1): call their identity tool and health_check for real model names and latency. For HTTP agents (claude-1..6): call their identity tool then health_check for real-time endpoint health. Read provider URLs from ~/.claude.json. Show a claude orchestrator row at the top of the table.
+Display a clean status table of all configured MCP quorum agents plus the Claude orchestrator. Slot names and types are read dynamically from ~/.claude.json at runtime — no slot names are hardcoded in this skill. For each non-skip slot: call its identity tool and health_check for real model names and latency. Read provider URLs from ~/.claude.json. Show a claude orchestrator row at the top of the table.
 
 This command is read-only (observation only). It does NOT invoke quorum and is NOT in quorum_commands.
 </objective>
@@ -92,11 +106,29 @@ if(fs.existsSync(cfgPath)){
   } catch(_){}
 }
 
-console.log(JSON.stringify({totalRounds,lastUpdate,providers,claudeModel,claudeAuth}));
+// Classify slots dynamically
+const SKIP_SLOTS = ['canopy', 'sentry'];
+const CLI_COMMANDS = ['codex', 'gemini', 'opencode', 'gh', 'copilot'];
+let slots = { cli: [], http: [], mcp: [], skip: [] };
+try {
+  if(fs.existsSync(cfgPath)){
+    const cfg2=JSON.parse(fs.readFileSync(cfgPath,'utf8'));
+    for(const [name,val] of Object.entries(cfg2.mcpServers||{})){
+      if(SKIP_SLOTS.includes(name)){ slots.skip.push(name); continue; }
+      const env=val.env||{};
+      if(env.ANTHROPIC_BASE_URL){ slots.http.push(name); }
+      else if(CLI_COMMANDS.some(c=>(val.command||'').includes(c))){ slots.cli.push(name); }
+      else if(val.command==='node'&&(val.args||[]).some(a=>/\.(mjs|cjs|js)$/.test(a))){ slots.mcp.push(name); }
+      else{ slots.skip.push(name); }
+    }
+  }
+} catch(_){ slots = { cli: [], http: [], mcp: [], skip: [] }; }
+
+console.log(JSON.stringify({totalRounds,lastUpdate,providers,claudeModel,claudeAuth,slots}));
 EOF
 ```
 
-Parse `totalRounds`, `lastUpdate`, `providers` (map of slot → provider name or null), `claudeModel`, and `claudeAuth`.
+Parse `totalRounds`, `lastUpdate`, `providers` (map of slot → provider name or null), `claudeModel`, `claudeAuth`, and `slots` (cli/http/mcp/skip arrays).
 
 **Provider for CLI agents** — prefer `identity.display_provider` when present. If absent, infer from model name:
 - `gpt-*` or `o[0-9]*` → OpenAI
@@ -106,103 +138,92 @@ Parse `totalRounds`, `lastUpdate`, `providers` (map of slot → provider name or
 - default → —
 
 **Auth type** — read from identity response `auth_type` field if present. If absent, infer:
-- CLI agents (codex-1, gemini-1, opencode-1, copilot-1) → `sub` (subscription — flat fee, no per-token cost)
-- HTTP agents (claude-1..6) → `api` (API token — pay per request)
+- CLI slots → `sub` (subscription — flat fee, no per-token cost)
+- HTTP/MCP slots → `api` (API token — pay per request)
 
 Display as `sub` or `api` in the Auth column.
 
-## Step 2: Display banner (run this Bash command second, after Step 1 output is stored; wait for output before proceeding to Step 3)
+## Step 2: Display banner
 
-Print:
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- nForma ► MCP STATUS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+From INIT_INFO.slots, compute a count description and print the banner:
 
-Querying 4 CLI agents + 6 HTTP providers...
+```bash
+node -e "
+const s=JSON.parse(process.argv[1]);
+const cli=s.cli.length, http=s.http.length, mcp=s.mcp.length;
+const parts=[];
+if(cli>0) parts.push(cli+' CLI agent'+(cli>1?'s':''));
+if(http>0) parts.push(http+' HTTP provider'+(http>1?'s':''));
+if(mcp>0) parts.push(mcp+' local MCP slot'+(mcp>1?'s':''));
+const countStr=parts.join(' + ')||'no quorum slots';
+console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+console.log(' nForma ► MCP STATUS');
+console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+console.log('');
+console.log('Querying '+countStr+'...');
+" '${JSON.stringify(INIT_INFO.slots)}'
 ```
 
 ## Step 3: Collect identity + health_check results via sub-agent (run after Step 2 output is stored)
 
-Invoke a Task() sub-agent to call all MCP tools. This prevents raw tool-result blocks from appearing in the main conversation.
+Build the slot list from INIT_INFO.slots (all non-skip slots across cli, http, and mcp arrays):
+
+```
+const allSlots = [...INIT_INFO.slots.cli, ...INIT_INFO.slots.http, ...INIT_INFO.slots.mcp];
+```
+
+If allSlots is empty (no non-skip slots configured), skip this sub-agent call entirely and proceed to Step 5 with an empty AGENT_RESULTS object ({}).
+
+Otherwise, invoke a Task() sub-agent with the following dynamically-constructed prompt (substitute allSlots at runtime):
 
 ```
 Task(
   subagent_type: "general-purpose",
   model: "claude-haiku-4-5",
-  prompt: """
+  prompt: `
 You are a data-collection sub-agent. Your only job is to call the MCP tools listed below and return their results as a single JSON object. Do not explain or summarize — return only the JSON object.
+
+The configured quorum slots are: ${JSON.stringify(allSlots)}
+
+Call identity and health_check for each slot listed above. Use tool names in the format mcp__<slot>__identity and mcp__<slot>__health_check. Tool names preserve hyphens: for slot 'ccr-1' call mcp__ccr-1__identity and mcp__ccr-1__health_check (NOT mcp__ccr_1__identity). For slot 'opencode-2' call mcp__opencode-2__identity and mcp__opencode-2__health_check.
 
 Call each tool with {} as input. Wrap every call in try/catch — if a tool throws or is unavailable, record null for that field.
 
-Tools to call in this order (call them one at a time, sequentially — never parallel):
-
-1.  mcp__codex-1__identity          — store result as codex_id
-2.  mcp__gemini-1__identity         — store result as gemini_id
-3.  mcp__opencode-1__identity       — store result as opencode_id
-4.  mcp__copilot-1__identity        — store result as copilot_id
-5.  mcp__codex-1__health_check      — store result as codex_hc
-6.  mcp__gemini-1__health_check     — store result as gemini_hc
-7.  mcp__opencode-1__health_check   — store result as opencode_hc
-8.  mcp__copilot-1__health_check    — store result as copilot_hc
-9.  mcp__claude-1__identity         — store result as claude1_id
-10. mcp__claude-1__health_check     — store result as claude1_hc
-11. mcp__claude-2__identity         — store result as claude2_id
-12. mcp__claude-2__health_check     — store result as claude2_hc
-13. mcp__claude-3__identity         — store result as claude3_id
-14. mcp__claude-3__health_check     — store result as claude3_hc
-15. mcp__claude-4__identity         — store result as claude4_id
-16. mcp__claude-4__health_check     — store result as claude4_hc
-17. mcp__claude-5__identity         — store result as claude5_id
-18. mcp__claude-5__health_check     — store result as claude5_hc
-19. mcp__claude-6__identity         — store result as claude6_id
-20. mcp__claude-6__health_check     — store result as claude6_hc
+Call all tools one at a time, sequentially — never parallel.
 
 Return ONLY this JSON structure (no markdown, no explanation):
 {
-  "codex-1":    { "identity": <codex_id or null>,    "hc": <codex_hc or null> },
-  "gemini-1":   { "identity": <gemini_id or null>,   "hc": <gemini_hc or null> },
-  "opencode-1": { "identity": <opencode_id or null>, "hc": <opencode_hc or null> },
-  "copilot-1":  { "identity": <copilot_id or null>,  "hc": <copilot_hc or null> },
-  "claude-1":   { "identity": <claude1_id or null>,  "hc": <claude1_hc or null> },
-  "claude-2":   { "identity": <claude2_id or null>,  "hc": <claude2_hc or null> },
-  "claude-3":   { "identity": <claude3_id or null>,  "hc": <claude3_hc or null> },
-  "claude-4":   { "identity": <claude4_id or null>,  "hc": <claude4_hc or null> },
-  "claude-5":   { "identity": <claude5_id or null>,  "hc": <claude5_hc or null> },
-  "claude-6":   { "identity": <claude6_id or null>,  "hc": <claude6_hc or null> }
+  "<slot>": { "identity": <identity result or null>, "hc": <health_check result or null> },
+  ...one entry per slot in the list above...
 }
 
-Where each identity value is the raw object returned by the tool (with at minimum `version` and `model` fields), and each hc value is the raw object returned by health_check (with `healthy`, `latencyMs`, and optionally `model`, `via` fields).
-"""
+Where each identity value is the raw object returned by the tool (with at minimum version and model fields), and each hc value is the raw object returned by health_check (with healthy, latencyMs, and optionally model, via fields).
+`
 )
 ```
 
-Store the sub-agent's returned JSON object as AGENT_RESULTS (parse from the sub-agent's text output).
-
-For each slot in AGENT_RESULTS:
-- `identity` = the identity result (or null if the sub-agent recorded null)
-- `hc` = the health_check result (or null)
-
-Use these values in Step 4 exactly as before — the shape is identical to what the old direct tool calls returned.
+Store the sub-agent's returned JSON object as AGENT_RESULTS (parse from the sub-agent's text output). Keys are slot names as provided in allSlots.
 
 ## Step 4: Derive health state per agent
 
-**For CLI agents — identity + health_check based:**
+For each slot in AGENT_RESULTS, look up its type from INIT_INFO.slots to branch on health logic:
+
+**For slots in INIT_INFO.slots.cli — identity + health_check based:**
 - If identity call threw an exception → health = `error`, latency = `—`
 - Else if `hc` is null (health_check threw or timed out) → health = `available`, latency = `—`
 - Else if `!hc.healthy` → health = `unhealthy`, latency = `${hc.latencyMs}ms`
 - Else → health = `available`, latency = `${hc.latencyMs}ms`
 
-Model for CLI agents: use `identity.model` if present (real model name from model_detect or static), else `identity.display_provider ?? identity.provider`.
+Model for CLI slots: use `identity.model` if present, else `identity.display_provider ?? identity.provider`.
 
-**For HTTP agents (claude-1 through claude-6) — live health_check result:**
+**For slots in INIT_INFO.slots.http or INIT_INFO.slots.mcp — live health_check result:**
 - If identity call threw an exception → health = `error`, latency = `—`
 - Else if `hc` is null (health_check threw or timed out) → health = `unreachable`, latency = `—`
 - Else if `hc.healthy === false` → health = `unhealthy`, latency = `${hc.latencyMs}ms`
 - Else if `hc.via === 'fallback'` → health = `fallback`, latency = `${hc.latencyMs}ms`
 - Else → health = `available`, latency = `${hc.latencyMs}ms`
 
-When `hc.via === 'fallback'`, the displayed Model should be `hc.model` (the fallback model) rather than the primary model from identity, since that's what actually responded.
+When `hc.via === 'fallback'`, the displayed Model should be `hc.model` (the fallback model).
 
 ## Step 5: Render formatted table
 
@@ -219,6 +240,8 @@ Before rendering, prepend a claude orchestrator row at the TOP of the table. Thi
 - Model: `claudeModel` (from INIT_INFO, e.g. `claude-sonnet-4-6`)
 - Health: `orchestrator`
 - Latency: `—`
+
+Rows come from all non-skip slots: iterate over [...INIT_INFO.slots.cli, ...INIT_INFO.slots.http, ...INIT_INFO.slots.mcp] in that order. Auth column: cli slots → `sub`, http/mcp slots → `api`.
 
 Example output format:
 
@@ -257,7 +280,7 @@ Health legend:
 </process>
 
 <success_criteria>
-- All 11 rows shown in one clean table (1 orchestrator + 4 CLI + 6 HTTP)
+- All non-skip configured slots shown in one clean table (1 orchestrator row + all cli/http/mcp slots discovered from ~/.claude.json)
 - Columns: Agent | Auth | Provider | Model | Health | Latency (no UNAVAIL column)
 - `claude` orchestrator row shown at top of table with model read from `~/.claude/settings.json`
 - CLI agents show real model names (gpt-5.3-codex, gemini-2.5-pro, xai/grok-3, gpt-4.1) not binary names
