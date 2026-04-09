@@ -17,7 +17,7 @@
         "--version"
       ],
       "display_provider": "OpenAI",
-      "cli": "/opt/homebrew/bin/codex",
+      "cli": null,
       "args_template": [
         "exec",
         "{prompt}"
@@ -96,7 +96,7 @@
         "--version"
       ],
       "display_provider": "Google",
-      "cli": "/opt/homebrew/bin/gemini",
+      "cli": null,
       "args_template": [
         "-m",
         "gemini-3-flash-preview",
@@ -172,7 +172,7 @@
         "--version"
       ],
       "display_provider": "OpenCode",
-      "cli": "/opt/homebrew/bin/opencode",
+      "cli": null,
       "args_template": [
         "run",
         "--print-logs",
@@ -229,7 +229,7 @@
         "--version"
       ],
       "display_provider": "GitHub",
-      "cli": "/opt/homebrew/bin/copilot",
+      "cli": null,
       "args_template": [
         "-p",
         "{prompt}",
@@ -296,7 +296,7 @@
       "mainTool": "claude",
       "model": "claude-opus-4-6",
       "display_provider": "Anthropic",
-      "cli": "/Users/jonathanborduas/.local/bin/claude",
+      "cli": null,
       "args_template": [
         "-p",
         "{prompt}",
@@ -336,7 +336,7 @@
       "mainTool": "claude",
       "model": "MiniMaxAI/MiniMax-M2.5",
       "display_provider": "Together.xyz",
-      "cli": "/opt/homebrew/bin/ccr",
+      "cli": null,
       "args_template": [
         "claude-1",
         "-p",
@@ -378,7 +378,7 @@
       "mainTool": "claude",
       "model": "Qwen/Qwen3.5-397B-A17B",
       "display_provider": "Together.xyz",
-      "cli": "/opt/homebrew/bin/ccr",
+      "cli": null,
       "args_template": [
         "claude-2",
         "-p",
@@ -420,7 +420,7 @@
       "mainTool": "claude",
       "model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
       "display_provider": "Together.xyz",
-      "cli": "/opt/homebrew/bin/ccr",
+      "cli": null,
       "args_template": [
         "claude-3",
         "-p",
@@ -462,7 +462,7 @@
       "mainTool": "claude",
       "model": "moonshotai/Kimi-K2.5",
       "display_provider": "Together.xyz",
-      "cli": "/opt/homebrew/bin/ccr",
+      "cli": null,
       "args_template": [
         "claude-4",
         "-p",
@@ -504,7 +504,7 @@
       "mainTool": "claude",
       "model": "openai/gpt-oss-120b",
       "display_provider": "Together.xyz",
-      "cli": "/opt/homebrew/bin/ccr",
+      "cli": null,
       "args_template": [
         "claude-5",
         "-p",
@@ -546,7 +546,7 @@
       "mainTool": "claude",
       "model": "zai-org/GLM-5.1",
       "display_provider": "Together.xyz",
-      "cli": "/opt/homebrew/bin/ccr",
+      "cli": null,
       "args_template": [
         "claude-6",
         "-p",
