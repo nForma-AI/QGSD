@@ -92,6 +92,7 @@ const hasEnableBreaker = args.includes('--enable-breaker');
 const hasMigrateSlots = args.includes('--migrate-slots');
 const hasFormal = args.includes('--formal');
 const hasUninstallFormal = args.includes('--uninstall-formal');
+const hasRescan = args.includes('--rescan');
 const hasAllProviders = args.includes('--all-providers');
 const hasVerbose = args.includes('--verbose') || args.includes('-v');
 
@@ -3417,15 +3418,26 @@ function promptRuntime(callback) {
 function promptProviders(callback) {
   const provs = require('./providers.json').providers;
   const classified = classifyProviders(provs);
-  const detected = detectExternalClis(classified.externalPrimary);
 
-  // CCR slots not included by default — users enable via /nf:mcp-setup
+  // Detect CCR binary separately — ccr-* slots live in externalPrimary (type: 'subprocess')
+  const ccrStatus = detectCcrCli();
+  const ccrSlots = classified.externalPrimary.filter(p => p.display_type === 'claude-code-router');
+  const ccrSlotNames = ccrSlots.map(p => p.name);
+
+  // Detect non-CCR external CLIs
+  const nonCcrExternal = classified.externalPrimary.filter(p => p.display_type !== 'claude-code-router');
+  const detected = detectExternalClis(nonCcrExternal);
+
+  // CCR slots: auto-include all when binary found
   const selected = [];
+  if (ccrStatus.found && ccrSlotNames.length > 0) {
+    for (const name of ccrSlotNames) selected.push(name);
+  }
 
   console.log(`\n  ${yellow}Quorum agent setup:${reset}`);
   console.log(`  Run /nf:mcp-setup after install to configure quorum slots (api-*, claude-*, ccr-*).\n`);
 
-  // Print detection results
+  // Print detection results for non-CCR CLIs
   for (const d of detected) {
     if (d.found) {
       console.log(`  ${green}\u2713${reset} ${d.name} \u2014 ${d.resolvedPath}`);
@@ -3434,13 +3446,13 @@ function promptProviders(callback) {
       console.log(`  ${yellow}\u2717${reset} ${d.name} \u2014 not found${hint ? ` (${hint})` : ''}`);
     }
   }
-  if (classified.ccr.length > 0) {
-    console.log('');
-    console.log(`  ${cyan}CCR slots:${reset}`);
-    for (const ccrSlot of classified.ccr) {
-      console.log(`  ${cyan}\u00BB${reset} ${ccrSlot.name} \u2014 CCR preset (${ccrSlot.model || 'unknown model'})`);
-    }
-    console.log(`  Install/enable ccr (${CLI_INSTALL_HINTS.ccr || 'npm i -g @musistudio/claude-code-router'}) before running these slots.\n`);
+
+  // Print CCR status
+  if (ccrStatus.found && ccrSlotNames.length > 0) {
+    console.log(`  ${green}\u2713${reset} ccr binary found \u2014 auto-including ${ccrSlotNames.length} CCR slots (${ccrSlotNames[0]}..${ccrSlotNames[ccrSlotNames.length - 1]})`);
+  } else if (ccrSlotNames.length > 0) {
+    const hint = CLI_INSTALL_HINTS.ccr || 'npm i -g @musistudio/claude-code-router';
+    console.log(`  ${yellow}\u2717${reset} ccr not found \u2014 CCR slots skipped. Install: ${hint}`);
   }
   console.log('');
 
@@ -3809,6 +3821,47 @@ if (hasFormal) {
 
 if (hasUninstallFormal) {
   uninstallFormalTools();
+  process.exit(0);
+}
+
+// RESCAN-01: --rescan re-detects installed CLIs and syncs missing MCP slots to ~/.claude.json
+if (hasRescan) {
+  console.log(`\n  ${cyan}Rescanning for CLI providers...${reset}\n`);
+  const provs = require('./providers.json').providers;
+  const classified = classifyProviders(provs);
+
+  // Detect CCR separately: if ccr binary found, include all ccr-* slots
+  const ccrStatus = detectCcrCli();
+  const ccrNames = ccrStatus.found ? classified.externalPrimary
+    .filter(p => p.display_type === 'claude-code-router')
+    .map(p => p.name) : [];
+
+  // Detect non-CCR external primaries
+  const nonCcrExternal = classified.externalPrimary.filter(p => p.display_type !== 'claude-code-router');
+  const detected = detectExternalClis(nonCcrExternal);
+  const foundNames = detected.filter(d => d.found).map(d => d.name);
+
+  selectedProviderSlots = [...foundNames, ...ccrNames];
+
+  if (selectedProviderSlots.length === 0) {
+    console.log(`  ${yellow}No external CLIs detected. Install CLIs first, then run --rescan.${reset}\n`);
+    process.exit(0);
+  }
+
+  // Print detection summary
+  for (const d of detected) {
+    if (d.found) {
+      console.log(`  ${green}\u2713${reset} ${d.name} \u2014 ${d.resolvedPath}`);
+    }
+  }
+  if (ccrStatus.found && ccrNames.length > 0) {
+    console.log(`  ${green}\u2713${reset} ccr binary found (${ccrStatus.resolvedPath}) \u2014 ${ccrNames.length} CCR slots`);
+  }
+  console.log('');
+
+  // Sync missing slots to ~/.claude.json
+  ensureMcpSlotsFromProviders();
+
   process.exit(0);
 }
 
