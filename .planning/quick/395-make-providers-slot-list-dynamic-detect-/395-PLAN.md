@@ -72,7 +72,10 @@ Add the following pure function immediately after the `readProvidersJson` / `wri
  * Rules:
  * - HTTP-only slots (no `cli` field OR type === 'http') are always included.
  * - For subprocess/ccr slots, use the already-resolved `resolvedCli` field if present,
- *   otherwise fall back to `cli`. Test with fs.accessSync(path, fs.constants.X_OK).
+ *   otherwise fall back to `cli`. This function MUST be called after the resolveCli() loop
+ *   in unified-mcp-server.mjs so that resolvedCli is populated before probing.
+ *   If resolvedCli is absent (e.g. called out-of-order or in isolation), the raw `cli`
+ *   field is used as a best-effort fallback. Test with fs.accessSync(path, fs.constants.X_OK).
  * - De-duplicate probes: slots sharing the same binary path (e.g. ccr-1..ccr-6 all use
  *   /opt/homebrew/bin/ccr) check the filesystem only once per unique path.
  * - Fail-open: any unexpected error returns the full providers list unchanged.
@@ -85,8 +88,9 @@ function detectInstalledProviders(providers) {
   try {
     const checked = new Map(); // binaryPath -> boolean (installed)
     return providers.filter(p => {
-      // HTTP-only slots have no CLI to probe
+      // HTTP-only slots have no CLI to probe — always include
       if (!p.cli || p.type === 'http') return true;
+      // Use resolvedCli (set by resolveCli() loop) if available; fall back to raw cli field
       const binaryPath = p.resolvedCli || p.cli;
       if (checked.has(binaryPath)) return checked.get(binaryPath);
       let installed = false;
@@ -98,12 +102,13 @@ function detectInstalledProviders(providers) {
       }
       checked.set(binaryPath, installed);
       if (!installed) {
-        process.stderr.write(`[manage-agents-core] detectInstalledProviders: ${p.name} excluded — CLI not found: ${binaryPath}\n`);
+        // stderr: per-slot exclusion diagnostic (type included to disambiguate shared-name slots)
+        process.stderr.write(`[manage-agents-core] detectInstalledProviders: ${p.name} (type=${p.type || 'subprocess'}) excluded — CLI not found: ${binaryPath}\n`);
       }
       return installed;
     });
   } catch (err) {
-    // Fail-open: unexpected error — return full list
+    // Fail-open: unexpected error — return full list unchanged
     process.stderr.write(`[manage-agents-core] detectInstalledProviders: unexpected error, using full list: ${err.message}\n`);
     return providers;
   }
@@ -117,14 +122,24 @@ detectInstalledProviders,
 ```
   </action>
   <verify>
-node -e "const c=require('./bin/manage-agents-core.cjs');console.log(typeof c._pure.detectInstalledProviders)"
-Expected output: `function`
+1. Confirm export:
+   node -e "const c=require('./bin/manage-agents-core.cjs');console.log(typeof c._pure.detectInstalledProviders)"
+   Expected output: `function`
 
-Also run: node -e "const c=require('./bin/manage-agents-core.cjs');const p=c._pure.readProvidersJson();const filtered=c._pure.detectInstalledProviders(p.providers);console.log('total:',p.providers.length,'installed:',filtered.length,filtered.map(x=>x.name))"
-Expected output: total count >= installed count, installed list is a subset of total names.
+2. Confirm filtering behavior against live providers.json:
+   node -e "const c=require('./bin/manage-agents-core.cjs');const p=c._pure.readProvidersJson();const filtered=c._pure.detectInstalledProviders(p.providers);console.log('total:',p.providers.length,'installed:',filtered.length,filtered.map(x=>x.name))"
+   Expected: total count >= installed count, installed list is a subset of total names.
+
+3. Confirm resolvedCli vs cli fallback path: pass a provider with only `cli` set (no resolvedCli) and verify it is probed using the `cli` value:
+   node -e "const c=require('./bin/manage-agents-core.cjs');const f=c._pure.detectInstalledProviders;const r=f([{name:'test-fallback',type:'subprocess',cli:'/usr/bin/env'}]);console.log('fallback result:',r.length,'(expect 1 — /usr/bin/env exists)')"
+   Expected output: `fallback result: 1 (expect 1 — /usr/bin/env exists)`
+
+4. Confirm HTTP-only slot always included:
+   node -e "const c=require('./bin/manage-agents-core.cjs');const f=c._pure.detectInstalledProviders;const r=f([{name:'http-only',type:'http',url:'http://localhost:9999'}]);console.log('http result:',r.length,'(expect 1)')"
+   Expected output: `http result: 1 (expect 1)`
   </verify>
   <done>
-`detectInstalledProviders` is exported from `manage-agents-core.cjs._pure`, accepts a providers array, returns only slots with reachable CLI binaries (plus all HTTP slots), deduplicates binary checks, and fails open.
+`detectInstalledProviders` is exported from `manage-agents-core.cjs._pure`, accepts a providers array, returns only slots with reachable CLI binaries (plus all HTTP slots), deduplicates binary checks, logs each excluded slot with its type, and fails open. resolvedCli fallback to cli is documented in code comments.
   </done>
 </task>
 
@@ -148,29 +163,44 @@ After the CLI resolution loop ends (after the closing brace of `for (const provi
 ```js
 // ─── Filter to installed CLIs only (DYNAMIC-SLOTS-01) ──────────────────────────
 // resolvedCli was set in the loop above; detectInstalledProviders uses it for probing.
-// HTTP-only slots and slots with missing resolvedCli fall back to provider.cli.
+// Calling detectInstalledProviders AFTER this loop is required — if called before,
+// resolvedCli will be absent and the function falls back to the raw cli field.
+// HTTP-only slots are always included regardless of CLI detection.
 providers = detectInstalledProviders(providers);
 if (providers.length === 0) {
+  // WARNING severity: zero tools means the server starts but can dispatch nothing.
+  // This is a stronger signal than per-slot exclusion and should be visible in logs.
   process.stderr.write('[unified-mcp-server] WARNING: No installed providers found after CLI detection — server will start with zero tools\n');
 }
 ```
+
+Severity distinction:
+- Per-slot exclusion messages (inside detectInstalledProviders) are diagnostic info written to stderr.
+- The zero-provider case above is a WARNING and uses a distinct prefix to be grep-able in logs.
 
 IMPORTANT: `providers` is declared with `let` (it is re-assigned inside the Guard block: `providers = providers || []`). Confirm the variable is declared as `let providers` — if it is declared as `const`, change `const providers` to `let providers` on the line where it is assigned (line 29: `let providers;` — already a `let` per the file).
 
 The `toolMap` on line 808 is built as `new Map(providers.map(p => [p.name, p]))` — this runs after the module-level code so it will automatically reflect the filtered list.
   </action>
   <verify>
-1. Start the server in a dry-run: node bin/unified-mcp-server.mjs <<< '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' 2>/dev/null | node -e "const d=require('fs').readFileSync('/dev/stdin','utf8');const r=JSON.parse(d);console.log('tools:',r.result.tools.map(t=>t.name))"
+1. Start the server in a dry-run and inspect the tool list:
+   node bin/unified-mcp-server.mjs <<< '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' 2>/dev/null | node -e "const d=require('fs').readFileSync('/dev/stdin','utf8');const r=JSON.parse(d);console.log('tools:',r.result.tools.map(t=>t.name))"
    Confirm the tool list only contains providers whose CLI binary is actually on the system.
 
-2. Grep for the integration: grep -n 'detectInstalledProviders' bin/unified-mcp-server.mjs
+2. Grep for the integration:
+   grep -n 'detectInstalledProviders' bin/unified-mcp-server.mjs
    Expected: at least 2 lines (import + call-site).
 
-3. No regression: node -e "const {createRequire}=require('module');const r=createRequire(import.meta ? import.meta.url : __filename);r('./bin/manage-agents-core.cjs')" 2>&1 | head -5
-   Expected: no error output (module loads cleanly).
+3. No regression — module loads cleanly:
+   node -e "const {createRequire}=require('module');const r=createRequire(require('path').resolve('bin/manage-agents-core.cjs'));r('./bin/manage-agents-core.cjs')" 2>&1 | head -5
+   Expected: no error output.
+
+4. Confirm resolvedCli dependency ordering: the detectInstalledProviders call must appear AFTER the resolveCli loop. Verify line order:
+   grep -n 'detectInstalledProviders\|for.*provider.*of.*providers' bin/unified-mcp-server.mjs
+   Expected: the for-loop line number is lower than the detectInstalledProviders call-site line number.
   </verify>
   <done>
-`unified-mcp-server.mjs` calls `detectInstalledProviders(providers)` after the CLI resolution loop. Slots without installed CLIs are excluded from `providers`, `buildAllProviderTools()`, `toolMap`, and all dispatch paths. HTTP-only slots remain included. Server starts without crashing even when all CLI slots are missing.
+`unified-mcp-server.mjs` calls `detectInstalledProviders(providers)` after the CLI resolution loop. Slots without installed CLIs are excluded from `providers`, `buildAllProviderTools()`, `toolMap`, and all dispatch paths. HTTP-only slots remain included. A WARNING-level message is emitted to stderr when zero providers remain. Server starts without crashing even when all CLI slots are missing.
   </done>
 </task>
 
@@ -182,16 +212,22 @@ After both tasks complete:
 1. `grep -n 'detectInstalledProviders' bin/manage-agents-core.cjs` returns the function definition and export line.
 2. `grep -n 'detectInstalledProviders' bin/unified-mcp-server.mjs` returns the require import and the call-site.
 3. `npm run test:ci` passes (no regressions in existing test suite).
-4. Start server with `PROVIDER_SLOT=codex-1 node bin/unified-mcp-server.mjs` — if codex binary absent, server logs `detectInstalledProviders: codex-1 excluded` on stderr and starts with zero tools (or just codex-1 is the only provider so it exits or emits warning).
+4. Start server with `PROVIDER_SLOT=codex-1 node bin/unified-mcp-server.mjs` — if codex binary is absent, server logs `detectInstalledProviders: codex-1 (type=...) excluded` on stderr and starts with zero tools; the WARNING line is also emitted.
 5. Start server without PROVIDER_SLOT — tools/list only returns tools for providers with installed CLIs.
+6. HTTP-only slot check: add a `type=http` entry with no `cli` field to providers.json temporarily and confirm it appears in the tools/list output (not excluded).
+7. resolvedCli fallback check: confirm that calling `detectInstalledProviders([{name:'x', type:'subprocess', cli:'/usr/bin/env'}])` (no resolvedCli) returns the slot (because /usr/bin/env exists), verifying the fallback path works correctly.
 </verification>
 
 <success_criteria>
 - `detectInstalledProviders` exported from `manage-agents-core.cjs._pure`
+- Exclusion log messages include slot type alongside name
+- Code comment in detectInstalledProviders documents the resolvedCli ordering dependency
 - `unified-mcp-server.mjs` tool list reflects only installed CLIs at startup
+- Zero-provider WARNING emitted to stderr (distinct severity from per-slot exclusion info)
 - Dedup: ccr-1 through ccr-6 share one binary probe (one `fs.accessSync` call for `/opt/homebrew/bin/ccr`)
 - Fail-open: unexpected errors during detection return full provider list
-- HTTP slots always included
+- HTTP slots always included (verified by dedicated test case)
+- resolvedCli vs cli fallback path exercised in verify step
 - `npm run test:ci` green
 </success_criteria>
 
