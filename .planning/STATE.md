@@ -106,7 +106,7 @@ Resume file: None
 - 2026-04-08 - Completed quick task 385: Add River ML phase indicator to nf-statusline.js
 - 2026-04-08 - Completed quick task 386: Add E2E test for River ML learning loop and surface shadow recommendations
 
-Last activity: 2026-04-09 - Completed quick task 395: Make providers slot list dynamic
+Last activity: 2026-04-09 - Completed quick task 396: Fill install.js CLI detection gaps (--rescan, CCR auto-include, null cli paths)
 - 2026-04-07: Completed quick task 381: Wire coderlm adapter queries into nf-solve dependency graph
 - 2026-04-08: Completed quick task 382: Set up coderlm cross-compilation CI
 - 2026-04-08 - Completed quick task 383: Implement coderlm lazy lifecycle management
@@ -124,3 +124,4 @@ Last activity: 2026-04-09 - Completed quick task 395: Make providers slot list d
 | 394 | Fix hardcoded slot names in mcp-restart.md and mcp-set-model.md | 2026-04-09 | 75c8fdd1 | Verified | [394-fix-hardcoded-slot-names-in-mcp-restart-](./quick/394-fix-hardcoded-slot-names-in-mcp-restart-/) |
 | 395 | Dynamic slot validation in mcp-update, fix codex-cli-1 refs in restart/set-model/quorum-test | 2026-04-09 | bad70b6d | Verified | [395-dynamic-slots-mcp-update-fix-refs](./quick/395-dynamic-slots-mcp-update-fix-refs/) |
 | 395 | Make providers slot list dynamic — detect installed CLIs at startup and build active slots from what is found instead of hardcoding all slots in providers.json | 2026-04-09 | e4a6f606 | Verified | [395-make-providers-slot-list-dynamic-detect-](./quick/395-make-providers-slot-list-dynamic-detect-/) |
+| 396 | Fill install.js CLI detection gaps: --rescan flag, CCR auto-include in promptProviders, strip hardcoded cli paths from providers.json | 2026-04-09 | 85e454a9 | Verified | [396-fill-install-js-cli-detection-gaps-add-r](./quick/396-fill-install-js-cli-detection-gaps-add-r/) |
