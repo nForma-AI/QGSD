@@ -82,6 +82,13 @@ if [[ -n "$(git diff --name-only docs/assets/)" ]]; then
   git commit -m "chore: regenerate assets for ${PKG_VERSION}"
   echo "Committed asset regeneration"
 fi
+
+# Commit formal model registry if it changed (auto-updated by spec-regen pipeline)
+if [[ -n "$(git diff --name-only .planning/formal/)" ]]; then
+  git add .planning/formal/
+  git commit -m "chore: sync formal model registry for ${PKG_VERSION}"
+  echo "Committed formal model registry sync"
+fi
 echo ""
 
 # --- 1. Verify working tree is clean ---
