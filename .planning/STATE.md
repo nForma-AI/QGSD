@@ -121,3 +121,4 @@ Last activity: 2026-04-09 — Completed quick task 393: Rewrite nf:mcp-status to
 | 390 | Update ensureBinary() to build coderlm from source via git clone + cargo build | 2026-04-09 | 644142c6 | Verified | [390-update-ensurebinary-in-bin-coderlm-lifec](./quick/390-update-ensurebinary-in-bin-coderlm-lifec/) |
 | 391 | Add auto-install steps for River and embed to install.js with statusline updates | 2026-04-09 | 2918e75c | Verified | [391-add-auto-install-steps-for-river-python-](./quick/391-add-auto-install-steps-for-river-python-/) |
 | 393 | Rewrite nf:mcp-status to be fully dynamic | 2026-04-09 | 3dcaabff | Pending | [393-rewrite-nf-mcp-status-to-be-fully-dynami](./quick/393-rewrite-nf-mcp-status-to-be-fully-dynami/) |
+| 394 | Fix hardcoded slot names in mcp-restart.md and mcp-set-model.md | 2026-04-09 | 75c8fdd1 | Verified | [394-fix-hardcoded-slot-names-in-mcp-restart-](./quick/394-fix-hardcoded-slot-names-in-mcp-restart-/) |

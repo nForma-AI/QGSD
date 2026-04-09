@@ -1,5 +1,5 @@
 {
-  "aggregated_at": "2026-04-09T07:18:03.894Z",
+  "aggregated_at": "2026-04-09T11:51:17.832Z",
   "requirements": [
     {
       "id": "ACT-01",
@@ -2722,6 +2722,17 @@
       "provenance": {
         "source_file": ".planning/quick/385-make-nf-mcp-repair-discover-slot-names-d/385-PLAN.md",
         "milestone": "quick-385"
+      }
+    },
+    {
+      "id": "MCP-09",
+      "text": "nf:mcp-status banner text SHALL compute agent counts dynamically from ~/.claude.json mcpServers instead of hardcoding provider counts",
+      "category": "MCP Observability",
+      "status": "Pending",
+      "background": "The current nf:mcp-status skill Step 2 prints a hardcoded string 'Querying 4 CLI agents + 6 HTTP providers...' regardless of actual mcpServers configuration. The count must be derived at runtime from ~/.claude.json.",
+      "provenance": {
+        "source_file": "manual",
+        "milestone": "v0.42"
       }
     },
     {
@@ -6278,6 +6289,6 @@
       }
     }
   ],
-  "content_hash": "6fa6f13b525805c549e59cf4dbd2eb8ed1080aca16ac138a9882c4884fe4c7fd",
-  "frozen_at": "2026-04-09T07:18:03.894Z"
+  "content_hash": "208c0ef9a97c88e61ce077e4bd281fde6f57779de460fbe28d8dcba0c60631f6",
+  "frozen_at": "2026-04-09T11:51:17.834Z"
 }
