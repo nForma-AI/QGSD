@@ -542,9 +542,9 @@
       "type": "subprocess",
       "auth_type": "sub",
       "has_file_access": true,
-      "description": "GLM-5 via Together.xyz — Claude Code Router (CCR) preset claude-6",
+      "description": "GLM-5.1 via Together.xyz — Claude Code Router (CCR) preset claude-6",
       "mainTool": "claude",
-      "model": "zai-org/GLM-5",
+      "model": "zai-org/GLM-5.1",
       "display_provider": "Together.xyz",
       "cli": "/opt/homebrew/bin/ccr",
       "args_template": [
