@@ -25,7 +25,7 @@ See: .planning/PROJECT.md
 | 381 | Create checklist registry JSON + matching script | 2026-04-07 | 0c515031 | Pending | [381-create-checklist-registry-json-with-trig](./quick/381-create-checklist-registry-json-with-trig/) |
 | 382 | Implement Tier 0 policy interface and Tier 1 River bandit layer for routing authority ladder in selectSlot | 2026-04-07 | 1fc88449 | Verified | [382-implement-tier-0-policy-interface-and-ti](./quick/382-implement-tier-0-policy-interface-and-ti/) |
 | 383 | Wire task-intake routing into PresetPolicy, update nf:quick command metadata with delegate flag, add delegation docs | 2026-04-07 | 40ef3ab3 | Verified | [383-wire-task-intake-routing-into-presetpoli](./quick/383-wire-task-intake-routing-into-presetpoli/) |
-| 384 | Standardize Process: Resolve Technical Debt as Required Gaps | 2026-04-09 | efa213dc | Complete | [384-standardize-process-resolve-technical-de](./quick/384-standardize-process-resolve-technical-de/) |
+| 384 | Standardize Process: Resolve Technical Debt as Required Gaps | 2026-04-09 | efa213dc | Verified | [384-standardize-process-resolve-technical-de](./quick/384-standardize-process-resolve-technical-de/) |
 
 ## Session Log
 
