@@ -106,14 +106,16 @@ Resume file: None
 - 2026-04-08 - Completed quick task 385: Add River ML phase indicator to nf-statusline.js
 - 2026-04-08 - Completed quick task 386: Add E2E test for River ML learning loop and surface shadow recommendations
 
-Last activity: 2026-04-09 — Quick task 389 complete (install.js coderlm auto-download)
+Last activity: 2026-04-09 — Quick task 390 complete (coderlm build from source)
 - 2026-04-07: Completed quick task 381: Wire coderlm adapter queries into nf-solve dependency graph
 - 2026-04-08: Completed quick task 382: Set up coderlm cross-compilation CI
 - 2026-04-08 - Completed quick task 383: Implement coderlm lazy lifecycle management
 - 2026-04-09 - Completed quick task 388: Add second tools-status line to nf-statusline (coderlm/River/embed)
+- 2026-04-09 - Completed quick task 390: Update ensureBinary() to build coderlm from source via git clone + cargo build
 | 384 | Fix nf:mcp-repair to call MCP tools directly instead of via sub-agents | 2026-04-08 | 758b4b32 | Pending | [384-fix-nf-mcp-repair-to-call-mcp-tools-dire](.planning/quick/384-fix-nf-mcp-repair-to-call-mcp-tools-dire/) |
 | 385 | Make nf:mcp-repair discover slot names dynamically from ~/.claude.json mcpServers instead of hardcoding them | 2026-04-08 | 77b238ed | Verified | [385-make-nf-mcp-repair-discover-slot-names-d](./quick/385-make-nf-mcp-repair-discover-slot-names-d/) |
 | 386 | Add coderlm status indicator to nf-statusline.js | 2026-04-08 | bebd81eb | Verified | [386-add-coderlm-status-indicator-to-nf-statu](./quick/386-add-coderlm-status-indicator-to-nf-statu/) |
 | 387 | Improve River ML statusline indicator to use compact dot-style visual matching coderlm indicator pattern | 2026-04-08 | 8e6ff7e8 | Verified | [387-improve-river-ml-statusline-indicator-to](./quick/387-improve-river-ml-statusline-indicator-to/) |
 | 388 | Add second tools-status line to nf-statusline showing coderlm/River/embed availability | 2026-04-09 | 573e1a21 | Verified | [388-add-tools-status-second-line-to-nf-statu](./quick/388-add-tools-status-second-line-to-nf-statu/) |
 | 389 | Make install.js automatically download and install the coderlm binary... | 2026-04-09 | bf0931c2 | Verified | [389-make-install-js-automatically-download-a](./quick/389-make-install-js-automatically-download-a/) |
+| 390 | Update ensureBinary() to build coderlm from source via git clone + cargo build | 2026-04-09 | 644142c6 | Verified | [390-update-ensurebinary-in-bin-coderlm-lifec](./quick/390-update-ensurebinary-in-bin-coderlm-lifec/) |
