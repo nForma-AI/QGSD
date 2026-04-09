@@ -154,7 +154,7 @@ Call the identity tool for `$AGENT` — one sequential call:
 
 `mcp__<$AGENT>__identity`
 
-(Replace hyphens in the agent name with hyphens as-is: `codex-cli-1` → `mcp__codex-cli-1__identity`)
+(Replace hyphens in the agent name with hyphens as-is: `codex-1` → `mcp__codex-1__identity`)
 
 **If identity tool returns successfully:**
 Parse response. Print:
