@@ -6,6 +6,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.41.19-rc.1] - 2026-04-10 — uv-backed River, active embed signal, solve embedding refresh
+
 ## [0.41.19] - 2026-04-10 — uv-backed River, active embed signal, solve embedding refresh
 
 ### Added
