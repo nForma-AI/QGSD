@@ -8,6 +8,7 @@ const os = require('os');
 
 const crypto = require('crypto');
 const { reachFiltered, proximityScore, graphDiscoverModules } = require('./formal-graph-search.cjs');
+const { createAdapter } = require('./coderlm-adapter.cjs');
 
 const ROOT = process.cwd();
 const SPEC_DIR = path.join(ROOT, '.planning', 'formal', 'spec');
@@ -828,6 +829,73 @@ function runModelCheckers(matches, maxModels, timeoutMs, projectRoot) {
   return results;
 }
 
+// ── Layer 2.5: Call-graph Backward Walk ──────────────────────────────────────
+
+/**
+ * Layer 2.5: Walk getCallers() backward from changed --files to discover formal modules
+ * affected by transitive call-graph relationships that file-name matching alone would miss.
+ *
+ * @param {string[]} files - Changed file paths (from --files CLI arg)
+ * @param {Set<string>} matchedModules - Already-matched module names (dedup set, modified in place)
+ * @param {object|null} adapter - coderlm adapter instance or null (fail-open)
+ * @returns {Array} New match objects (not already in matchedModules), each with matched_by: 'call_graph'
+ */
+function discoverViaCallGraph(files, matchedModules, adapter) {
+  const newMatches = [];
+  if (!adapter || !files || files.length === 0) return newMatches;
+
+  let healthy = false;
+  try {
+    const h = adapter.healthSync();
+    healthy = h.healthy;
+  } catch (_) {}
+  if (!healthy) return newMatches;
+
+  // Get all available formal modules for scope.json matching
+  let allModules = [];
+  try {
+    if (fs.existsSync(SPEC_DIR)) {
+      allModules = fs.readdirSync(SPEC_DIR, { withFileTypes: true })
+        .filter(d => d.isDirectory())
+        .map(d => d.name);
+    }
+  } catch (_) {
+    return newMatches; // fail-open: can't scan SPEC_DIR
+  }
+
+  for (const changedFile of files) {
+    let callers;
+    try {
+      const result = adapter.getCallersSync('', changedFile);
+      if (result.error || !Array.isArray(result.callers)) continue;
+      callers = result.callers;
+    } catch (_) {
+      continue; // fail-open: skip this file on any error
+    }
+
+    // For each caller file, check if it matches any formal module's source_files globs
+    for (const callerFile of callers) {
+      const normalizedCaller = callerFile.replace(/\\/g, '/');
+      for (const mod of allModules) {
+        if (matchedModules.has(mod)) continue;
+        const scopePath = path.join(SPEC_DIR, mod, 'scope.json');
+        let scope;
+        try { scope = JSON.parse(fs.readFileSync(scopePath, 'utf8')); } catch (_) { continue; }
+        if (scope.source_files && matchesSourceFiles([normalizedCaller], scope.source_files)) {
+          matchedModules.add(mod);
+          newMatches.push({
+            module: mod,
+            path: '.planning/formal/spec/' + mod + '/invariants.md',
+            matched_by: 'call_graph',
+            discovered_via: changedFile + ' -> ' + normalizedCaller
+          });
+        }
+      }
+    }
+  }
+  return newMatches;
+}
+
 // ── Layer 3: Semantic Similarity ─────────────────────────────────────────────
 
 /**
@@ -987,6 +1055,9 @@ async function main() {
     process.exit(1);
   }
 
+  // Create coderlm adapter for Layer 2.5 (fail-open: adapter unhealthy = Layer 2.5 skips)
+  const adapter = createAdapter();
+
   // Bug-mode: match against model-registry.json (with project spec merge)
   if (args.bugMode) {
     // Merge project specs into registry view for bug-mode compatibility
@@ -1108,7 +1179,14 @@ async function main() {
   // Layer 2: Proximity index enrichment (fail-open)
   const enriched = enrichWithProximityIndex(matches, args.files, tokens);
 
-  // Layer 3: Semantic similarity fallback (runs only when layers 1+2 return 0 matches)
+  // Layer 2.5: Call-graph backward walk (CDIAG-02, fail-open)
+  const matchedModuleSet = new Set(enriched.map(m => m.module));
+  const callGraphMatches = discoverViaCallGraph(args.files, matchedModuleSet, adapter);
+  if (callGraphMatches.length > 0) {
+    for (const cgm of callGraphMatches) enriched.push(cgm);
+  }
+
+  // Layer 3: Semantic similarity fallback (runs only when layers 1+2+2.5 return 0 matches)
   let finalMatches = enriched;
   if (enriched.length === 0 && !args.noL3) {
     const modulesForL3 = modules.map(mod => {
@@ -1160,7 +1238,9 @@ if (typeof module !== 'undefined') {
     loadProjectManifest,
     matchProjectSpecs,
     scanUnregisteredSpecs,
-    mergeProjectSpecsIntoRegistry
+    mergeProjectSpecsIntoRegistry,
+    discoverViaCallGraph,
+    matchesSourceFiles
   };
 }
 
