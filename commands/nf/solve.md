@@ -62,6 +62,14 @@ Use `focusPhrase` in Phase 3b bash command and Phase 4 Agent call. Forward `--re
 - `--resume`: Resume from a saved solve-session.json (in_progress status) — skip completed iterations and continue the convergence loop from where it left off. Useful after context resets or crashes.
 - Neither flag (default): run the full solve cycle as before (diagnose + remediate + report).
 
+## Phase 0: Embedding refresh
+
+Before any diagnostic work, rebuild the embedding cache so nf-solve.cjs has fresh vectors for similarity fallback. Fail-open — if proximity-embed.mjs is missing or errors, log and continue.
+
+```bash
+node $HOME/.claude/nf-bin/proximity-embed.mjs 2>/dev/null || node bin/proximity-embed.mjs 2>/dev/null || true
+```
+
 ## Phase 0.5: Resume from session (--execute or --resume)
 
 If `executeMode` or `resumeMode` is true, load the saved solve session instead of running Phase 1:
