@@ -221,6 +221,24 @@ if (require.main === module) (async () => {
     }));
   }
 
+  // Fire-and-forget coderlm auto-start — keep coderlm warm so it's ready for quick/phase tasks.
+  // Only runs if the binary is present; fails silently if lifecycle script is missing or crashes.
+  try {
+    const coderlmBin = path.join(os.homedir(), '.claude', 'nf-bin', 'coderlm');
+    if (fs.existsSync(coderlmBin)) {
+      let lifecyclePath = null;
+      try { lifecyclePath = resolveBin('coderlm-lifecycle.cjs'); } catch (_) {}
+      if (lifecyclePath && fs.existsSync(lifecyclePath)) {
+        const { spawn } = require('child_process');
+        const child = spawn(process.execPath, [lifecyclePath, '--start'], {
+          detached: true,
+          stdio: 'ignore',
+        });
+        child.unref();
+      }
+    }
+  } catch (_) {}
+
   process.exit(0);
 })();
 
