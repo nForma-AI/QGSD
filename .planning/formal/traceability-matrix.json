@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-08T08:08:46.391Z",
+    "generated_at": "2026-04-10T14:34:48.672Z",
     "generator_version": "1.1",
     "data_sources": {
       "annotations": {
@@ -12,11 +12,11 @@
         "used_as_fallback": 6
       },
       "check_results": {
-        "entry_count": 245
+        "entry_count": 239
       },
       "unit_test_coverage": {
         "available": true,
-        "requirements_matched": 438
+        "requirements_matched": 444
       }
     }
   },
@@ -1051,7 +1051,16 @@
           "latest_result": "pass",
           "check_id": "alloy:bin-path-resolution"
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/INST-11.stub.test.js",
+            "test_name": "INST-11: bin scripts resolve ROOT from process.cwd(), not __dirname"
+          }
+        ]
+      }
     },
     "BLD-01": {
       "id": "BLD-01",
@@ -2116,7 +2125,16 @@
           "latest_result": "pass",
           "check_id": "alloy:config-zero-providers"
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/CONF-10.stub.test.js",
+            "test_name": "CONF-10: config-audit.cjs exists and is fail-open (exit 0)"
+          }
+        ]
+      }
     },
     "DISP-07": {
       "id": "DISP-07",
@@ -2170,7 +2188,16 @@
           "latest_result": "pass",
           "check_id": "alloy:debate-trace-persistence"
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/DISP-07.stub.test.js",
+            "test_name": "DISP-07 — Bool: structural verification"
+          }
+        ]
+      }
     },
     "DEBT-02": {
       "id": "DEBT-02",
@@ -6187,7 +6214,16 @@
           "latest_result": null,
           "check_id": null
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/OBS-09.stub.test.js",
+            "test_name": "OBS-09: all handler files reference standard schema fields in return objects"
+          }
+        ]
+      }
     },
     "OBS-10": {
       "id": "OBS-10",
@@ -6248,7 +6284,16 @@
           "latest_result": null,
           "check_id": null
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/OBS-10.stub.test.js",
+            "test_name": "OBS-10: observe-utils.cjs exports formatAge, parseDuration, classifySeverityFromLabels"
+          }
+        ]
+      }
     },
     "OBS-12": {
       "id": "OBS-12",
@@ -14007,7 +14052,16 @@
           "latest_result": null,
           "check_id": null
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/DISP-08.stub.test.js",
+            "test_name": "DISP-08 — DualTimerTick: behavioral verification"
+          }
+        ]
+      }
     },
     "ENFC-01": {
       "id": "ENFC-01",
@@ -17121,8 +17175,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/BML-02.stub.test.js",
+            "test_name": "BML-02: MaxThreeCheckers — default cap is 3 (maxModels=undefined)"
+          }
+        ]
       }
     },
     "BML-03": {
@@ -17179,8 +17238,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/ROUTE-02.stub.test.js",
+            "test_name": "ROUTE-02: BugFixRoutesToDebug — scope-contract files with bug_fix type have routed_through_debug field"
+          }
+        ]
       }
     },
     "ROUTE-03": {
@@ -17195,8 +17259,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/ROUTE-03.stub.test.js",
+            "test_name": "ROUTE-03: NonBugRoutesToNormal — feature/refactor tasks have routed_through_debug=false"
+          }
+        ]
       }
     },
     "ROUTE-04": {
@@ -17211,8 +17280,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/ROUTE-04.stub.test.js",
+            "test_name": "ROUTE-04: StoredBeforeRouting — scope-contract.json files exist on disk (storage occurred)"
+          }
+        ]
       }
     },
     "SESSION-01": {
@@ -33179,9 +33253,9 @@
     }
   },
   "coverage_summary": {
-    "total_requirements": 450,
-    "covered_count": 438,
-    "coverage_percentage": 97.3,
+    "total_requirements": 463,
+    "covered_count": 444,
+    "coverage_percentage": 95.9,
     "uncovered_requirements": [
       "DBG-01",
       "DBG-02",
@@ -33191,9 +33265,16 @@
       "DBUG-02",
       "DBUG-03",
       "DBUG-04",
+      "MCP-07",
+      "MCP-08",
+      "MCP-09",
+      "MCP-10",
       "MRF-01",
       "MRF-02",
       "MRF-03",
+      "ROUTE-05",
+      "ROUTE-06",
+      "ROUTE-07",
       "SIM-04"
     ],
     "orphan_properties": []
@@ -33255,6 +33336,12 @@
         "detail": "model-registry lists META-03 for .planning/formal/alloy/architecture-registry.als but requirements.json META-03 does not list .planning/formal/alloy/architecture-registry.als in formal_models"
       },
       {
+        "model_file": ".planning/formal/alloy/bin-path-resolution.als",
+        "requirement_id": "INST-11",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists INST-11 for .planning/formal/alloy/bin-path-resolution.als but requirements.json INST-11 does not list .planning/formal/alloy/bin-path-resolution.als in formal_models"
+      },
+      {
         "model_file": ".planning/formal/alloy/build-test-quality.als",
         "requirement_id": "BLD-01",
         "direction": "model_claims_requirement",
@@ -33313,6 +33400,18 @@
         "requirement_id": "CONF-08",
         "direction": "model_claims_requirement",
         "detail": "model-registry lists CONF-08 for .planning/formal/alloy/config-two-layer.als but requirements.json CONF-08 does not list .planning/formal/alloy/config-two-layer.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/config-zero-providers.als",
+        "requirement_id": "CONF-10",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists CONF-10 for .planning/formal/alloy/config-zero-providers.als but requirements.json CONF-10 does not list .planning/formal/alloy/config-zero-providers.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/debate-trace-persistence.als",
+        "requirement_id": "DISP-07",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists DISP-07 for .planning/formal/alloy/debate-trace-persistence.als but requirements.json DISP-07 does not list .planning/formal/alloy/debate-trace-persistence.als in formal_models"
       },
       {
         "model_file": ".planning/formal/alloy/debt-lifecycle.als",
@@ -33793,6 +33892,18 @@
         "requirement_id": "MULTI-03",
         "direction": "model_claims_requirement",
         "detail": "model-registry lists MULTI-03 for .planning/formal/alloy/multi-slot.als but requirements.json MULTI-03 does not list .planning/formal/alloy/multi-slot.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/observability-handlers.als",
+        "requirement_id": "OBS-09",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists OBS-09 for .planning/formal/alloy/observability-handlers.als but requirements.json OBS-09 does not list .planning/formal/alloy/observability-handlers.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/observability-handlers.als",
+        "requirement_id": "OBS-10",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists OBS-10 for .planning/formal/alloy/observability-handlers.als but requirements.json OBS-10 does not list .planning/formal/alloy/observability-handlers.als in formal_models"
       },
       {
         "model_file": ".planning/formal/alloy/parallel-exec.als",
@@ -34737,6 +34848,12 @@
         "detail": "model-registry lists PRST-02 for .planning/formal/tla/QGSDAgentProvisioning.tla but requirements.json PRST-02 does not list .planning/formal/tla/QGSDAgentProvisioning.tla in formal_models"
       },
       {
+        "model_file": ".planning/formal/tla/QGSDDispatchPipeline.tla",
+        "requirement_id": "DISP-08",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists DISP-08 for .planning/formal/tla/QGSDDispatchPipeline.tla but requirements.json DISP-08 does not list .planning/formal/tla/QGSDDispatchPipeline.tla in formal_models"
+      },
+      {
         "model_file": ".planning/formal/tla/QGSDMCPEnv.tla",
         "requirement_id": "MCPENV-02",
         "direction": "model_claims_requirement",
@@ -35578,11 +35695,6 @@
       },
       {
         "type": "unknown_requirement_id",
-        "reference": "INST-11",
-        "referenced_by": "model-registry .planning/formal/alloy/bin-path-resolution.als requirements"
-      },
-      {
-        "type": "unknown_requirement_id",
         "reference": "CL-01",
         "referenced_by": "model-registry .planning/formal/alloy/changelog-release.als requirements"
       },
@@ -35635,16 +35747,6 @@
         "type": "unknown_requirement_id",
         "reference": "CONF-13",
         "referenced_by": "model-registry .planning/formal/alloy/config-audit.als requirements"
-      },
-      {
-        "type": "unknown_requirement_id",
-        "reference": "CONF-10",
-        "referenced_by": "model-registry .planning/formal/alloy/config-zero-providers.als requirements"
-      },
-      {
-        "type": "unknown_requirement_id",
-        "reference": "DISP-07",
-        "referenced_by": "model-registry .planning/formal/alloy/debate-trace-persistence.als requirements"
       },
       {
         "type": "unknown_requirement_id",
@@ -35775,16 +35877,6 @@
         "type": "unknown_requirement_id",
         "reference": "OBS-15",
         "referenced_by": "model-registry .planning/formal/alloy/observability-handler-arch.als requirements"
-      },
-      {
-        "type": "unknown_requirement_id",
-        "reference": "OBS-09",
-        "referenced_by": "model-registry .planning/formal/alloy/observability-handlers.als requirements"
-      },
-      {
-        "type": "unknown_requirement_id",
-        "reference": "OBS-10",
-        "referenced_by": "model-registry .planning/formal/alloy/observability-handlers.als requirements"
       },
       {
         "type": "unknown_requirement_id",
@@ -36143,11 +36235,6 @@
       },
       {
         "type": "unknown_requirement_id",
-        "reference": "DISP-08",
-        "referenced_by": "model-registry .planning/formal/tla/QGSDDispatchPipeline.tla requirements"
-      },
-      {
-        "type": "unknown_requirement_id",
         "reference": "SAFE-03",
         "referenced_by": "model-registry .planning/formal/tla/QGSDQuorum.tla requirements"
       },
@@ -36249,8 +36336,8 @@
     ],
     "summary": {
       "total_checked": 717,
-      "asymmetric_count": 389,
-      "stale_count": 142,
+      "asymmetric_count": 395,
+      "stale_count": 136,
       "clean": false
     }
   },
@@ -36992,7 +37079,7 @@
   },
   "coverage_preservation": {
     "baseline_found": true,
-    "baseline_date": "2026-04-08T07:12:42.980Z",
+    "baseline_date": "2026-04-10T14:19:22.234Z",
     "requirements_checked": 574,
     "regressions": [],
     "summary": {

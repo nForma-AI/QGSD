@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-08T12:13:56.596Z",
+  "generated_at": "2026-04-10T09:37:35.703Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -518,6 +518,15 @@
         }
       ]
     },
+    "CONF-10": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CONF-10.stub.test.js",
+          "test_name": "CONF-10: config-audit.cjs exists and is fail-open (exit 0)"
+        }
+      ]
+    },
     "CONST-01": {
       "covered": true,
       "test_cases": [
@@ -865,6 +874,24 @@
         {
           "test_file": ".planning/formal/generated-stubs/DISP-06.stub.test.js",
           "test_name": "DISP-06: matchRequirementsByKeywords is exported as a function"
+        }
+      ]
+    },
+    "DISP-07": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DISP-07.stub.test.js",
+          "test_name": "DISP-07 — Bool: structural verification"
+        }
+      ]
+    },
+    "DISP-08": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DISP-08.stub.test.js",
+          "test_name": "DISP-08 — DualTimerTick: behavioral verification"
         }
       ]
     },
@@ -1398,6 +1425,15 @@
         }
       ]
     },
+    "INST-11": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/INST-11.stub.test.js",
+          "test_name": "INST-11: bin scripts resolve ROOT from process.cwd(), not __dirname"
+        }
+      ]
+    },
     "INTENT-01": {
       "covered": true,
       "test_cases": [
@@ -1908,6 +1944,24 @@
         {
           "test_file": ".planning/formal/generated-stubs/OBS-08.stub.test.js",
           "test_name": "OBS-08: classifyTier is exported"
+        }
+      ]
+    },
+    "OBS-09": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/OBS-09.stub.test.js",
+          "test_name": "OBS-09: all handler files reference standard schema fields in return objects"
+        }
+      ]
+    },
+    "OBS-10": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/OBS-10.stub.test.js",
+          "test_name": "OBS-10: observe-utils.cjs exports formatAge, parseDuration, classifySeverityFromLabels"
         }
       ]
     },
@@ -3995,6 +4049,22 @@
       "covered": false,
       "test_cases": []
     },
+    "MCP-07": {
+      "covered": false,
+      "test_cases": []
+    },
+    "MCP-08": {
+      "covered": false,
+      "test_cases": []
+    },
+    "MCP-09": {
+      "covered": false,
+      "test_cases": []
+    },
+    "MCP-10": {
+      "covered": false,
+      "test_cases": []
+    },
     "MRF-01": {
       "covered": false,
       "test_cases": []
@@ -4004,6 +4074,18 @@
       "test_cases": []
     },
     "MRF-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ROUTE-05": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ROUTE-06": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ROUTE-07": {
       "covered": false,
       "test_cases": []
     },

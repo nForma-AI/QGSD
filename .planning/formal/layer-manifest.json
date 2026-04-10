@@ -1,6 +1,6 @@
 {
   "schema_version": "2",
-  "generated": "2026-04-07T18:33:28.889Z",
+  "generated": "2026-04-10T09:33:12.808Z",
   "layers": {
     "L1": [
       {
@@ -1155,6 +1155,11 @@
         "path": ".planning/formal/tla/NFWaveDAG.tla",
         "description": "Graph-driven wave scheduling with Tarjan SCC collapsing and topological wave assignment",
         "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/DistTagAlignment.tla",
+        "description": "npm dist-tag alignment: @next must never fall behind @latest after stable publish",
+        "grounding_status": "has_semantic_declarations"
       }
     ]
   },
@@ -1178,18 +1183,18 @@
   "collapsed_layers": {
     "L2": {
       "reason": "Empty layer — zero entries permanently blocked Gate B (STRUCT-01)",
-      "collapsed_at": "2026-04-07T18:33:28.889Z"
+      "collapsed_at": "2026-04-10T09:33:12.808Z"
     }
   },
   "summary": {
-    "total_models": 230,
+    "total_models": 231,
     "L1_count": 2,
     "L2_count": 0,
-    "L3_count": 228,
+    "L3_count": 229,
     "maturity_distribution": {
       "0": 193,
-      "1": 37
+      "1": 38
     },
-    "spec_modules_with_invariants": 18
+    "spec_modules_with_invariants": 19
   }
 }

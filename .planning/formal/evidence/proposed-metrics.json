@@ -1,10 +1,10 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-07T18:33:46.789Z",
-  "total_proposed": 1739,
+  "generated": "2026-04-10T09:33:51.780Z",
+  "total_proposed": 1746,
   "implemented": 0,
   "partial": 0,
-  "outstanding": 1739,
+  "outstanding": 1746,
   "metrics": [
     {
       "metric_name": "nf_maxdeliberationrounds__tla",
@@ -1396,6 +1396,18 @@
       "coverage": "uncovered",
       "formal_ref": "spec:/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/BugModelLookup.tla:TypeOK",
       "instrumentation_snippet": "// Observe handler for TypeOK (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_typeok__tla\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_typeok__tla\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/BugModelLookup.tla:TypeOK\",\n    \"description\": \"Counts violations of TypeOK\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_typeok__tla",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/DistTagAlignment.tla",
+      "assumption_name": "TypeOK",
+      "assumption_type": "invariant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/DistTagAlignment.tla:TypeOK",
+      "instrumentation_snippet": "// Observe handler for TypeOK (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_typeok__tla\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_typeok__tla\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/DistTagAlignment.tla:TypeOK\",\n    \"description\": \"Counts violations of TypeOK\"\n  }\n}",
       "status": "proposed"
     },
     {
@@ -3292,6 +3304,78 @@
       "coverage": "uncovered",
       "formal_ref": "spec:/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/MCDeliberationRevision.cfg:PeerReviewBeforeRevision",
       "instrumentation_snippet": "// Observe handler for PeerReviewBeforeRevision (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_peerreviewbeforerevision\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_peerreviewbeforerevision\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/MCDeliberationRevision.cfg:PeerReviewBeforeRevision\",\n    \"description\": \"Counts violations of PeerReviewBeforeRevision\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_typeok__tla",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/MCDistTagAlignment.cfg",
+      "assumption_name": "TypeOK",
+      "assumption_type": "invariant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/MCDistTagAlignment.cfg:TypeOK",
+      "instrumentation_snippet": "// Observe handler for TypeOK (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_typeok__tla\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_typeok__tla\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/MCDistTagAlignment.cfg:TypeOK\",\n    \"description\": \"Counts violations of TypeOK\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_invariant__tla",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/MCDistTagAlignment.cfg",
+      "assumption_name": "INVARIANT",
+      "assumption_type": "invariant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/MCDistTagAlignment.cfg:INVARIANT",
+      "instrumentation_snippet": "// Observe handler for INVARIANT (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_invariant__tla\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_invariant__tla\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/MCDistTagAlignment.cfg:INVARIANT\",\n    \"description\": \"Counts violations of INVARIANT\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_nextneverbehindlatest",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/MCDistTagAlignment.cfg",
+      "assumption_name": "NextNeverBehindLatest",
+      "assumption_type": "invariant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/MCDistTagAlignment.cfg:NextNeverBehindLatest",
+      "instrumentation_snippet": "// Observe handler for NextNeverBehindLatest (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_nextneverbehindlatest\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_nextneverbehindlatest\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/MCDistTagAlignment.cfg:NextNeverBehindLatest\",\n    \"description\": \"Counts violations of NextNeverBehindLatest\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_invariant__tla",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/MCDistTagAlignment.cfg",
+      "assumption_name": "INVARIANT",
+      "assumption_type": "invariant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/MCDistTagAlignment.cfg:INVARIANT",
+      "instrumentation_snippet": "// Observe handler for INVARIANT (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_invariant__tla\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_invariant__tla\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/MCDistTagAlignment.cfg:INVARIANT\",\n    \"description\": \"Counts violations of INVARIANT\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_alignmentsufficient",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/MCDistTagAlignment.cfg",
+      "assumption_name": "AlignmentSufficient",
+      "assumption_type": "invariant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/MCDistTagAlignment.cfg:AlignmentSufficient",
+      "instrumentation_snippet": "// Observe handler for AlignmentSufficient (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_alignmentsufficient\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_alignmentsufficient\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/MCDistTagAlignment.cfg:AlignmentSufficient\",\n    \"description\": \"Counts violations of AlignmentSufficient\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_eventuallyaligned",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/MCDistTagAlignment.cfg",
+      "assumption_name": "EventuallyAligned",
+      "assumption_type": "invariant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/MCDistTagAlignment.cfg:EventuallyAligned",
+      "instrumentation_snippet": "// Observe handler for EventuallyAligned (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_eventuallyaligned\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_eventuallyaligned\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD-worktrees/feature-issue-58-integrate-coderlm-adapter/.planning/formal/tla/MCDistTagAlignment.cfg:EventuallyAligned\",\n    \"description\": \"Counts violations of EventuallyAligned\"\n  }\n}",
       "status": "proposed"
     },
     {

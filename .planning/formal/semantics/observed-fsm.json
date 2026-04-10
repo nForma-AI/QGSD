@@ -1,38 +1,38 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-07T18:33:42.696Z",
+  "generated": "2026-04-10T09:34:20.336Z",
   "observed_transitions": {
     "IDLE": {
       "QUORUM_START": {
         "to_state": "COLLECTING_VOTES",
-        "count": 2197,
+        "count": 3725,
         "source": "both"
       },
       "CIRCUIT_BREAK": {
         "to_state": "IDLE",
-        "count": 450,
+        "count": 766,
         "source": "both"
       },
       "DECIDE": {
         "to_state": "IDLE",
-        "count": 180,
+        "count": 304,
         "source": "per_event"
       }
     },
     "COLLECTING_VOTES": {
       "QUORUM_START": {
         "to_state": "COLLECTING_VOTES",
-        "count": 2191,
+        "count": 3706,
         "source": "per_session"
       },
       "CIRCUIT_BREAK": {
         "to_state": "COLLECTING_VOTES",
-        "count": 433,
+        "count": 749,
         "source": "per_session"
       },
       "DECIDE": {
         "to_state": "COLLECTING_VOTES",
-        "count": 180,
+        "count": 304,
         "source": "per_session"
       }
     }
@@ -140,14 +140,14 @@
   },
   "coverage": {
     "model_coverage": 0.3157894736842105,
-    "vocabulary_coverage": 0.988116043341489,
-    "total_events": 2861,
-    "mapped_events": 2827,
-    "unmapped_events": 34
+    "vocabulary_coverage": 0.9730113636363636,
+    "total_events": 4928,
+    "mapped_events": 4795,
+    "unmapped_events": 133
   },
   "replay_modes": {
     "per_event_transitions": 3,
     "per_session_transitions": 5,
-    "sessions_replayed": 7
+    "sessions_replayed": 22
   }
 }

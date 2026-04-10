@@ -33,44 +33,47 @@ function detectContextSize(data) {
 function buildToolsLine(homeDir, dir) {
   const parts = [];
 
-  // 1. coderlm indicator
+  // Visual language:
+  //   · tool  (dim)    = not installed — tool exists, user doesn't have it
+  //   ○ tool  (normal) = installed, idle / not running
+  //   ● tool  (green)  = active / running / ready
+
+  // 1. coderlm indicator — always shown
   try {
     const coderlmBin = path.join(homeDir, '.claude', 'nf-bin', 'coderlm');
-    if (fs.existsSync(coderlmBin)) {
-      // Binary present — check if PID is alive
+    if (!fs.existsSync(coderlmBin)) {
+      parts.push('\x1b[2m· coderlm\x1b[0m'); // not installed
+    } else {
       let alive = false;
       try {
         const pidFile = path.join(homeDir, '.claude', 'nf-bin', 'coderlm.pid');
         const pidStr = fs.readFileSync(pidFile, 'utf8').trim();
         const pid = parseInt(pidStr, 10);
-        if (!isNaN(pid)) {
-          process.kill(pid, 0); // throws ESRCH if dead
-          alive = true;
-        }
+        if (!isNaN(pid)) { process.kill(pid, 0); alive = true; }
       } catch (_e) {}
       parts.push(alive
-        ? '\x1b[32m● coderlm\x1b[0m'
-        : '\x1b[2m· coderlm\x1b[0m');
+        ? '\x1b[32m● coderlm\x1b[0m'   // active
+        : '○ coderlm');                  // installed, idle
     }
-    // Binary missing → omit entirely
-  } catch (_e) {}
+  } catch (_e) { parts.push('\x1b[2m· coderlm\x1b[0m'); }
 
-  // 2. River indicator — only shown when nf-python-env can import river
+  // 2. River indicator — always shown
   try {
+    const nfPython = path.join(homeDir, '.claude', 'nf-python-env', 'bin', 'python');
     let riverImportable = false;
     try {
-      const nfPython = path.join(os.homedir(), '.claude', 'nf-python-env', 'bin', 'python');
       const riverCheck = spawnSync(nfPython, ['-c', 'import river'], { timeout: 3000 });
       riverImportable = riverCheck.status === 0;
     } catch (_e) {}
 
-    if (riverImportable) {
-      const riverPath = path.join(dir, '.nf-river-state.json');
-      let toolsRiver = '\x1b[2m· River\x1b[0m'; // installed but idle
+    if (!riverImportable) {
+      parts.push('\x1b[2m· River\x1b[0m'); // not installed
+    } else {
+      let toolsRiver = '○ River'; // installed, idle
       try {
+        const riverPath = path.join(dir, '.nf-river-state.json');
         if (fs.existsSync(riverPath)) {
-          const riverRaw = fs.readFileSync(riverPath, 'utf8');
-          const riverState = JSON.parse(riverRaw);
+          const riverState = JSON.parse(fs.readFileSync(riverPath, 'utf8'));
           const qTable = riverState && riverState.qTable;
           if (qTable && typeof qTable === 'object') {
             const RIVER_MIN_EXPLORE = 20;
@@ -87,8 +90,8 @@ function buildToolsLine(homeDir, dir) {
             }
             if (hasArms) {
               toolsRiver = allAbove
-                ? '\x1b[32m● River\x1b[0m'
-                : '\x1b[36m● River\x1b[0m';
+                ? '\x1b[32m● River\x1b[0m'   // trained
+                : '\x1b[36m● River\x1b[0m';   // exploring
             }
             if (riverState.lastShadow && typeof riverState.lastShadow.recommendation === 'string' && riverState.lastShadow.recommendation) {
               toolsRiver = `\x1b[33m● River: ${riverState.lastShadow.recommendation}\x1b[0m`;
@@ -98,20 +101,20 @@ function buildToolsLine(homeDir, dir) {
       } catch (_e) {}
       parts.push(toolsRiver);
     }
-    // River not importable → omit entirely
-  } catch (_e) {}
+  } catch (_e) { parts.push('\x1b[2m· River\x1b[0m'); }
 
-  // 3. embed indicator — active (green) when embedding-cache.json exists, dim when only installed
+  // 3. embed indicator — always shown
   try {
     const transformersPath = path.join(homeDir, '.claude', 'nf-bin', 'node_modules', '@huggingface', 'transformers');
-    if (fs.existsSync(transformersPath)) {
+    if (!fs.existsSync(transformersPath)) {
+      parts.push('\x1b[2m· embed\x1b[0m'); // not installed
+    } else {
       const cachePath = path.join(dir, '.planning', 'formal', 'embedding-cache.json');
       parts.push(fs.existsSync(cachePath)
-        ? '\x1b[32m● embed\x1b[0m'
-        : '\x1b[2m· embed\x1b[0m');
+        ? '\x1b[32m● embed\x1b[0m'  // active (cache warm)
+        : '○ embed');                 // installed, idle
     }
-    // Not installed → omit entirely
-  } catch (_e) {}
+  } catch (_e) { parts.push('\x1b[2m· embed\x1b[0m'); }
 
   return parts.join(' \x1b[2m│\x1b[0m ');
 }
@@ -248,42 +251,6 @@ process.stdin.on('end', () => {
       }
     }
 
-    // River ML phase indicator
-    let riverIndicator = '';
-    try {
-      const riverPath = path.join(dir, '.nf-river-state.json');
-      const riverRaw = fs.readFileSync(riverPath, 'utf8');
-      const riverState = JSON.parse(riverRaw);
-      const qTable = riverState && riverState.qTable;
-      if (qTable && typeof qTable === 'object') {
-        const RIVER_MIN_EXPLORE = 20;
-        let hasArms = false;
-        let allAbove = true;
-        for (const taskType of Object.keys(qTable)) {
-          const arms = qTable[taskType];
-          if (arms && typeof arms === 'object') {
-            for (const armName of Object.keys(arms)) {
-              hasArms = true;
-              if ((arms[armName].visits || 0) < RIVER_MIN_EXPLORE) {
-                allAbove = false;
-              }
-            }
-          }
-        }
-        if (hasArms) {
-          riverIndicator = allAbove
-            ? ' \x1b[32m● River\x1b[0m'
-            : ' \x1b[36m● River\x1b[0m';
-        }
-        // Shadow recommendation takes visual priority when present
-        if (riverState.lastShadow && typeof riverState.lastShadow.recommendation === 'string' && riverState.lastShadow.recommendation) {
-          riverIndicator = ` \x1b[33m● River: ${riverState.lastShadow.recommendation}\x1b[0m`;
-        }
-      }
-    } catch (_e) {
-      // Fail-silent: no state file or malformed JSON → no indicator
-    }
-
     // nForma update available?
     let gsdUpdate = '';
     const cacheFile = path.join(homeDir, '.claude', 'cache', 'nf-update-check.json');
@@ -296,27 +263,12 @@ process.stdin.on('end', () => {
       } catch (e) {}
     }
 
-    // coderlm server status indicator
-    let coderlmIndicator = '';
-    try {
-      const pidFile = path.join(homeDir, '.claude', 'nf-bin', 'coderlm.pid');
-      const pidStr = fs.readFileSync(pidFile, 'utf8').trim();
-      const pid = parseInt(pidStr, 10);
-      if (!isNaN(pid)) {
-        process.kill(pid, 0); // throws ESRCH if dead
-        coderlmIndicator = '\x1b[32m● coderlm\x1b[0m';
-      }
-    } catch (e) {
-      coderlmIndicator = '';
-    }
-    const coderlmPart = coderlmIndicator ? coderlmIndicator + ' │ ' : '';
-
     // Output (tools line is assembled and written after the main line)
     const dirname = path.basename(dir);
     if (task) {
-      process.stdout.write(`${gsdUpdate}${coderlmPart}\x1b[2m${model}\x1b[0m │ \x1b[1m${task}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}${riverIndicator}`);
+      process.stdout.write(`${gsdUpdate}\x1b[2m${model}\x1b[0m │ \x1b[1m${task}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}`);
     } else {
-      process.stdout.write(`${gsdUpdate}${coderlmPart}\x1b[2m${model}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}${riverIndicator}`);
+      process.stdout.write(`${gsdUpdate}\x1b[2m${model}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}`);
     }
 
     // Tools status second line

@@ -1,15 +1,25 @@
 {
-  "last_run": "2026-04-07T19:11:07.553Z",
+  "last_run": "2026-04-10T09:37:33.368Z",
   "converged": false,
   "iteration_count": 1,
-  "final_residual_total": 5,
-  "reverse_discovery_total": 2,
-  "heatmap_total": 7783,
+  "final_residual_total": 67,
+  "reverse_discovery_total": 14,
+  "heatmap_total": 373,
   "known_issues": [
     {
       "layer": "d_to_c",
-      "residual": 5,
-      "net_residual": 3
+      "residual": 67,
+      "net_residual": 34
+    },
+    {
+      "layer": "c_to_r",
+      "residual": 6,
+      "net_residual": 6
+    },
+    {
+      "layer": "t_to_r",
+      "residual": 6,
+      "net_residual": 6
     },
     {
       "layer": "d_to_r",
@@ -18,7 +28,7 @@
     },
     {
       "layer": "git_heatmap",
-      "residual": 7783
+      "residual": 373
     },
     {
       "layer": "git_history",
@@ -30,11 +40,11 @@
     },
     {
       "layer": "config_health",
-      "residual": 19
+      "residual": 20
     },
     {
       "layer": "security",
-      "residual": 24
+      "residual": 17
     },
     {
       "layer": "asset_stale",
@@ -46,11 +56,11 @@
     }
   ],
   "r_to_f_progress": {
-    "total": 450,
+    "total": 463,
     "covered": 0,
     "percentage": "0.0"
   },
-  "focus": null,
+  "focus": "NONEXISTENT-FOCUS-TERM",
   "capped_layers": [],
   "baseline_drift": {
     "detected": false,
