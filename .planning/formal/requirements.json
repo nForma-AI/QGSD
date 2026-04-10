@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-04-09T12:34:12.319Z",
-  "content_hash": "e346d502ae71dfc5961e3d4ffad3b843e80e54ec50cf877ca735777547971079",
+  "aggregated_at": "2026-04-10T17:51:29.449Z",
+  "content_hash": "c653a718a60b3e22d37f6170fe990d3fee9d66578b97cb8199b154f86c4cce91",
   "requirements": [
     {
       "id": "ACT-01",
@@ -4533,6 +4533,16 @@
       }
     },
     {
+      "id": "SCOPE-04",
+      "text": "The nf-scope-guard.js PreToolUse hook is synced to hooks/dist/, included in the test:ci suite, and installed globally via bin/install.js so it fires on every Edit, Write, and MultiEdit tool call",
+      "category": "Scope Guard",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Quick task 387 activated the scope-contract enforcement hook by syncing the implementation to dist, adding comprehensive unit tests to CI, and installing it globally. The hook now provides real-time warnings when edits target files outside declared scope contracts, helping developers maintain focus within assigned boundaries.",
+      "source_file": ".planning/quick/387-implement-scope-contract-commit-time-enf/387-PLAN.md",
+      "milestone": "quick-387"
+    },
+    {
       "id": "SEC-01",
       "text": "Pre-commit hook runs secret scanning (e.g., Gitleaks) to block commits containing API keys, tokens, passwords, or credentials",
       "category": "Security",
@@ -6338,5 +6348,5 @@
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
   "last_sync": "2026-03-31T09:45:23.686Z",
-  "frozen_at": "2026-04-09T12:34:12.319Z"
+  "frozen_at": "2026-04-10T17:51:29.450Z"
 }
