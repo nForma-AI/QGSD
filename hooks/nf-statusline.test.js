@@ -316,19 +316,27 @@ test('TC17: No state file shows idle River (no active indicator form)', () => {
 
 // TC18: Malformed state file — idle River indicator (fail-open fallback)
 test('TC18: Malformed state file shows idle River (fail-open fallback)', () => {
-  const tempDir = makeTempDir('tc18');
+  const tempHome = makeTempDir('tc18-home');
+  const tempDir = makeTempDir('tc18-dir');
+  // Create nf-python-env so River indicator is shown
+  const nfPython = path.join(tempHome, '.claude', 'nf-python-env', 'bin');
+  fs.mkdirSync(nfPython, { recursive: true });
+  fs.writeFileSync(path.join(nfPython, 'python'), '#!/bin/sh\nexit 0\n', 'utf8');
+  fs.chmodSync(path.join(nfPython, 'python'), 0o755);
+  // Write malformed state file
   const stateFile = path.join(tempDir, '.nf-river-state.json');
   fs.writeFileSync(stateFile, 'not valid json', 'utf8');
 
   try {
-    const { stdout, exitCode } = runHook({
-      model: { display_name: 'M' },
-      workspace: { current_dir: tempDir },
-    });
+    const { stdout, exitCode } = runHook(
+      { model: { display_name: 'M' }, workspace: { current_dir: tempDir } },
+      { HOME: tempHome }
+    );
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
     assert.ok(!stdout.includes('River:'), 'stdout must NOT include "River:"');
     assert.ok(stdout.includes('River'), 'stdout must include River as fail-open fallback');
   } finally {
+    fs.rmSync(tempHome, { recursive: true, force: true });
     fs.rmSync(tempDir, { recursive: true, force: true });
   }
 });
@@ -530,20 +538,24 @@ test('TC27: coderlm binary present with alive PID shows green active indicator',
   }
 });
 
-// TC26: embed package present → dim · embed in tools line
+// TC26: embed package present, no cache → dim · embed in tools line
 test('TC26: embed package present shows dim embed indicator', () => {
-  const tempDir = makeTempDir('tc26');
-  const pkgDir = path.join(tempDir, 'node_modules', '@huggingface', 'transformers');
+  const tempHome = makeTempDir('tc26-home');
+  const tempDir = makeTempDir('tc26-dir');
+  // Install transformers stub in the correct nf-bin location
+  const pkgDir = path.join(tempHome, '.claude', 'nf-bin', 'node_modules', '@huggingface', 'transformers');
   fs.mkdirSync(pkgDir, { recursive: true });
+  // No embedding-cache.json → dim indicator (not active)
   try {
-    const { stdout, exitCode } = runHook({
-      model: { display_name: 'M' },
-      workspace: { current_dir: tempDir },
-    });
+    const { stdout, exitCode } = runHook(
+      { model: { display_name: 'M' }, workspace: { current_dir: tempDir } },
+      { HOME: tempHome }
+    );
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
     assert.ok(stdout.includes('embed'), 'stdout must include embed indicator when package present');
     assert.ok(stdout.includes('\x1b[2m· embed\x1b[0m'), 'stdout must include dim embed indicator');
   } finally {
+    fs.rmSync(tempHome, { recursive: true, force: true });
     fs.rmSync(tempDir, { recursive: true, force: true });
   }
 });
