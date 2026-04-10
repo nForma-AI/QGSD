@@ -6,7 +6,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-## [0.42.0] - 2026-04-10 — Deep coderlm Solve Integration
+## [0.42.0-rc.1] - 2026-04-10 — Deep coderlm Solve Integration
 
 ### Added
 - `feat(coderlm)`: LRU cache (100 entries, 5min TTL) for all coderlm query results — cleared at solve loop start, metrics emitted to stderr (CADP-01, CADP-03)
