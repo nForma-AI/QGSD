@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-04-08)
 ## Current Position
 
 Phase: 56 (3 of 4) — Diagnostic Enrichment
-Plan: 01 complete (1/? plans for phase 56)
-Status: Plan 01 executed
-Last activity: 2026-04-10 — Phase 056-01 complete (Git heatmap callee-count enrichment)
+Plan: 02 complete (2/? plans for phase 56)
+Status: Plan 02 executed
+Last activity: 2026-04-10 — Phase 056-02 complete (Reverse discovery C->R/T->R caller-count enrichment)
 
 Progress: [████████████████████] 100/99 plans (101%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
+- Total plans completed: 8
 - Average duration: ~1 session
-- Total execution time: ~0.9 hours
+- Total execution time: ~1.0 hours
 
 **By Phase:**
 
@@ -29,7 +29,7 @@ Progress: [████████████████████] 100/99 
 |-------|-------|-------|----------|
 | 54. Adapter Foundation | 3/3 | 0.5h | ~10m |
 | 55. Remediation Enrichment | 2/2 | 0.2h | ~6m |
-| 56. Diagnostic Enrichment | 0/? | - | - |
+| 56. Diagnostic Enrichment | 2/? | 0.5h | ~15m |
 | 57. Accuracy & Safety | 0/? | - | - |
 
 ## Accumulated Context
@@ -50,6 +50,9 @@ Progress: [████████████████████] 100/99 
 - Phase 055 decision (Plan 02): Idempotency check on assert_patterns.length > 0 (not test_files.length) for re-runnable partial enrichment
 - Phase 056 decision (Plan 01): Git heatmap priority weighting uses Math.log1p(calleeCount) for sublinear boost (avoids explosion on high-caller files while still rewarding callee count)
 - Phase 056 decision (Plan 01): Module-level _activeAdapter variable for sweepGitHeatmap() access (matches existing formalTestSyncCache pattern for scope)
+- Phase 056 decision (Plan 02): Reverse discovery (C->R and T->R) enriched with caller_count via getCallersSync('', filePath); dead_code_flag true when caller_count===0
+- Phase 056 decision (Plan 02): Per-candidate fail-open pattern for enrichment — each getCallersSync wrapped in try-catch to isolate failures; health check gates entire enrichment block
+- Phase 056 decision (Plan 02): Report annotation shows "(0 callers — likely dead code)" when dead_code_flag=true, or "(N callers)" for defined counts; undefined counts omit annotation (fail-open)
 
 ### Pending Todos
 

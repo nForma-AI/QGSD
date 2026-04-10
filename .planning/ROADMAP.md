@@ -64,7 +64,7 @@ Plans:
 
 Plans:
 - [x] 056-01-PLAN.md — Heatmap callee-count enrichment: computePriority callee_count arg + sweepGitHeatmap getCallers integration (CREM-03) (COMPLETE)
-- [ ] 056-02-PLAN.md — Reverse discovery dead-code evidence: sweepCtoR/sweepTtoR caller_count + dead_code_flag + report annotation (CREM-04)
+- [x] 056-02-PLAN.md — Reverse discovery dead-code evidence: sweepCtoR/sweepTtoR caller_count + dead_code_flag + report annotation (CREM-04) (COMPLETE)
 
 ### Phase 57: Accuracy & Safety
 **Goal**: Scope scan and incremental filter layers use call-graph data to prevent incorrect layer skips and missed formal models, preserving solve convergence correctness
@@ -89,5 +89,5 @@ Plans:
 |-------|----------------|--------|-----------|
 | 54. Adapter Foundation | 3/3 | Complete | 2026-04-08 |
 | 55. Remediation Enrichment | 2/2 | Complete | 2026-04-08 |
-| 56. Diagnostic Enrichment | 0/2 | Not started | - |
+| 56. Diagnostic Enrichment | 2/2 | Complete | 2026-04-10 |
 | 57. Accuracy & Safety | 0/? | Not started | - |
