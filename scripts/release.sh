@@ -82,6 +82,13 @@ if [[ -n "$(git diff --name-only docs/assets/)" ]]; then
   git commit -m "chore: regenerate assets for ${PKG_VERSION}"
   echo "Committed asset regeneration"
 fi
+
+# Commit formal model registry if it changed (auto-updated by spec-regen pipeline)
+if [[ -n "$(git diff --name-only .planning/formal/)" ]]; then
+  git add .planning/formal/
+  git commit -m "chore: sync formal model registry for ${PKG_VERSION}"
+  echo "Committed formal model registry sync"
+fi
 echo ""
 
 # --- 1. Verify working tree is clean ---
@@ -103,12 +110,14 @@ echo "Branch:   $(git branch --show-current)"
 echo ""
 
 # --- 3. Validate CHANGELOG entry ---
-if ! grep -q "## \[${VERSION}\]" CHANGELOG.md; then
-  echo "ERROR: CHANGELOG.md has no entry for [${VERSION}]"
-  echo "Add a ## [${VERSION}] - $(date +%Y-%m-%d) section before releasing."
+# For prereleases (e.g. 0.41.18-rc.1), check for the base version entry (0.41.18)
+CHANGELOG_VERSION="${VERSION%%-*}"
+if ! grep -q "## \[${CHANGELOG_VERSION}\]" CHANGELOG.md; then
+  echo "ERROR: CHANGELOG.md has no entry for [${CHANGELOG_VERSION}]"
+  echo "Add a ## [${CHANGELOG_VERSION}] - $(date +%Y-%m-%d) section before releasing."
   exit 1
 fi
-echo "CHANGELOG: found entry for [${VERSION}]"
+echo "CHANGELOG: found entry for [${CHANGELOG_VERSION}]"
 
 # --- 4. Check tag doesn't exist ---
 if git tag -l "$TAG" | grep -q "$TAG"; then
@@ -141,7 +150,8 @@ echo ""
 
 # --- 7. Extract changelog section for tag body ---
 # Grab everything between ## [VERSION] and the next ## [
-CHANGELOG_BODY=$(awk "/^## \[${VERSION}\]/{found=1; next} /^## \[/{if(found) exit} found{print}" CHANGELOG.md)
+# Use base version for prereleases (0.41.18 not 0.41.18-rc.1)
+CHANGELOG_BODY=$(awk "/^## \[${CHANGELOG_VERSION}\]/{found=1; next} /^## \[/{if(found) exit} found{print}" CHANGELOG.md || true)
 
 if [[ -z "$CHANGELOG_BODY" ]]; then
   CHANGELOG_BODY="Release ${VERSION}"
@@ -155,7 +165,8 @@ if [[ -n "$RELEASE_TITLE" ]]; then
   TAG_TITLE="${TAG} — ${RELEASE_TITLE}"
 else
   # Try to extract subtitle from changelog line: ## [VERSION] - date — Subtitle
-  CHANGELOG_LINE=$(grep "^## \[${VERSION}\]" CHANGELOG.md | head -1)
+  # Use base version (strip -rc.N) since prereleases share the same changelog entry
+  CHANGELOG_LINE=$(grep "^## \[${CHANGELOG_VERSION}\]" CHANGELOG.md | head -1 || true)
   SUBTITLE=$(echo "$CHANGELOG_LINE" | sed -n 's/.*— *//p')
   if [[ -n "$SUBTITLE" ]]; then
     TAG_TITLE="${TAG} — ${SUBTITLE}"

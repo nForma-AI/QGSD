@@ -47,6 +47,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 - `chore(commands)`: MCP command agent slots renamed (`codex-cli-1` → `codex-1`, `gemini-cli-1` → `gemini-1`); `nf:mcp-update` now discovers valid slots dynamically from `~/.claude.json` instead of a hardcoded list
 
+## [0.41.18] - 2026-04-09 — River ML Q-learning and tech debt standardization
+
+### Added
+- `feat(routing)`: River ML Q-learning replaces the bandit policy — `routing-policy.cjs` now uses `QLearning` with ε-greedy exploration, learning rate 0.1, discount 0.9, and a reward signal wired into Mode C dispatch on task completion (#73)
+- `feat(statusline)`: River ML phase indicator in `nf-statusline.js` — shows current routing policy phase (exploration / exploitation / shadow) with live shadow-mode recommendations surfaced from the learning loop state file
+- `feat(quick-384-386)`: E2E learning loop test (`quick-386`) validates the full River ML cycle: dispatch → reward recording → Q-table update → shadow recommendation persistence
+- `feat(verify-work)`: framework-native tests (Playwright first, Jest fallback) now auto-discovered and run via `maintain-tests run-batch` before UAT prompt — UAT completes automatically when all pass
+- `docs(issue-77)`: 10 technical debt items (DEBT-07–DEBT-16) formalized as tracked requirements in `requirements.json` — covering JSON serialization patterns, path resolution, empty catch blocks, 4 formal model gaps, and the audit process itself
+
+### Changed
+- `refactor(routing)`: `quorum-slot-dispatch.cjs` records routing reward after each Mode C dispatch result — success/failure/partial mapped to +1/−0.5/+0.25
+
 ## [0.41.17] - 2026-04-08 — Config-driven milestones
 
 ### Added
