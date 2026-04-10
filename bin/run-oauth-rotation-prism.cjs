@@ -45,7 +45,12 @@ if (!prismBin) {
 }
 
 // ── Locate model file ────────────────────────────────────────────────────────
-const modelPath = path.join(__dirname, '..', '.planning', 'formal', 'prism', 'oauth-rotation.pm');
+// Prefer __dirname-relative path (works when run from project root bin/).
+// Fall back to process.cwd()-relative path (works when script is invoked from
+// nf-bin via run-formal-verify.cjs, where __dirname points to ~/.claude/nf-bin/).
+const _oauthModelDirname = path.join(__dirname, '..', '.planning', 'formal', 'prism', 'oauth-rotation.pm');
+const _oauthModelCwd     = path.join(process.cwd(), '.planning', 'formal', 'prism', 'oauth-rotation.pm');
+const modelPath = fs.existsSync(_oauthModelDirname) ? _oauthModelDirname : _oauthModelCwd;
 if (!fs.existsSync(modelPath)) {
   process.stderr.write(
     '[run-oauth-rotation-prism] Model file not found: ' + modelPath + '\n'
@@ -82,7 +87,9 @@ if (fs.existsSync(providersPath)) {
 // Otherwise fall back to a single inline property.
 const extraArgs  = process.argv.slice(2);
 const hasPf      = extraArgs.some(a => a === '-pf' || a === '-prop');
-const propsFile  = path.join(__dirname, '..', '.planning', 'formal', 'prism', 'oauth-rotation.props');
+const _propsDirname2 = path.join(__dirname, '..', '.planning', 'formal', 'prism', 'oauth-rotation.props');
+const _propsCwd2     = path.join(process.cwd(), '.planning', 'formal', 'prism', 'oauth-rotation.props');
+const propsFile  = fs.existsSync(_propsDirname2) ? _propsDirname2 : _propsCwd2;
 const hasProps   = !hasPf && fs.existsSync(propsFile);
 // Inject live max_retries unless the caller already overrides it
 const callerOverridesRetries = extraArgs.some(

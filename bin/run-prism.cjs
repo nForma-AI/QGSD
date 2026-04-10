@@ -60,7 +60,12 @@ if (!prismBin) {
 }
 
 // ── Locate model file ────────────────────────────────────────────────────────
-const modelPath = path.join(__dirname, '..', '.planning', 'formal', 'prism', 'quorum.pm');
+// Prefer __dirname-relative path (works when run from project root bin/).
+// Fall back to process.cwd()-relative path (works when script is invoked from
+// nf-bin via run-formal-verify.cjs, where __dirname points to ~/.claude/nf-bin/).
+const _modelPathDirname = path.join(__dirname, '..', '.planning', 'formal', 'prism', 'quorum.pm');
+const _modelPathCwd     = path.join(process.cwd(), '.planning', 'formal', 'prism', 'quorum.pm');
+const modelPath = fs.existsSync(_modelPathDirname) ? _modelPathDirname : _modelPathCwd;
 if (!fs.existsSync(modelPath)) {
   process.stderr.write(
     '[run-prism] Model file not found: ' + modelPath + '\n'
@@ -144,7 +149,10 @@ try {
 }
 
 // ── Load calibration policy ───────────────────────────────────────────────
-const policyPath = path.join(__dirname, '..', '.planning', 'formal', 'policy.yaml');
+// Same fallback: prefer __dirname-relative, fall back to cwd-relative.
+const _policyDirname = path.join(__dirname, '..', '.planning', 'formal', 'policy.yaml');
+const _policyCwd     = path.join(process.cwd(), '.planning', 'formal', 'policy.yaml');
+const policyPath = fs.existsSync(_policyDirname) ? _policyDirname : _policyCwd;
 let policy;
 try {
   policy = readPolicy(policyPath);
@@ -319,8 +327,11 @@ let activeModelPath = modelPath; // default: quorum.pm
 let activeMcpRates = null;       // per-slot rates if mcp-availability model
 
 // Resolve model path for non-default models
+// Same fallback: prefer __dirname-relative, fall back to cwd-relative.
 if (modelArgValue && modelArgValue !== 'quorum') {
-  const resolvedModelPath = path.join(__dirname, '..', '.planning', 'formal', 'prism', modelArgValue + '.pm');
+  const _rDirname = path.join(__dirname, '..', '.planning', 'formal', 'prism', modelArgValue + '.pm');
+  const _rCwd     = path.join(process.cwd(), '.planning', 'formal', 'prism', modelArgValue + '.pm');
+  const resolvedModelPath = fs.existsSync(_rDirname) ? _rDirname : _rCwd;
   if (!fs.existsSync(resolvedModelPath)) {
     process.stderr.write('[run-prism] ' + modelArgValue + '.pm not found at: ' + resolvedModelPath + '\n');
     process.exit(1);
@@ -339,7 +350,10 @@ if (useMCPAvailabilityModel) {
 }
 
 const hasPf    = filteredExtraArgs.some(a => a === '-pf' || a === '-prop');
-const propsFile = path.join(__dirname, '..', '.planning', 'formal', 'prism', activeModelName + '.props');
+// Same fallback for props file resolution.
+const _propsDirname = path.join(__dirname, '..', '.planning', 'formal', 'prism', activeModelName + '.props');
+const _propsCwd     = path.join(process.cwd(), '.planning', 'formal', 'prism', activeModelName + '.props');
+const propsFile = fs.existsSync(_propsDirname) ? _propsDirname : _propsCwd;
 const hasProps  = !hasPf && fs.existsSync(propsFile);
 
 // Determine if caller already overrides tp_rate or unavail
