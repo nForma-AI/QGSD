@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-04-10)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement
-**Current focus:** v0.42 milestone complete — ready for audit
+**Current focus:** v0.42 milestone archived — planning next milestone
 
 ## Current Position
 
