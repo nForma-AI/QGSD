@@ -6,6 +6,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.42.2-rc.1] - 2026-04-10 — fix CI test isolation for River ML statusline
+
+### Fixed
+- `fix(test)`: River ML statusline tests (TC15/16/19/21/22/23) now mock `HOME` with a fake `nf-python-env/bin/python` — these tests passed locally (where `~/.claude/nf-python-env` exists) but failed in CI where the runner has no python env, causing the River indicator gate to skip the state file check entirely
+
 ## [0.42.1-rc.1] - 2026-04-10 — coderlm operational hardening
 
 ### Fixed
