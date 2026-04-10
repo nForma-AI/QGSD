@@ -251,42 +251,6 @@ process.stdin.on('end', () => {
       }
     }
 
-    // River ML phase indicator
-    let riverIndicator = '';
-    try {
-      const riverPath = path.join(dir, '.nf-river-state.json');
-      const riverRaw = fs.readFileSync(riverPath, 'utf8');
-      const riverState = JSON.parse(riverRaw);
-      const qTable = riverState && riverState.qTable;
-      if (qTable && typeof qTable === 'object') {
-        const RIVER_MIN_EXPLORE = 20;
-        let hasArms = false;
-        let allAbove = true;
-        for (const taskType of Object.keys(qTable)) {
-          const arms = qTable[taskType];
-          if (arms && typeof arms === 'object') {
-            for (const armName of Object.keys(arms)) {
-              hasArms = true;
-              if ((arms[armName].visits || 0) < RIVER_MIN_EXPLORE) {
-                allAbove = false;
-              }
-            }
-          }
-        }
-        if (hasArms) {
-          riverIndicator = allAbove
-            ? ' \x1b[32m● River\x1b[0m'
-            : ' \x1b[36m● River\x1b[0m';
-        }
-        // Shadow recommendation takes visual priority when present
-        if (riverState.lastShadow && typeof riverState.lastShadow.recommendation === 'string' && riverState.lastShadow.recommendation) {
-          riverIndicator = ` \x1b[33m● River: ${riverState.lastShadow.recommendation}\x1b[0m`;
-        }
-      }
-    } catch (_e) {
-      // Fail-silent: no state file or malformed JSON → no indicator
-    }
-
     // nForma update available?
     let gsdUpdate = '';
     const cacheFile = path.join(homeDir, '.claude', 'cache', 'nf-update-check.json');
@@ -299,27 +263,12 @@ process.stdin.on('end', () => {
       } catch (e) {}
     }
 
-    // coderlm server status indicator
-    let coderlmIndicator = '';
-    try {
-      const pidFile = path.join(homeDir, '.claude', 'nf-bin', 'coderlm.pid');
-      const pidStr = fs.readFileSync(pidFile, 'utf8').trim();
-      const pid = parseInt(pidStr, 10);
-      if (!isNaN(pid)) {
-        process.kill(pid, 0); // throws ESRCH if dead
-        coderlmIndicator = '\x1b[32m● coderlm\x1b[0m';
-      }
-    } catch (e) {
-      coderlmIndicator = '';
-    }
-    const coderlmPart = coderlmIndicator ? coderlmIndicator + ' │ ' : '';
-
     // Output (tools line is assembled and written after the main line)
     const dirname = path.basename(dir);
     if (task) {
-      process.stdout.write(`${gsdUpdate}${coderlmPart}\x1b[2m${model}\x1b[0m │ \x1b[1m${task}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}${riverIndicator}`);
+      process.stdout.write(`${gsdUpdate}\x1b[2m${model}\x1b[0m │ \x1b[1m${task}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}`);
     } else {
-      process.stdout.write(`${gsdUpdate}${coderlmPart}\x1b[2m${model}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}${riverIndicator}`);
+      process.stdout.write(`${gsdUpdate}\x1b[2m${model}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}`);
     }
 
     // Tools status second line
