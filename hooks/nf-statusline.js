@@ -55,11 +55,12 @@ function buildToolsLine(homeDir, dir) {
     // Binary missing → omit entirely
   } catch (_e) {}
 
-  // 2. River indicator — only shown when python3 can import river
+  // 2. River indicator — only shown when nf-python-env can import river
   try {
     let riverImportable = false;
     try {
-      const riverCheck = spawnSync('python3', ['-c', 'import river'], { timeout: 3000 });
+      const nfPython = path.join(os.homedir(), '.claude', 'nf-python-env', 'bin', 'python');
+      const riverCheck = spawnSync(nfPython, ['-c', 'import river'], { timeout: 3000 });
       riverImportable = riverCheck.status === 0;
     } catch (_e) {}
 
@@ -100,12 +101,14 @@ function buildToolsLine(homeDir, dir) {
     // River not importable → omit entirely
   } catch (_e) {}
 
-  // 3. embed indicator
-  // Note: embed has no runtime active signal — always dim when installed.
+  // 3. embed indicator — active (green) when embedding-cache.json exists, dim when only installed
   try {
     const transformersPath = path.join(homeDir, '.claude', 'nf-bin', 'node_modules', '@huggingface', 'transformers');
     if (fs.existsSync(transformersPath)) {
-      parts.push('\x1b[2m· embed\x1b[0m');
+      const cachePath = path.join(dir, '.planning', 'formal', 'embedding-cache.json');
+      parts.push(fs.existsSync(cachePath)
+        ? '\x1b[32m● embed\x1b[0m'
+        : '\x1b[2m· embed\x1b[0m');
     }
     // Not installed → omit entirely
   } catch (_e) {}

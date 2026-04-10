@@ -2602,24 +2602,31 @@ function install(isGlobal, runtime = 'claude') {
     }
   }
 
-  // Install River ML library via pip3 if not already importable (fail-open)
+  // Install River ML library into dedicated uv-managed venv (fail-open)
+  // Venv lives at ~/.claude/nf-python-env — avoids PEP 668 Homebrew conflicts
   {
     const { spawnSync: _spawnRiver } = require('child_process');
+    const nfPythonEnv = path.join(os.homedir(), '.claude', 'nf-python-env');
+    const nfPython = path.join(nfPythonEnv, 'bin', 'python');
     try {
-      const riverCheck = _spawnRiver('python3', ['-c', 'import river'], { timeout: 3000 });
+      const riverCheck = _spawnRiver(nfPython, ['-c', 'import river'], { timeout: 3000 });
       if (riverCheck.status !== 0) {
-        console.log(`  ${cyan}↓${reset} Installing River ML (pip3)...`);
-        const riverInstall = _spawnRiver('pip3', ['install', 'river', '--user'], { timeout: 60000 });
+        console.log(`  ${cyan}↓${reset} Installing River ML (uv)...`);
+        // Create venv if it doesn't exist yet
+        if (!fs.existsSync(nfPythonEnv)) {
+          _spawnRiver('uv', ['venv', nfPythonEnv], { timeout: 30000 });
+        }
+        const riverInstall = _spawnRiver('uv', ['pip', 'install', '--python', nfPythonEnv, 'river'], { timeout: 60000 });
         if (riverInstall.status === 0) {
           console.log(`  ${green}✓${reset} River ML installed`);
         } else {
           const errOut = riverInstall.stderr ? riverInstall.stderr.toString().slice(0, 120) : '';
-          console.log(`  ${yellow}⚠${reset} River ML install skipped: pip3 returned non-zero${errOut ? ' (' + errOut + ')' : ''}`);
+          console.log(`  ${yellow}⚠${reset} River ML install skipped: uv returned non-zero${errOut ? ' (' + errOut + ')' : ''}`);
         }
       }
       // status === 0: River already importable — skip silently
     } catch (e) {
-      // python3 not found or timed out — skip silently (fail-open)
+      // uv or nfPython not found or timed out — skip silently (fail-open)
     }
   }
 
