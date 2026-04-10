@@ -6,6 +6,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.42.1-rc.1] - 2026-04-10 — coderlm operational hardening
+
+### Fixed
+- `fix(coderlm)`: circuit-breaker in `sweepGitHeatmap` stops querying after 3 consecutive `getCallersSync` failures — prevents 5 s timeout × N-files overhead when server is unresponsive
+- `fix(coderlm)`: pre-flight `healthSync()` before first sweep emits availability to stderr so fail-open status is visible before queries start
+- `fix(coderlm)`: CDIAG-03 wired into solve loop — in `--skip-layers` incremental mode, call-graph expansion via `computeAffectedLayers` un-skips layers whose transitive callers were affected by remediation
+
 ## [0.42.0-rc.1] - 2026-04-10 — Deep coderlm Solve Integration
 
 ### Added
