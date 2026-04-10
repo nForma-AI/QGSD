@@ -15,7 +15,7 @@ Requirements for deep coderlm integration into the solve loop. Every integration
 
 ### Remediation Enrichment
 
-- [ ] **CREM-01**: R→F dispatch passes `getImplementation()` + `getCallers()` results as `--seed-files` to `/nf:close-formal-gaps` so generated formal specs match actual code structure
+- [x] **CREM-01**: R→F dispatch passes `getImplementation()` + `getCallers()` results as `--seed-files` to `/nf:close-formal-gaps` so generated formal specs match actual code structure
 - [x] **CREM-02**: F→T stub generation uses `findTests()` + `peek()` to pre-populate test stub recipes with observed test patterns from the codebase (assert patterns, setup code)
 - [x] **CREM-03**: Git heatmap hot-zone ranking uses `getCallers()` frequency (callee count) alongside git churn score — files with more callers are prioritized for formal modeling *(Phase 56)*
 - [x] **CREM-04**: Reverse discovery (C→R, T→R) candidates are enriched with `getCallers()` call counts as evidence for quorum — modules with 0 callers are flagged as likely dead code *(Phase 56)*
@@ -23,8 +23,8 @@ Requirements for deep coderlm integration into the solve loop. Every integration
 ### Diagnostic & Infrastructure
 
 - [x] **CDIAG-01**: `queryEdgesSync()` in nf-solve.cjs uses `getImplementation()` for symbol-level edge discovery instead of file-name string matching — edges reflect actual function calls, not module imports *(Phase 54)*
-- [ ] **CDIAG-02**: `formal-scope-scan.cjs` includes a Layer 2.5 call-graph discovery step that walks `getCallers()` backward from changed files to find affected formal models
-- [ ] **CDIAG-03**: `solve-incremental-filter.cjs` uses `getCallers()` transitive dependency data to prevent incorrect layer skips — if a changed file is called by a layer script, that layer is not skipped
+- [x] **CDIAG-02**: `formal-scope-scan.cjs` includes a Layer 2.5 call-graph discovery step that walks `getCallers()` backward from changed files to find affected formal models
+- [x] **CDIAG-03**: `solve-incremental-filter.cjs` uses `getCallers()` transitive dependency data to prevent incorrect layer skips — if a changed file is called by a layer script, that layer is not skipped
 - [x] **CDIAG-04**: coderlm server is re-indexed between solve iterations (after remediation creates/modifies files) so the call graph reflects the current state of the codebase *(Phase 54)*
 
 ## Out of Scope
