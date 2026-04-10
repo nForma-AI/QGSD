@@ -390,6 +390,53 @@ test('parseStateForReminder returns null for null/undefined input', () => {
   assert.equal(parseStateForReminder(''), null);
 });
 
+// ─── coderlm auto-start tests ───────────────────────────────────────────────
+
+test('coderlm auto-start: skipped silently when binary absent → exits 0, stdout clean', () => {
+  // Point HOME at a tmpdir that has no nf-bin/coderlm binary.
+  // The hook must exit 0 and not corrupt stdout.
+  const tmpDir = makeTmpDir();
+  const { exitCode, stdout, stderr } = runHook({ cwd: tmpDir }, {
+    env: { ...process.env, HOME: tmpDir },
+  });
+  assert.equal(exitCode, 0, 'hook must exit 0 when coderlm binary is absent');
+  assert.ok(!stderr.includes('Error'), 'no error output when coderlm is absent');
+  // stdout is either empty or valid JSON — not corrupted by the spawn attempt
+  if (stdout.trim().length > 0) {
+    let parsed;
+    try { parsed = JSON.parse(stdout); } catch (e) {
+      assert.fail('stdout corrupted by coderlm spawn path: ' + stdout);
+    }
+    assert.ok(parsed && typeof parsed === 'object', 'parsed stdout must be an object');
+  }
+});
+
+test('coderlm auto-start: when binary exists, hook still exits 0 and stdout is valid JSON', () => {
+  // Create a fake coderlm binary (executable shell script that exits immediately).
+  const tmpDir = makeTmpDir();
+  const nfBinDir = path.join(tmpDir, '.claude', 'nf-bin');
+  fs.mkdirSync(nfBinDir, { recursive: true });
+  const fakeBin = path.join(nfBinDir, 'coderlm');
+  fs.writeFileSync(fakeBin, '#!/bin/sh\nexit 0\n', 'utf8');
+  fs.chmodSync(fakeBin, 0o755);
+  // Also create a fake lifecycle script that exits immediately (no actual server spawn).
+  const fakeLifecycle = path.join(nfBinDir, 'coderlm-lifecycle.cjs');
+  fs.writeFileSync(fakeLifecycle, '#!/usr/bin/env node\nprocess.exit(0);\n', 'utf8');
+
+  const { exitCode, stdout, stderr } = runHook({ cwd: tmpDir }, {
+    env: { ...process.env, HOME: tmpDir },
+  });
+  assert.equal(exitCode, 0, 'hook must exit 0 when coderlm binary exists');
+  assert.ok(!stderr.includes('Error'), 'no error output when coderlm is present');
+  if (stdout.trim().length > 0) {
+    let parsed;
+    try { parsed = JSON.parse(stdout); } catch (e) {
+      assert.fail('stdout corrupted when coderlm binary is present: ' + stdout);
+    }
+    assert.ok(parsed && typeof parsed === 'object');
+  }
+});
+
 test('stdout is either empty or valid JSON (never partial/corrupt output)', () => {
   const tmpDir = makeTmpDir();
   // Repo with a surfaceable issue to exercise the stdout write path.

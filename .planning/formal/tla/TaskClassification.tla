@@ -84,14 +84,17 @@ Spec == Init /\ [][Next]_vars /\ WF_vars(Next)
 \* ── Safety invariants ────────────────────────────────────────────────────────
 
 \* ROUTE-02: Bug fixes always route to debug pipeline
+\* @requirement ROUTE-02
 BugFixRoutesToDebug ==
     (phase = "routed" /\ taskType = "bug_fix") => routedTo = "debug"
 
 \* ROUTE-03: Feature/refactor routes to normal pipeline
+\* @requirement ROUTE-03
 NonBugRoutesToNormal ==
     (phase = "routed" /\ taskType \in {"feature", "refactor"}) => routedTo = "normal"
 
 \* ROUTE-04: Classification stored before routing
+\* @requirement ROUTE-04
 StoredBeforeRouting ==
     phase \in {"routing", "routed"} => classificationStored = TRUE
 

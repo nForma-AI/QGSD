@@ -6,6 +6,47 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.42.2-rc.1] - 2026-04-10 — fix CI test isolation for River ML statusline
+
+### Fixed
+- `fix(test)`: River ML statusline tests (TC15/16/19/21/22/23) now mock `HOME` with a fake `nf-python-env/bin/python` — these tests passed locally (where `~/.claude/nf-python-env` exists) but failed in CI where the runner has no python env, causing the River indicator gate to skip the state file check entirely
+
+## [0.42.1-rc.1] - 2026-04-10 — coderlm operational hardening
+
+### Fixed
+- `fix(coderlm)`: circuit-breaker in `sweepGitHeatmap` stops querying after 3 consecutive `getCallersSync` failures — prevents 5 s timeout × N-files overhead when server is unresponsive
+- `fix(coderlm)`: pre-flight `healthSync()` before first sweep emits availability to stderr so fail-open status is visible before queries start
+- `fix(coderlm)`: CDIAG-03 wired into solve loop — in `--skip-layers` incremental mode, call-graph expansion via `computeAffectedLayers` un-skips layers whose transitive callers were affected by remediation
+
+## [0.42.0-rc.1] - 2026-04-10 — Deep coderlm Solve Integration
+
+### Added
+- `feat(coderlm)`: LRU cache (100 entries, 5min TTL) for all coderlm query results — cleared at solve loop start, metrics emitted to stderr (CADP-01, CADP-03)
+- `feat(coderlm)`: `queryEdgesSync` uses `getImplementation()` for symbol-level dependency edges in `computeWaves` (CDIAG-01)
+- `feat(coderlm)`: coderlm adapter reindexed between solve iterations after each autoClose remediation (CDIAG-04)
+- `feat(remediation)`: R→F dispatch seeds `--seed-files` from `getImplementation()` + `getCallers()` per requirement (CREM-01)
+- `feat(remediation)`: F→T dispatch uses `findTests()` + `peek()` to pre-populate test stub recipes in `formal-test-sync.cjs` (CREM-02)
+- `feat(diagnostics)`: Git heatmap priority weighting enriched with callee count via `Math.log1p(calleeCount)` — sublinear boost without explosion (CREM-03)
+- `feat(diagnostics)`: C→R and T→R reverse-discovery candidates enriched with `caller_count` + `dead_code_flag`; solve report annotates dead code candidates (CREM-04)
+- `feat(scope-scan)`: Layer 2.5 backward call-graph walk in `formal-scope-scan.cjs` discovers files via `getCallersSync` not reachable by static Layer 2 analysis (CDIAG-02)
+- `feat(incremental-filter)`: `expandWithCallGraph()` in `solve-incremental-filter.cjs` expands affected set with transitive call-graph dependencies — monotone-safe add-only (CDIAG-03)
+
+### Changed
+- All coderlm integration points are fail-open: health check gates every query site; unavailability routes to pre-integration behavior with zero errors (CADP-02)
+
+## [0.41.19-rc.1] - 2026-04-10 — uv-backed River, active embed signal, solve embedding refresh
+
+## [0.41.19] - 2026-04-10 — uv-backed River, active embed signal, solve embedding refresh
+
+### Added
+- `feat(statusline)`: embed indicator now shows `● embed` (green/active) when `embedding-cache.json` exists, `· embed` (dim) when only installed
+- `feat(solve)`: Phase 0 in `/nf:solve` rebuilds embedding cache via `proximity-embed.mjs` before each diagnostic run — ensures fresh vectors for similarity fallback
+- `feat(statusline)`: River ML import check now uses `~/.claude/nf-python-env` (uv-managed venv) — avoids PEP 668 Homebrew conflicts
+- Installer creates `~/.claude/nf-python-env` via `uv venv` and installs river with `uv pip install`
+
+### Changed
+- `chore(commands)`: MCP command agent slots renamed (`codex-cli-1` → `codex-1`, `gemini-cli-1` → `gemini-1`); `nf:mcp-update` now discovers valid slots dynamically from `~/.claude.json` instead of a hardcoded list
+
 ## [0.41.18] - 2026-04-09 — River ML Q-learning and tech debt standardization
 
 ### Added

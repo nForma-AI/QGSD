@@ -55,7 +55,9 @@ const { detectNewlyBlocked } = require('./escalation-classifier.cjs');
 const { CycleDetector } = require('./solve-cycle-detector.cjs');
 const { measureHypotheses } = require('./hypothesis-measure.cjs')._pure;
 const { loadHypothesisTransitions, computeLayerPriorityWeights } = require('./hypothesis-layer-map.cjs');
-const { computeWaves } = require('./solve-wave-dag.cjs');
+const { computeWaves, computeWavesFromGraph } = require('./solve-wave-dag.cjs');
+const { createAdapter } = require('./coderlm-adapter.cjs');
+const { ensureRunning, touchLastQuery, checkIdleStop, reindex } = require('./coderlm-lifecycle.cjs');
 
 const TAG = '[nf-solve]';
 let ROOT = process.cwd();
@@ -121,6 +123,129 @@ function embeddingNearestReq(nodeKey) {
     similarity: Math.round(bestSim * 1000) / 1000,
     proximity_context,
   };
+}
+
+// ── Layer script mapping for coderlm callers queries ────────────────────────
+// Maps layer keys to their primary script files for inter-layer dependency discovery
+
+const LAYER_SCRIPT_MAP = {
+  f_to_t: 'bin/formal-test-sync.cjs',
+  c_to_f: 'bin/nf-solve.cjs',           // inline handler, no separate script
+  t_to_c: 'bin/nf-solve.cjs',           // inline handler
+  f_to_c: 'bin/nf-solve.cjs',           // inline handler
+  d_to_c: 'bin/nf-solve.cjs',           // inline handler
+  git_heatmap: 'bin/git-heatmap.cjs',
+  c_to_r: 'bin/nf-solve.cjs',           // inline handler
+  t_to_r: 'bin/nf-solve.cjs',           // inline handler
+  d_to_r: 'bin/nf-solve.cjs',           // inline handler
+  hazard_model: 'bin/hazard-model.cjs',
+  l1_to_l3: 'bin/nf-solve.cjs',         // inline handler
+  l3_to_tc: 'bin/generate-traceability-matrix.cjs',
+  per_model_gates: 'bin/compute-per-model-gates.cjs',
+  r_to_f: 'bin/nf-solve.cjs',           // inline handler
+  r_to_d: 'bin/nf-solve.cjs',           // inline handler
+  p_to_f: 'bin/nf-solve.cjs',           // inline handler
+  h_to_m: 'bin/nf-solve.cjs',           // inline handler
+  b_to_f: 'bin/nf-solve.cjs',           // inline handler
+};
+
+/**
+ * Maps layer keys to their primary exported symbol names.
+ * Derived from actual module.exports of each distinct (non-inline) layer script.
+ * Inline handlers (pointing to bin/nf-solve.cjs) are excluded — no distinct symbol to query.
+ * l3_to_tc is excluded — bin/generate-traceability-matrix.cjs exports no named symbols.
+ *
+ * Symbol names verified via: node -e "const m = require('./bin/<script>'); console.log(Object.keys(m))"
+ */
+const LAYER_SYMBOL_MAP = {
+  f_to_t: 'classifyTestStrategy',      // bin/formal-test-sync.cjs primary export
+  git_heatmap: 'computePriority',       // bin/git-heatmap.cjs primary export
+  hazard_model: 'generateHazardModel',  // bin/hazard-model.cjs primary export
+  per_model_gates: 'computeAggregate',  // bin/compute-per-model-gates.cjs primary export
+};
+
+/**
+ * Query coderlm for inter-layer dependency edges based on active layer scripts.
+ *
+ * Uses getImplementationSync for symbol-level precision (CDIAG-01): resolves the actual
+ * implementation file for each layer's primary symbol, then queries getCallersSync to get
+ * the callers of that symbol.
+ *
+ * Fallback note: /implementation endpoint returns { file, line } without a callers array.
+ * So we use getImplementationSync to confirm the symbol is resolvable (symbol-level precision
+ * for the target), then getCallersSync(symbol, implementationFile) to get symbol-level callers.
+ * This is more precise than the previous approach (file-basename string matching) because
+ * callers are filtered to the specific function, not all importers of the module.
+ *
+ * Reverse lookup uses path.resolve() comparison (not substring matching) to avoid false
+ * matches on similar filenames (CADP-02 compliance).
+ *
+ * @param {Object} adapter - coderlm adapter instance
+ * @param {string[]} activeLayerKeys - Array of layer keys with residual > 0
+ * @returns {Array<{from: string, to: string}>} Array of discovered edges
+ */
+function queryEdgesSync(adapter, activeLayerKeys) {
+  try {
+    const edges = [];
+
+    // Build reverse map: resolved script path -> [layer keys that use it]
+    const scriptToLayers = {};
+    for (const key of activeLayerKeys) {
+      const script = LAYER_SCRIPT_MAP[key];
+      if (!script) continue;
+      const resolved = path.resolve(script);
+      if (!scriptToLayers[resolved]) scriptToLayers[resolved] = [];
+      scriptToLayers[resolved].push(key);
+    }
+
+    // For each active layer that has a known primary symbol, query symbol-level callers
+    for (const key of activeLayerKeys) {
+      const symbol = LAYER_SYMBOL_MAP[key];
+      if (!symbol) continue; // inline handler or no known symbol — skip
+
+      const script = LAYER_SCRIPT_MAP[key];
+      if (!script) continue;
+
+      try {
+        // Step 1: Use getImplementationSync to confirm symbol resolves (symbol-level precision)
+        // The response is { file, line } — no callers array (pre-flight verified).
+        const implResult = adapter.getImplementationSync(symbol);
+        // Use implementation file if available, otherwise fall back to the script path
+        const queryFile = (implResult && implResult.file) ? implResult.file : script;
+
+        // Step 2: Use getCallersSync with the resolved symbol + file for caller discovery
+        // This gives symbol-level callers (not all importers of the module)
+        const callersResult = adapter.getCallersSync(symbol, queryFile);
+        if (callersResult.error || !callersResult.callers) continue;
+
+        // Step 3: Map caller files back to layer keys using path.resolve() comparison
+        const targetLayers = scriptToLayers[path.resolve(script)] || [];
+        for (const callerFile of callersResult.callers) {
+          const resolvedCaller = path.resolve(callerFile);
+          for (const otherKey of activeLayerKeys) {
+            const otherScript = LAYER_SCRIPT_MAP[otherKey];
+            if (!otherScript) continue;
+            // Use exact path.resolve() comparison — NOT substring/includes matching
+            if (resolvedCaller === path.resolve(otherScript)) {
+              for (const target of targetLayers) {
+                if (target !== otherKey) {
+                  edges.push({ from: otherKey, to: target });
+                }
+              }
+            }
+          }
+        }
+      } catch (innerErr) {
+        // fail-open per CADP-02: skip this layer's edges on any per-symbol error
+        continue;
+      }
+    }
+
+    return edges;
+  } catch (e) {
+    // fail-open: any top-level exception returns empty edges (CADP-02)
+    return [];
+  }
 }
 
 // ── CLI flags ────────────────────────────────────────────────────────────────
@@ -816,6 +941,19 @@ function sweepRtoF() {
  * Cache for formal-test-sync.cjs --json --report-only result.
  */
 let formalTestSyncCache = null;
+
+/**
+ * Active adapter instance from solve() scope, used for enrichment in sweepGitHeatmap().
+ * Set at loop start, cleared after each iteration.
+ */
+let _activeAdapter = null;
+
+/**
+ * Circuit-breaker: consecutive coderlm query failure count.
+ * Resets to 0 on any successful query. When >= 3, sweepGitHeatmap skips coderlm
+ * for the remainder of the run to avoid repeated 5 s timeout overhead.
+ */
+let _coderlmConsecutiveFailures = 0;
 
 /**
  * Helper to load and cache formal-test-sync result.
@@ -2381,6 +2519,29 @@ function sweepCtoR() {
     }
   } catch (e) { /* fail-open */ }
 
+  // CREM-04: Enrich untraced candidates with caller counts (fail-open)
+  if (_activeAdapter && untraced.length > 0) {
+    try {
+      const healthResult = _activeAdapter.healthSync();
+      if (healthResult && healthResult.healthy) {
+        for (const candidate of untraced) {
+          try {
+            const filePath = candidate.file || '';
+            const result = _activeAdapter.getCallersSync('', filePath);
+            const callerCount = (result && Array.isArray(result.callers)) ? result.callers.length : undefined;
+            if (callerCount !== undefined) {
+              candidate.caller_count = callerCount;
+              candidate.dead_code_flag = callerCount === 0;
+            }
+          } catch (_e) { /* fail-open per candidate */ }
+        }
+        process.stderr.write(TAG + ' CREM-04: enriched ' + untraced.length + ' C->R candidate(s) with caller counts\n');
+      }
+    } catch (_e) {
+      process.stderr.write(TAG + ' CREM-04 C->R: coderlm unavailable, using heuristics only\n');
+    }
+  }
+
   return {
     residual: untraced.length,
     detail: {
@@ -2575,6 +2736,29 @@ function sweepTtoR() {
       }
     }
   } catch (e) { /* fail-open */ }
+
+  // CREM-04: Enrich orphan test candidates with caller counts (fail-open)
+  if (_activeAdapter && orphanItems.length > 0) {
+    try {
+      const healthResult = _activeAdapter.healthSync();
+      if (healthResult && healthResult.healthy) {
+        for (const item of orphanItems) {
+          try {
+            const filePath = item.file || '';
+            const result = _activeAdapter.getCallersSync('', filePath);
+            const callerCount = (result && Array.isArray(result.callers)) ? result.callers.length : undefined;
+            if (callerCount !== undefined) {
+              item.caller_count = callerCount;
+              item.dead_code_flag = callerCount === 0;
+            }
+          } catch (_e) { /* fail-open per candidate */ }
+        }
+        process.stderr.write(TAG + ' CREM-04: enriched ' + orphanItems.length + ' T->R candidate(s) with caller counts\n');
+      }
+    } catch (_e) {
+      process.stderr.write(TAG + ' CREM-04 T->R: coderlm unavailable, using heuristics only\n');
+    }
+  }
 
   const annotation_coverage_percent = testFiles.length > 0
     ? Math.round((annotatedCount / testFiles.length) * 100)
@@ -3311,7 +3495,7 @@ function sweepPerModelGates() {
  * Refreshes the evidence file first (unless --report-only or --fast).
  * This is informational — not added to the automatable forward total.
  */
-function sweepGitHeatmap() {
+function sweepGitHeatmap(adapter) {
   const evidencePath = path.join(ROOT, '.planning', 'formal', 'evidence', 'git-heatmap.json');
 
   // Refresh evidence (skip in fast/report-only modes — too slow for git mining)
@@ -3330,6 +3514,37 @@ function sweepGitHeatmap() {
     const data = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
     const hotZones = data.uncovered_hot_zones || [];
     const signals = data.signals || {};
+
+    // CREM-03: Enrich hot-zone callee counts via coderlm getCallersSync (fail-open)
+    if (adapter && hotZones.length > 0) {
+      try {
+        const healthResult = adapter.healthSync();
+        if (healthResult && healthResult.healthy) {
+          for (const hz of hotZones) {
+            // Circuit-breaker: stop querying after 3 consecutive failures (avoids 5 s timeout × N files)
+            if (_coderlmConsecutiveFailures >= 3) break;
+            try {
+              // Use the file path as symbol hint — getCallersSync resolves by file
+              const result = adapter.getCallersSync('', hz.file);
+              if (result && Array.isArray(result.callers)) {
+                hz.callee_count = result.callers.length;
+                // Re-compute priority with updated callee_count
+                const { computePriority } = require('./git-heatmap.cjs');
+                hz.priority = computePriority(hz.churn || 0, hz.fixes || 0, hz.adjustments || 0, hz.callee_count);
+                _coderlmConsecutiveFailures = 0; // reset on success
+              }
+            } catch (_e) {
+              _coderlmConsecutiveFailures++;
+            }
+          }
+          // Re-sort after enrichment
+          hotZones.sort((a, b) => b.priority - a.priority);
+          process.stderr.write(TAG + ' CREM-03: enriched ' + hotZones.length + ' hot-zone(s) with callee counts\n');
+        }
+      } catch (_e) {
+        process.stderr.write(TAG + ' CREM-03: coderlm unavailable, using git churn ranking only\n');
+      }
+    }
 
     return {
       residual: hotZones.length,
@@ -4204,7 +4419,7 @@ function computeResidual() {
 
   // Git heatmap sweep (informational — not added to forward total)
   const _t_git_heatmap = Date.now();
-  const git_heatmap = sweepGitHeatmap();
+  const git_heatmap = sweepGitHeatmap(_activeAdapter);
   _timing.git_heatmap = { duration_ms: Date.now() - _t_git_heatmap, skipped: false };
   const heatmap_total = git_heatmap.residual >= 0 ? git_heatmap.residual : 0;
 
@@ -5245,7 +5460,9 @@ function formatReport(iterations, finalResidual, converged) {
     if (detail.untraced_modules && detail.untraced_modules.length > 0) {
       lines.push('Untraced modules (' + detail.untraced_modules.length + ' of ' + detail.total_modules + '):');
       for (const mod of detail.untraced_modules.slice(0, 20)) {
-        lines.push('  - ' + mod.file);
+        const deadNote = (mod.dead_code_flag === true) ? ' (0 callers — likely dead code)' :
+                         (typeof mod.caller_count === 'number') ? ' (' + mod.caller_count + ' callers)' : '';
+        lines.push('  - ' + mod.file + deadNote);
       }
       if (detail.untraced_modules.length > 20) {
         lines.push('  ... and ' + (detail.untraced_modules.length - 20) + ' more');
@@ -5260,7 +5477,10 @@ function formatReport(iterations, finalResidual, converged) {
     if (detail.orphan_tests && detail.orphan_tests.length > 0) {
       lines.push('Orphan tests (' + detail.orphan_tests.length + ' of ' + detail.total_tests + '):');
       for (const t of detail.orphan_tests.slice(0, 20)) {
-        lines.push('  - ' + t);
+        const testFile = typeof t === 'string' ? t : (t.file || '');
+        const deadNote = (t.dead_code_flag === true) ? ' (0 callers — likely dead code)' :
+                         (typeof t.caller_count === 'number') ? ' (' + t.caller_count + ' callers)' : '';
+        lines.push('  - ' + testFile + deadNote);
       }
       if (detail.orphan_tests.length > 20) {
         lines.push('  ... and ' + (detail.orphan_tests.length - 20) + ' more');
@@ -5735,6 +5955,22 @@ function main() {
 
   const cycleDetector = new CycleDetector();
 
+  // CADP-01: Create adapter once per solve run (accumulates metrics across all iterations).
+  // resetCache() clears stale data from previous runs before the loop starts.
+  // Hoisted here so metrics are non-zero after sync-path queries in queryEdgesSync.
+  const _solveAdapter = createAdapter({ enabled: true });
+  _solveAdapter.resetCache(); // CADP-01: cleared at loop start
+  _activeAdapter = _solveAdapter; // CREM-03: Make adapter available to sweepGitHeatmap()
+
+  // Pre-flight: log coderlm availability before the first sweep so diagnostics arrive early.
+  // Non-blocking — failure routes to fail-open mode throughout the loop.
+  try {
+    const warmup = _solveAdapter.healthSync();
+    process.stderr.write(TAG + ' coderlm pre-flight: ' + (warmup.healthy ? 'healthy — queries enabled' : 'unavailable — fail-open mode') + '\n');
+  } catch (_) {
+    process.stderr.write(TAG + ' coderlm pre-flight: unreachable — fail-open mode\n');
+  }
+
   for (let i = 1; i <= maxIterations; i++) {
     process.stderr.write(TAG + ' Iteration ' + i + '/' + maxIterations + '\n');
 
@@ -5796,14 +6032,65 @@ function main() {
       // HTARGET-01/02: Compute hypothesis-driven wave dispatch order
       let waveOrder = null;
       try {
-        const transitions = loadHypothesisTransitions(ROOT);
-        const priorityWeights = computeLayerPriorityWeights(transitions);
-        const computedWaves = computeWaves(residual, priorityWeights);
-        if (computedWaves.length > 0) {
-          waveOrder = computedWaves;  // Preserve full wave structure (not flattened)
-          process.stderr.write(TAG + ' Wave ordering (' + computedWaves.length + ' waves, ' +
-            (transitions.length > 0 ? transitions.length + ' hypothesis transition(s) applied' : 'no transitions') +
-            '): ' + computedWaves.map(w => 'W' + w.wave + '[' + w.layers.join(',') + ']' + (w.sequential ? '(seq)' : '')).join(' -> ') + '\n');
+        // coderlm auto-start lifecycle (replaces NF_CODERLM_ENABLED gate)
+        // Fail-open: if ensureRunning fails, falls through to heuristic waves
+        try {
+          const lifecycle = ensureRunning({ port: 8787, indexPath: ROOT });
+          if (lifecycle.ok) {
+            const adapter = _solveAdapter; // reuse hoisted adapter (accumulates metrics, CADP-03)
+            const healthResult = adapter.healthSync();
+            if (healthResult.healthy) {
+              touchLastQuery();  // Update idle timer
+              process.stderr.write(TAG + ' coderlm server healthy, attempting graph-driven wave ordering\n');
+
+              // Collect active layers (residual > 0)
+              const activeLayerKeys = [];
+              for (const [key, val] of Object.entries(residual)) {
+                if (val && typeof val === 'object' && val.residual > 0) {
+                  activeLayerKeys.push(key);
+                }
+              }
+
+              if (activeLayerKeys.length > 0) {
+                const discoveredEdges = queryEdgesSync(adapter, activeLayerKeys);
+                process.stderr.write(TAG + ' coderlm discovered ' + discoveredEdges.length + ' inter-layer edge(s)\n');
+
+                const graph = {
+                  nodes: activeLayerKeys,
+                  edges: discoveredEdges
+                };
+
+                const transitions = loadHypothesisTransitions(ROOT);
+                const priorityWeights = computeLayerPriorityWeights(transitions);
+                const graphWaves = computeWavesFromGraph(graph, priorityWeights);
+
+                if (graphWaves.length > 0) {
+                  waveOrder = graphWaves;
+                  process.stderr.write(TAG + ' coderlm graph-driven wave ordering (' + graphWaves.length + ' waves): ' +
+                    graphWaves.map(w => 'W' + w.wave + '[' + w.layers.join(',') + ']' + (w.sequential ? '(seq)' : '')).join(' -> ') + '\n');
+                }
+              }
+            } else {
+              process.stderr.write(TAG + ' coderlm unhealthy after start (' + healthResult.error + '), falling back to heuristic waves\n');
+            }
+          } else {
+            process.stderr.write(TAG + ' coderlm lifecycle: ' + (lifecycle.error || 'unavailable') + ', falling back to heuristic waves\n');
+          }
+        } catch (e) {
+          process.stderr.write(TAG + ' WARNING: coderlm integration failed: ' + e.message + ', falling back\n');
+        }
+
+        // Fall through to hypothesis-driven wave computation if coderlm path didn't produce a result (always available as fallback)
+        if (!waveOrder) {
+          const transitions = loadHypothesisTransitions(ROOT);
+          const priorityWeights = computeLayerPriorityWeights(transitions);
+          const computedWaves = computeWaves(residual, priorityWeights);
+          if (computedWaves.length > 0) {
+            waveOrder = computedWaves;  // Preserve full wave structure (not flattened)
+            process.stderr.write(TAG + ' Wave ordering (' + computedWaves.length + ' waves, ' +
+              (transitions.length > 0 ? transitions.length + ' hypothesis transition(s) applied' : 'no transitions') +
+              '): ' + computedWaves.map(w => 'W' + w.wave + '[' + w.layers.join(',') + ']' + (w.sequential ? '(seq)' : '')).join(' -> ') + '\n');
+          }
         }
       } catch (e) {
         // fail-open: wave ordering failure means autoClose uses default order
@@ -5813,12 +6100,70 @@ function main() {
       const closeResult = autoClose(residual, oscillatingSet, waveOrder);
       iterations[iterations.length - 1].actions = closeResult.actions_taken;
       iterations[iterations.length - 1].wave_order = waveOrder;
+
+      // CDIAG-04: Re-index coderlm only when autoClose actually modified files.
+      // Guard: actions_taken.length > 0 indicates remediation wrote/changed files.
+      // Fail-open: reindex errors are logged to stderr and never bubble to caller.
+      if (closeResult.actions_taken && closeResult.actions_taken.length > 0) {
+        try {
+          const reindexResult = reindex({ port: 8787 });
+          if (reindexResult.ok) {
+            process.stderr.write(TAG + ' coderlm reindexed after remediation\n');
+          } else {
+            process.stderr.write(TAG + ' coderlm reindex skipped: ' + (reindexResult.error || 'unavailable') + '\n');
+          }
+        } catch (e) {
+          process.stderr.write(TAG + ' coderlm reindex failed (non-fatal): ' + e.message + '\n');
+        }
+      }
+
+      // CDIAG-03: In incremental mode (--skip-layers), expand skipLayerSet using call-graph
+      // analysis of files written by autoClose. This prevents incorrect skips when a changed
+      // utility file's callers map to additional layers not covered by static DOMAIN_MAP matching.
+      // Only runs when user requested layer skipping AND adapter is available.
+      if (skipLayerSet.size > 0 && _activeAdapter) {
+        try {
+          const gitOut = spawnSync('git', ['diff', '--name-only'], { encoding: 'utf8', cwd: ROOT });
+          const changedFiles = (gitOut.stdout || '').trim().split('\n').filter(Boolean);
+          if (changedFiles.length > 0) {
+            const { computeAffectedLayers } = require('./solve-incremental-filter.cjs');
+            const filterResult = computeAffectedLayers(changedFiles, _activeAdapter);
+            let unblocked = 0;
+            for (const layer of filterResult.affected_layers) {
+              if (skipLayerSet.has(layer)) {
+                skipLayerSet.delete(layer);
+                unblocked++;
+              }
+            }
+            if (unblocked > 0) {
+              process.stderr.write(TAG + ' CDIAG-03: call-graph expansion un-skipped ' + unblocked + ' layer(s) for next iteration\n');
+            }
+          }
+        } catch (e) {
+          process.stderr.write(TAG + ' CDIAG-03: call-graph expansion failed (non-fatal): ' + e.message + '\n');
+        }
+      }
+
+      checkIdleStop();  // Stop coderlm if idle > 5 min
     } else {
       break; // report-only = single sweep, no loop
     }
 
     prevTotal = effectiveTotal;
   }
+
+  // CADP-03: Emit coderlm session metrics to stderr after solve loop exits
+  try {
+    if (_solveAdapter && typeof _solveAdapter.getSessionMetrics === 'function') {
+      const m = _solveAdapter.getSessionMetrics();
+      process.stderr.write(
+        TAG + ' coderlm session metrics: ' +
+        m.queryCount + ' queries, ' +
+        (m.cacheHitRate * 100).toFixed(1) + '% cache hit rate, ' +
+        m.totalLatencyMs + 'ms total latency\n'
+      );
+    }
+  } catch (e) { /* fail-open */ }
 
   const finalResidual = iterations[iterations.length - 1].residual;
 

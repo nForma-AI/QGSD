@@ -1,0 +1,25 @@
+{
+  "feature/issue-58-integrate-coderlm-adapter": {
+    "task_id": 393,
+    "task_description": "Rewrite nf:mcp-status to be fully dynamic: read all slot names and types from ~/.claude.json at runtime, compute banner counts dynamically, and query the correct identity/health_check tools for actual configured slots instead of hardcoded claude-1..6 and codex/gemini/opencode/copilot names",
+    "approach": "Read all slot names and types from ~/.claude.json at runtime, classify each slot (CLI/HTTP/local-MCP/skip) dynamically, compute banner counts from the classification, and build the Step 3 sub-agent tool list from actual configured slots — replacing all hardcoded claude-1..6 and codex/gemini/opencode/copilot-1 references throughout the skill.",
+    "out_of_scope": [
+      "Adding new MCP server types or providers beyond what exists in the current config",
+      "Modifying the providers.json file structure or slot naming conventions",
+      "Implementing caching or persistent storage of slot configurations",
+      "Changing the display format or table columns",
+      "Fixing other MCP skills (mcp-repair, mcp-restart, mcp-update, etc.) — only mcp-status.md in scope"
+    ],
+    "classification": {
+      "type": "refactor",
+      "confidence": 0.95,
+      "routed_through_debug": false
+    },
+    "risk_level": "medium",
+    "risk_reason": "Modifying commands/nf/mcp-status.md (workflow file) with dynamic runtime logic replacing hardcoded slot names. Scoped to single file but affects user-facing diagnostics.",
+    "branches_affected": ["feature/issue-58-integrate-coderlm-adapter"],
+    "created_at": "2026-04-09T12:44:10.568Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

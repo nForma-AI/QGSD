@@ -653,3 +653,20 @@ Archive: `.planning/milestones/v0.15-MILESTONE-AUDIT.md`
 
 ---
 
+
+## v0.42 Deep coderlm Solve Integration (Shipped: 2026-04-10)
+
+**Phases completed:** Phases 54–57 (4 phases, 9 plans)
+**Requirements:** 11/11 satisfied | Audit: PASSED
+
+**Key accomplishments:**
+- LRU cache module (`bin/coderlm-cache.cjs`) with 100-entry capacity, 5-min TTL, hit/miss stats — wired into all 6 adapter query methods and reset at convergence loop start (CADP-01)
+- Symbol-level edge discovery via `getImplementationSync` + `LAYER_SYMBOL_MAP` with `path.resolve()` comparison, replacing file-name string matching in `queryEdgesSync()` (CDIAG-01); coderlm server re-indexed after autoClose() modifies files (CDIAG-04)
+- R→F remediation dispatch passes `--seed-files` from `getImplementationSync`/`getCallersSync` so generated formal specs reference real function signatures and caller relationships (CREM-01); F→T stub generation enriched with `findTests`/`peek` assertion patterns (CREM-02)
+- Git heatmap hot-zone ranking incorporates `Math.log1p(calleeCount)` alongside git churn score — widely-called files surface for formal coverage even with moderate churn (CREM-03)
+- Reverse discovery candidates enriched with `caller_count` and `dead_code_flag`; solve report annotates 0-caller modules as "(0 callers — likely dead code)" (CREM-04)
+- `formal-scope-scan.cjs` Layer 2.5 walks `getCallers()` backward from changed files to discover formal modules file-name matching would miss (CDIAG-02); `solve-incremental-filter.cjs` `expandWithCallGraph()` prevents incorrect layer skips via transitive dependency expansion (CDIAG-03)
+- All 8 integration points fail-open: when coderlm is unavailable, every layer returns pre-integration result with zero errors
+
+---
+

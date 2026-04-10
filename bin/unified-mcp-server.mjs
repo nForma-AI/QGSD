@@ -20,6 +20,7 @@ import os from 'os';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
 const { resolveCli } = require('./resolve-cli.cjs');
+const { _pure: { detectInstalledProviders } } = require('./manage-agents-core.cjs');
 
 // ─── Load providers config ─────────────────────────────────────────────────────
 const configPath = process.env.UNIFIED_PROVIDERS_CONFIG
@@ -59,6 +60,18 @@ for (const provider of providers) {
       }
     }
   }
+}
+
+// ─── Filter to installed CLIs only (DYNAMIC-SLOTS-01) ──────────────────────────
+// resolvedCli was set in the loop above; detectInstalledProviders uses it for probing.
+// Calling detectInstalledProviders AFTER this loop is required — if called before,
+// resolvedCli will be absent and the function falls back to the raw cli field.
+// HTTP-only slots are always included regardless of CLI detection.
+providers = detectInstalledProviders(providers);
+if (providers.length === 0) {
+  // WARNING severity: zero tools means the server starts but can dispatch nothing.
+  // This is a stronger signal than per-slot exclusion and should be visible in logs.
+  process.stderr.write('[unified-mcp-server] WARNING: No installed providers found after CLI detection — server will start with zero tools\n');
 }
 
 // ─── PROVIDER_SLOT mode detection ─────────────────────────────────────────────

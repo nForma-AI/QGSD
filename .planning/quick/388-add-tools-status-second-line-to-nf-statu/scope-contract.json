@@ -1,0 +1,25 @@
+{
+  "feature/issue-58-integrate-coderlm-adapter": {
+    "task_id": 388,
+    "task_description": "Add a second status line to nf-statusline.js showing tool availability: '● coderlm │ · River │ · embed' printed on a new line below the main statusline",
+    "approach": "Modify hooks/nf-statusline.js to add a new function buildToolsStatusLine() that detects and formats the three tools (coderlm, River, embed) with proper ● (bright) and · (dim) indicators. For coderlm: check if binary exists at ~/.claude/nf-bin/coderlm (· dim), then check if PID in ~/.claude/nf-bin/coderlm.pid is alive via process.kill(pid, 0) (● green if alive, omit if binary missing). For River: always shown as built-in — check for .nf-river-state.json in workspace dir, use · dim if absent or ● with color (green for active/post-explore, cyan for exploring, yellow for shadow) if present, leveraging existing qTable and lastShadow logic. For embed: check if node_modules/@huggingface/transformers exists (· dim if found, omit if missing, since no runtime signal exists). Build the tools line as a second process.stdout.write() call with leading newline, assembling only the installed/active tools. Copy hooks/nf-statusline.js to hooks/dist/nf-statusline.js, then run node bin/install.js --claude --global.",
+    "out_of_scope": [
+      "Modifying River ML algorithm logic or exploration thresholds",
+      "Adding new tool detection beyond coderlm, River, and embed",
+      "Changing the main statusline format or order",
+      "Adding configuration options for tool visibility",
+      "Creating new test files beyond updating existing assertions"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.95,
+      "routed_through_debug": false
+    },
+    "risk_level": "high",
+    "risk_reason": "Hook files in hooks/dist/ must be synced as part of this change, which is a guardrail trigger; installer-adjacent changes combined with multiple file modifications across the statusline system elevate this to high risk.",
+    "branches_affected": ["feature/issue-58-integrate-coderlm-adapter"],
+    "created_at": "2026-04-09T00:00:00.000Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

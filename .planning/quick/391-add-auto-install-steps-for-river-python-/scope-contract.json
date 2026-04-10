@@ -1,0 +1,26 @@
+{
+  "feature/issue-58-integrate-coderlm-adapter": {
+    "task_id": 391,
+    "task_description": "Add auto-install steps for River (Python) and embed (@huggingface/transformers) to install.js, with matching statusline updates",
+    "approach": "Add auto-install steps for River (Python) and embed (@huggingface/transformers) to install.js with idempotency checks, then update buildToolsLine() in nf-statusline.js to check global installations instead of project-local or always-shown indicators.",
+    "out_of_scope": [
+      "Modifying River state file detection logic or Q-table exploration thresholds",
+      "Changing color schemes or text styling for any indicators",
+      "Adding installation steps for other dependencies or packages",
+      "Updating package.json or package-lock.json versions",
+      "Modifying other hooks beyond nf-statusline.js",
+      "Adding pre-release or version checking for River or embed packages"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.95,
+      "routed_through_debug": false
+    },
+    "risk_level": "high",
+    "risk_reason": "Modifications to bin/install.js (core installer) and hooks/nf-statusline.js (hook file) trigger GUARDRAIL for high risk.",
+    "branches_affected": ["feature/issue-58-integrate-coderlm-adapter"],
+    "created_at": "2026-04-09T08:33:15.457Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}
