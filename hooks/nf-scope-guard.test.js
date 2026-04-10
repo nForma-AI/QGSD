@@ -96,11 +96,13 @@ it('TC-SG-11: readScopeContract with malformed JSON returns null', () => {
   }
 });
 
-// TC-SG-12: getCurrentBranch with a valid git repo returns a non-null string
+// TC-SG-12: getCurrentBranch with a valid git repo returns a string or null (detached HEAD in CI)
 it('TC-SG-12: getCurrentBranch with valid git repo returns branch name', () => {
-  // Use the current working directory (which is a git repo)
+  // Use the current working directory (which is a git repo).
+  // CI may run in detached HEAD state, in which case the function correctly returns null.
   const result = getCurrentBranch(process.cwd());
-  assert.ok(result !== null, 'getCurrentBranch should return a branch name');
-  assert.ok(typeof result === 'string', 'branch name should be a string');
-  assert.ok(result.length > 0, 'branch name should not be empty');
+  assert.ok(result === null || typeof result === 'string', 'getCurrentBranch should return null or a string');
+  if (result !== null) {
+    assert.ok(result.length > 0, 'branch name should not be empty');
+  }
 });
