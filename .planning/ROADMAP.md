@@ -75,11 +75,11 @@ Plans:
   2. `solve-incremental-filter.cjs` prevents incorrect layer skips by checking getCallers transitive dependencies -- if a changed file is called by a layer script (directly or transitively), that layer is not skipped even if its own files appear unchanged
   3. When coderlm is unavailable, scope scan uses file-name matching and incremental filter uses its existing skip heuristics -- the solve loop converges to the same result, just potentially slower (fewer models discovered, more layers run unnecessarily)
   4. The solve convergence loop reaches a terminal state (all layers at residual 0 or blocked by Option C) on every run where at least one layer has non-zero residual -- call-graph integration does not introduce new oscillation modes or prevent convergence [derived from EventualConvergence formal invariant]
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 57-01: TBD
-- [ ] 57-02: TBD
+- [ ] 057-01-PLAN.md — Layer 2.5 call-graph backward walk in formal-scope-scan.cjs (CDIAG-02)
+- [ ] 057-02-PLAN.md — expandWithCallGraph() transitive dependency expansion in solve-incremental-filter.cjs (CDIAG-03)
 
 ## Progress
 
@@ -90,4 +90,4 @@ Plans:
 | 54. Adapter Foundation | 3/3 | Complete | 2026-04-08 |
 | 55. Remediation Enrichment | 2/2 | Complete | 2026-04-08 |
 | 56. Diagnostic Enrichment | 2/2 | Complete | 2026-04-10 |
-| 57. Accuracy & Safety | 0/? | Not started | - |
+| 57. Accuracy & Safety | 0/2 | Not started | - |
