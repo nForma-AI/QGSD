@@ -2512,6 +2512,29 @@ function sweepCtoR() {
     }
   } catch (e) { /* fail-open */ }
 
+  // CREM-04: Enrich untraced candidates with caller counts (fail-open)
+  if (_activeAdapter && untraced.length > 0) {
+    try {
+      const healthResult = _activeAdapter.healthSync();
+      if (healthResult && healthResult.healthy) {
+        for (const candidate of untraced) {
+          try {
+            const filePath = candidate.file || '';
+            const result = _activeAdapter.getCallersSync('', filePath);
+            const callerCount = (result && Array.isArray(result.callers)) ? result.callers.length : undefined;
+            if (callerCount !== undefined) {
+              candidate.caller_count = callerCount;
+              candidate.dead_code_flag = callerCount === 0;
+            }
+          } catch (_e) { /* fail-open per candidate */ }
+        }
+        process.stderr.write(TAG + ' CREM-04: enriched ' + untraced.length + ' C->R candidate(s) with caller counts\n');
+      }
+    } catch (_e) {
+      process.stderr.write(TAG + ' CREM-04 C->R: coderlm unavailable, using heuristics only\n');
+    }
+  }
+
   return {
     residual: untraced.length,
     detail: {
