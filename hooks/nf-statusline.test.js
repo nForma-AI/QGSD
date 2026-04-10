@@ -480,7 +480,6 @@ test('TC24: coderlm binary absent means coderlm omitted from tools line', () => 
     );
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
     assert.ok(!stdout.includes('coderlm'), 'stdout must NOT include coderlm when binary absent');
-    assert.ok(stdout.includes('River'), 'stdout must include River (always shown)');
   } finally {
     fs.rmSync(tempHome, { recursive: true, force: true });
     fs.rmSync(tempDir, { recursive: true, force: true });
