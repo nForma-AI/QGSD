@@ -301,7 +301,7 @@ const MODULE_CHECKS = {
       cmd: [
         'java', '-cp', '.planning/formal/tla/tla2tools.jar', 'tlc2.TLC',
         '-config', '.planning/formal/tla/MCsafety.cfg',
-        '.planning/formal/tla/NFQuorum_xstate.tla',
+        '.planning/formal/tla/NFQuorum.tla',
         '-workers', '1'
       ]
     }
