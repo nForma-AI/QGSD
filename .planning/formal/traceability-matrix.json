@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-04T07:29:53.408Z",
+    "generated_at": "2026-04-10T14:27:06.010Z",
     "generator_version": "1.1",
     "data_sources": {
       "annotations": {
@@ -12,11 +12,11 @@
         "used_as_fallback": 6
       },
       "check_results": {
-        "entry_count": 1542
+        "entry_count": 1096
       },
       "unit_test_coverage": {
         "available": true,
-        "requirements_matched": 430
+        "requirements_matched": 435
       }
     }
   },
@@ -217,7 +217,16 @@
           "latest_result": "pass",
           "check_id": "alloy:code-quality-guardrails"
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/GUARD-01.stub.test.js",
+            "test_name": "GUARD-01: quick.md contains MUST_NOT_SKIP annotations (>= 5)"
+          }
+        ]
+      }
     },
     "OBS-11": {
       "id": "OBS-11",
@@ -2107,7 +2116,16 @@
           "latest_result": "pass",
           "check_id": "alloy:config-zero-providers"
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/CONF-10.stub.test.js",
+            "test_name": "CONF-10: config-audit.cjs exists and is fail-open (exit 0)"
+          }
+        ]
+      }
     },
     "DISP-07": {
       "id": "DISP-07",
@@ -2161,7 +2179,16 @@
           "latest_result": "pass",
           "check_id": "alloy:debate-trace-persistence"
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/DISP-07.stub.test.js",
+            "test_name": "DISP-07: quorum-slot-dispatch.cjs exists and contains debate trace persistence logic"
+          }
+        ]
+      }
     },
     "DEBT-02": {
       "id": "DEBT-02",
@@ -2521,7 +2548,16 @@
           "latest_result": "pass",
           "check_id": "alloy:dispatch-formal-context"
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/DISP-06.stub.test.js",
+            "test_name": "DISP-06: matchRequirementsByKeywords is exported as a function"
+          }
+        ]
+      }
     },
     "DOC-01": {
       "id": "DOC-01",
@@ -11961,7 +11997,7 @@
           "model_file": ".planning/formal/tla/NFAccountManager.tla",
           "property_name": "ActiveIsPoolMember",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:account-manager"
         },
         {
@@ -11989,7 +12025,7 @@
           "model_file": ".planning/formal/tla/NFAccountManager.tla",
           "property_name": "NoActiveWhenEmpty",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:account-manager"
         }
       ]
@@ -12001,7 +12037,7 @@
           "model_file": ".planning/formal/tla/NFAccountManager.tla",
           "property_name": "IdleNoPending",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:account-manager"
         }
       ]
@@ -12013,7 +12049,7 @@
           "model_file": ".planning/formal/tla/NFAccountManager.tla",
           "property_name": "OpMatchesState",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:account-manager"
         }
       ]
@@ -12025,7 +12061,7 @@
           "model_file": ".planning/formal/tla/NFAccountManager.tla",
           "property_name": "IdleReachable",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:account-manager"
         }
       ]
@@ -12037,7 +12073,7 @@
           "model_file": ".planning/formal/tla/NFCircuitBreaker.tla",
           "property_name": "TypeOK",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:breaker"
         }
       ],
@@ -12058,7 +12094,7 @@
           "model_file": ".planning/formal/tla/NFCircuitBreaker.tla",
           "property_name": "DisabledExcludesActive",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:breaker"
         }
       ],
@@ -12079,7 +12115,7 @@
           "model_file": ".planning/formal/tla/NFCircuitBreaker.tla",
           "property_name": "MonitoringReachable",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:breaker"
         }
       ],
@@ -12248,21 +12284,21 @@
           "property_name": "DeliberationMonotone",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "tla:deliberation"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "DeliberationMonotone",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "tla:deliberation"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "DeliberationMonotone",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "tla:deliberation"
+          "check_id": "tla:quorum-safety"
         }
       ]
     },
@@ -12351,7 +12387,7 @@
           "model_file": ".planning/formal/tla/NFOscillation.tla",
           "property_name": "TypeOK",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:oscillation"
         }
       ],
@@ -12372,7 +12408,7 @@
           "model_file": ".planning/formal/tla/NFOscillation.tla",
           "property_name": "OscillationFlaggedCorrectly",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:oscillation"
         }
       ],
@@ -12401,7 +12437,7 @@
           "model_file": ".planning/formal/tla/NFOscillation.tla",
           "property_name": "AlgorithmTerminates",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:oscillation"
         }
       ]
@@ -12823,7 +12859,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "TypeOK",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -12844,7 +12880,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "SafetyInvariant1",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -12865,7 +12901,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "SafetyInvariant1",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -12886,7 +12922,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "SafetyInvariant2",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -12907,7 +12943,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "SafetyInvariant3",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -12928,7 +12964,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "LivenessProperty1",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -12949,7 +12985,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "LivenessProperty2",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -12970,7 +13006,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "LivenessProperty3",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -13989,7 +14025,16 @@
           "latest_result": null,
           "check_id": null
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/DISP-08.stub.test.js",
+            "test_name": "DISP-08: call-quorum-slot.cjs implements idle timer with reset on stdout/stderr"
+          }
+        ]
+      }
     },
     "ENFC-01": {
       "id": "ENFC-01",
@@ -27858,7 +27903,7 @@
         "CRED-02"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:account-manager"
     },
     ".planning/formal/tla/NFAccountManager.tla::NoActiveWhenEmpty": {
@@ -27868,7 +27913,7 @@
         "CRED-03"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:account-manager"
     },
     ".planning/formal/tla/NFAccountManager.tla::IdleNoPending": {
@@ -27878,7 +27923,7 @@
         "CRED-04"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:account-manager"
     },
     ".planning/formal/tla/NFAccountManager.tla::OpMatchesState": {
@@ -27888,7 +27933,7 @@
         "CRED-05"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:account-manager"
     },
     ".planning/formal/tla/NFAccountManager.tla::IdleReachable": {
@@ -27898,7 +27943,7 @@
         "CRED-06"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:account-manager"
     },
     ".planning/formal/tla/NFCircuitBreaker.tla::TypeOK": {
@@ -27908,7 +27953,7 @@
         "DETECT-01"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:breaker"
     },
     ".planning/formal/tla/NFCircuitBreaker.tla::DisabledExcludesActive": {
@@ -27918,7 +27963,7 @@
         "DETECT-02"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:breaker"
     },
     ".planning/formal/tla/NFCircuitBreaker.tla::MonitoringReachable": {
@@ -27928,7 +27973,7 @@
         "DETECT-03"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:breaker"
     },
     ".planning/formal/tla/NFConfigLoader.tla::TypeOK": {
@@ -28039,7 +28084,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "tla:deliberation"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/tla/NFDeliberation.tla::ImprovementMonotone": {
       "model_file": ".planning/formal/tla/NFDeliberation.tla",
@@ -28159,7 +28204,7 @@
         "DETECT-04"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:oscillation"
     },
     ".planning/formal/tla/NFOscillation.tla::OscillationFlaggedCorrectly": {
@@ -28169,7 +28214,7 @@
         "DETECT-05"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:oscillation"
     },
     ".planning/formal/tla/NFOscillation.tla::AlgorithmTerminates": {
@@ -28179,7 +28224,7 @@
         "DETECT-06"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:oscillation"
     },
     ".planning/formal/tla/NFPolicy.tla::TypeOK": {
@@ -28304,7 +28349,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "tla:deliberation"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/tla/NFQuorum.tla::EventualConsensus": {
       "model_file": ".planning/formal/tla/NFQuorum.tla",
@@ -28604,7 +28649,7 @@
         "STOP-01"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::SafetyInvariant1": {
@@ -28615,7 +28660,7 @@
         "SPEC-01"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::SafetyInvariant2": {
@@ -28625,7 +28670,7 @@
         "STOP-03"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::SafetyInvariant3": {
@@ -28635,7 +28680,7 @@
         "STOP-04"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::LivenessProperty1": {
@@ -28645,7 +28690,7 @@
         "STOP-05"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::LivenessProperty2": {
@@ -28655,7 +28700,7 @@
         "STOP-06"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::LivenessProperty3": {
@@ -28665,7 +28710,7 @@
         "STOP-07"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFTokenOpt.tla::TypeOK": {
@@ -29756,7 +29801,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "tla:deliberation"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/tla/QGSDQuorum.tla::EventualConsensus": {
       "model_file": ".planning/formal/tla/QGSDQuorum.tla",
@@ -32893,9 +32938,9 @@
     }
   },
   "coverage_summary": {
-    "total_requirements": 446,
-    "covered_count": 430,
-    "coverage_percentage": 96.4,
+    "total_requirements": 465,
+    "covered_count": 435,
+    "coverage_percentage": 93.5,
     "uncovered_requirements": [
       "BML-02",
       "DBG-01",
@@ -32906,18 +32951,38 @@
       "DBUG-02",
       "DBUG-03",
       "DBUG-04",
+      "DEBT-07",
+      "DEBT-08",
+      "DEBT-09",
+      "DEBT-10",
+      "DEBT-11",
+      "DEBT-12",
+      "DEBT-13",
+      "DEBT-14",
+      "DEBT-15",
+      "DEBT-16",
+      "DIST-01",
       "MRF-01",
       "MRF-02",
       "MRF-03",
       "ROUTE-02",
       "ROUTE-03",
       "ROUTE-04",
+      "ROUTE-05",
+      "ROUTE-06",
+      "ROUTE-07",
       "SIM-04"
     ],
     "orphan_properties": []
   },
   "bidirectional_validation": {
     "asymmetric_links": [
+      {
+        "model_file": ".planning/formal/alloy/agent-context-payload.als",
+        "requirement_id": "GUARD-01",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists GUARD-01 for .planning/formal/alloy/agent-context-payload.als but requirements.json GUARD-01 does not list .planning/formal/alloy/agent-context-payload.als in formal_models"
+      },
       {
         "model_file": ".planning/formal/alloy/annotation-extraction.als",
         "requirement_id": "ANNOT-01",
@@ -32985,6 +33050,12 @@
         "detail": "model-registry lists STD-02 for .planning/formal/alloy/build-test-quality.als but requirements.json STD-02 does not list .planning/formal/alloy/build-test-quality.als in formal_models"
       },
       {
+        "model_file": ".planning/formal/alloy/code-quality-guardrails.als",
+        "requirement_id": "GUARD-01",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists GUARD-01 for .planning/formal/alloy/code-quality-guardrails.als but requirements.json GUARD-01 does not list .planning/formal/alloy/code-quality-guardrails.als in formal_models"
+      },
+      {
         "model_file": ".planning/formal/alloy/config-two-layer.als",
         "requirement_id": "CONF-01",
         "direction": "model_claims_requirement",
@@ -33019,6 +33090,18 @@
         "requirement_id": "CONF-08",
         "direction": "model_claims_requirement",
         "detail": "model-registry lists CONF-08 for .planning/formal/alloy/config-two-layer.als but requirements.json CONF-08 does not list .planning/formal/alloy/config-two-layer.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/config-zero-providers.als",
+        "requirement_id": "CONF-10",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists CONF-10 for .planning/formal/alloy/config-zero-providers.als but requirements.json CONF-10 does not list .planning/formal/alloy/config-zero-providers.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/debate-trace-persistence.als",
+        "requirement_id": "DISP-07",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists DISP-07 for .planning/formal/alloy/debate-trace-persistence.als but requirements.json DISP-07 does not list .planning/formal/alloy/debate-trace-persistence.als in formal_models"
       },
       {
         "model_file": ".planning/formal/alloy/debt-lifecycle.als",
@@ -33073,6 +33156,12 @@
         "requirement_id": "DIAG-02",
         "direction": "model_claims_requirement",
         "detail": "model-registry lists DIAG-02 for .planning/formal/alloy/diagnostics.als but requirements.json DIAG-02 does not list .planning/formal/alloy/diagnostics.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/dispatch-formal-context.als",
+        "requirement_id": "DISP-06",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists DISP-06 for .planning/formal/alloy/dispatch-formal-context.als but requirements.json DISP-06 does not list .planning/formal/alloy/dispatch-formal-context.als in formal_models"
       },
       {
         "model_file": ".planning/formal/alloy/event-vocabulary.als",
@@ -34437,6 +34526,12 @@
         "detail": "model-registry lists PRST-02 for .planning/formal/tla/QGSDAgentProvisioning.tla but requirements.json PRST-02 does not list .planning/formal/tla/QGSDAgentProvisioning.tla in formal_models"
       },
       {
+        "model_file": ".planning/formal/tla/QGSDDispatchPipeline.tla",
+        "requirement_id": "DISP-08",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists DISP-08 for .planning/formal/tla/QGSDDispatchPipeline.tla but requirements.json DISP-08 does not list .planning/formal/tla/QGSDDispatchPipeline.tla in formal_models"
+      },
+      {
         "model_file": ".planning/formal/tla/QGSDMCPEnv.tla",
         "requirement_id": "MCPENV-02",
         "direction": "model_claims_requirement",
@@ -35257,11 +35352,6 @@
       },
       {
         "type": "unknown_requirement_id",
-        "reference": "GUARD-01",
-        "referenced_by": "model-registry .planning/formal/alloy/agent-context-payload.als requirements"
-      },
-      {
-        "type": "unknown_requirement_id",
         "reference": "OBS-11",
         "referenced_by": "model-registry .planning/formal/alloy/agent-context-payload.als requirements"
       },
@@ -35332,23 +35422,8 @@
       },
       {
         "type": "unknown_requirement_id",
-        "reference": "GUARD-01",
-        "referenced_by": "model-registry .planning/formal/alloy/code-quality-guardrails.als requirements"
-      },
-      {
-        "type": "unknown_requirement_id",
         "reference": "CONF-13",
         "referenced_by": "model-registry .planning/formal/alloy/config-audit.als requirements"
-      },
-      {
-        "type": "unknown_requirement_id",
-        "reference": "CONF-10",
-        "referenced_by": "model-registry .planning/formal/alloy/config-zero-providers.als requirements"
-      },
-      {
-        "type": "unknown_requirement_id",
-        "reference": "DISP-07",
-        "referenced_by": "model-registry .planning/formal/alloy/debate-trace-persistence.als requirements"
       },
       {
         "type": "unknown_requirement_id",
@@ -35359,11 +35434,6 @@
         "type": "unknown_requirement_id",
         "reference": "DIAG-03",
         "referenced_by": "model-registry .planning/formal/alloy/diagnostics.als requirements"
-      },
-      {
-        "type": "unknown_requirement_id",
-        "reference": "DISP-06",
-        "referenced_by": "model-registry .planning/formal/alloy/dispatch-formal-context.als requirements"
       },
       {
         "type": "unknown_requirement_id",
@@ -35852,11 +35922,6 @@
       },
       {
         "type": "unknown_requirement_id",
-        "reference": "DISP-08",
-        "referenced_by": "model-registry .planning/formal/tla/QGSDDispatchPipeline.tla requirements"
-      },
-      {
-        "type": "unknown_requirement_id",
         "reference": "SAFE-03",
         "referenced_by": "model-registry .planning/formal/tla/QGSDQuorum.tla requirements"
       },
@@ -35958,8 +36023,8 @@
     ],
     "summary": {
       "total_checked": 715,
-      "asymmetric_count": 385,
-      "stale_count": 145,
+      "asymmetric_count": 391,
+      "stale_count": 139,
       "clean": false
     }
   },
@@ -36680,7 +36745,7 @@
   },
   "coverage_preservation": {
     "baseline_found": true,
-    "baseline_date": "2026-04-04T07:29:52.896Z",
+    "baseline_date": "2026-04-10T14:26:59.950Z",
     "requirements_checked": 568,
     "regressions": [],
     "summary": {

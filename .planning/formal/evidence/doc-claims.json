@@ -1,10 +1,220 @@
 {
-  "generated": "2026-04-04T07:21:53.204Z",
-  "total_claims_checked": 101,
-  "doc_files_scanned": 6,
-  "raw_broken_count": 0,
-  "weighted_residual": 0,
+  "generated": "2026-04-10T16:02:11.560Z",
+  "total_claims_checked": 162,
+  "doc_files_scanned": 7,
+  "raw_broken_count": 23,
+  "weighted_residual": 46,
   "suppressed_fp_count": 7,
-  "category_breakdown": {},
-  "broken_claims": []
+  "category_breakdown": {
+    "user": 23
+  },
+  "broken_claims": [
+    {
+      "doc_file": "README.md",
+      "line": 964,
+      "type": "dependency",
+      "value": "api-and-interface-design",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "README.md",
+      "line": 965,
+      "type": "dependency",
+      "value": "deprecation-and-migration",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/USER-GUIDE.md",
+      "line": 362,
+      "type": "dependency",
+      "value": "api-and-interface-design",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/USER-GUIDE.md",
+      "line": 363,
+      "type": "dependency",
+      "value": "deprecation-and-migration",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 60,
+      "type": "dependency",
+      "value": "test-driven-development",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 61,
+      "type": "dependency",
+      "value": "performance-optimization",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 62,
+      "type": "dependency",
+      "value": "code-simplification",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 63,
+      "type": "dependency",
+      "value": "frontend-ui-engineering",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 64,
+      "type": "dependency",
+      "value": "browser-testing-with-devtools",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 65,
+      "type": "dependency",
+      "value": "spec-driven-development",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 66,
+      "type": "dependency",
+      "value": "incremental-implementation",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 67,
+      "type": "dependency",
+      "value": "git-workflow-and-versioning",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 68,
+      "type": "dependency",
+      "value": "ci-cd-and-automation",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 69,
+      "type": "dependency",
+      "value": "documentation-and-adrs",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 70,
+      "type": "dependency",
+      "value": "security-and-hardening",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 71,
+      "type": "dependency",
+      "value": "api-and-interface-design",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 78,
+      "type": "dependency",
+      "value": "nf-planner",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 78,
+      "type": "dependency",
+      "value": "nf-plan-checker",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 79,
+      "type": "dependency",
+      "value": "nf-executor",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 79,
+      "type": "dependency",
+      "value": "nf-verifier",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 90,
+      "type": "dependency",
+      "value": "planning-and-task-breakdown",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 90,
+      "type": "dependency",
+      "value": "context-engineering",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 90,
+      "type": "dependency",
+      "value": "using-agent-skills",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    }
+  ]
 }

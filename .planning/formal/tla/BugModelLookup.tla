@@ -97,9 +97,11 @@ Spec == Init /\ [][Next]_vars /\ WF_vars(Next)
 \* ── Safety invariants ────────────────────────────────────────────────────────
 
 \* BML-02: Never run more than 3 checkers
+\* @requirement BML-02
 MaxThreeCheckers == checksRun <= 3
 
 \* BML-02: Checks completed never exceeds checks run
+\* @requirement BML-02
 ChecksConsistent == checksCompleted <= checksRun
 
 \* BML-03: When done, gaps are always tracked
