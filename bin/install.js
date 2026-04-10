@@ -2574,7 +2574,8 @@ function install(isGlobal, runtime = 'claude') {
   }
 
   // Download coderlm binary to nf-bin/ if not already present (fail-open)
-  {
+  // Skipped when NF_INSTALL_SKIP_OPTIONAL=1 (set by install tests) — git clone can take 60s+
+  if (!process.env.NF_INSTALL_SKIP_OPTIONAL) {
     const lifecycle = getCoderlmLifecycle();
     if (lifecycle) {
       // Idempotency check: if coderlm already installed, skip silently
