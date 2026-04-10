@@ -943,6 +943,12 @@ function sweepRtoF() {
 let formalTestSyncCache = null;
 
 /**
+ * Active adapter instance from solve() scope, used for enrichment in sweepGitHeatmap().
+ * Set at loop start, cleared after each iteration.
+ */
+let _activeAdapter = null;
+
+/**
  * Helper to load and cache formal-test-sync result.
  */
 function loadFormalTestSync() {
@@ -3436,7 +3442,7 @@ function sweepPerModelGates() {
  * Refreshes the evidence file first (unless --report-only or --fast).
  * This is informational — not added to the automatable forward total.
  */
-function sweepGitHeatmap() {
+function sweepGitHeatmap(adapter) {
   const evidencePath = path.join(ROOT, '.planning', 'formal', 'evidence', 'git-heatmap.json');
 
   // Refresh evidence (skip in fast/report-only modes — too slow for git mining)
@@ -3455,6 +3461,32 @@ function sweepGitHeatmap() {
     const data = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
     const hotZones = data.uncovered_hot_zones || [];
     const signals = data.signals || {};
+
+    // CREM-03: Enrich hot-zone callee counts via coderlm getCallersSync (fail-open)
+    if (adapter && hotZones.length > 0) {
+      try {
+        const healthResult = adapter.healthSync();
+        if (healthResult && healthResult.healthy) {
+          for (const hz of hotZones) {
+            try {
+              // Use the file path as symbol hint — getCallersSync resolves by file
+              const result = adapter.getCallersSync('', hz.file);
+              if (result && Array.isArray(result.callers)) {
+                hz.callee_count = result.callers.length;
+                // Re-compute priority with updated callee_count
+                const { computePriority } = require('./git-heatmap.cjs');
+                hz.priority = computePriority(hz.churn || 0, hz.fixes || 0, hz.adjustments || 0, hz.callee_count);
+              }
+            } catch (_e) { /* fail-open per entry */ }
+          }
+          // Re-sort after enrichment
+          hotZones.sort((a, b) => b.priority - a.priority);
+          process.stderr.write(TAG + ' CREM-03: enriched ' + hotZones.length + ' hot-zone(s) with callee counts\n');
+        }
+      } catch (_e) {
+        process.stderr.write(TAG + ' CREM-03: coderlm unavailable, using git churn ranking only\n');
+      }
+    }
 
     return {
       residual: hotZones.length,
@@ -4329,7 +4361,7 @@ function computeResidual() {
 
   // Git heatmap sweep (informational — not added to forward total)
   const _t_git_heatmap = Date.now();
-  const git_heatmap = sweepGitHeatmap();
+  const git_heatmap = sweepGitHeatmap(_activeAdapter);
   _timing.git_heatmap = { duration_ms: Date.now() - _t_git_heatmap, skipped: false };
   const heatmap_total = git_heatmap.residual >= 0 ? git_heatmap.residual : 0;
 
@@ -5865,6 +5897,7 @@ function main() {
   // Hoisted here so metrics are non-zero after sync-path queries in queryEdgesSync.
   const _solveAdapter = createAdapter({ enabled: true });
   _solveAdapter.resetCache(); // CADP-01: cleared at loop start
+  _activeAdapter = _solveAdapter; // CREM-03: Make adapter available to sweepGitHeatmap()
 
   for (let i = 1; i <= maxIterations; i++) {
     process.stderr.write(TAG + ' Iteration ' + i + '/' + maxIterations + '\n');
