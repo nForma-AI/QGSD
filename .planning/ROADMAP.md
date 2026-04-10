@@ -63,7 +63,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 056-01-PLAN.md — Heatmap callee-count enrichment: computePriority callee_count arg + sweepGitHeatmap getCallers integration (CREM-03)
+- [x] 056-01-PLAN.md — Heatmap callee-count enrichment: computePriority callee_count arg + sweepGitHeatmap getCallers integration (CREM-03) (COMPLETE)
 - [ ] 056-02-PLAN.md — Reverse discovery dead-code evidence: sweepCtoR/sweepTtoR caller_count + dead_code_flag + report annotation (CREM-04)
 
 ### Phase 57: Accuracy & Safety

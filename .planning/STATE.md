@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-04-08)
 ## Current Position
 
 Phase: 56 (3 of 4) — Diagnostic Enrichment
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-04-08 — Quick task 387 complete (River ML dot-style statusline indicator)
+Plan: 01 complete (1/? plans for phase 56)
+Status: Plan 01 executed
+Last activity: 2026-04-10 — Phase 056-01 complete (Git heatmap callee-count enrichment)
 
 Progress: [████████████████████] 100/99 plans (101%)
 
@@ -48,6 +48,8 @@ Progress: [████████████████████] 100/99 
 - Phase 055 decision (Plan 01): Coderlm unavailability gates via health check — failure routes to batch dispatch, preserving pre-integration behavior
 - Phase 055 decision (Plan 02): Recipe enrichment runs in async tail AFTER main() completes (not wrapping main) to preserve process.exit() timing
 - Phase 055 decision (Plan 02): Idempotency check on assert_patterns.length > 0 (not test_files.length) for re-runnable partial enrichment
+- Phase 056 decision (Plan 01): Git heatmap priority weighting uses Math.log1p(calleeCount) for sublinear boost (avoids explosion on high-caller files while still rewarding callee count)
+- Phase 056 decision (Plan 01): Module-level _activeAdapter variable for sweepGitHeatmap() access (matches existing formalTestSyncCache pattern for scope)
 
 ### Pending Todos
 
