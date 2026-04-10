@@ -6,6 +6,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.41.19] - 2026-04-10 — uv-backed River, active embed signal, solve embedding refresh
+
+### Added
+- `feat(statusline)`: embed indicator now shows `● embed` (green/active) when `embedding-cache.json` exists, `· embed` (dim) when only installed
+- `feat(solve)`: Phase 0 in `/nf:solve` rebuilds embedding cache via `proximity-embed.mjs` before each diagnostic run — ensures fresh vectors for similarity fallback
+- `feat(statusline)`: River ML import check now uses `~/.claude/nf-python-env` (uv-managed venv) — avoids PEP 668 Homebrew conflicts
+- Installer creates `~/.claude/nf-python-env` via `uv venv` and installs river with `uv pip install`
+
+### Changed
+- `chore(commands)`: MCP command agent slots renamed (`codex-cli-1` → `codex-1`, `gemini-cli-1` → `gemini-1`); `nf:mcp-update` now discovers valid slots dynamically from `~/.claude.json` instead of a hardcoded list
+
 ## [0.41.17] - 2026-04-08 — Config-driven milestones
 
 ### Added
