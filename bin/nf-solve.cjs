@@ -2730,6 +2730,29 @@ function sweepTtoR() {
     }
   } catch (e) { /* fail-open */ }
 
+  // CREM-04: Enrich orphan test candidates with caller counts (fail-open)
+  if (_activeAdapter && orphanItems.length > 0) {
+    try {
+      const healthResult = _activeAdapter.healthSync();
+      if (healthResult && healthResult.healthy) {
+        for (const item of orphanItems) {
+          try {
+            const filePath = item.file || '';
+            const result = _activeAdapter.getCallersSync('', filePath);
+            const callerCount = (result && Array.isArray(result.callers)) ? result.callers.length : undefined;
+            if (callerCount !== undefined) {
+              item.caller_count = callerCount;
+              item.dead_code_flag = callerCount === 0;
+            }
+          } catch (_e) { /* fail-open per candidate */ }
+        }
+        process.stderr.write(TAG + ' CREM-04: enriched ' + orphanItems.length + ' T->R candidate(s) with caller counts\n');
+      }
+    } catch (_e) {
+      process.stderr.write(TAG + ' CREM-04 T->R: coderlm unavailable, using heuristics only\n');
+    }
+  }
+
   const annotation_coverage_percent = testFiles.length > 0
     ? Math.round((annotatedCount / testFiles.length) * 100)
     : 0;
@@ -5425,7 +5448,9 @@ function formatReport(iterations, finalResidual, converged) {
     if (detail.untraced_modules && detail.untraced_modules.length > 0) {
       lines.push('Untraced modules (' + detail.untraced_modules.length + ' of ' + detail.total_modules + '):');
       for (const mod of detail.untraced_modules.slice(0, 20)) {
-        lines.push('  - ' + mod.file);
+        const deadNote = (mod.dead_code_flag === true) ? ' (0 callers — likely dead code)' :
+                         (typeof mod.caller_count === 'number') ? ' (' + mod.caller_count + ' callers)' : '';
+        lines.push('  - ' + mod.file + deadNote);
       }
       if (detail.untraced_modules.length > 20) {
         lines.push('  ... and ' + (detail.untraced_modules.length - 20) + ' more');
@@ -5440,7 +5465,10 @@ function formatReport(iterations, finalResidual, converged) {
     if (detail.orphan_tests && detail.orphan_tests.length > 0) {
       lines.push('Orphan tests (' + detail.orphan_tests.length + ' of ' + detail.total_tests + '):');
       for (const t of detail.orphan_tests.slice(0, 20)) {
-        lines.push('  - ' + t);
+        const testFile = typeof t === 'string' ? t : (t.file || '');
+        const deadNote = (t.dead_code_flag === true) ? ' (0 callers — likely dead code)' :
+                         (typeof t.caller_count === 'number') ? ' (' + t.caller_count + ' callers)' : '';
+        lines.push('  - ' + testFile + deadNote);
       }
       if (detail.orphan_tests.length > 20) {
         lines.push('  ... and ' + (detail.orphan_tests.length - 20) + ' more');
