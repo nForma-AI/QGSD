@@ -230,7 +230,8 @@ if (require.main === module) (async () => {
       try { lifecyclePath = resolveBin('coderlm-lifecycle.cjs'); } catch (_) {}
       if (lifecyclePath && fs.existsSync(lifecyclePath)) {
         const { spawn } = require('child_process');
-        const child = spawn(process.execPath, [lifecyclePath, '--start'], {
+        // Pass default port (8787) + project cwd so coderlm indexes the right directory
+        const child = spawn(process.execPath, [lifecyclePath, '--start', '8787', _hookCwd], {
           detached: true,
           stdio: 'ignore',
         });
