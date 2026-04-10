@@ -476,8 +476,8 @@ test('TC23: Shadow with null recommendation falls back to normal indicator', () 
 
 // --- Tools Status Second Line Tests ---
 
-// TC24: coderlm binary absent → no coderlm in tools line
-test('TC24: coderlm binary absent means coderlm omitted from tools line', () => {
+// TC24: coderlm binary absent → dim · coderlm (not installed, always shown)
+test('TC24: coderlm binary absent shows dim not-installed indicator', () => {
   const tempHome = makeTempDir('tc24');
   const tempDir = makeTempDir('tc24-dir');
   // Do NOT create ~/.claude/nf-bin/coderlm — binary absent
@@ -487,15 +487,16 @@ test('TC24: coderlm binary absent means coderlm omitted from tools line', () => 
       { HOME: tempHome }
     );
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
-    assert.ok(!stdout.includes('coderlm'), 'stdout must NOT include coderlm when binary absent');
+    assert.ok(stdout.includes('coderlm'), 'stdout must include coderlm (always shown)');
+    assert.ok(stdout.includes('\x1b[2m· coderlm\x1b[0m'), 'stdout must show dim · coderlm when not installed');
   } finally {
     fs.rmSync(tempHome, { recursive: true, force: true });
     fs.rmSync(tempDir, { recursive: true, force: true });
   }
 });
 
-// TC25: coderlm binary present but no PID file → dim · coderlm
-test('TC25: coderlm binary present but no PID → dim indicator', () => {
+// TC25: coderlm binary present but no PID file → ○ coderlm (idle)
+test('TC25: coderlm binary present but no PID → hollow idle indicator', () => {
   const tempHome = makeTempDir('tc25');
   const tempDir = makeTempDir('tc25-dir');
   const binDir = path.join(tempHome, '.claude', 'nf-bin');
@@ -509,7 +510,7 @@ test('TC25: coderlm binary present but no PID → dim indicator', () => {
     );
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
     assert.ok(stdout.includes('coderlm'), 'stdout must include coderlm when binary present');
-    assert.ok(stdout.includes('\x1b[2m· coderlm\x1b[0m'), 'stdout must include dim coderlm indicator');
+    assert.ok(stdout.includes('○ coderlm'), 'stdout must show hollow ○ coderlm when idle');
   } finally {
     fs.rmSync(tempHome, { recursive: true, force: true });
     fs.rmSync(tempDir, { recursive: true, force: true });
@@ -538,22 +539,22 @@ test('TC27: coderlm binary present with alive PID shows green active indicator',
   }
 });
 
-// TC26: embed package present, no cache → dim · embed in tools line
-test('TC26: embed package present shows dim embed indicator', () => {
+// TC26: embed package present, no cache → ○ embed (idle)
+test('TC26: embed package present shows hollow idle indicator', () => {
   const tempHome = makeTempDir('tc26-home');
   const tempDir = makeTempDir('tc26-dir');
   // Install transformers stub in the correct nf-bin location
   const pkgDir = path.join(tempHome, '.claude', 'nf-bin', 'node_modules', '@huggingface', 'transformers');
   fs.mkdirSync(pkgDir, { recursive: true });
-  // No embedding-cache.json → dim indicator (not active)
+  // No embedding-cache.json → idle (not active)
   try {
     const { stdout, exitCode } = runHook(
       { model: { display_name: 'M' }, workspace: { current_dir: tempDir } },
       { HOME: tempHome }
     );
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
-    assert.ok(stdout.includes('embed'), 'stdout must include embed indicator when package present');
-    assert.ok(stdout.includes('\x1b[2m· embed\x1b[0m'), 'stdout must include dim embed indicator');
+    assert.ok(stdout.includes('embed'), 'stdout must include embed when package present');
+    assert.ok(stdout.includes('○ embed'), 'stdout must show hollow ○ embed when idle');
   } finally {
     fs.rmSync(tempHome, { recursive: true, force: true });
     fs.rmSync(tempDir, { recursive: true, force: true });
