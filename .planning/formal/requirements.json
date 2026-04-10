@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-04-09T12:34:12.319Z",
-  "content_hash": "e346d502ae71dfc5961e3d4ffad3b843e80e54ec50cf877ca735777547971079",
+  "aggregated_at": "2026-04-10T21:49:42.228Z",
+  "content_hash": "9b77494a25139f12a10865d95a9cb2f1b6e2391ad346438bd1bfc404c813045c",
   "requirements": [
     {
       "id": "ACT-01",
@@ -6156,6 +6156,16 @@
       "category_raw": "Verification Gate"
     },
     {
+      "id": "VERIFY-03",
+      "text": "Generated formal model test stubs use ROOT-relative path resolution via `path.resolve(__dirname, '..', '..', '..')` and contain semantic assertions (`assert.match()` checks) verifying configuration and tool references, eliminating hardcoded absolute paths for CI portability.",
+      "category": "Testing & Quality",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Solver-generated test stubs initially contained hardcoded absolute paths (e.g., `/Users/jonathanborduas/code/QGSD/bin/...`) that blocked CI portability and broke on different systems. This requirement ensures all 16 formal model test stubs use portable ROOT-relative path resolution and include semantic verification checks consistent with their associated requirements.",
+      "source_file": ".planning/quick/387-issue-84/387-PLAN.md",
+      "milestone": "quick-387"
+    },
+    {
       "id": "VIS-01",
       "text": "All TUI screenshots regenerated via VHS tape automation after README structural changes",
       "category": "Visual Assets",
@@ -6338,5 +6348,5 @@
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
   "last_sync": "2026-03-31T09:45:23.686Z",
-  "frozen_at": "2026-04-09T12:34:12.319Z"
+  "frozen_at": "2026-04-10T21:49:42.228Z"
 }
