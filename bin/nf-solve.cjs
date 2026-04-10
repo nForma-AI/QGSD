@@ -949,6 +949,13 @@ let formalTestSyncCache = null;
 let _activeAdapter = null;
 
 /**
+ * Circuit-breaker: consecutive coderlm query failure count.
+ * Resets to 0 on any successful query. When >= 3, sweepGitHeatmap skips coderlm
+ * for the remainder of the run to avoid repeated 5 s timeout overhead.
+ */
+let _coderlmConsecutiveFailures = 0;
+
+/**
  * Helper to load and cache formal-test-sync result.
  */
 function loadFormalTestSync() {
@@ -3514,6 +3521,8 @@ function sweepGitHeatmap(adapter) {
         const healthResult = adapter.healthSync();
         if (healthResult && healthResult.healthy) {
           for (const hz of hotZones) {
+            // Circuit-breaker: stop querying after 3 consecutive failures (avoids 5 s timeout × N files)
+            if (_coderlmConsecutiveFailures >= 3) break;
             try {
               // Use the file path as symbol hint — getCallersSync resolves by file
               const result = adapter.getCallersSync('', hz.file);
@@ -3522,8 +3531,11 @@ function sweepGitHeatmap(adapter) {
                 // Re-compute priority with updated callee_count
                 const { computePriority } = require('./git-heatmap.cjs');
                 hz.priority = computePriority(hz.churn || 0, hz.fixes || 0, hz.adjustments || 0, hz.callee_count);
+                _coderlmConsecutiveFailures = 0; // reset on success
               }
-            } catch (_e) { /* fail-open per entry */ }
+            } catch (_e) {
+              _coderlmConsecutiveFailures++;
+            }
           }
           // Re-sort after enrichment
           hotZones.sort((a, b) => b.priority - a.priority);
@@ -5950,6 +5962,15 @@ function main() {
   _solveAdapter.resetCache(); // CADP-01: cleared at loop start
   _activeAdapter = _solveAdapter; // CREM-03: Make adapter available to sweepGitHeatmap()
 
+  // Pre-flight: log coderlm availability before the first sweep so diagnostics arrive early.
+  // Non-blocking — failure routes to fail-open mode throughout the loop.
+  try {
+    const warmup = _solveAdapter.healthSync();
+    process.stderr.write(TAG + ' coderlm pre-flight: ' + (warmup.healthy ? 'healthy — queries enabled' : 'unavailable — fail-open mode') + '\n');
+  } catch (_) {
+    process.stderr.write(TAG + ' coderlm pre-flight: unreachable — fail-open mode\n');
+  }
+
   for (let i = 1; i <= maxIterations; i++) {
     process.stderr.write(TAG + ' Iteration ' + i + '/' + maxIterations + '\n');
 
@@ -6093,6 +6114,33 @@ function main() {
           }
         } catch (e) {
           process.stderr.write(TAG + ' coderlm reindex failed (non-fatal): ' + e.message + '\n');
+        }
+      }
+
+      // CDIAG-03: In incremental mode (--skip-layers), expand skipLayerSet using call-graph
+      // analysis of files written by autoClose. This prevents incorrect skips when a changed
+      // utility file's callers map to additional layers not covered by static DOMAIN_MAP matching.
+      // Only runs when user requested layer skipping AND adapter is available.
+      if (skipLayerSet.size > 0 && _activeAdapter) {
+        try {
+          const gitOut = spawnSync('git', ['diff', '--name-only'], { encoding: 'utf8', cwd: ROOT });
+          const changedFiles = (gitOut.stdout || '').trim().split('\n').filter(Boolean);
+          if (changedFiles.length > 0) {
+            const { computeAffectedLayers } = require('./solve-incremental-filter.cjs');
+            const filterResult = computeAffectedLayers(changedFiles, _activeAdapter);
+            let unblocked = 0;
+            for (const layer of filterResult.affected_layers) {
+              if (skipLayerSet.has(layer)) {
+                skipLayerSet.delete(layer);
+                unblocked++;
+              }
+            }
+            if (unblocked > 0) {
+              process.stderr.write(TAG + ' CDIAG-03: call-graph expansion un-skipped ' + unblocked + ' layer(s) for next iteration\n');
+            }
+          }
+        } catch (e) {
+          process.stderr.write(TAG + ' CDIAG-03: call-graph expansion failed (non-fatal): ' + e.message + '\n');
         }
       }
 
