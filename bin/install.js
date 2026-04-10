@@ -2602,54 +2602,58 @@ function install(isGlobal, runtime = 'claude') {
     }
   }
 
-  // Install River ML library into dedicated uv-managed venv (fail-open)
-  // Venv lives at ~/.claude/nf-python-env — avoids PEP 668 Homebrew conflicts
-  {
-    const { spawnSync: _spawnRiver } = require('child_process');
-    const nfPythonEnv = path.join(os.homedir(), '.claude', 'nf-python-env');
-    const nfPython = path.join(nfPythonEnv, 'bin', 'python');
-    try {
-      const riverCheck = _spawnRiver(nfPython, ['-c', 'import river'], { timeout: 3000 });
-      if (riverCheck.status !== 0) {
-        console.log(`  ${cyan}↓${reset} Installing River ML (uv)...`);
-        // Create venv if it doesn't exist yet
-        if (!fs.existsSync(nfPythonEnv)) {
-          _spawnRiver('uv', ['venv', nfPythonEnv], { timeout: 30000 });
+  // Optional heavy installs: River ML and @huggingface/transformers.
+  // Skipped when NF_INSTALL_SKIP_OPTIONAL=1 (set by install tests to avoid network timeouts).
+  if (!process.env.NF_INSTALL_SKIP_OPTIONAL) {
+    // Install River ML library into dedicated uv-managed venv (fail-open)
+    // Venv lives at ~/.claude/nf-python-env — avoids PEP 668 Homebrew conflicts
+    {
+      const { spawnSync: _spawnRiver } = require('child_process');
+      const nfPythonEnv = path.join(os.homedir(), '.claude', 'nf-python-env');
+      const nfPython = path.join(nfPythonEnv, 'bin', 'python');
+      try {
+        const riverCheck = _spawnRiver(nfPython, ['-c', 'import river'], { timeout: 3000 });
+        if (riverCheck.status !== 0) {
+          console.log(`  ${cyan}↓${reset} Installing River ML (uv)...`);
+          // Create venv if it doesn't exist yet
+          if (!fs.existsSync(nfPythonEnv)) {
+            _spawnRiver('uv', ['venv', nfPythonEnv], { timeout: 30000 });
+          }
+          const riverInstall = _spawnRiver('uv', ['pip', 'install', '--python', nfPythonEnv, 'river'], { timeout: 60000 });
+          if (riverInstall.status === 0) {
+            console.log(`  ${green}✓${reset} River ML installed`);
+          } else {
+            const errOut = riverInstall.stderr ? riverInstall.stderr.toString().slice(0, 120) : '';
+            console.log(`  ${yellow}⚠${reset} River ML install skipped: uv returned non-zero${errOut ? ' (' + errOut + ')' : ''}`);
+          }
         }
-        const riverInstall = _spawnRiver('uv', ['pip', 'install', '--python', nfPythonEnv, 'river'], { timeout: 60000 });
-        if (riverInstall.status === 0) {
-          console.log(`  ${green}✓${reset} River ML installed`);
-        } else {
-          const errOut = riverInstall.stderr ? riverInstall.stderr.toString().slice(0, 120) : '';
-          console.log(`  ${yellow}⚠${reset} River ML install skipped: uv returned non-zero${errOut ? ' (' + errOut + ')' : ''}`);
-        }
+        // status === 0: River already importable — skip silently
+      } catch (e) {
+        // uv or nfPython not found or timed out — skip silently (fail-open)
       }
-      // status === 0: River already importable — skip silently
-    } catch (e) {
-      // uv or nfPython not found or timed out — skip silently (fail-open)
     }
-  }
 
-  // Install @huggingface/transformers to nf-bin if not already present (fail-open)
-  {
-    const { spawnSync: _spawnEmbed } = require('child_process');
-    try {
-      const transformersGlobalPath = path.join(os.homedir(), '.claude', 'nf-bin', 'node_modules', '@huggingface', 'transformers');
-      if (!fs.existsSync(transformersGlobalPath)) {
-        console.log(`  ${cyan}↓${reset} Installing @huggingface/transformers...`);
-        const embedInstall = _spawnEmbed('npm', ['install', '--prefix', path.join(os.homedir(), '.claude', 'nf-bin'), '@huggingface/transformers'], { timeout: 120000 });
-        if (embedInstall.status === 0) {
-          console.log(`  ${green}✓${reset} @huggingface/transformers installed`);
-        } else {
-          const errOut = embedInstall.stderr ? embedInstall.stderr.toString().slice(0, 120) : '';
-          console.log(`  ${yellow}⚠${reset} @huggingface/transformers install skipped: npm returned non-zero${errOut ? ' (' + errOut + ')' : ''}`);
+    // Install @huggingface/transformers to nf-bin if not already present (fail-open)
+    {
+      const { spawnSync: _spawnEmbed } = require('child_process');
+      try {
+        const transformersGlobalPath = path.join(os.homedir(), '.claude', 'nf-bin', 'node_modules', '@huggingface', 'transformers');
+        if (!fs.existsSync(transformersGlobalPath)) {
+          console.log(`  ${cyan}↓${reset} Installing @huggingface/transformers...`);
+          const embedInstall = _spawnEmbed('npm', ['install', '--prefix', path.join(os.homedir(), '.claude', 'nf-bin'), '@huggingface/transformers'], { timeout: 120000 });
+          if (embedInstall.status === 0) {
+            console.log(`  ${green}✓${reset} @huggingface/transformers installed`);
+          } else {
+            const errOut = embedInstall.stderr ? embedInstall.stderr.toString().slice(0, 120) : '';
+            console.log(`  ${yellow}⚠${reset} @huggingface/transformers install skipped: npm returned non-zero${errOut ? ' (' + errOut + ')' : ''}`);
+          }
         }
+        // Already present — skip silently
+      } catch (e) {
+        // Unexpected error — skip silently (fail-open)
       }
-      // Already present — skip silently
-    } catch (e) {
-      // Unexpected error — skip silently (fail-open)
     }
-  }
+  } // end NF_INSTALL_SKIP_OPTIONAL guard
 
   // Validate hook path references point to real targets
   const hooksDestValidation = path.join(targetDir, 'hooks');
