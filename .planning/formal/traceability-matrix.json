@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-10T22:12:41.115Z",
+    "generated_at": "2026-04-10T22:14:20.215Z",
     "generator_version": "1.1",
     "data_sources": {
       "annotations": {
@@ -12,7 +12,7 @@
         "used_as_fallback": 6
       },
       "check_results": {
-        "entry_count": 667
+        "entry_count": 1007
       },
       "unit_test_coverage": {
         "available": true,
@@ -38364,7 +38364,7 @@
   },
   "coverage_preservation": {
     "baseline_found": true,
-    "baseline_date": "2026-04-10T22:12:36.136Z",
+    "baseline_date": "2026-04-10T22:14:18.589Z",
     "requirements_checked": 586,
     "regressions": [],
     "summary": {
