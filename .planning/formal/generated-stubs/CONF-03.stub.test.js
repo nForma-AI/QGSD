@@ -4,9 +4,11 @@
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
+const path = require('path');
+const ROOT = path.resolve(__dirname, '..', '..', '..');
 
 test('CONF-03 — ConfigLayer: DEFAULT_CONFIG has quorum_commands as array of command names', () => {
-  const { DEFAULT_CONFIG } = require('/Users/jonathanborduas/code/QGSD/hooks/config-loader.js');
+  const { DEFAULT_CONFIG } = require(path.join(ROOT, 'hooks', 'config-loader.js'));
   assert.ok(Array.isArray(DEFAULT_CONFIG.quorum_commands), 'quorum_commands must be an array');
   assert.ok(DEFAULT_CONFIG.quorum_commands.length > 0, 'quorum_commands must not be empty');
   for (const cmd of DEFAULT_CONFIG.quorum_commands) {
@@ -15,7 +17,7 @@ test('CONF-03 — ConfigLayer: DEFAULT_CONFIG has quorum_commands as array of co
 });
 
 test('CONF-03 — ConfigLayer: DEFAULT_CONFIG has required_models as dict with tool_prefix and required', () => {
-  const { DEFAULT_CONFIG } = require('/Users/jonathanborduas/code/QGSD/hooks/config-loader.js');
+  const { DEFAULT_CONFIG } = require(path.join(ROOT, 'hooks', 'config-loader.js'));
   assert.strictEqual(typeof DEFAULT_CONFIG.required_models, 'object', 'required_models must be an object');
   assert.ok(!Array.isArray(DEFAULT_CONFIG.required_models), 'required_models must not be an array');
 
@@ -28,12 +30,12 @@ test('CONF-03 — ConfigLayer: DEFAULT_CONFIG has required_models as dict with t
 });
 
 test('CONF-03 — ConfigLayer: DEFAULT_CONFIG has fail_mode defaulting to "open"', () => {
-  const { DEFAULT_CONFIG } = require('/Users/jonathanborduas/code/QGSD/hooks/config-loader.js');
+  const { DEFAULT_CONFIG } = require(path.join(ROOT, 'hooks', 'config-loader.js'));
   assert.strictEqual(DEFAULT_CONFIG.fail_mode, 'open', 'fail_mode default must be "open"');
 });
 
 test('CONF-03 — ConfigLayer: validateConfig rejects invalid fail_mode values', () => {
-  const { validateConfig } = require('/Users/jonathanborduas/code/QGSD/hooks/config-loader.js');
+  const { validateConfig } = require(path.join(ROOT, 'hooks', 'config-loader.js'));
   const config = {
     quorum_commands: ['quick'],
     required_models: {},

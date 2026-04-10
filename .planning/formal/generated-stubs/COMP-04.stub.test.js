@@ -5,9 +5,11 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
+const path = require('path');
+const ROOT = path.resolve(__dirname, '..', '..', '..');
 
 test('COMP-04 — install.js has buildActiveSlots() that reads mcpServers from ~/.claude.json', () => {
-  const content = fs.readFileSync('/Users/jonathanborduas/code/QGSD/bin/install.js', 'utf8');
+  const content = fs.readFileSync(path.join(ROOT, 'bin', 'install.js'), 'utf8');
 
   // Must have buildActiveSlots function that discovers slots from ~/.claude.json
   assert.match(content, /buildActiveSlots/, 'Should define buildActiveSlots function');

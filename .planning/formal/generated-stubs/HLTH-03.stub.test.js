@@ -10,8 +10,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
 const os = require('node:os');
+const ROOT = path.resolve(__dirname, '..', '..', '..');
 
-const GSD_TOOLS = '/Users/jonathanborduas/code/QGSD/core/bin/gsd-tools.cjs';
+const GSD_TOOLS = path.join(ROOT, 'core', 'bin', 'gsd-tools.cjs');
 
 function createTempProject() {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hlth03-'));

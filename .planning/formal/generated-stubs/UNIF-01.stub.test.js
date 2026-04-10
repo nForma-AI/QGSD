@@ -7,6 +7,8 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
+const ROOT = path.resolve(__dirname, '..', '..', '..');
+const WRITE_CHECK_RESULT = path.join(ROOT, 'bin', 'write-check-result.cjs');
 
 test('UNIF-01: writeCheckResult appends normalized JSON with required fields to NDJSON', () => {
   // Use a temp file to avoid polluting real check-results.ndjson
@@ -14,8 +16,8 @@ test('UNIF-01: writeCheckResult appends normalized JSON with required fields to 
   process.env.CHECK_RESULTS_PATH = tmpFile;
 
   // Re-require to pick up new env var
-  delete require.cache[require.resolve('/Users/jonathanborduas/code/QGSD/bin/write-check-result.cjs')];
-  const { writeCheckResult } = require('/Users/jonathanborduas/code/QGSD/bin/write-check-result.cjs');
+  delete require.cache[require.resolve(WRITE_CHECK_RESULT)];
+  const { writeCheckResult } = require(WRITE_CHECK_RESULT);
 
   writeCheckResult({
     tool: 'run-tlc',
@@ -48,8 +50,8 @@ test('UNIF-01: writeCheckResult appends normalized JSON with required fields to 
 test('UNIF-01: writeCheckResult rejects entries missing required fields', () => {
   assert.throws(
     () => {
-      delete require.cache[require.resolve('/Users/jonathanborduas/code/QGSD/bin/write-check-result.cjs')];
-      const { writeCheckResult } = require('/Users/jonathanborduas/code/QGSD/bin/write-check-result.cjs');
+      delete require.cache[require.resolve(WRITE_CHECK_RESULT)];
+      const { writeCheckResult } = require(WRITE_CHECK_RESULT);
       writeCheckResult({ tool: '', formalism: 'tla', result: 'pass' });
     },
     /tool is required/,
@@ -60,8 +62,8 @@ test('UNIF-01: writeCheckResult rejects entries missing required fields', () => 
 test('UNIF-01: writeCheckResult validates result enum', () => {
   assert.throws(
     () => {
-      delete require.cache[require.resolve('/Users/jonathanborduas/code/QGSD/bin/write-check-result.cjs')];
-      const { writeCheckResult } = require('/Users/jonathanborduas/code/QGSD/bin/write-check-result.cjs');
+      delete require.cache[require.resolve(WRITE_CHECK_RESULT)];
+      const { writeCheckResult } = require(WRITE_CHECK_RESULT);
       writeCheckResult({ tool: 'x', formalism: 'tla', result: 'invalid-result', check_id: 'a', surface: 'b', property: 'c', runtime_ms: 0, summary: 'd' });
     },
     /result must be one of/,
