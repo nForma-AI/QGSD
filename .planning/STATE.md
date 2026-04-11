@@ -4,11 +4,12 @@
 
 See: .planning/PROJECT.md
 
-## Position
+## Current Position
 
-**Milestone:** v0.41 milestone
-**Current phase:** (determining...)
-**Status:** Resuming
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-04-11 — Milestone v0.42 started
 
 ## Quick Tasks Completed
 

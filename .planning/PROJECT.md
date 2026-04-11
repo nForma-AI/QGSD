@@ -10,7 +10,15 @@ Profile: cli
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
-## Current Milestone: None — ready for `/nf:new-milestone`
+## Current Milestone: v0.42 Repowise Intelligence Integration
+
+**Goal:** Adopt proven context-optimization patterns from Repowise so agents work faster, cheaper, and with higher accuracy on large repositories.
+
+**Target features:**
+- XML-style context packing (reduce token consumption via structured XML format)
+- AST-based 'Skeleton Views' via Tree-Sitter (structural code views for initial research)
+- Hotspot detection — Churn + Complexity analysis for risk identification
+- Co-change prediction — Git history mining for implicit coupling detection
 
 ## Shipped: v0.41 — Unified Autoresearch Execution Pipeline (2026-03-25)
 
