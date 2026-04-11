@@ -11,6 +11,7 @@ const { spawnSync } = require('child_process');
 const path = require('path');
 
 const RUN_BREAKER_TLC = path.join(__dirname, 'run-breaker-tlc.cjs');
+const { resolveTlaJar } = require('./resolve-formal-tools.cjs');
 
 test('exits non-zero and prints clear error when JAVA_HOME points to nonexistent path', () => {
   const result = spawnSync(process.execPath, [RUN_BREAKER_TLC], {
@@ -29,10 +30,7 @@ test('exits non-zero and prints download URL when tla2tools.jar is not found', (
     null;
   // If no Java available, skip this test — it cannot reach JAR check without Java.
   if (!javaHome) { return; }  // test is skipped, not failed
-  // If the JAR is present on disk (gitignored but downloaded), skip — cannot test absence.
-  const fs = require('fs');
-  const jarPath = require('path').join(__dirname, '..', '.planning', 'formal', 'tla', 'tla2tools.jar');
-  if (fs.existsSync(jarPath)) { return; }  // test is skipped, not failed
+  if (resolveTlaJar(path.join(__dirname, '..'))) { return; }  // skip if any supported TLA JAR resolution path exists
   const result = spawnSync(process.execPath, [RUN_BREAKER_TLC], {
     encoding: 'utf8',
     env: { ...process.env, JAVA_HOME: javaHome },

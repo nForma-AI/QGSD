@@ -5,8 +5,10 @@
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
+const path = require('path');
+const ROOT = path.resolve(__dirname, '..', '..', '..');
 
-const mod = require('/Users/jonathanborduas/code/QGSD/bin/verify-quorum-health.cjs');
+const mod = require(path.join(ROOT, 'bin', 'verify-quorum-health.cjs'));
 
 test('HEAL-02: verify-quorum-health exports suggestMaxDeliberation function', () => {
   assert.strictEqual(typeof mod.suggestMaxDeliberation, 'function',

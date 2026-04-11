@@ -524,6 +524,7 @@ node ~/.claude/nf/bin/nf-tools.cjs activity-set \
 **Formal check (before verifier spawn):**
 
 Run the keyword-match scan and formal check before spawning the verifier. The scan is identical to the plan-phase Step 4.5 algorithm.
+Reference matcher shape: `tr ' -/'` plus `grep -qF "$KEYWORD" || echo "$KEYWORD" | grep -qF`.
 
 ```bash
 # Formal scope scan — uses centralized bin/formal-scope-scan.cjs

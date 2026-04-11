@@ -53,13 +53,56 @@ const DOMAIN_MAP = [
 const ALWAYS_SWEEP = ['r_to_f', 'r_to_d'];
 
 /**
+ * CDIAG-03: Expand the affected layer set using getCallers transitive data.
+ * For each changed file, query getCallers to find which files call it.
+ * For each caller file, run it through DOMAIN_MAP to find additional affected layers.
+ * This prevents incorrect skips when a utility file is changed but its callers map to layers.
+ *
+ * @param {string[]} filesTouched - File paths changed by remediation
+ * @param {Set<string>} affectedSet - Already-affected layers (modified in place)
+ * @param {object|null} adapter - coderlm adapter or null (fail-open)
+ * @returns {void} — modifies affectedSet in place
+ */
+function expandWithCallGraph(filesTouched, affectedSet, adapter) {
+  if (!adapter || !filesTouched || filesTouched.length === 0) return;
+
+  let healthy = false;
+  try {
+    const h = adapter.healthSync();
+    healthy = h.healthy;
+  } catch (_) {}
+  if (!healthy) return;
+
+  for (const filePath of filesTouched) {
+    let callers;
+    try {
+      const result = adapter.getCallersSync('', filePath);
+      if (result.error || !Array.isArray(result.callers)) continue;
+      callers = result.callers;
+    } catch (_) {
+      continue; // fail-open: one file failure doesn't block others
+    }
+
+    for (const callerFile of callers) {
+      const normalized = callerFile.replace(/\\/g, '/');
+      for (const { pattern, layers } of DOMAIN_MAP) {
+        if (pattern.test(normalized)) {
+          for (const layer of layers) affectedSet.add(layer);
+        }
+      }
+    }
+  }
+}
+
+/**
  * Given a list of file paths touched by remediation, compute which layers
  * need re-sweeping and which can be skipped.
  *
  * @param {string[]} filesTouched - relative file paths
+ * @param {object|null} [adapter] - optional coderlm adapter for call-graph expansion (CDIAG-03)
  * @returns {{ affected_layers: string[], skip_layers: string[], files_analyzed: number }}
  */
-function computeAffectedLayers(filesTouched) {
+function computeAffectedLayers(filesTouched, adapter) {
   if (!Array.isArray(filesTouched) || filesTouched.length === 0) {
     // No file info → sweep everything (safe fallback)
     return { affected_layers: [...LAYER_KEYS], skip_layers: [], files_analyzed: 0 };
@@ -85,6 +128,9 @@ function computeAffectedLayers(filesTouched) {
     }
   }
 
+  // CDIAG-03: Expand via call-graph (fail-open when adapter null/unavailable)
+  expandWithCallGraph(filesTouched, affected, adapter || null);
+
   const affectedArray = [...affected];
   const skipArray = LAYER_KEYS.filter(k => !affected.has(k));
 
@@ -104,8 +150,20 @@ if (require.main === module) {
   } else {
     filesTouched = JSON.parse(fs.readFileSync('/dev/stdin', 'utf8'));
   }
-  const result = computeAffectedLayers(filesTouched);
+
+  // CDIAG-03: Optional coderlm adapter (fail-open when not provided)
+  let adapter = null;
+  const adapterHostArg = process.argv.find(a => a.startsWith('--adapter-host='));
+  const adapterHost = adapterHostArg ? adapterHostArg.slice('--adapter-host='.length) : process.env.NF_CODERLM_HOST;
+  if (adapterHost) {
+    try {
+      const { createAdapter } = require('./coderlm-adapter.cjs');
+      adapter = createAdapter({ host: adapterHost });
+    } catch (_) {} // fail-open if coderlm-adapter.cjs unavailable
+  }
+
+  const result = computeAffectedLayers(filesTouched, adapter);
   process.stdout.write(JSON.stringify(result, null, 2) + '\n');
 }
 
-module.exports = { computeAffectedLayers, DOMAIN_MAP, ALWAYS_SWEEP };
+module.exports = { computeAffectedLayers, expandWithCallGraph, DOMAIN_MAP, ALWAYS_SWEEP };

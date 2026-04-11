@@ -46,7 +46,7 @@ Store as `focusPhrase` variable (string or null) for forwarding to sub-skills an
 Initialize at the very start of the process block:
   - If args contain `--focus="X"` or `--focus=X`, set `focusPhrase = X`
   - Otherwise, set `focusPhrase = null`
-  - If args contain `--verbose`, set `verboseMode = true`. Otherwise, set `verboseMode = false`.
+  - If args contain `--fast`, set `verboseMode = false`. Otherwise, set `verboseMode = true`. (`--verbose` is accepted as a no-op alias for clarity.)
   - If args contain `--fast`, set `fastMode = true`. Otherwise, set `fastMode = false`.
   - If args contain `--plan-only`, set `planOnly = true`. Otherwise, set `planOnly = false`.
   - If args contain `--execute`, set `executeMode = true`. Otherwise, set `executeMode = false`.
@@ -61,6 +61,14 @@ Use `focusPhrase` in Phase 3b bash command and Phase 4 Agent call. Forward `--re
 - `--execute`: Resume from a saved solve-session.json (planned status) — skip Phase 1 diagnostic and go directly to Phase 3 remediation using the saved baseline.
 - `--resume`: Resume from a saved solve-session.json (in_progress status) — skip completed iterations and continue the convergence loop from where it left off. Useful after context resets or crashes.
 - Neither flag (default): run the full solve cycle as before (diagnose + remediate + report).
+
+## Phase 0: Embedding refresh
+
+Before any diagnostic work, rebuild the embedding cache so nf-solve.cjs has fresh vectors for similarity fallback. Fail-open — if proximity-embed.mjs is missing or errors, log and continue.
+
+```bash
+node $HOME/.claude/nf-bin/proximity-embed.mjs 2>/dev/null || node bin/proximity-embed.mjs 2>/dev/null || true
+```
 
 ## Phase 0.5: Resume from session (--execute or --resume)
 
@@ -97,9 +105,9 @@ Parse the JSON output:
 
 ## Phase 1: Diagnose
 
-### Fast-path (default — no --verbose)
+### Fast-path (--fast flag)
 
-When `verboseMode` is false, run the diagnostic sweep directly via Bash instead of dispatching an Agent to solve-diagnose.md. This skips legacy migration, config audit, observe refresh, hypothesis measurement, root cause quorum vote, heatmap analysis, issue classification, and FSM detection — producing the baseline residual in ~60s instead of ~27min.
+When `verboseMode` is false (i.e. `--fast` was passed), run the diagnostic sweep directly via Bash instead of dispatching an Agent to solve-diagnose.md. This skips legacy migration, config audit, observe refresh, hypothesis measurement, root cause quorum vote, heatmap analysis, issue classification, and FSM detection — producing the baseline residual in ~60s instead of ~27min.
 
 **Step 1a: Load open debt** (needed for convergence debt checks in Phase 3):
 ```bash
@@ -150,9 +158,9 @@ Display the baseline residual table (same unified table format as solve-diagnose
 
 Skip Phase 1b (Classify) entirely in fast-path — classification depends on the full diagnostic context that fast-path omits.
 
-### Verbose path (--verbose)
+### Verbose path (default)
 
-When `verboseMode` is true, dispatch the full Agent to solve-diagnose.md (full diagnostic with all sub-steps):
+When `verboseMode` is true (default, unless `--fast` was passed), dispatch the full Agent to solve-diagnose.md (full diagnostic with all sub-steps):
 
 ```
 Agent(

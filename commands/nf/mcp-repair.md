@@ -4,37 +4,14 @@ description: Auto-diagnose and repair quorum slot connectivity — restarts MCP 
 allowed-tools:
   - Bash
   - Read
-  - Task
-  - mcp__codex-1__identity
-  - mcp__gemini-1__identity
-  - mcp__opencode-1__identity
-  - mcp__copilot-1__identity
-  - mcp__claude-1__identity
-  - mcp__claude-2__identity
-  - mcp__claude-3__identity
-  - mcp__claude-4__identity
-  - mcp__claude-5__identity
-  - mcp__claude-6__identity
-  - mcp__codex-1__health_check
-  - mcp__gemini-1__health_check
-  - mcp__opencode-1__health_check
-  - mcp__copilot-1__health_check
-  - mcp__claude-1__health_check
-  - mcp__claude-2__health_check
-  - mcp__claude-3__health_check
-  - mcp__claude-4__health_check
-  - mcp__claude-5__health_check
-  - mcp__claude-6__health_check
-  - mcp__codex-1__deep_health_check
-  - mcp__gemini-1__deep_health_check
-  - mcp__opencode-1__deep_health_check
-  - mcp__copilot-1__deep_health_check
-  - mcp__claude-1__deep_health_check
-  - mcp__claude-2__deep_health_check
-  - mcp__claude-3__deep_health_check
-  - mcp__claude-4__deep_health_check
-  - mcp__claude-5__deep_health_check
-  - mcp__claude-6__deep_health_check
+  # MCP tool access: this skill calls mcp__<slot>__identity, mcp__<slot>__health_check,
+  # and mcp__<slot>__deep_health_check for each slot discovered from ~/.claude.json mcpServers.
+  # MCP tools become available at session startup based on what is configured in ~/.claude.json —
+  # slots present there are accessible without being explicitly listed here.
+  # Note: listing specific mcp__*__ tool names here is not required; the session's registered
+  # tool set is determined by session startup, not by this frontmatter. The comment above is
+  # documentation only.
+  # The executor must NOT attempt to call tools for slots not present in ~/.claude.json.
 ---
 
 <objective>
@@ -58,17 +35,26 @@ This command is read-only except for the service restart and pkill restart actio
 
 ## Step 1 — Initial diagnosis (before state)
 
-Read the slot list from `bin/providers.json` to determine how many slots to diagnose:
+First, discover the configured slot names from `~/.claude.json`:
 
 ```bash
-node << 'NF_EVAL'
-const p = JSON.parse(require("fs").readFileSync("bin/providers.json","utf8"));
-const slots = p.providers.filter(function(s) { return s.name && s.name !== "unified-1"; });
-console.log(slots.length);
+SLOT_NAMES=$(node << 'NF_EVAL'
+var fs = require("fs"), path = require("path"), os = require("os");
+try {
+  var cj = JSON.parse(fs.readFileSync(path.join(os.homedir(), ".claude.json"), "utf8"));
+  var slots = Object.keys(cj.mcpServers || {}).filter(function(k) { return k !== "unified-1"; });
+  console.log(JSON.stringify(slots));
+} catch (e) {
+  process.stderr.write("Warning: could not read ~/.claude.json: " + e.message + "\n");
+  console.log(JSON.stringify([]));
+}
 NF_EVAL
+)
 ```
 
-Store the count as `$SLOT_COUNT`.
+`$SLOT_NAMES` is now a JSON array string. Example: `["codex-1","gemini-1","opencode-1","copilot-1","claude-1","claude-2","claude-3","claude-4","claude-5","claude-6"]`
+
+Parse the slot count from `$SLOT_NAMES` (array length) for the banner. Store as `$SLOT_COUNT`.
 
 Display banner:
 
@@ -80,70 +66,22 @@ Display banner:
 Diagnosing $SLOT_COUNT quorum slots...
 ```
 
-Invoke a Task() sub-agent to call all MCP identity + health_check + deep_health_check tools. This prevents raw tool-result blocks from cluttering the main conversation.
+For each slot name in `$SLOT_NAMES`, call the following MCP tools directly in the orchestrator, one at a time, sequentially. If a tool is unavailable or throws, record null for that slot/field. Note: MCP servers that are not health-check servers (e.g., filesystem-1, brave-1, gmail) may not expose `identity` or `health_check` tools — treat null or "tool not found" results for these as "unresponsive" rather than errors.
 
-```
-Task(
-  subagent_type: "general-purpose",
-  model: "claude-haiku-4-5",
-  prompt: """
-You are a data-collection sub-agent. Your only job is to call the MCP tools listed below and return their results as a single JSON object. Do not explain or summarize — return only the JSON object.
+For each slot `<slot>` in $SLOT_NAMES:
+- Call `mcp__<slot>__identity({})` → record as identity result (null if tool unavailable)
+- Call `mcp__<slot>__health_check({})` → record as hc result (null if tool unavailable)
+- Call `mcp__<slot>__deep_health_check({})` → record as deep result (null if tool unavailable)
 
-Call each tool with {} as input. Wrap every call in try/catch — if a tool throws or is unavailable, record null for that field.
+Repeat this pattern for every slot in `$SLOT_NAMES` before moving to the next step.
 
-Tools to call in this order (call them one at a time, sequentially — never parallel):
-
-1.  mcp__codex-1__identity          — store result as codex_id
-2.  mcp__gemini-1__identity         — store result as gemini_id
-3.  mcp__opencode-1__identity       — store result as opencode_id
-4.  mcp__copilot-1__identity        — store result as copilot_id
-5.  mcp__codex-1__health_check      — store result as codex_hc
-6.  mcp__gemini-1__health_check     — store result as gemini_hc
-7.  mcp__opencode-1__health_check   — store result as opencode_hc
-8.  mcp__copilot-1__health_check    — store result as copilot_hc
-9.  mcp__claude-1__identity         — store result as claude1_id
-10. mcp__claude-1__health_check     — store result as claude1_hc
-11. mcp__claude-2__identity         — store result as claude2_id
-12. mcp__claude-2__health_check     — store result as claude2_hc
-13. mcp__claude-3__identity         — store result as claude3_id
-14. mcp__claude-3__health_check     — store result as claude3_hc
-15. mcp__claude-4__identity         — store result as claude4_id
-16. mcp__claude-4__health_check     — store result as claude4_hc
-17. mcp__claude-5__identity         — store result as claude5_id
-18. mcp__claude-5__health_check     — store result as claude5_hc
-19. mcp__claude-6__identity         — store result as claude6_id
-20. mcp__claude-6__health_check     — store result as claude6_hc
-21. mcp__codex-1__deep_health_check   — store result as codex_1_deep
-22. mcp__gemini-1__deep_health_check  — store result as gemini_1_deep
-23. mcp__opencode-1__deep_health_check — store result as opencode_1_deep
-24. mcp__copilot-1__deep_health_check — store result as copilot_1_deep
-25. mcp__claude-1__deep_health_check  — store result as claude_1_deep
-26. mcp__claude-2__deep_health_check  — store result as claude_2_deep
-27. mcp__claude-3__deep_health_check  — store result as claude_3_deep
-28. mcp__claude-4__deep_health_check  — store result as claude_4_deep
-29. mcp__claude-5__deep_health_check  — store result as claude_5_deep
-30. mcp__claude-6__deep_health_check  — store result as claude_6_deep
-
-Return ONLY this JSON structure (no markdown, no explanation):
+Assemble `$BEFORE_STATE` as a JSON object keyed by slot name:
 {
-  "codex-1":    { "identity": <codex_id or null>,    "hc": <codex_hc or null>,    "deep": <codex_1_deep or null> },
-  "gemini-1":   { "identity": <gemini_id or null>,   "hc": <gemini_hc or null>,   "deep": <gemini_1_deep or null> },
-  "opencode-1": { "identity": <opencode_id or null>, "hc": <opencode_hc or null>, "deep": <opencode_1_deep or null> },
-  "copilot-1":  { "identity": <copilot_id or null>,  "hc": <copilot_hc or null>,  "deep": <copilot_1_deep or null> },
-  "claude-1":   { "identity": <claude1_id or null>,  "hc": <claude1_hc or null>,  "deep": <claude_1_deep or null> },
-  "claude-2":   { "identity": <claude2_id or null>,  "hc": <claude2_hc or null>,  "deep": <claude_2_deep or null> },
-  "claude-3":   { "identity": <claude3_id or null>,  "hc": <claude3_hc or null>,  "deep": <claude_3_deep or null> },
-  "claude-4":   { "identity": <claude4_id or null>,  "hc": <claude4_hc or null>,  "deep": <claude_4_deep or null> },
-  "claude-5":   { "identity": <claude5_id or null>,  "hc": <claude5_hc or null>,  "deep": <claude_5_deep or null> },
-  "claude-6":   { "identity": <claude6_id or null>,  "hc": <claude6_hc or null>,  "deep": <claude_6_deep or null> }
+  "<slot-name>": { "identity": <result or null>, "hc": <result or null>, "deep": <result or null> },
+  ...one entry per slot in $SLOT_NAMES...
 }
 
-Where each identity value is the raw object returned by the tool (with at minimum version and model fields), each hc value is the raw object returned by health_check (with healthy, latencyMs, and optionally model, via fields), and each deep value is the raw object returned by deep_health_check (with healthy, latencyMs, layer, error fields).
-"""
-)
-```
-
-Store the sub-agent's returned JSON object as `$BEFORE_STATE`.
+Store this as `$BEFORE_STATE`.
 
 ## Step 2 — 4-step diagnostic classification
 
@@ -304,15 +242,7 @@ For each slot classified as `service-down` with `service.start` config in provid
 4. Print "Restarting <slot>... OK" or "Restarting <slot>... FAILED" based on poll result
 5. Re-run deep_health_check to verify:
 
-```
-Task(
-  subagent_type: "general-purpose",
-  model: "claude-haiku-4-5",
-  prompt: """
-Call mcp__<slot>__deep_health_check({}) and return the raw result JSON.
-"""
-)
-```
+Call mcp__<slot>__deep_health_check({}) directly and record the result.
 
 ### MCP server restart (pkill for mcp-down slots)
 
@@ -404,7 +334,7 @@ If no manual actions needed, skip this step.
 
 ## Step 6 — Post-repair verification (after state)
 
-If any auto-repairs were attempted in Step 4, re-run identity + health_check + deep_health_check on ONLY the repaired slots using a Task() sub-agent (same pattern as Step 1, but listing only the repaired slot tools).
+If any auto-repairs were attempted in Step 4, call identity, health_check, and deep_health_check directly on ONLY the repaired slots (same sequential direct-call pattern as Step 1). Assemble results into `$AFTER_STATE` using the same JSON structure as `$BEFORE_STATE` but only for repaired slots.
 
 Store as `$AFTER_STATE`.
 
@@ -445,7 +375,8 @@ No auto-fixable issues found. Manual action needed for M slot(s) — see above.
 </process>
 
 <success_criteria>
-- All configured slots from bin/providers.json are diagnosed (not a hardcoded count)
+- All configured slots from ~/.claude.json mcpServers are diagnosed (not a hardcoded list)
+- Slot names are discovered dynamically at runtime from ~/.claude.json mcpServers keys
 - Diagnosis table shows Slot | Type | Layer | Status | Issue | Action for every slot
 - Deep inference probe (deep_health_check) used for comprehensive diagnosis
 - Service auto-start attempted for SERVICE_DOWN slots with service.start config
@@ -455,8 +386,8 @@ No auto-fixable issues found. Manual action needed for M slot(s) — see above.
 - Downed MCP servers (claude-1..6) auto-repaired via pkill using exact process path from ~/.claude.json
 - Non-auto-fixable issues (auth, quota, missing binary, timeout) produce actionable user guidance
 - Before/after summary shows health improvement metrics after repairs
-- Task() sub-agent pattern used for MCP tool calls (keeps raw output out of conversation)
-- Sub-agent return JSON includes "deep" field per slot
+- MCP tool calls issued directly in the orchestrator (not via Task() sub-agents, which lack MCP server access)
+- Result JSON includes "deep" field per slot
 - Sequential Bash execution pattern followed throughout
 - No quorum invariants violated (observational + restart only)
 </success_criteria>

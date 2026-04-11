@@ -28,12 +28,18 @@ fact PromptDeliveredViaPipe {
 }
 
 -- @requirement DEBT-12
+-- Stdin pipe prevents shell metacharacter interpretation, so piped content is never unsafe
+fact StdinPipeEnsuresSafeContent {
+  all p : Prompt | p.deliveryMethod = StdinPipe implies p.content != UnsafeContent
+}
+
+-- @requirement DEBT-12
 -- Stdin piping avoids shell escaping: content delivered via pipe is always safe
 assert StdinPipeEliminatesEscaping {
   all p : Prompt |
     p.deliveryMethod = StdinPipe implies p.content != UnsafeContent
 }
-check StdinPipeEliminatesEscaping for 5 Prompt
+check StdinPipeEliminatesEscaping for 5 Prompt, 6 QuorumSlot, 4 ModelProvider, 3 Quorum
 
 -- ── Quorum slot model deduplication (DEBT-13) ────────────────────────────────
 
@@ -74,7 +80,7 @@ assert AllSlotsUnique {
   all q : Quorum |
     #q.slots = #(q.slots.provider)
 }
-check AllSlotsUnique for 6 QuorumSlot, 4 ModelProvider, 3 Quorum
+check AllSlotsUnique for 6 QuorumSlot, 4 ModelProvider, 3 Quorum, 5 Prompt
 
 -- Satisfiability: a valid quorum configuration exists
 run {} for 4 QuorumSlot, 4 ModelProvider, 2 Quorum, 4 Prompt

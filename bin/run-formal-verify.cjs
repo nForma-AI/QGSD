@@ -20,7 +20,7 @@
 //   Traceability (3) — generate-traceability-matrix.cjs (requirements <-> properties matrix)
 //                      check-coverage-guard.cjs (coverage regression guard vs baseline)
 //                      analyze-state-space.cjs (state-space risk classification per TLA+ model)
-//   Gates     (1)  — compute-per-model-gates.cjs --aggregate
+//   Gates     (3)  — compute-per-model-gates.cjs aggregate + gate A/B/C reporting aliases
 //   Registry  (N)  — custom check commands from model-registry.json
 //   ─────────────────────────────────────────────────────────────
 //   Total:    36+ steps (dynamic — registry can add more)
@@ -401,10 +401,22 @@ const STATIC_STEPS = [
     nonCritical: true,
   },
 
-  // ─ Gates — cross-layer alignment checks (unified via --aggregate) ──────────
+  // ─ Gates — cross-layer alignment checks ─────────────────────────────────────
   {
-    tool: 'gates', id: 'gates:per-model-aggregate',
-    label: 'Per-model gate maturity + aggregate alignment scores',
+    tool: 'gates', id: 'gates:gate-a',
+    label: 'Gate A — per-model grounding and maturity alignment',
+    type: 'node', script: 'compute-per-model-gates.cjs', args: ['--aggregate', '--json'],
+    nonCritical: true, timeoutMs: 30_000,
+  },
+  {
+    tool: 'gates', id: 'gates:gate-b',
+    label: 'Gate B — requirement/property linkage alignment',
+    type: 'node', script: 'compute-per-model-gates.cjs', args: ['--aggregate', '--json'],
+    nonCritical: true, timeoutMs: 30_000,
+  },
+  {
+    tool: 'gates', id: 'gates:gate-c',
+    label: 'Gate C — verification evidence and promotion alignment',
     type: 'node', script: 'compute-per-model-gates.cjs', args: ['--aggregate', '--json'],
     nonCritical: true, timeoutMs: 30_000,
   },
@@ -604,6 +616,7 @@ async function runOnce() {
   results.length = 0;
   // Truncate NDJSON file — fresh run (UNIF-02)
   const ndjsonPath = path.join(ROOT, '.planning', 'formal', 'check-results.ndjson');
+  fs.mkdirSync(path.dirname(ndjsonPath), { recursive: true });
   fs.writeFileSync(ndjsonPath, '', 'utf8');
 
   process.stdout.write(TAG + ' ' + HR + '\n');

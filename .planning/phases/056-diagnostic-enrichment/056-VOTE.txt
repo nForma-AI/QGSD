@@ -1,0 +1,109 @@
+PHASE 056 REVIEW VOTE: CONDITIONAL APPROVE
+
+Slot: gemini-1
+Round: 1
+Reviewer: Claude Sonnet 4.6
+Date: 2026-04-08
+
+QUESTION: Review the Phase 056 implementation plans for diagnostic enrichment. Do these plans correctly address the phase goal and CREM-03/CREM-04 requirements? Are the technical approaches sound and complete? Vote APPROVE if plans are ready for execution, or BLOCK if there are significant issues.
+
+VERDICT: APPROVE (with clarifications required before execution)
+
+SUMMARY:
+========
+
+The Phase 056 plans correctly address both CREM-03 and CREM-04 requirements with technically sound approaches. The phase goal is clearly understood, and the implementation strategies (Math.log1p weighting for callee-count priority boost, caller-count enrichment with dead-code flagging, fail-open patterns) are appropriate.
+
+Three scope management clarifications are needed BEFORE execution, but none block the core functionality:
+
+1. Explicit commitment to _activeAdapter pattern (module-scope with per-solve reset)
+2. Pre-identification of report annotation code location
+3. Clear call-site documentation for sweepGitHeatmap() adapter parameter
+
+STRENGTHS:
+==========
+✅ Correct understanding of phase goal and CREM requirements
+✅ Math is sound (Math.log1p weighting prevents explosion while rewarding callee count)
+✅ Fail-open invariant respected throughout both plans
+✅ Task breakdown is atomic and testable
+✅ Integration with existing coderlm adapter (Phase 054-055) is architecturally correct
+✅ Both forward path (heatmap ranking) and reverse discovery (dead-code flagging) are addressed
+
+CONCERNS:
+=========
+⚠️ Plan 01, Task 2: Module-scope adapter pattern needs explicit commitment
+   - Current plan leaves this decision to implementer
+   - CADP-01 invariant (reset per solve run) must be respected
+   - Recommend: module-scope _activeAdapter with reset at solve() line 5866
+
+⚠️ Plan 02, Part B: Report annotation location not pre-identified
+   - Actual code location for C->R and T->R formatting should be specified
+   - If formatting code doesn't exist, clarify JSON output is sufficient
+
+⚠️ Both plans: Adapter plumbing across computeResidual() scope should be explicit
+   - computeResidual is top-level function called from solve()
+   - Solution already specified in review, just needs plan confirmation
+
+TECHNICAL ASSESSMENT:
+=====================
+- Phase goal correctly scoped ✅
+- CREM-03 requirement coverage complete ✅
+- CREM-04 requirement coverage complete ✅
+- Fail-open invariant design correct ✅
+- Integration architecture sound ✅
+- Task breakdown appropriate ✅
+- Estimated effort: ~1 hour (reasonable for scope)
+
+REQUIREMENT TRACEABILITY:
+=========================
+CREM-03 (Hot-zone callee-count ranking):
+  Plan 01, Task 1: computePriority() 4th arg + Math.log1p ✅
+  Plan 01, Task 1: buildUncoveredHotZones() adds callee_count=0 ✅
+  Plan 01, Task 2: sweepGitHeatmap() calls getCallersSync() ✅
+  Plan 01, Task 2: Re-sort after enrichment ✅
+  Plan 01, Task 2: Fail-open when coderlm unavailable ✅
+
+CREM-04 (Reverse discovery dead-code flagging):
+  Plan 02, Task 1: sweepCtoR() enriches caller_count + dead_code_flag ✅
+  Plan 02, Task 2: sweepTtoR() enriches caller_count + dead_code_flag ✅
+  Plan 02, Task 2: Report annotation "(0 callers — likely dead code)" ✅
+  Plan 02: Fail-open when coderlm unavailable ✅
+
+IMPROVEMENTS REQUESTED:
+=======================
+MUST FIX before execution:
+  1. Plan 01, Task 2: Explicitly state _activeAdapter pattern (module-scope + per-solve reset)
+  2. Plan 02, Part B: Identify exact function/line for C->R and T->R report formatting
+
+SHOULD FIX before execution:
+  3. Both plans: Explicit sweepGitHeatmap() call-site documentation (with adapter)
+  4. Both plans: Clarify fail-open behavior in verification steps
+
+NICE-TO-HAVE:
+  5. Document expected behavior with CODERLM_DISABLED=1 (integration test scenario)
+
+RECOMMENDATION:
+===============
+APPROVE Phase 056 implementation plans with the following action items:
+
+1. Implementer should clarify in Plan 01, Task 2:
+   "Use module-scope variable: let _activeAdapter = null; 
+    Reset at solve() line 5866: _activeAdapter = _solveAdapter.
+    This follows CADP-01 pattern and respects 'reset per solve run' invariant."
+
+2. Implementer should clarify in Plan 02, Part B:
+   "Identify the function building C->R and T->R report lines.
+    If not found, enriched fields will auto-flow to JSON output (sufficient for phase).
+    Formatting code location: [TBD - identify before execution]"
+
+3. Both plans: Confirm sweepGitHeatmap(adapter) call signature change at line 4332
+
+With these clarifications addressed, plans are ready for execution.
+
+CONFIDENCE LEVEL: HIGH (95%)
+- Scope management issues are well-understood and easily resolved
+- No fundamental architectural concerns
+- All requirements traceable to plan tasks
+- Fail-open patterns established and reusable from Phase 054-055
+
+Ready for execution after clarifications.

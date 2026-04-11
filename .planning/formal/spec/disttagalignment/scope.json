@@ -1,0 +1,7 @@
+{
+  "surface": "disttagalignment",
+  "spec_file": "formal/tla/DistTagAlignment.tla",
+  "config_file": "formal/tla/MCDistTagAlignment.cfg",
+  "requirements": ["DIST-01"],
+  "description": "npm dist-tag alignment invariant: @next must never fall behind @latest"
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": "2",
-  "generated": "2026-04-10T14:19:36.519Z",
+  "generated": "2026-04-10T22:00:30.893Z",
   "layers": {
     "L1": [
       {
@@ -1150,6 +1150,36 @@
         "path": ".planning/formal/tla/NFOutputIntegrity.tla",
         "description": "Quorum output truncation pipeline — models 6 truncation layers (L1-L6) and verifies verdict integrity, truncation detection, telemetry recording, and consensus gate awareness. Confirmed 2 violations: TRUNC-04 (telemetry gap) and TRUNC-05 (raw field silent truncation).",
         "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/shell-prompt-quorum-dedup.als",
+        "description": "Shell-safe prompt delivery via stdin pipe and quorum slot model deduplication diversity guarantee",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/tla/NFSolveResidual.tla",
+        "description": "Net residual computation (FP subtraction) and solve convergence layer-transition sweeps",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/debug-invariants-instrumentation.als",
+        "description": "Debug invariant constraint extraction and per-file trace instrumentation source registration",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/code-standards-debt-audit.als",
+        "description": "Standardized code patterns: JSON serialization, path resolution, error propagation, and debt audit process",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFDistTag.tla",
+        "description": "npm dist-tag ordering invariant: @next must never fall behind @latest after stable publish",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFRiverPolicy.tla",
+        "description": "River ML policy: 3-tier slot routing, Q-learning with Bellman updates, epsilon-greedy exploration, E2E learning loop",
+        "grounding_status": "ungrounded"
       }
     ]
   },
@@ -1173,17 +1203,17 @@
   "collapsed_layers": {
     "L2": {
       "reason": "Empty layer — zero entries permanently blocked Gate B (STRUCT-01)",
-      "collapsed_at": "2026-04-10T14:19:36.519Z"
+      "collapsed_at": "2026-04-10T22:00:30.893Z"
     }
   },
   "summary": {
-    "total_models": 229,
+    "total_models": 235,
     "L1_count": 2,
     "L2_count": 0,
-    "L3_count": 227,
+    "L3_count": 233,
     "maturity_distribution": {
-      "0": 192,
-      "1": 37
+      "0": 197,
+      "1": 38
     },
     "spec_modules_with_invariants": 18
   }

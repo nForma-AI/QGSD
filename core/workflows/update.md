@@ -44,31 +44,30 @@ Running fresh install...
 Proceed to install step (treat as version 0.0.0 for comparison).
 </step>
 
-<step name="detect_channel">
-Detect whether the installed version is on the staging channel:
+<step name="select_channel">
+Fetch both dist-tag versions so the user can make an informed choice:
 
 ```bash
-# $INSTALLED_VERSION from previous step
-if echo "$INSTALLED_VERSION" | grep -q '\-staging'; then
-  CHANNEL="staging"
-else
-  CHANNEL="latest"
-fi
-echo "Channel: $CHANNEL"
+npm view @nforma.ai/nforma dist-tags --json 2>/dev/null
 ```
 
-Store `$CHANNEL` for use in subsequent steps.
+Parse the JSON to get `latest` and `next` versions. Then use AskUserQuestion:
+- Question: "Which channel do you want to update to?\n\n- **latest** — stable release (currently {latest_version})\n- **next** — prerelease / rc (currently {next_version})"
+- Options:
+  - "latest (stable)"
+  - "next (prerelease)"
+  - "Cancel"
+
+If user selects "Cancel": exit.
+
+Store the selected channel as `$CHANNEL` (`"latest"` or `"next"`).
 </step>
 
 <step name="check_latest_version">
-Check npm for the latest version on the detected channel:
+Check npm for the version on the selected channel:
 
 ```bash
-if [ "$CHANNEL" = "staging" ]; then
-  npm view @nforma.ai/nforma dist-tags.staging 2>/dev/null
-else
-  node bin/install.js --version 2>/dev/null
-fi
+npm view @nforma.ai/nforma dist-tags.$CHANNEL 2>/dev/null
 ```
 
 Store result as `$LATEST_VERSION`.
@@ -110,14 +109,14 @@ You're ahead of the latest release (development version?).
 
 Exit.
 
-**If CHANNEL is "staging" and installed == latest:**
+**If CHANNEL is "next" and installed == latest:**
 ```
-## nForma Update (staging channel)
+## nForma Update (next channel)
 
-**Installed:** X.Y.Z-staging.N
-**Latest staging:** X.Y.Z-staging.N
+**Installed:** X.Y.Z-rc.N
+**Latest next:** X.Y.Z-rc.N
 
-You're on the latest staging version.
+You're already on the latest prerelease.
 ```
 
 Exit.
@@ -134,7 +133,7 @@ Exit.
 ## nForma Update Available
 
 **Installed:** 1.5.10
-**Latest${CHANNEL === 'staging' ? ' (staging)' : ''}:** 1.5.15
+**Latest (${CHANNEL}):** 1.5.15
 
 ### What's New
 ────────────────────────────────────────────────────────────
@@ -177,28 +176,14 @@ Use AskUserQuestion:
 </step>
 
 <step name="run_update">
-Run the update using the install type and channel detected earlier:
+Run the update using the install type and channel selected earlier.
 
-**If CHANNEL is "staging":**
-
-First, update the npm package to the staging tag:
+First, update the npm package to the selected channel tag:
 ```bash
-npm install -g @nforma.ai/nforma@staging 2>/dev/null || true
+npm install -g @nforma.ai/nforma@$CHANNEL 2>/dev/null || true
 ```
 
 Then run the installer:
-
-**If LOCAL install:**
-```bash
-node bin/install.js --claude --local
-```
-
-**If GLOBAL install (or unknown):**
-```bash
-node bin/install.js --claude --global
-```
-
-**If CHANNEL is "latest":**
 
 **If LOCAL install:**
 ```bash

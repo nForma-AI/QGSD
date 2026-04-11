@@ -44,7 +44,7 @@ fact InvariantsHaveSource {
 assert AllInvariantsExtracted {
   all inv : DebugInvariant | inv.extracted = True
 }
-check AllInvariantsExtracted for 6 DebugInvariant
+check AllInvariantsExtracted for 6 DebugInvariant, 3 InstrumentationEntry, 3 FormalizationCandidate
 
 -- ── Instrumentation source registry (DEBT-08) ────────────────────────────────
 
@@ -77,7 +77,7 @@ assert PerFileTraceAlwaysAvailable {
   all c : FormalizationCandidate |
     PerFileTrace in c.instrumentationSources
 }
-check PerFileTraceAlwaysAvailable for 5 FormalizationCandidate, 4 InstrumentationSource
+check PerFileTraceAlwaysAvailable for 5 FormalizationCandidate, 4 InstrumentationSource, 4 DebugInvariant, 3 InstrumentationEntry
 
 -- Satisfiability
 run {} for 4 DebugInvariant, 3 InstrumentationEntry, 3 FormalizationCandidate

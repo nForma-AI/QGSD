@@ -5,22 +5,24 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
+const path = require('node:path');
+const ROOT = path.resolve(__dirname, '..', '..', '..');
 
 test('TRIAGE-02: run-formal-verify.cjs contains a triage-bundle step referencing generate-triage-bundle.cjs', () => {
-  const source = fs.readFileSync('/Users/jonathanborduas/code/QGSD/bin/run-formal-verify.cjs', 'utf8');
+  const source = fs.readFileSync(path.join(ROOT, 'bin', 'run-formal-verify.cjs'), 'utf8');
   // Verify generate-triage-bundle.cjs is registered as a step
   assert.match(source, /generate-triage-bundle\.cjs/, 'references generate-triage-bundle.cjs');
 });
 
 test('TRIAGE-02: triage-bundle step is in STATIC_STEPS (runs after tool groups)', () => {
-  const source = fs.readFileSync('/Users/jonathanborduas/code/QGSD/bin/run-formal-verify.cjs', 'utf8');
+  const source = fs.readFileSync(path.join(ROOT, 'bin', 'run-formal-verify.cjs'), 'utf8');
   // The triage bundle step should be in the STATIC_STEPS array
   assert.match(source, /ci:triage-bundle/, 'has ci:triage-bundle step id');
   assert.match(source, /generate-triage-bundle/, 'step references the triage bundle script');
 });
 
 test('TRIAGE-02: triage-bundle step appears after CI enforcement steps in STATIC_STEPS', () => {
-  const source = fs.readFileSync('/Users/jonathanborduas/code/QGSD/bin/run-formal-verify.cjs', 'utf8');
+  const source = fs.readFileSync(path.join(ROOT, 'bin', 'run-formal-verify.cjs'), 'utf8');
   // Triage bundle should appear after CI enforcement steps
   const ciTraceIdx = source.indexOf("'ci:trace-redaction'");
   const triageIdx = source.indexOf("'ci:triage-bundle'");
