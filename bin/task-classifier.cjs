@@ -26,7 +26,6 @@ const COMPLEXITY_MAP = {
  * @returns {'trivial'|'simple'|'moderate'|'complex'} Complexity classification
  */
 function classifyTask(taskEnvelope) {
-  // Rule 1: null/undefined envelope -> 'moderate' (fail-open default)
   if (!taskEnvelope) return 'moderate';
 
   const objective = (taskEnvelope.objective || '').toString();
@@ -37,23 +36,48 @@ function classifyTask(taskEnvelope) {
   const riskLevel = taskEnvelope.risk_level || 'medium';
   const planTaskCount = taskEnvelope.task_count || 1;
 
-  // Rule 2: exploration tasks are trivial
   if (isExploration) return 'trivial';
 
-  // Rule 3: reviews on small file sets are simple
   if (isReview && fileCount <= 3) return 'simple';
 
-  // Rule 4: high risk or architecture -> complex
   if (riskLevel === 'high' || hasArchitecture) return 'complex';
 
-  // Rule 5: many files or many tasks -> moderate
   if (fileCount > 5 || planTaskCount > 3) return 'moderate';
 
-  // Rule 6: low/routine risk -> simple
   if (riskLevel === 'low' || riskLevel === 'routine') return 'simple';
 
-  // Rule 7: default -> moderate
   return 'moderate';
+}
+
+function adjustForHotspotRisk(complexity, taskFiles, cwd) {
+  if (!taskFiles || taskFiles.length === 0) return complexity;
+
+  try {
+    const hotspotPath = path.join(cwd || process.cwd(), '.planning', 'repowise', 'hotspot-cache.json');
+    if (!fs.existsSync(hotspotPath)) return complexity;
+
+    const data = JSON.parse(fs.readFileSync(hotspotPath, 'utf8'));
+    if (!data || !data.files) return complexity;
+
+    const hotspotMap = new Map();
+    for (const f of data.files) {
+      hotspotMap.set(f.path, f.hotspot_score);
+    }
+
+    let maxScore = 0;
+    for (const fp of taskFiles) {
+      const score = hotspotMap.get(fp) || 0;
+      if (score > maxScore) maxScore = score;
+    }
+
+    if (maxScore > 0.7 && complexity === 'simple') return 'moderate';
+    if (maxScore > 0.7 && complexity === 'moderate') return 'complex';
+    if (maxScore > 0.4 && complexity === 'simple') return 'moderate';
+  } catch (_) {
+    // fail-open: return unchanged complexity
+  }
+
+  return complexity;
 }
 
 // Complexity-to-config-key mapping for thinking_budget_scaling overrides.
@@ -111,4 +135,4 @@ function readTaskEnvelope(cwd) {
   }
 }
 
-module.exports = { classifyTask, getModelRecommendation, readTaskEnvelope, COMPLEXITY_MAP };
+module.exports = { classifyTask, adjustForHotspotRisk, getModelRecommendation, readTaskEnvelope, COMPLEXITY_MAP };

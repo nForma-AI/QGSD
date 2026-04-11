@@ -4,7 +4,7 @@ const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('path');
 
-const { classifyTask, getModelRecommendation, readTaskEnvelope, COMPLEXITY_MAP } = require('./task-classifier.cjs');
+const { classifyTask, adjustForHotspotRisk, getModelRecommendation, readTaskEnvelope, COMPLEXITY_MAP } = require('./task-classifier.cjs');
 
 describe('classifyTask', () => {
   it('returns moderate for null envelope (fail-open)', () => {
@@ -112,5 +112,79 @@ describe('COMPLEXITY_MAP', () => {
     assert.ok(COMPLEXITY_MAP.simple);
     assert.ok(COMPLEXITY_MAP.moderate);
     assert.ok(COMPLEXITY_MAP.complex);
+  });
+});
+
+describe('adjustForHotspotRisk', () => {
+  it('returns unchanged complexity when no files provided', () => {
+    assert.equal(adjustForHotspotRisk('simple', [], '/tmp'), 'simple');
+  });
+
+  it('returns unchanged complexity when no cache exists', () => {
+    assert.equal(adjustForHotspotRisk('simple', ['src/foo.js'], '/tmp/nonexistent-' + Date.now()), 'simple');
+  });
+
+  it('upgrades simple to moderate when file has high hotspot score', () => {
+    const os = require('os');
+    const fs2 = require('fs');
+    const tmpDir = fs2.mkdtempSync(path.join(os.tmpdir(), 'hotspot-risk-'));
+    const repowiseDir = path.join(tmpDir, '.planning', 'repowise');
+    fs2.mkdirSync(repowiseDir, { recursive: true });
+    fs2.writeFileSync(path.join(repowiseDir, 'hotspot-cache.json'), JSON.stringify({
+      files: [{ path: 'src/risky.js', hotspot_score: 0.85, risk: 'high' }],
+    }));
+    try {
+      assert.equal(adjustForHotspotRisk('simple', ['src/risky.js'], tmpDir), 'moderate');
+    } finally {
+      fs2.rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+
+  it('upgrades moderate to complex when file has high hotspot score', () => {
+    const os = require('os');
+    const fs2 = require('fs');
+    const tmpDir = fs2.mkdtempSync(path.join(os.tmpdir(), 'hotspot-risk-'));
+    const repowiseDir = path.join(tmpDir, '.planning', 'repowise');
+    fs2.mkdirSync(repowiseDir, { recursive: true });
+    fs2.writeFileSync(path.join(repowiseDir, 'hotspot-cache.json'), JSON.stringify({
+      files: [{ path: 'src/critical.js', hotspot_score: 0.8, risk: 'high' }],
+    }));
+    try {
+      assert.equal(adjustForHotspotRisk('moderate', ['src/critical.js'], tmpDir), 'complex');
+    } finally {
+      fs2.rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+
+  it('upgrades simple to moderate when file has medium hotspot score', () => {
+    const os = require('os');
+    const fs2 = require('fs');
+    const tmpDir = fs2.mkdtempSync(path.join(os.tmpdir(), 'hotspot-risk-'));
+    const repowiseDir = path.join(tmpDir, '.planning', 'repowise');
+    fs2.mkdirSync(repowiseDir, { recursive: true });
+    fs2.writeFileSync(path.join(repowiseDir, 'hotspot-cache.json'), JSON.stringify({
+      files: [{ path: 'src/medium.js', hotspot_score: 0.5, risk: 'medium' }],
+    }));
+    try {
+      assert.equal(adjustForHotspotRisk('simple', ['src/medium.js'], tmpDir), 'moderate');
+    } finally {
+      fs2.rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+
+  it('does not upgrade when hotspot score is low', () => {
+    const os = require('os');
+    const fs2 = require('fs');
+    const tmpDir = fs2.mkdtempSync(path.join(os.tmpdir(), 'hotspot-risk-'));
+    const repowiseDir = path.join(tmpDir, '.planning', 'repowise');
+    fs2.mkdirSync(repowiseDir, { recursive: true });
+    fs2.writeFileSync(path.join(repowiseDir, 'hotspot-cache.json'), JSON.stringify({
+      files: [{ path: 'src/safe.js', hotspot_score: 0.1, risk: 'low' }],
+    }));
+    try {
+      assert.equal(adjustForHotspotRisk('simple', ['src/safe.js'], tmpDir), 'simple');
+    } finally {
+      fs2.rmSync(tmpDir, { recursive: true, force: true });
+    }
   });
 });
