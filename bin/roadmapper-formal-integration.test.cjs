@@ -74,34 +74,34 @@ test('fail-open: missing .planning/formal/spec/ directory → FORMAL_SPEC_CONTEX
 // These tests read source files from core/ and agents/ (NOT installed ~/.claude/ copies).
 // Implementation edits source; Plan 03 runs install.js to sync to ~/.claude/.
 
-// ---- Test Group 1: gsd-tools.cjs goal regex fix (ISSUE-2) ----
+// ---- Test Group 1: nf-tools.cjs goal regex fix (ISSUE-2) ----
 // Plan 02 must replace **Goal:** (colon inside asterisks) with **Goal**: (colon outside).
 // Three locations: lines 1027, 2612, 4370.
 
-const GSD_TOOLS_PATH = path.resolve(__dirname, '../core/bin/gsd-tools.cjs');
-let gsdToolsContent = '';
+const NF_TOOLS_PATH = path.resolve(__dirname, '../core/bin/nf-tools.cjs');
+let nfToolsContent = '';
 try {
-  gsdToolsContent = fs.readFileSync(GSD_TOOLS_PATH, 'utf8');
+  nfToolsContent = fs.readFileSync(NF_TOOLS_PATH, 'utf8');
 } catch (e) {
-  gsdToolsContent = '';
+  nfToolsContent = '';
 }
 
-test('gsd-tools.cjs: old broken regex **Goal:** is NOT present', () => {
+test('nf-tools.cjs: old broken regex **Goal:** is NOT present', () => {
   assert.ok(
-    !gsdToolsContent.includes('**Goal:**'),
-    'Old broken regex still present: "**Goal:**" found in core/bin/gsd-tools.cjs — fix all 3 regex locations'
+    !nfToolsContent.includes('**Goal:**'),
+    'Old broken regex still present: "**Goal:**" found in core/bin/nf-tools.cjs — fix all 3 regex locations'
   );
 });
 
-test('gsd-tools.cjs: fixed regex **Goal**: appears at least 3 times (all 3 parser locations)', () => {
+test('nf-tools.cjs: fixed regex **Goal**: appears at least 3 times (all 3 parser locations)', () => {
   // JS regex literals store escaped asterisks as \*\*Goal\*\*: in source files;
   // template strings use literal **Goal**: — count both forms
-  const literalCount = (gsdToolsContent.match(/\*\*Goal\*\*:/g) || []).length;
-  const escapedCount = (gsdToolsContent.match(/\\\*\\\*Goal\\\*\\\*:/g) || []).length;
+  const literalCount = (nfToolsContent.match(/\*\*Goal\*\*:/g) || []).length;
+  const escapedCount = (nfToolsContent.match(/\\\*\\\*Goal\\\*\\\*:/g) || []).length;
   const count = literalCount + escapedCount;
   assert.ok(
     count >= 3,
-    `Expected >=3 occurrences of **Goal**: (fixed regex, both literal and JS-escaped forms) in gsd-tools.cjs, got ${count} (literal=${literalCount}, escaped=${escapedCount})`
+    `Expected >=3 occurrences of **Goal**: (fixed regex, both literal and JS-escaped forms) in nf-tools.cjs, got ${count} (literal=${literalCount}, escaped=${escapedCount})`
   );
 });
 

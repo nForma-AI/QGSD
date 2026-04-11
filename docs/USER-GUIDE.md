@@ -255,7 +255,7 @@ Here is what an active project session looks like, with project context and quor
                User approves
                         │
                         ▼
-              Run: npx qgsd --reset-breaker
+              Run: npx nf --reset-breaker
                         │
                         ▼
               Single-model executes
@@ -403,8 +403,8 @@ nForma stores project settings in `.planning/config.json`. Configure during `/nf
   },
   "git": {
     "branching_strategy": "none",
-    "phase_branch_template": "gsd/phase-{phase}-{slug}",
-    "milestone_branch_template": "gsd/{milestone}-{slug}"
+    "phase_branch_template": "nf/phase-{phase}-{slug}",
+    "milestone_branch_template": "nf/{milestone}-{slug}"
   }
 }
 ```
@@ -441,8 +441,8 @@ Disable these to speed up phases in familiar domains or when conserving tokens.
 | Setting | Options | Default | What it Controls |
 |---------|---------|---------|------------------|
 | `git.branching_strategy` | `none`, `phase`, `milestone` | `none` | When and how branches are created |
-| `git.phase_branch_template` | Template string | `gsd/phase-{phase}-{slug}` | Branch name for phase strategy |
-| `git.milestone_branch_template` | Template string | `gsd/{milestone}-{slug}` | Branch name for milestone strategy |
+| `git.phase_branch_template` | Template string | `nf/phase-{phase}-{slug}` | Branch name for phase strategy |
+| `git.milestone_branch_template` | Template string | `nf/{milestone}-{slug}` | Branch name for milestone strategy |
 
 **Branching strategies explained:**
 
@@ -458,17 +458,17 @@ Disable these to speed up phases in familiar domains or when conserving tokens.
 
 | Agent | `quality` | `balanced` | `budget` |
 |-------|-----------|------------|----------|
-| qgsd-planner | Opus | Opus | Sonnet |
-| qgsd-roadmapper | Opus | Sonnet | Sonnet |
-| qgsd-executor | Opus | Sonnet | Sonnet |
-| qgsd-phase-researcher | Opus | Sonnet | Haiku |
-| qgsd-project-researcher | Opus | Sonnet | Haiku |
-| qgsd-research-synthesizer | Sonnet | Sonnet | Haiku |
-| qgsd-debugger | Opus | Sonnet | Sonnet |
-| qgsd-codebase-mapper | Sonnet | Haiku | Haiku |
-| qgsd-verifier | Sonnet | Sonnet | Haiku |
-| qgsd-plan-checker | Sonnet | Sonnet | Haiku |
-| qgsd-integration-checker | Sonnet | Sonnet | Haiku |
+| nf-planner | Opus | Opus | Sonnet |
+| nf-roadmapper | Opus | Sonnet | Sonnet |
+| nf-executor | Opus | Sonnet | Sonnet |
+| nf-phase-researcher | Opus | Sonnet | Haiku |
+| nf-project-researcher | Opus | Sonnet | Haiku |
+| nf-research-synthesizer | Sonnet | Sonnet | Haiku |
+| nf-debugger | Opus | Sonnet | Sonnet |
+| nf-codebase-mapper | Sonnet | Haiku | Haiku |
+| nf-verifier | Sonnet | Sonnet | Haiku |
+| nf-plan-checker | Sonnet | Sonnet | Haiku |
+| nf-integration-checker | Sonnet | Sonnet | Haiku |
 
 **Profile philosophy:**
 - **quality** -- Opus for all decision-making agents, Sonnet for read-only verification. Use when quota is available and the work is critical.
@@ -601,7 +601,7 @@ Set `commit_docs: false` during `/nf:new-project` or via `/nf:settings`. Add `.p
 
 ### nForma Update Overwrote My Local Changes
 
-Since v1.17, the installer backs up locally modified files to `gsd-local-patches/`. Run `/nf:reapply-patches` to merge your changes back.
+Since v1.17, the installer backs up locally modified files to `nf-local-patches/`. Run `/nf:reapply-patches` to merge your changes back.
 
 ### Subagent Appears to Fail but Work Was Done
 

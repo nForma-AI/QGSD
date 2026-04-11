@@ -159,14 +159,14 @@ describe('handleUpstream', () => {
     const mockExec = (cmd, args) => {
       if (args[0] === 'release') {
         return JSON.stringify([
-          { tagName: 'v0.27.0', name: 'v0.27.0', publishedAt: new Date().toISOString(), isPrerelease: false, url: 'https://github.com/gsd-build/get-shit-done/releases/tag/v0.27.0' }
+          { tagName: 'v0.27.0', name: 'v0.27.0', publishedAt: new Date().toISOString(), isPrerelease: false, url: 'https://github.com/nf-build/get-shit-done/releases/tag/v0.27.0' }
         ]);
       }
       return '[]';
     };
 
     const result = handleUpstream(
-      { type: 'upstream', label: 'GSD', repo: 'gsd-build/get-shit-done', coupling: 'tight', filter: { since: '30d' } },
+      { type: 'upstream', label: 'NF', repo: 'nf-build/get-shit-done', coupling: 'tight', filter: { since: '30d' } },
       { execFn: mockExec, basePath: tmpDir }
     );
 

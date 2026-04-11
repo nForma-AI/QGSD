@@ -1,5 +1,5 @@
 /**
- * GSD Tools Tests
+ * NF Tools Tests
  */
 
 const { test, describe, beforeEach, afterEach } = require('node:test');
@@ -8,10 +8,10 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-const TOOLS_PATH = path.join(__dirname, 'gsd-tools.cjs');
+const TOOLS_PATH = path.join(__dirname, 'nf-tools.cjs');
 
-// Helper to run gsd-tools command
-function runGsdTools(args, cwd = process.cwd()) {
+// Helper to run nf-tools command
+function runNfTools(args, cwd = process.cwd()) {
   try {
     const result = execSync(`node "${TOOLS_PATH}" ${args}`, {
       cwd,
@@ -30,7 +30,7 @@ function runGsdTools(args, cwd = process.cwd()) {
 
 // Create temp directory structure
 function createTempProject() {
-  const tmpDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'gsd-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'nf-test-'));
   fs.mkdirSync(path.join(tmpDir, '.planning', 'phases'), { recursive: true });
   return tmpDir;
 }
@@ -51,7 +51,7 @@ describe('history-digest command', () => {
   });
 
   test('empty phases directory returns valid schema', () => {
-    const result = runGsdTools('history-digest', tmpDir);
+    const result = runNfTools('history-digest', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const digest = JSON.parse(result.output);
@@ -92,7 +92,7 @@ key-decisions:
 
     fs.writeFileSync(path.join(phaseDir, '01-01-SUMMARY.md'), summaryContent);
 
-    const result = runGsdTools('history-digest', tmpDir);
+    const result = runNfTools('history-digest', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const digest = JSON.parse(result.output);
@@ -174,7 +174,7 @@ tech-stack:
 `
     );
 
-    const result = runGsdTools('history-digest', tmpDir);
+    const result = runNfTools('history-digest', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const digest = JSON.parse(result.output);
@@ -222,7 +222,7 @@ broken: [unclosed
 `
     );
 
-    const result = runGsdTools('history-digest', tmpDir);
+    const result = runNfTools('history-digest', tmpDir);
     assert.ok(result.success, `Command should succeed despite malformed files: ${result.error}`);
 
     const digest = JSON.parse(result.output);
@@ -247,7 +247,7 @@ provides:
 `
     );
 
-    const result = runGsdTools('history-digest', tmpDir);
+    const result = runNfTools('history-digest', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const digest = JSON.parse(result.output);
@@ -272,7 +272,7 @@ patterns-established: ["Pattern X", "Pattern Y"]
 `
     );
 
-    const result = runGsdTools('history-digest', tmpDir);
+    const result = runNfTools('history-digest', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const digest = JSON.parse(result.output);
@@ -305,7 +305,7 @@ describe('phases list command', () => {
   });
 
   test('empty phases directory returns empty array', () => {
-    const result = runGsdTools('phases list', tmpDir);
+    const result = runNfTools('phases list', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -319,7 +319,7 @@ describe('phases list command', () => {
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '02-api'), { recursive: true });
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '01-foundation'), { recursive: true });
 
-    const result = runGsdTools('phases list', tmpDir);
+    const result = runNfTools('phases list', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -337,7 +337,7 @@ describe('phases list command', () => {
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '02.2-patch'), { recursive: true });
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '03-ui'), { recursive: true });
 
-    const result = runGsdTools('phases list', tmpDir);
+    const result = runNfTools('phases list', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -356,7 +356,7 @@ describe('phases list command', () => {
     fs.writeFileSync(path.join(phaseDir, '01-01-SUMMARY.md'), '# Summary');
     fs.writeFileSync(path.join(phaseDir, 'RESEARCH.md'), '# Research');
 
-    const result = runGsdTools('phases list --type plans', tmpDir);
+    const result = runNfTools('phases list --type plans', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -374,7 +374,7 @@ describe('phases list command', () => {
     fs.writeFileSync(path.join(phaseDir, '01-01-SUMMARY.md'), '# Summary 1');
     fs.writeFileSync(path.join(phaseDir, '01-02-SUMMARY.md'), '# Summary 2');
 
-    const result = runGsdTools('phases list --type summaries', tmpDir);
+    const result = runNfTools('phases list --type summaries', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -393,7 +393,7 @@ describe('phases list command', () => {
     fs.writeFileSync(path.join(phase01, '01-01-PLAN.md'), '# Plan');
     fs.writeFileSync(path.join(phase02, '02-01-PLAN.md'), '# Plan');
 
-    const result = runGsdTools('phases list --type plans --phase 01', tmpDir);
+    const result = runNfTools('phases list --type plans --phase 01', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -436,7 +436,7 @@ Some description here.
 `
     );
 
-    const result = runGsdTools('roadmap get-phase 1', tmpDir);
+    const result = runNfTools('roadmap get-phase 1', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -456,7 +456,7 @@ Some description here.
 `
     );
 
-    const result = runGsdTools('roadmap get-phase 5', tmpDir);
+    const result = runNfTools('roadmap get-phase 5', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -476,7 +476,7 @@ Some description here.
 `
     );
 
-    const result = runGsdTools('roadmap get-phase 2.1', tmpDir);
+    const result = runNfTools('roadmap get-phase 2.1', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -503,7 +503,7 @@ This phase covers:
 `
     );
 
-    const result = runGsdTools('roadmap get-phase 1', tmpDir);
+    const result = runNfTools('roadmap get-phase 1', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -513,7 +513,7 @@ This phase covers:
   });
 
   test('handles missing ROADMAP.md gracefully', () => {
-    const result = runGsdTools('roadmap get-phase 1', tmpDir);
+    const result = runNfTools('roadmap get-phase 1', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -535,7 +535,7 @@ This phase covers:
 `
     );
 
-    const result = runGsdTools('roadmap get-phase 1', tmpDir);
+    const result = runNfTools('roadmap get-phase 1', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -556,7 +556,7 @@ This phase covers:
 `
     );
 
-    const result = runGsdTools('roadmap get-phase 1', tmpDir);
+    const result = runNfTools('roadmap get-phase 1', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -585,7 +585,7 @@ describe('phase next-decimal command', () => {
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '06-feature'), { recursive: true });
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '07-next'), { recursive: true });
 
-    const result = runGsdTools('phase next-decimal 06', tmpDir);
+    const result = runNfTools('phase next-decimal 06', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -598,7 +598,7 @@ describe('phase next-decimal command', () => {
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '06.1-hotfix'), { recursive: true });
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '06.2-patch'), { recursive: true });
 
-    const result = runGsdTools('phase next-decimal 06', tmpDir);
+    const result = runNfTools('phase next-decimal 06', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -611,7 +611,7 @@ describe('phase next-decimal command', () => {
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '06.1-first'), { recursive: true });
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '06.3-third'), { recursive: true });
 
-    const result = runGsdTools('phase next-decimal 06', tmpDir);
+    const result = runNfTools('phase next-decimal 06', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -622,7 +622,7 @@ describe('phase next-decimal command', () => {
   test('handles single-digit phase input', () => {
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '06-feature'), { recursive: true });
 
-    const result = runGsdTools('phase next-decimal 6', tmpDir);
+    const result = runNfTools('phase next-decimal 6', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -633,7 +633,7 @@ describe('phase next-decimal command', () => {
   test('returns error if base phase does not exist', () => {
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '01-start'), { recursive: true });
 
-    const result = runGsdTools('phase next-decimal 06', tmpDir);
+    const result = runNfTools('phase next-decimal 06', tmpDir);
     assert.ok(result.success, `Command should succeed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -660,7 +660,7 @@ describe('phase-plan-index command', () => {
   test('empty phase directory returns empty plans array', () => {
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '03-api'), { recursive: true });
 
-    const result = runGsdTools('phase-plan-index 03', tmpDir);
+    const result = runNfTools('phase-plan-index 03', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -689,7 +689,7 @@ files-modified: [prisma/schema.prisma, src/lib/db.ts]
 `
     );
 
-    const result = runGsdTools('phase-plan-index 03', tmpDir);
+    const result = runNfTools('phase-plan-index 03', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -743,7 +743,7 @@ objective: API routes
 `
     );
 
-    const result = runGsdTools('phase-plan-index 03', tmpDir);
+    const result = runNfTools('phase-plan-index 03', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -763,7 +763,7 @@ objective: API routes
     // Plan without summary
     fs.writeFileSync(path.join(phaseDir, '03-02-PLAN.md'), `---\nwave: 2\n---\n## Task 1`);
 
-    const result = runGsdTools('phase-plan-index 03', tmpDir);
+    const result = runNfTools('phase-plan-index 03', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -788,7 +788,7 @@ objective: Manual review needed
 `
     );
 
-    const result = runGsdTools('phase-plan-index 03', tmpDir);
+    const result = runNfTools('phase-plan-index 03', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -797,7 +797,7 @@ objective: Manual review needed
   });
 
   test('phase not found returns error', () => {
-    const result = runGsdTools('phase-plan-index 99', tmpDir);
+    const result = runNfTools('phase-plan-index 99', tmpDir);
     assert.ok(result.success, `Command should succeed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -821,7 +821,7 @@ describe('state-snapshot command', () => {
   });
 
   test('missing STATE.md returns error', () => {
-    const result = runGsdTools('state-snapshot', tmpDir);
+    const result = runNfTools('state-snapshot', tmpDir);
     assert.ok(result.success, `Command should succeed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -845,7 +845,7 @@ describe('state-snapshot command', () => {
 `
     );
 
-    const result = runGsdTools('state-snapshot', tmpDir);
+    const result = runNfTools('state-snapshot', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -875,7 +875,7 @@ describe('state-snapshot command', () => {
 `
     );
 
-    const result = runGsdTools('state-snapshot', tmpDir);
+    const result = runNfTools('state-snapshot', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -899,7 +899,7 @@ describe('state-snapshot command', () => {
 `
     );
 
-    const result = runGsdTools('state-snapshot', tmpDir);
+    const result = runNfTools('state-snapshot', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -924,7 +924,7 @@ describe('state-snapshot command', () => {
 `
     );
 
-    const result = runGsdTools('state-snapshot', tmpDir);
+    const result = runNfTools('state-snapshot', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -943,7 +943,7 @@ describe('state-snapshot command', () => {
 `
     );
 
-    const result = runGsdTools('state-snapshot', tmpDir);
+    const result = runNfTools('state-snapshot', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -967,7 +967,7 @@ describe('summary-extract command', () => {
   });
 
   test('missing file returns error', () => {
-    const result = runGsdTools('summary-extract .planning/phases/01-test/01-01-SUMMARY.md', tmpDir);
+    const result = runNfTools('summary-extract .planning/phases/01-test/01-01-SUMMARY.md', tmpDir);
     assert.ok(result.success, `Command should succeed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1003,7 +1003,7 @@ Full summary content here.
 `
     );
 
-    const result = runGsdTools('summary-extract .planning/phases/01-foundation/01-01-SUMMARY.md', tmpDir);
+    const result = runNfTools('summary-extract .planning/phases/01-foundation/01-01-SUMMARY.md', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1036,7 +1036,7 @@ key-decisions:
 `
     );
 
-    const result = runGsdTools('summary-extract .planning/phases/01-foundation/01-01-SUMMARY.md --fields one_liner,key_files', tmpDir);
+    const result = runNfTools('summary-extract .planning/phases/01-foundation/01-01-SUMMARY.md --fields one_liner,key_files', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1061,7 +1061,7 @@ one-liner: Minimal summary
 `
     );
 
-    const result = runGsdTools('summary-extract .planning/phases/01-foundation/01-01-SUMMARY.md', tmpDir);
+    const result = runNfTools('summary-extract .planning/phases/01-foundation/01-01-SUMMARY.md', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1086,7 +1086,7 @@ key-decisions:
 `
     );
 
-    const result = runGsdTools('summary-extract .planning/phases/01-foundation/01-01-SUMMARY.md', tmpDir);
+    const result = runNfTools('summary-extract .planning/phases/01-foundation/01-01-SUMMARY.md', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1117,7 +1117,7 @@ describe('init commands', () => {
     fs.mkdirSync(phaseDir, { recursive: true });
     fs.writeFileSync(path.join(phaseDir, '03-01-PLAN.md'), '# Plan');
 
-    const result = runGsdTools('init execute-phase 03', tmpDir);
+    const result = runNfTools('init execute-phase 03', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1134,7 +1134,7 @@ describe('init commands', () => {
     fs.writeFileSync(path.join(phaseDir, '03-VERIFICATION.md'), '# Verification');
     fs.writeFileSync(path.join(phaseDir, '03-UAT.md'), '# UAT');
 
-    const result = runGsdTools('init plan-phase 03', tmpDir);
+    const result = runNfTools('init plan-phase 03', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1148,7 +1148,7 @@ describe('init commands', () => {
   });
 
   test('init progress returns file paths', () => {
-    const result = runGsdTools('init progress', tmpDir);
+    const result = runNfTools('init progress', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1166,7 +1166,7 @@ describe('init commands', () => {
     fs.writeFileSync(path.join(phaseDir, '03-VERIFICATION.md'), '# Verification');
     fs.writeFileSync(path.join(phaseDir, '03-UAT.md'), '# UAT');
 
-    const result = runGsdTools('init phase-op 03', tmpDir);
+    const result = runNfTools('init phase-op 03', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1183,7 +1183,7 @@ describe('init commands', () => {
     const phaseDir = path.join(tmpDir, '.planning', 'phases', '03-api');
     fs.mkdirSync(phaseDir, { recursive: true });
 
-    const result = runGsdTools('init plan-phase 03', tmpDir);
+    const result = runNfTools('init plan-phase 03', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1208,7 +1208,7 @@ describe('roadmap analyze command', () => {
   });
 
   test('missing ROADMAP.md returns error', () => {
-    const result = runGsdTools('roadmap analyze', tmpDir);
+    const result = runNfTools('roadmap analyze', tmpDir);
     assert.ok(result.success, `Command should succeed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1241,7 +1241,7 @@ describe('roadmap analyze command', () => {
     fs.mkdirSync(p2, { recursive: true });
     fs.writeFileSync(path.join(p2, '02-01-PLAN.md'), '# Plan');
 
-    const result = runGsdTools('roadmap analyze', tmpDir);
+    const result = runNfTools('roadmap analyze', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1271,7 +1271,7 @@ describe('roadmap analyze command', () => {
 `
     );
 
-    const result = runGsdTools('roadmap analyze', tmpDir);
+    const result = runNfTools('roadmap analyze', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1312,7 +1312,7 @@ describe('phase add command', () => {
 `
     );
 
-    const result = runGsdTools('phase add User Dashboard', tmpDir);
+    const result = runNfTools('phase add User Dashboard', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1337,7 +1337,7 @@ describe('phase add command', () => {
       `# Roadmap v1.0\n`
     );
 
-    const result = runGsdTools('phase add Initial Setup', tmpDir);
+    const result = runNfTools('phase add Initial Setup', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1374,7 +1374,7 @@ describe('phase insert command', () => {
     );
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '01-foundation'), { recursive: true });
 
-    const result = runGsdTools('phase insert 1 Fix Critical Bug', tmpDir);
+    const result = runNfTools('phase insert 1 Fix Critical Bug', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1407,7 +1407,7 @@ describe('phase insert command', () => {
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '01-foundation'), { recursive: true });
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '01.1-hotfix'), { recursive: true });
 
-    const result = runGsdTools('phase insert 1 Another Fix', tmpDir);
+    const result = runNfTools('phase insert 1 Another Fix', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1420,7 +1420,7 @@ describe('phase insert command', () => {
       `# Roadmap\n### Phase 1: Test\n**Goal:** Test\n`
     );
 
-    const result = runGsdTools('phase insert 99 Fix Something', tmpDir);
+    const result = runNfTools('phase insert 99 Fix Something', tmpDir);
     assert.ok(!result.success, 'should fail for missing phase');
     assert.ok(result.error.includes('not found'), 'error mentions not found');
   });
@@ -1440,7 +1440,7 @@ describe('phase insert command', () => {
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '09.05-existing'), { recursive: true });
 
     // Pass unpadded "9.05" but roadmap has "09.05"
-    const result = runGsdTools('phase insert 9.05 Padding Test', tmpDir);
+    const result = runNfTools('phase insert 9.05 Padding Test', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1466,7 +1466,7 @@ describe('phase insert command', () => {
     );
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '05-feature-work'), { recursive: true });
 
-    const result = runGsdTools('phase insert 5 Hotfix', tmpDir);
+    const result = runNfTools('phase insert 5 Hotfix', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1522,7 +1522,7 @@ describe('phase remove command', () => {
     fs.writeFileSync(path.join(p3, '03-02-PLAN.md'), '# Plan 2');
 
     // Remove phase 2
-    const result = runGsdTools('phase remove 2', tmpDir);
+    const result = runNfTools('phase remove 2', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1566,12 +1566,12 @@ describe('phase remove command', () => {
     );
 
     // Should fail without --force
-    const result = runGsdTools('phase remove 1', tmpDir);
+    const result = runNfTools('phase remove 1', tmpDir);
     assert.ok(!result.success, 'should fail without --force');
     assert.ok(result.error.includes('executed plan'), 'error mentions executed plans');
 
     // Should succeed with --force
-    const forceResult = runGsdTools('phase remove 1 --force', tmpDir);
+    const forceResult = runNfTools('phase remove 1 --force', tmpDir);
     assert.ok(forceResult.success, `Force remove failed: ${forceResult.error}`);
   });
 
@@ -1586,7 +1586,7 @@ describe('phase remove command', () => {
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '06.2-fix-b'), { recursive: true });
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '06.3-fix-c'), { recursive: true });
 
-    const result = runGsdTools('phase remove 6.2', tmpDir);
+    const result = runNfTools('phase remove 6.2', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     // 06.3 should become 06.2
@@ -1612,7 +1612,7 @@ describe('phase remove command', () => {
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '01-a'), { recursive: true });
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '02-b'), { recursive: true });
 
-    runGsdTools('phase remove 2', tmpDir);
+    runNfTools('phase remove 2', tmpDir);
 
     const state = fs.readFileSync(path.join(tmpDir, '.planning', 'STATE.md'), 'utf-8');
     assert.ok(state.includes('**Total Phases:** 1'), 'total phases should be decremented');
@@ -1662,7 +1662,7 @@ describe('phase complete command', () => {
     fs.writeFileSync(path.join(p1, '01-VERIFICATION.md'), '---\nstatus: passed\n---');
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '02-api'), { recursive: true });
 
-    const result = runGsdTools('phase complete 1', tmpDir);
+    const result = runNfTools('phase complete 1', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1700,7 +1700,7 @@ describe('phase complete command', () => {
     fs.writeFileSync(path.join(p1, '01-01-SUMMARY.md'), '# Summary');
     fs.writeFileSync(path.join(p1, '01-VERIFICATION.md'), '---\nstatus: passed\n---');
 
-    const result = runGsdTools('phase complete 1', tmpDir);
+    const result = runNfTools('phase complete 1', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1737,7 +1737,7 @@ describe('phase complete command', () => {
     fs.writeFileSync(path.join(p1, '01-VERIFICATION.md'), '---\nstatus: passed\n---');
     // NO Phase 2 directory on disk
 
-    const result = runGsdTools('phase complete 1', tmpDir);
+    const result = runNfTools('phase complete 1', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1776,7 +1776,7 @@ describe('phase complete command', () => {
     fs.writeFileSync(path.join(p1, 'v0.28-01-VERIFICATION.md'), '---\nstatus: passed\n---');
     // NO v0.28-02 directory on disk
 
-    const result = runGsdTools('phase complete v0.28-01', tmpDir);
+    const result = runNfTools('phase complete v0.28-01', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1806,7 +1806,7 @@ describe('phase complete command', () => {
     fs.writeFileSync(path.join(p1, '01-VERIFICATION.md'), '---\nstatus: passed\n---');
     // NO other phase directories
 
-    const result = runGsdTools('phase complete 1', tmpDir);
+    const result = runNfTools('phase complete 1', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -1871,7 +1871,7 @@ describe('phase complete command', () => {
     fs.writeFileSync(path.join(p1, '01-VERIFICATION.md'), '---\nstatus: passed\n---');
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '02-api'), { recursive: true });
 
-    const result = runGsdTools('phase complete 1', tmpDir);
+    const result = runNfTools('phase complete 1', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const req = fs.readFileSync(path.join(tmpDir, '.planning', 'REQUIREMENTS.md'), 'utf-8');
@@ -1945,7 +1945,7 @@ describe('phase complete command', () => {
     fs.writeFileSync(path.join(p1, '01-VERIFICATION.md'), '---\nstatus: passed\n---');
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '02-api'), { recursive: true });
 
-    const result = runGsdTools('phase complete 1', tmpDir);
+    const result = runNfTools('phase complete 1', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const req = fs.readFileSync(path.join(tmpDir, '.planning', 'REQUIREMENTS.md'), 'utf-8');
@@ -2002,7 +2002,7 @@ describe('phase complete command', () => {
     fs.writeFileSync(path.join(p1, '01-01-SUMMARY.md'), '# Summary');
     fs.writeFileSync(path.join(p1, '01-VERIFICATION.md'), '---\nstatus: passed\n---');
 
-    const result = runGsdTools('phase complete 1', tmpDir);
+    const result = runNfTools('phase complete 1', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     // REQUIREMENTS.md should be unchanged
@@ -2034,7 +2034,7 @@ describe('phase complete command', () => {
     fs.writeFileSync(path.join(p1, '01-01-SUMMARY.md'), '# Summary');
     fs.writeFileSync(path.join(p1, '01-VERIFICATION.md'), '---\nstatus: passed\n---');
 
-    const result = runGsdTools('phase complete 1', tmpDir);
+    const result = runNfTools('phase complete 1', tmpDir);
     assert.ok(result.success, `Command should succeed even without REQUIREMENTS.md: ${result.error}`);
   });
 
@@ -2054,7 +2054,7 @@ describe('phase complete command', () => {
     fs.writeFileSync(path.join(p1, '01-01-SUMMARY.md'), '# Summary');
     // Deliberately NO VERIFICATION.md
 
-    const result = runGsdTools('phase complete 1', tmpDir);
+    const result = runNfTools('phase complete 1', tmpDir);
     assert.ok(!result.success, 'should fail without VERIFICATION.md');
     assert.ok(result.error.includes('VERIFICATION.md'), 'error should mention VERIFICATION.md');
   });
@@ -2096,7 +2096,7 @@ describe('milestone complete command', () => {
       `---\none-liner: Set up project infrastructure\n---\n# Summary\n`
     );
 
-    const result = runGsdTools('milestone complete v1.0 --name MVP Foundation', tmpDir);
+    const result = runNfTools('milestone complete v1.0 --name MVP Foundation', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -2139,7 +2139,7 @@ describe('milestone complete command', () => {
       `# State\n\n**Status:** In progress\n**Last Activity:** 2025-01-01\n**Last Activity Description:** Working\n`
     );
 
-    const result = runGsdTools('milestone complete v1.0 --name Beta', tmpDir);
+    const result = runNfTools('milestone complete v1.0 --name Beta', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const milestones = fs.readFileSync(path.join(tmpDir, '.planning', 'MILESTONES.md'), 'utf-8');
@@ -2172,7 +2172,7 @@ describe('validate consistency command', () => {
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '02-b'), { recursive: true });
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '03-c'), { recursive: true });
 
-    const result = runGsdTools('validate consistency', tmpDir);
+    const result = runNfTools('validate consistency', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -2188,7 +2188,7 @@ describe('validate consistency command', () => {
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '01-a'), { recursive: true });
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '02-orphan'), { recursive: true });
 
-    const result = runGsdTools('validate consistency', tmpDir);
+    const result = runNfTools('validate consistency', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -2207,7 +2207,7 @@ describe('validate consistency command', () => {
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '01-a'), { recursive: true });
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '03-c'), { recursive: true });
 
-    const result = runGsdTools('validate consistency', tmpDir);
+    const result = runNfTools('validate consistency', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -2240,7 +2240,7 @@ describe('FIX-04: decimal phase number parsing', () => {
     );
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '06.1-decimal-fix'), { recursive: true });
 
-    const result = runGsdTools('validate consistency', tmpDir);
+    const result = runNfTools('validate consistency', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const data = JSON.parse(result.output);
@@ -2266,7 +2266,7 @@ describe('FIX-04: decimal phase number parsing', () => {
     );
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '06.1-decimal-fix'), { recursive: true });
 
-    const result = runGsdTools('validate health', tmpDir);
+    const result = runNfTools('validate health', tmpDir);
     // validate health exits 0 even with warnings
     const data = JSON.parse(result.output);
 
@@ -2303,7 +2303,7 @@ describe('progress command', () => {
     fs.writeFileSync(path.join(p1, '01-01-SUMMARY.md'), '# Done');
     fs.writeFileSync(path.join(p1, '01-02-PLAN.md'), '# Plan 2');
 
-    const result = runGsdTools('progress json', tmpDir);
+    const result = runNfTools('progress json', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -2324,7 +2324,7 @@ describe('progress command', () => {
     fs.writeFileSync(path.join(p1, '01-01-PLAN.md'), '# Plan');
     fs.writeFileSync(path.join(p1, '01-01-SUMMARY.md'), '# Done');
 
-    const result = runGsdTools('progress bar --raw', tmpDir);
+    const result = runNfTools('progress bar --raw', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
     assert.ok(result.output.includes('1/1'), 'should include count');
     assert.ok(result.output.includes('100%'), 'should include 100%');
@@ -2339,7 +2339,7 @@ describe('progress command', () => {
     fs.mkdirSync(p1, { recursive: true });
     fs.writeFileSync(path.join(p1, '01-01-PLAN.md'), '# Plan');
 
-    const result = runGsdTools('progress table --raw', tmpDir);
+    const result = runNfTools('progress table --raw', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
     assert.ok(result.output.includes('Phase'), 'should have table header');
     assert.ok(result.output.includes('foundation'), 'should include phase name');
@@ -2369,7 +2369,7 @@ describe('todo complete command', () => {
       `title: Add dark mode\narea: ui\ncreated: 2025-01-01\n`
     );
 
-    const result = runGsdTools('todo complete add-dark-mode.md', tmpDir);
+    const result = runNfTools('todo complete add-dark-mode.md', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -2394,7 +2394,7 @@ describe('todo complete command', () => {
   });
 
   test('fails for nonexistent todo', () => {
-    const result = runGsdTools('todo complete nonexistent.md', tmpDir);
+    const result = runNfTools('todo complete nonexistent.md', tmpDir);
     assert.ok(!result.success, 'should fail');
     assert.ok(result.error.includes('not found'), 'error mentions not found');
   });
@@ -2418,7 +2418,7 @@ describe('scaffold command', () => {
   test('scaffolds context file', () => {
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '03-api'), { recursive: true });
 
-    const result = runGsdTools('scaffold context --phase 3', tmpDir);
+    const result = runNfTools('scaffold context --phase 3', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -2437,7 +2437,7 @@ describe('scaffold command', () => {
   test('scaffolds UAT file', () => {
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '03-api'), { recursive: true });
 
-    const result = runGsdTools('scaffold uat --phase 3', tmpDir);
+    const result = runNfTools('scaffold uat --phase 3', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -2454,7 +2454,7 @@ describe('scaffold command', () => {
   test('scaffolds verification file', () => {
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '03-api'), { recursive: true });
 
-    const result = runGsdTools('scaffold verification --phase 3', tmpDir);
+    const result = runNfTools('scaffold verification --phase 3', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -2468,7 +2468,7 @@ describe('scaffold command', () => {
   });
 
   test('scaffolds phase directory', () => {
-    const result = runGsdTools('scaffold phase-dir --phase 5 --name User Dashboard', tmpDir);
+    const result = runNfTools('scaffold phase-dir --phase 5 --name User Dashboard', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -2484,7 +2484,7 @@ describe('scaffold command', () => {
     fs.mkdirSync(phaseDir, { recursive: true });
     fs.writeFileSync(path.join(phaseDir, '03-CONTEXT.md'), '# Existing content');
 
-    const result = runGsdTools('scaffold context --phase 3', tmpDir);
+    const result = runNfTools('scaffold context --phase 3', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -2516,7 +2516,7 @@ describe('activity commands', () => {
       quorum_round: 1,
     });
 
-    const result = runGsdTools(`activity-set '${json}'`, tmpDir);
+    const result = runNfTools(`activity-set '${json}'`, tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -2537,7 +2537,7 @@ describe('activity commands', () => {
   test('TC2: activity-set with minimal fields (activity only) writes file with activity + updated', () => {
     const json = JSON.stringify({ activity: 'plan_phase' });
 
-    const result = runGsdTools(`activity-set '${json}'`, tmpDir);
+    const result = runNfTools(`activity-set '${json}'`, tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const filePath = path.join(tmpDir, '.planning', 'current-activity.json');
@@ -2553,19 +2553,19 @@ describe('activity commands', () => {
 
   test('TC3: activity-set then activity-clear removes file; activity-get returns {}', () => {
     const json = JSON.stringify({ activity: 'execute_phase', sub_activity: 'debugging' });
-    runGsdTools(`activity-set '${json}'`, tmpDir);
+    runNfTools(`activity-set '${json}'`, tmpDir);
 
     const filePath = path.join(tmpDir, '.planning', 'current-activity.json');
     assert.ok(fs.existsSync(filePath), 'file should exist after activity-set');
 
-    const clearResult = runGsdTools('activity-clear', tmpDir);
+    const clearResult = runNfTools('activity-clear', tmpDir);
     assert.ok(clearResult.success, `activity-clear failed: ${clearResult.error}`);
     const clearOutput = JSON.parse(clearResult.output);
     assert.strictEqual(clearOutput.cleared, true, 'should return cleared: true');
 
     assert.ok(!fs.existsSync(filePath), 'file should be removed after activity-clear');
 
-    const getResult = runGsdTools('activity-get', tmpDir);
+    const getResult = runNfTools('activity-get', tmpDir);
     assert.ok(getResult.success, `activity-get failed: ${getResult.error}`);
     const getOutput = JSON.parse(getResult.output);
     assert.deepStrictEqual(getOutput, {}, 'activity-get should return empty object when file missing');
@@ -2575,7 +2575,7 @@ describe('activity commands', () => {
     const filePath = path.join(tmpDir, '.planning', 'current-activity.json');
     assert.ok(!fs.existsSync(filePath), 'file should not exist before test');
 
-    const result = runGsdTools('activity-clear', tmpDir);
+    const result = runNfTools('activity-clear', tmpDir);
     assert.ok(result.success, `activity-clear failed on missing file: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -2608,8 +2608,8 @@ describe('maintain-tests batch command', () => {
     const files = Array.from({ length: 20 }, (_, i) => `/project/test${i + 1}.test.js`);
     const discoverPath = writeDiscoverJson(tmpDir, files);
 
-    const result1 = runGsdTools(`maintain-tests batch --input-file "${discoverPath}" --size 5 --seed 12345`);
-    const result2 = runGsdTools(`maintain-tests batch --input-file "${discoverPath}" --size 5 --seed 12345`);
+    const result1 = runNfTools(`maintain-tests batch --input-file "${discoverPath}" --size 5 --seed 12345`);
+    const result2 = runNfTools(`maintain-tests batch --input-file "${discoverPath}" --size 5 --seed 12345`);
 
     assert.ok(result1.success, `First run failed: ${result1.error}`);
     assert.ok(result2.success, `Second run failed: ${result2.error}`);
@@ -2626,7 +2626,7 @@ describe('maintain-tests batch command', () => {
     const files = Array.from({ length: 250 }, (_, i) => `/project/test${i + 1}.test.js`);
     const discoverPath = writeDiscoverJson(tmpDir, files);
 
-    const result = runGsdTools(`maintain-tests batch --input-file "${discoverPath}" --size 100 --seed 1`);
+    const result = runNfTools(`maintain-tests batch --input-file "${discoverPath}" --size 100 --seed 1`);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const out = JSON.parse(result.output);
@@ -2643,7 +2643,7 @@ describe('maintain-tests batch command', () => {
     const excludePath = path.join(tmpDir, 'exclude.json');
     fs.writeFileSync(excludePath, JSON.stringify(excludedFiles), 'utf-8');
 
-    const result = runGsdTools(`maintain-tests batch --input-file "${discoverPath}" --exclude-file "${excludePath}" --size 100 --seed 1`);
+    const result = runNfTools(`maintain-tests batch --input-file "${discoverPath}" --exclude-file "${excludePath}" --size 100 --seed 1`);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const out = JSON.parse(result.output);
@@ -2663,7 +2663,7 @@ describe('maintain-tests batch command', () => {
     // Cleanup before test
     try { fs.unlinkSync(manifestPath); } catch { /* ok */ }
 
-    const result = runGsdTools(`maintain-tests batch --input-file "${discoverPath}" --size 100 --seed 1 --manifest-file "${manifestPath}"`);
+    const result = runNfTools(`maintain-tests batch --input-file "${discoverPath}" --size 100 --seed 1 --manifest-file "${manifestPath}"`);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     assert.ok(fs.existsSync(manifestPath), 'manifest file should exist at specified path');
@@ -2678,7 +2678,7 @@ describe('maintain-tests batch command', () => {
   test('TC5: Empty input — returns zero batches', () => {
     const discoverPath = writeDiscoverJson(tmpDir, []);
 
-    const result = runGsdTools(`maintain-tests batch --input-file "${discoverPath}" --size 100 --seed 1`);
+    const result = runNfTools(`maintain-tests batch --input-file "${discoverPath}" --size 100 --seed 1`);
     assert.ok(result.success, `Command should succeed with empty input: ${result.error}`);
 
     const out = JSON.parse(result.output);
@@ -2690,7 +2690,7 @@ describe('maintain-tests batch command', () => {
   test('TC6: Single file smaller than batch size — one batch with one file', () => {
     const discoverPath = writeDiscoverJson(tmpDir, ['/project/only.test.js']);
 
-    const result = runGsdTools(`maintain-tests batch --input-file "${discoverPath}" --size 100 --seed 1`);
+    const result = runNfTools(`maintain-tests batch --input-file "${discoverPath}" --size 100 --seed 1`);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const out = JSON.parse(result.output);
@@ -2715,7 +2715,7 @@ describe('maintain-tests discover command', () => {
     fs.writeFileSync(path.join(tmpDir, 'jest.config.js'), 'module.exports = {};');
     fs.writeFileSync(path.join(tmpDir, 'playwright.config.js'), 'module.exports = {};');
 
-    const result = runGsdTools(`maintain-tests discover --runner jest --dir "${tmpDir}"`);
+    const result = runNfTools(`maintain-tests discover --runner jest --dir "${tmpDir}"`);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -2729,7 +2729,7 @@ describe('maintain-tests discover command', () => {
 
   test('TC2: No config files returns empty runners with warning', () => {
     // tmpDir has no jest/playwright/pytest config files by default
-    const result = runGsdTools(`maintain-tests discover --dir "${tmpDir}"`);
+    const result = runNfTools(`maintain-tests discover --dir "${tmpDir}"`);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -2744,7 +2744,7 @@ describe('maintain-tests discover command', () => {
     // Clean up any pre-existing file
     try { fs.unlinkSync(outputFile); } catch (e) { /* ok */ }
 
-    const result = runGsdTools(`maintain-tests discover --runner jest --dir "${tmpDir}" --output-file "${outputFile}"`);
+    const result = runNfTools(`maintain-tests discover --runner jest --dir "${tmpDir}" --output-file "${outputFile}"`);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     assert.ok(fs.existsSync(outputFile), 'output file should exist at specified path');
@@ -2766,7 +2766,7 @@ describe('maintain-tests discover command', () => {
     // via a simple two-runner detect scenario where only one runner is available
     fs.writeFileSync(path.join(tmpDir, 'jest.config.js'), 'module.exports = {};');
 
-    const result = runGsdTools(`maintain-tests discover --dir "${tmpDir}"`);
+    const result = runNfTools(`maintain-tests discover --dir "${tmpDir}"`);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -2789,7 +2789,7 @@ describe('maintain-tests discover command', () => {
     }, null, 2);
     fs.writeFileSync(path.join(tmpDir, 'package.json'), pkgJson);
 
-    const result = runGsdTools(`maintain-tests discover --dir "${tmpDir}"`);
+    const result = runNfTools(`maintain-tests discover --dir "${tmpDir}"`);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -2902,7 +2902,7 @@ describe('maintain-tests run-batch command', () => {
 
   test('TC3: run-batch output schema validation — empty batch returns required keys', () => {
     const manifestPath = writeBatchManifest(tmpDir, { files: [] });
-    const result = runGsdTools(`maintain-tests run-batch --batch-file "${manifestPath}"`);
+    const result = runNfTools(`maintain-tests run-batch --batch-file "${manifestPath}"`);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const out = JSON.parse(result.output);
@@ -2954,7 +2954,7 @@ describe('maintain-tests run-batch command', () => {
     // Cleanup before test
     try { fs.unlinkSync(outputFile); } catch (e) { /* ok */ }
 
-    const result = runGsdTools(`maintain-tests run-batch --batch-file "${manifestPath}" --output-file "${outputFile}"`);
+    const result = runNfTools(`maintain-tests run-batch --batch-file "${manifestPath}" --output-file "${outputFile}"`);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     assert.ok(fs.existsSync(outputFile), 'output file should exist at specified path');
@@ -2970,7 +2970,7 @@ describe('maintain-tests run-batch command', () => {
 
   test('TC6: --env flag is accepted without error', () => {
     const manifestPath = writeBatchManifest(tmpDir, { files: [] });
-    const result = runGsdTools(`maintain-tests run-batch --batch-file "${manifestPath}" --env MY_VAR=hello`);
+    const result = runNfTools(`maintain-tests run-batch --batch-file "${manifestPath}" --env MY_VAR=hello`);
     assert.ok(result.success, `Command should accept --env without crashing: ${result.error}`);
 
     // Output must still be valid JSON (no crash from env parsing)
@@ -2988,7 +2988,7 @@ describe('maintain-tests integration — monorepo cross-discovery', () => {
   let tmpDir;
 
   beforeEach(() => {
-    tmpDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'gsd-monorepo-'));
+    tmpDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'nf-monorepo-'));
     // Create a monorepo fixture with both jest and playwright configs
     fs.writeFileSync(path.join(tmpDir, 'jest.config.js'), 'module.exports = {};');
     fs.writeFileSync(path.join(tmpDir, 'playwright.config.js'), 'module.exports = {};');
@@ -3020,7 +3020,7 @@ describe('maintain-tests integration — monorepo cross-discovery', () => {
     // Direct deduplication test: create a JSON with intentional duplicates and verify
     // that the batch command still accepts it (batch does not de-dup; discover does).
     // The real test is the discover output invariant.
-    const result = runGsdTools(`maintain-tests discover --dir "${tmpDir}"`);
+    const result = runNfTools(`maintain-tests discover --dir "${tmpDir}"`);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -3047,7 +3047,7 @@ describe('maintain-tests integration — monorepo cross-discovery', () => {
   test('TC-MONOREPO-2: --runner jest flag prevents cross-framework contamination', () => {
     // Both jest.config.js and playwright.config.js are in tmpDir.
     // With --runner jest, only jest CLI should be invoked; playwright must be absent.
-    const result = runGsdTools(`maintain-tests discover --runner jest --dir "${tmpDir}"`);
+    const result = runNfTools(`maintain-tests discover --runner jest --dir "${tmpDir}"`);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -3065,7 +3065,7 @@ describe('maintain-tests integration — monorepo cross-discovery', () => {
     // In auto mode (no --runner flag), both jest.config.js and playwright.config.js
     // are present, so both should be detected and appear in runners.
     // CLI invocations may fail gracefully if tools not installed — that is expected.
-    const result = runGsdTools(`maintain-tests discover --dir "${tmpDir}"`);
+    const result = runNfTools(`maintain-tests discover --dir "${tmpDir}"`);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -3090,12 +3090,12 @@ describe('maintain-tests integration — monorepo cross-discovery', () => {
 
 describe('maintain-tests integration — pytest parametrized ID parsing', () => {
   // These tests exercise the pytest output parser logic directly via a helper script.
-  // The parser logic (extracted from invokePytest in gsd-tools.cjs) splits on "::",
+  // The parser logic (extracted from invokePytest in nf-tools.cjs) splits on "::",
   // takes index 0 as file path, and deduplicates. We replicate the parser here to
   // verify correctness with fixture inputs — this is Option A from the plan.
 
   function parsePytestCollectOutput(stdout, cwd) {
-    // Replicates the parsing logic from invokePytest in gsd-tools.cjs:
+    // Replicates the parsing logic from invokePytest in nf-tools.cjs:
     // split by newline, filter ERRORS/separators/empty, split on "::", take index 0.
     const lines = stdout.split('\n');
     const files = new Set();
@@ -3203,7 +3203,7 @@ describe('maintain-tests integration — buffer overflow regression', () => {
   let tmpDir;
 
   beforeEach(() => {
-    tmpDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'gsd-buffer-'));
+    tmpDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'nf-buffer-'));
   });
 
   afterEach(() => {
@@ -3220,7 +3220,7 @@ describe('maintain-tests integration — buffer overflow regression', () => {
       'for (let i = 0; i < 2000; i++) process.stdout.write(line); // 2MB output',
     ].join('\n'), 'utf-8');
 
-    // Run via gsd-tools maintain-tests run-batch with an empty batch — this exercises
+    // Run via nf-tools maintain-tests run-batch with an empty batch — this exercises
     // spawnToFile indirectly. For a direct test we call node with the large-output script
     // via a run-batch manifest pointing to the script as a "test file".
     // However, since run-batch expects a real test runner, we test spawnToFile directly
@@ -3244,7 +3244,7 @@ describe('maintain-tests integration — buffer overflow regression', () => {
     const manifestPath = path.join(tmpDir, 'empty-manifest.json');
     fs.writeFileSync(manifestPath, manifestContent, 'utf-8');
 
-    const result = runGsdTools(`maintain-tests run-batch --batch-file "${manifestPath}"`);
+    const result = runNfTools(`maintain-tests run-batch --batch-file "${manifestPath}"`);
     assert.ok(result.success, `TC-BUFFER-1: run-batch should not crash on empty batch: ${result.error}`);
 
     const out = JSON.parse(result.output);
@@ -3292,7 +3292,7 @@ describe('maintain-tests integration — buffer overflow regression', () => {
       batch_size: 50,
     }), 'utf-8');
 
-    const result = runGsdTools(`maintain-tests run-batch --batch-file "${manifestPath}"`);
+    const result = runNfTools(`maintain-tests run-batch --batch-file "${manifestPath}"`);
     assert.ok(result.success, `TC-BUFFER-2: run-batch must complete without crash: ${result.error}`);
 
     const out = JSON.parse(result.output);
@@ -3321,7 +3321,7 @@ describe('maintain-tests batch \u2014 runner field propagation', () => {
       test_files: ['/project/a.spec.ts', '/project/b.spec.ts', '/project/c.spec.ts'],
       total_count: 3,
     }), 'utf-8');
-    const result = runGsdTools('maintain-tests batch --input-file "' + discoverPath + '" --size 10 --seed 1', tmpDir);
+    const result = runNfTools('maintain-tests batch --input-file "' + discoverPath + '" --size 10 --seed 1', tmpDir);
     assert.ok(result.success, 'TC-RUNNER-1: batch must succeed: ' + result.error);
     const out = JSON.parse(result.output);
     assert.ok(out.batches.length > 0, 'TC-RUNNER-1: must have at least one batch');
@@ -3337,7 +3337,7 @@ describe('maintain-tests batch \u2014 runner field propagation', () => {
       test_files: ['/project/test_a.py', '/project/test_b.py'],
       total_count: 2,
     }), 'utf-8');
-    const result = runGsdTools('maintain-tests batch --input-file "' + discoverPath + '" --size 10 --seed 1', tmpDir);
+    const result = runNfTools('maintain-tests batch --input-file "' + discoverPath + '" --size 10 --seed 1', tmpDir);
     assert.ok(result.success, 'TC-RUNNER-2: batch must succeed: ' + result.error);
     const out = JSON.parse(result.output);
     assert.ok(out.batches.length > 0, 'TC-RUNNER-2: must have at least one batch');
@@ -3351,7 +3351,7 @@ describe('maintain-tests batch \u2014 runner field propagation', () => {
       test_files: ['/project/a.test.js'],
       total_count: 1,
     }), 'utf-8');
-    const result = runGsdTools('maintain-tests batch --input-file "' + discoverPath + '" --size 10 --seed 1', tmpDir);
+    const result = runNfTools('maintain-tests batch --input-file "' + discoverPath + '" --size 10 --seed 1', tmpDir);
     assert.ok(result.success, 'TC-RUNNER-3: batch must succeed: ' + result.error);
     const out = JSON.parse(result.output);
     assert.strictEqual(out.batches[0].runner, 'jest', 'TC-RUNNER-3: empty runners should default to jest');
@@ -3383,7 +3383,7 @@ describe('maintain-tests run-batch \u2014 --batch-index flag', () => {
 
   test('TC-BATCHIDX-1: --batch-index 0 executes batches[0] (default behavior)', () => {
     const manifestPath = writeManifest(tmpDir, 3);
-    const result = runGsdTools('maintain-tests run-batch --batch-file "' + manifestPath + '" --batch-index 0', tmpDir);
+    const result = runNfTools('maintain-tests run-batch --batch-file "' + manifestPath + '" --batch-index 0', tmpDir);
     assert.ok(result.success, 'TC-BATCHIDX-1: run-batch must succeed: ' + result.error);
     const out = JSON.parse(result.output);
     assert.ok(Object.prototype.hasOwnProperty.call(out, 'executed_count'), 'TC-BATCHIDX-1: must have executed_count');
@@ -3391,7 +3391,7 @@ describe('maintain-tests run-batch \u2014 --batch-index flag', () => {
 
   test('TC-BATCHIDX-2: --batch-index 2 executes batches[2] (third batch)', () => {
     const manifestPath = writeManifest(tmpDir, 3);
-    const result = runGsdTools('maintain-tests run-batch --batch-file "' + manifestPath + '" --batch-index 2', tmpDir);
+    const result = runNfTools('maintain-tests run-batch --batch-file "' + manifestPath + '" --batch-index 2', tmpDir);
     assert.ok(result.success, 'TC-BATCHIDX-2: run-batch must succeed for valid index: ' + result.error);
     const out = JSON.parse(result.output);
     assert.ok(Object.prototype.hasOwnProperty.call(out, 'executed_count'), 'TC-BATCHIDX-2: must have executed_count');
@@ -3399,7 +3399,7 @@ describe('maintain-tests run-batch \u2014 --batch-index flag', () => {
 
   test('TC-BATCHIDX-3: --batch-index out of range returns error', () => {
     const manifestPath = writeManifest(tmpDir, 3);
-    const result = runGsdTools('maintain-tests run-batch --batch-file "' + manifestPath + '" --batch-index 99', tmpDir);
+    const result = runNfTools('maintain-tests run-batch --batch-file "' + manifestPath + '" --batch-index 99', tmpDir);
     assert.ok(!result.success, 'TC-BATCHIDX-3: out-of-range index must fail');
     assert.ok(result.error.includes('out of range'), 'TC-BATCHIDX-3: error must say "out of range", got: ' + result.error);
   });
@@ -3433,7 +3433,7 @@ describe('maintain-tests save-state command', () => {
   test('TC-SAVESTATE-1: save-state writes file and returns written=true', () => {
     const stateFile = path.join(tmpDir, 'state.db');
     const stateJsonArg = minimalStateJson().replace(/'/g, "'\\''");
-    const result = runGsdTools("maintain-tests save-state --state-file \"" + stateFile + "\" --state-json '" + stateJsonArg + "'", tmpDir);
+    const result = runNfTools("maintain-tests save-state --state-file \"" + stateFile + "\" --state-json '" + stateJsonArg + "'", tmpDir);
     assert.ok(result.success, 'TC-SAVESTATE-1: save-state must succeed: ' + result.error);
     const out = JSON.parse(result.output);
     assert.strictEqual(out.written, true, 'TC-SAVESTATE-1: written must be true');
@@ -3443,14 +3443,14 @@ describe('maintain-tests save-state command', () => {
 
   test('TC-SAVESTATE-2: save-state requires --state-json', () => {
     const stateFile = path.join(tmpDir, 'state.db');
-    const result = runGsdTools('maintain-tests save-state --state-file "' + stateFile + '"', tmpDir);
+    const result = runNfTools('maintain-tests save-state --state-file "' + stateFile + '"', tmpDir);
     assert.ok(!result.success, 'TC-SAVESTATE-2: save-state without --state-json must fail');
     assert.ok(result.error.includes('--state-json is required'), 'TC-SAVESTATE-2: error must mention --state-json: ' + result.error);
   });
 
   test('TC-SAVESTATE-3: save-state rejects invalid JSON', () => {
     const stateFile = path.join(tmpDir, 'state.db');
-    const result = runGsdTools("maintain-tests save-state --state-file \"" + stateFile + "\" --state-json 'not-json'", tmpDir);
+    const result = runNfTools("maintain-tests save-state --state-file \"" + stateFile + "\" --state-json 'not-json'", tmpDir);
     assert.ok(!result.success, 'TC-SAVESTATE-3: invalid JSON must fail');
     assert.ok(result.error.includes('invalid JSON'), 'TC-SAVESTATE-3: error must say invalid JSON: ' + result.error);
   });
@@ -3458,8 +3458,8 @@ describe('maintain-tests save-state command', () => {
   test('TC-SAVESTATE-4: save-state auto-sets updated timestamp', () => {
     const stateFile = path.join(tmpDir, 'state.db');
     const stateJsonArg = minimalStateJson().replace(/'/g, "'\\''");
-    runGsdTools("maintain-tests save-state --state-file \"" + stateFile + "\" --state-json '" + stateJsonArg + "'", tmpDir);
-    const loadResult = runGsdTools('maintain-tests load-state --state-file "' + stateFile + '"', tmpDir);
+    runNfTools("maintain-tests save-state --state-file \"" + stateFile + "\" --state-json '" + stateJsonArg + "'", tmpDir);
+    const loadResult = runNfTools('maintain-tests load-state --state-file "' + stateFile + '"', tmpDir);
     assert.ok(loadResult.success, 'TC-SAVESTATE-4: load-state must succeed: ' + loadResult.error);
     const state = JSON.parse(loadResult.output);
     assert.ok(state !== null, 'TC-SAVESTATE-4: state must not be null');
@@ -3474,7 +3474,7 @@ describe('maintain-tests load-state command', () => {
 
   test('TC-LOADSTATE-1: load-state returns null when file does not exist', () => {
     const stateFile = path.join(tmpDir, 'nonexistent.db');
-    const result = runGsdTools('maintain-tests load-state --state-file "' + stateFile + '"', tmpDir);
+    const result = runNfTools('maintain-tests load-state --state-file "' + stateFile + '"', tmpDir);
     assert.ok(result.success, 'TC-LOADSTATE-1: load-state must succeed even when file missing: ' + result.error);
     assert.strictEqual(result.output, 'null', 'TC-LOADSTATE-1: output must be null for missing file, got: ' + result.output);
   });
@@ -3483,9 +3483,9 @@ describe('maintain-tests load-state command', () => {
     const stateFile = path.join(tmpDir, 'state.db');
     const stateJson = JSON.stringify({ schema_version: 1, session_id: 'round-trip-test', batches_complete: 7 });
     const stateJsonArg = stateJson.replace(/'/g, "'\\''");
-    const saveResult = runGsdTools("maintain-tests save-state --state-file \"" + stateFile + "\" --state-json '" + stateJsonArg + "'", tmpDir);
+    const saveResult = runNfTools("maintain-tests save-state --state-file \"" + stateFile + "\" --state-json '" + stateJsonArg + "'", tmpDir);
     assert.ok(saveResult.success, 'TC-LOADSTATE-2: save must succeed: ' + saveResult.error);
-    const loadResult = runGsdTools('maintain-tests load-state --state-file "' + stateFile + '"', tmpDir);
+    const loadResult = runNfTools('maintain-tests load-state --state-file "' + stateFile + '"', tmpDir);
     assert.ok(loadResult.success, 'TC-LOADSTATE-2: load must succeed: ' + loadResult.error);
     const state = JSON.parse(loadResult.output);
     assert.ok(state !== null, 'TC-LOADSTATE-2: state must not be null');
@@ -3497,11 +3497,11 @@ describe('maintain-tests load-state command', () => {
   test('TC-LOADSTATE-3: load-state uses default path .planning/maintain-tests-state.json when --state-file omitted', () => {
     const stateJson = JSON.stringify({ schema_version: 1, session_id: 'default-path-test', batches_complete: 0 });
     const stateJsonArg = stateJson.replace(/'/g, "'\\''");
-    const saveResult = runGsdTools("maintain-tests save-state --state-json '" + stateJsonArg + "'", tmpDir);
+    const saveResult = runNfTools("maintain-tests save-state --state-json '" + stateJsonArg + "'", tmpDir);
     assert.ok(saveResult.success, 'TC-LOADSTATE-3: save to default path must succeed: ' + saveResult.error);
     const expectedPath = path.join(tmpDir, '.planning', 'maintain-tests-state.json');
     assert.ok(fs.existsSync(expectedPath), 'TC-LOADSTATE-3: file must exist at default path');
-    const loadResult = runGsdTools('maintain-tests load-state', tmpDir);
+    const loadResult = runNfTools('maintain-tests load-state', tmpDir);
     assert.ok(loadResult.success, 'TC-LOADSTATE-3: load from default path must succeed: ' + loadResult.error);
     const state = JSON.parse(loadResult.output);
     assert.ok(state !== null, 'TC-LOADSTATE-3: state must not be null');
@@ -3597,9 +3597,9 @@ describe('maintain-tests resume mid-batch', () => {
       batches_complete: 2,
     });
     const stateJsonArg = stateJson.replace(/'/g, "'\\''");
-    const saveResult = runGsdTools("maintain-tests save-state --state-file \"" + stateFile + "\" --state-json '" + stateJsonArg + "'", tmpDir);
+    const saveResult = runNfTools("maintain-tests save-state --state-file \"" + stateFile + "\" --state-json '" + stateJsonArg + "'", tmpDir);
     assert.ok(saveResult.success, 'TC-RESUME-1: save must succeed: ' + saveResult.error);
-    const loadResult = runGsdTools('maintain-tests load-state --state-file "' + stateFile + '"', tmpDir);
+    const loadResult = runNfTools('maintain-tests load-state --state-file "' + stateFile + '"', tmpDir);
     assert.ok(loadResult.success, 'TC-RESUME-1: load must succeed: ' + loadResult.error);
     const state = JSON.parse(loadResult.output);
     assert.ok(state !== null, 'TC-RESUME-1: state must not be null');
@@ -3620,7 +3620,7 @@ describe('maintain-tests resume mid-batch', () => {
     };
     const manifestPath = path.join(tmpDir, 'batch-manifest.json');
     fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf-8');
-    const result = runGsdTools('maintain-tests run-batch --batch-file "' + manifestPath + '" --batch-index 2', tmpDir);
+    const result = runNfTools('maintain-tests run-batch --batch-file "' + manifestPath + '" --batch-index 2', tmpDir);
     assert.ok(result.success, 'TC-RESUME-2: run-batch with --batch-index 2 must succeed: ' + result.error);
     const out = JSON.parse(result.output);
     assert.ok(out.executed_count !== undefined, 'TC-RESUME-2: output must include executed_count');
@@ -3640,9 +3640,9 @@ describe('maintain-tests termination state conditions', () => {
     const stateFile = path.join(dir, 'state.db');
     const stateJson = JSON.stringify(stateObj);
     const stateJsonArg = stateJson.replace(/'/g, "'\\''");
-    const saveResult = runGsdTools("maintain-tests save-state --state-file \"" + stateFile + "\" --state-json '" + stateJsonArg + "'", dir);
+    const saveResult = runNfTools("maintain-tests save-state --state-file \"" + stateFile + "\" --state-json '" + stateJsonArg + "'", dir);
     if (!saveResult.success) return { success: false, error: saveResult.error };
-    const loadResult = runGsdTools('maintain-tests load-state --state-file "' + stateFile + '"', dir);
+    const loadResult = runNfTools('maintain-tests load-state --state-file "' + stateFile + '"', dir);
     if (!loadResult.success) return { success: false, error: loadResult.error };
     return { success: true, state: JSON.parse(loadResult.output) };
   }
@@ -3688,9 +3688,9 @@ describe('maintain-tests Phase 21 schema fields round-trip', () => {
       },
     };
     const stateJsonArg = JSON.stringify(stateObj).replace(/'/g, "'\\''");
-    const saveResult = runGsdTools("maintain-tests save-state --state-file \"" + stateFile + "\" --state-json '" + stateJsonArg + "'", tmpDir);
+    const saveResult = runNfTools("maintain-tests save-state --state-file \"" + stateFile + "\" --state-json '" + stateJsonArg + "'", tmpDir);
     assert.ok(saveResult.success, 'TC-SCHEMA21-1: save must succeed: ' + saveResult.error);
-    const loadResult = runGsdTools('maintain-tests load-state --state-file "' + stateFile + '"', tmpDir);
+    const loadResult = runNfTools('maintain-tests load-state --state-file "' + stateFile + '"', tmpDir);
     assert.ok(loadResult.success, 'TC-SCHEMA21-1: load must succeed: ' + loadResult.error);
     const state = JSON.parse(loadResult.output);
     assert.ok(Array.isArray(state.categorization_verdicts), 'TC-SCHEMA21-1: categorization_verdicts must be an array');
@@ -3711,9 +3711,9 @@ describe('maintain-tests Phase 21 schema fields round-trip', () => {
       },
     };
     const stateJsonArg = JSON.stringify(stateObj).replace(/'/g, "'\\''");
-    const saveResult = runGsdTools("maintain-tests save-state --state-file \"" + stateFile + "\" --state-json '" + stateJsonArg + "'", tmpDir);
+    const saveResult = runNfTools("maintain-tests save-state --state-file \"" + stateFile + "\" --state-json '" + stateJsonArg + "'", tmpDir);
     assert.ok(saveResult.success, 'TC-SCHEMA21-2: save must succeed: ' + saveResult.error);
-    const loadResult = runGsdTools('maintain-tests load-state --state-file "' + stateFile + '"', tmpDir);
+    const loadResult = runNfTools('maintain-tests load-state --state-file "' + stateFile + '"', tmpDir);
     assert.ok(loadResult.success, 'TC-SCHEMA21-2: load must succeed: ' + loadResult.error);
     const state = JSON.parse(loadResult.output);
     assert.strictEqual(state.deferred_report.low_context[0], 'bar.test.js', 'TC-SCHEMA21-2: deferred_report.low_context[0] must match');
@@ -3741,7 +3741,7 @@ describe('milestone-scoped phase IDs', () => {
       `# Roadmap: nForma\n\n### Phase v0.7-01: Composition Architecture\n**Goal:** Config-driven quorum\n\n### Phase v0.7-02: Multiple Slots\n**Goal:** N instances per family\n`
     );
 
-    const result = runGsdTools('roadmap analyze', tmpDir);
+    const result = runNfTools('roadmap analyze', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -3756,7 +3756,7 @@ describe('milestone-scoped phase IDs', () => {
     const phaseDir = path.join(tmpDir, '.planning', 'phases', 'v0.7-01-composition-architecture');
     fs.mkdirSync(phaseDir, { recursive: true });
 
-    const result = runGsdTools('find-phase v0.7-01', tmpDir);
+    const result = runNfTools('find-phase v0.7-01', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -3770,7 +3770,7 @@ describe('milestone-scoped phase IDs', () => {
       fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', d), { recursive: true });
     }
 
-    const result = runGsdTools('phases list', tmpDir);
+    const result = runNfTools('phases list', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -3791,7 +3791,7 @@ describe('milestone-scoped phase IDs', () => {
     fs.writeFileSync(path.join(phaseDir, 'v0.7-01-01-PLAN.md'), '# Plan');
     fs.writeFileSync(path.join(phaseDir, 'v0.7-01-01-SUMMARY.md'), '# Summary');
 
-    const result = runGsdTools('roadmap analyze', tmpDir);
+    const result = runNfTools('roadmap analyze', tmpDir);
     assert.ok(result.success, `Command failed: ${result.error}`);
 
     const output = JSON.parse(result.output);
@@ -3831,7 +3831,7 @@ describe('HLTH: versioned phase dir health check fixes', () => {
   });
 
   test('HLTH-01-TC-01: W005 not emitted for v0.X-YY-name dirs', () => {
-    const result = runGsdTools('validate health', tmpDir);
+    const result = runNfTools('validate health', tmpDir);
     const data = JSON.parse(result.output);
 
     const w005 = (data.warnings || []).some(
@@ -3843,7 +3843,7 @@ describe('HLTH: versioned phase dir health check fixes', () => {
   test('HLTH-01-TC-02: W005 not emitted for v0.X-YY-name dirs with dots in name segment (v0.9-08-post-v0.9-install-sync)', () => {
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', 'v0.9-08-post-v0.9-install-sync'), { recursive: true });
 
-    const result = runGsdTools('validate health', tmpDir);
+    const result = runNfTools('validate health', tmpDir);
     const data = JSON.parse(result.output);
 
     const w005 = (data.warnings || []).some(
@@ -3853,7 +3853,7 @@ describe('HLTH: versioned phase dir health check fixes', () => {
   });
 
   test('HLTH-02-TC-01: W007 not emitted for versioned phases present on both disk and ROADMAP', () => {
-    const result = runGsdTools('validate health', tmpDir);
+    const result = runNfTools('validate health', tmpDir);
     const data = JSON.parse(result.output);
 
     const w007 = (data.warnings || []).some(
@@ -3863,7 +3863,7 @@ describe('HLTH: versioned phase dir health check fixes', () => {
   });
 
   test('HLTH-03-TC-01: W002 not emitted for Phase v0.X-YY STATE.md references when dir exists', () => {
-    const result = runGsdTools('validate health', tmpDir);
+    const result = runNfTools('validate health', tmpDir);
     const data = JSON.parse(result.output);
 
     const w002 = (data.warnings || []).some(
@@ -3907,7 +3907,7 @@ describe('SAFE-01: --repair safety guard for rich STATE.md', () => {
     ].join('\n');
     fs.writeFileSync(path.join(tmpDir, '.planning', 'STATE.md'), richState);
 
-    const result = runGsdTools('validate health --repair', tmpDir);
+    const result = runNfTools('validate health --repair', tmpDir);
     const data = JSON.parse(result.output);
 
     // STATE.md must be unchanged
@@ -3931,7 +3931,7 @@ describe('SAFE-01: --repair safety guard for rich STATE.md', () => {
     ].join('\n');
     fs.writeFileSync(path.join(tmpDir, '.planning', 'STATE.md'), richState);
 
-    const result = runGsdTools('validate health --repair --force', tmpDir);
+    const result = runNfTools('validate health --repair --force', tmpDir);
     const data = JSON.parse(result.output);
 
     const afterContent = fs.readFileSync(path.join(tmpDir, '.planning', 'STATE.md'), 'utf-8');
@@ -3954,7 +3954,7 @@ describe('SAFE-01: --repair safety guard for rich STATE.md', () => {
     ].join('\n');
     fs.writeFileSync(path.join(tmpDir, '.planning', 'STATE.md'), shortState);
 
-    const result = runGsdTools('validate health --repair', tmpDir);
+    const result = runNfTools('validate health --repair', tmpDir);
     const data = JSON.parse(result.output);
 
     const afterContent = fs.readFileSync(path.join(tmpDir, '.planning', 'STATE.md'), 'utf-8');
@@ -3992,7 +3992,7 @@ describe('SAFE-02: legacy numeric phase dirs archived', () => {
   test('SAFE-02-TC-01: W007 not emitted for numeric phases present in both ROADMAP and disk', () => {
     // Simulate pre-archive state: dir on disk + in ROADMAP
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', '18-cli-foundation'), { recursive: true });
-    const result = runGsdTools('validate health', tmpDir);
+    const result = runNfTools('validate health', tmpDir);
     const data = JSON.parse(result.output);
     const w007 = (data.warnings || []).some(
       i => i.code === 'W007' && i.message && i.message.includes('18')
@@ -4004,7 +4004,7 @@ describe('SAFE-02: legacy numeric phase dirs archived', () => {
     // Simulate post-archive state: dir NOT in phases/, in archive/legacy/
     // Numeric phase 18 is in ROADMAP but NOT on disk under phases/
     // -> W006 fires (in ROADMAP, not on disk) but W007 must NOT fire
-    const result = runGsdTools('validate health', tmpDir);
+    const result = runNfTools('validate health', tmpDir);
     const data = JSON.parse(result.output);
     const w007 = (data.warnings || []).some(
       i => i.code === 'W007' && i.message && i.message.includes('18')
@@ -4066,7 +4066,7 @@ describe('QUICK-231: W007 not emitted for phases archived in milestones/v*-phase
     fs.mkdirSync(path.join(tmpDir, '.planning', 'milestones', 'v0.9-phases', 'v0.9-02-another-feature'), { recursive: true });
     fs.mkdirSync(path.join(tmpDir, '.planning', 'milestones', 'v0.15-phases', 'v0.15-01-health-fix'), { recursive: true });
 
-    const result = runGsdTools('validate health', tmpDir);
+    const result = runNfTools('validate health', tmpDir);
     const data = JSON.parse(result.output);
 
     const archivedW007 = (data.warnings || []).filter(
@@ -4084,7 +4084,7 @@ describe('QUICK-231: W007 not emitted for phases archived in milestones/v*-phase
     // Create an orphaned phase not in ROADMAP and not archived
     fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', 'v0.99-01-orphaned'), { recursive: true });
 
-    const result = runGsdTools('validate health', tmpDir);
+    const result = runNfTools('validate health', tmpDir);
     const data = JSON.parse(result.output);
 
     const orphanW007 = (data.warnings || []).filter(
@@ -4102,7 +4102,7 @@ describe('QUICK-231: W007 not emitted for phases archived in milestones/v*-phase
     );
     fs.mkdirSync(path.join(tmpDir, '.planning', 'milestones', 'v0.9-phases', 'v0.9-01-archived-feature'), { recursive: true });
 
-    const result = runGsdTools('validate health', tmpDir);
+    const result = runNfTools('validate health', tmpDir);
     const data = JSON.parse(result.output);
 
     // W006 should NOT fire because the phase exists in archive
@@ -4150,7 +4150,7 @@ describe('VIS-01: quorum failure health warnings', () => {
       ])
     );
 
-    const result = runGsdTools('validate health', tmpDir);
+    const result = runNfTools('validate health', tmpDir);
     const data = JSON.parse(result.output);
 
     const w008 = (data.warnings || []).some(
@@ -4168,7 +4168,7 @@ describe('VIS-01: quorum failure health warnings', () => {
       ])
     );
 
-    const result = runGsdTools('validate health', tmpDir);
+    const result = runNfTools('validate health', tmpDir);
     const data = JSON.parse(result.output);
 
     const w008 = (data.warnings || []).some(i => i.code === 'W008');
@@ -4178,7 +4178,7 @@ describe('VIS-01: quorum failure health warnings', () => {
   test('VIS-01-TC-03: W008 not emitted when quorum-failures.json does not exist', () => {
     // File intentionally NOT written in this test
 
-    const result = runGsdTools('validate health', tmpDir);
+    const result = runNfTools('validate health', tmpDir);
     const data = JSON.parse(result.output);
 
     const w008 = (data.warnings || []).some(i => i.code === 'W008');
@@ -4197,47 +4197,47 @@ describe('TIER: resolveModelInternal tier lookup', () => {
     cleanup(tmpDir);
   });
 
-  test('TIER-01: default config → gsd-phase-researcher resolves to haiku', () => {
+  test('TIER-01: default config → nf-phase-researcher resolves to haiku', () => {
     // No config.json — uses DEFAULT_CONFIG where model_tier_worker = 'haiku'
-    const result = runGsdTools('resolve-model gsd-phase-researcher', tmpDir);
+    const result = runNfTools('resolve-model nf-phase-researcher', tmpDir);
     assert.ok(result.success, `resolve-model failed: ${result.error}`);
     const data = JSON.parse(result.output);
     assert.strictEqual(data.model, 'haiku', `TIER-01: expected haiku, got ${data.model}`);
   });
 
-  test('TIER-02: default config → gsd-plan-checker resolves to haiku', () => {
+  test('TIER-02: default config → nf-plan-checker resolves to haiku', () => {
     // No config.json — uses DEFAULT_CONFIG where model_tier_worker = 'haiku'
-    const result = runGsdTools('resolve-model gsd-plan-checker', tmpDir);
+    const result = runNfTools('resolve-model nf-plan-checker', tmpDir);
     assert.ok(result.success, `resolve-model failed: ${result.error}`);
     const data = JSON.parse(result.output);
     assert.strictEqual(data.model, 'haiku', `TIER-02: expected haiku, got ${data.model}`);
   });
 
-  test('TIER-03a: default config → gsd-planner resolves to inherit (opus tier)', () => {
+  test('TIER-03a: default config → nf-planner resolves to inherit (opus tier)', () => {
     // No config.json — planner tier = 'planner', model_tier_planner = 'opus' → 'inherit'
-    const result = runGsdTools('resolve-model gsd-planner', tmpDir);
+    const result = runNfTools('resolve-model nf-planner', tmpDir);
     assert.ok(result.success, `resolve-model failed: ${result.error}`);
     const data = JSON.parse(result.output);
     assert.strictEqual(data.model, 'inherit', `TIER-03a: expected inherit, got ${data.model}`);
   });
 
-  test('TIER-03b: model_tier_worker:sonnet in config → gsd-phase-researcher resolves to sonnet', () => {
+  test('TIER-03b: model_tier_worker:sonnet in config → nf-phase-researcher resolves to sonnet', () => {
     fs.writeFileSync(
       path.join(tmpDir, '.planning', 'config.json'),
       JSON.stringify({ model_tier_worker: 'sonnet' })
     );
-    const result = runGsdTools('resolve-model gsd-phase-researcher', tmpDir);
+    const result = runNfTools('resolve-model nf-phase-researcher', tmpDir);
     assert.ok(result.success, `resolve-model failed: ${result.error}`);
     const data = JSON.parse(result.output);
     assert.strictEqual(data.model, 'sonnet', `TIER-03b: expected sonnet, got ${data.model}`);
   });
 
-  test('TIER-03c: per-agent model_overrides beats tier key for gsd-phase-researcher', () => {
+  test('TIER-03c: per-agent model_overrides beats tier key for nf-phase-researcher', () => {
     fs.writeFileSync(
       path.join(tmpDir, '.planning', 'config.json'),
-      JSON.stringify({ model_overrides: { 'gsd-phase-researcher': 'sonnet' } })
+      JSON.stringify({ model_overrides: { 'nf-phase-researcher': 'sonnet' } })
     );
-    const result = runGsdTools('resolve-model gsd-phase-researcher', tmpDir);
+    const result = runNfTools('resolve-model nf-phase-researcher', tmpDir);
     assert.ok(result.success, `resolve-model failed: ${result.error}`);
     const data = JSON.parse(result.output);
     assert.strictEqual(data.model, 'sonnet', `TIER-03c: expected sonnet (override), got ${data.model}`);
@@ -4245,7 +4245,7 @@ describe('TIER: resolveModelInternal tier lookup', () => {
 
   test('TIER-03d: unknown agent type falls back to worker tier (haiku)', () => {
     // Unknown agents fall through agentToTier default '|| worker'
-    const result = runGsdTools('resolve-model gsd-unknown-agent-xyz', tmpDir);
+    const result = runNfTools('resolve-model nf-unknown-agent-xyz', tmpDir);
     assert.ok(result.success, `resolve-model failed: ${result.error}`);
     const data = JSON.parse(result.output);
     assert.strictEqual(data.model, 'haiku', `TIER-03d: expected haiku worker fallback, got ${data.model}`);
@@ -4268,7 +4268,7 @@ describe('default_milestone config feature', () => {
       path.join(tmpDir, '.planning', 'config.json'),
       JSON.stringify({ default_milestone: 'v0.42 My Milestone' })
     );
-    const result = runGsdTools('init quick "test task" --raw', tmpDir);
+    const result = runNfTools('init quick "test task" --raw', tmpDir);
     assert.ok(result.success, `init quick failed: ${result.error}`);
     const data = JSON.parse(result.output);
     assert.strictEqual(data.chosen_milestone, 'v0.42', `DM-TC-01: expected chosen_milestone=v0.42, got ${data.chosen_milestone}`);
@@ -4284,7 +4284,7 @@ describe('default_milestone config feature', () => {
       path.join(tmpDir, '.planning', 'STATE.md'),
       'Milestone: v0.41 — milestone\n'
     );
-    const result = runGsdTools('init quick "test task" --raw', tmpDir);
+    const result = runNfTools('init quick "test task" --raw', tmpDir);
     assert.ok(result.success, `init quick failed: ${result.error}`);
     const data = JSON.parse(result.output);
     assert.strictEqual(data.chosen_milestone, 'v0.41', `DM-TC-02: expected chosen_milestone=v0.41, got ${data.chosen_milestone}`);
@@ -4300,7 +4300,7 @@ describe('default_milestone config feature', () => {
       path.join(tmpDir, '.planning', 'STATE.md'),
       'Milestone: v0.41 — milestone\n'
     );
-    const result = runGsdTools('init quick "test task" --raw', tmpDir);
+    const result = runNfTools('init quick "test task" --raw', tmpDir);
     assert.ok(result.success, `init quick failed: ${result.error}`);
     const data = JSON.parse(result.output);
     assert.strictEqual(data.chosen_milestone, 'v0.41', `DM-TC-03: expected chosen_milestone=v0.41, got ${data.chosen_milestone}`);
@@ -4312,7 +4312,7 @@ describe('default_milestone config feature', () => {
       path.join(tmpDir, '.planning', 'config.json'),
       JSON.stringify({ default_milestone: '0.42' })
     );
-    const result = runGsdTools('init quick "test task" --raw', tmpDir);
+    const result = runNfTools('init quick "test task" --raw', tmpDir);
     assert.ok(result.success, `init quick failed: ${result.error}`);
     const data = JSON.parse(result.output);
     assert.strictEqual(data.chosen_milestone, 'v0.42', `DM-TC-04: expected chosen_milestone=v0.42, got ${data.chosen_milestone}`);
@@ -4323,7 +4323,7 @@ describe('default_milestone config feature', () => {
       path.join(tmpDir, '.planning', 'config.json'),
       JSON.stringify({ default_milestone: 'v0.42: Release' })
     );
-    const result = runGsdTools('init quick "test task" --raw', tmpDir);
+    const result = runNfTools('init quick "test task" --raw', tmpDir);
     assert.ok(result.success, `init quick failed: ${result.error}`);
     const data = JSON.parse(result.output);
     assert.strictEqual(data.chosen_milestone, 'v0.42', `DM-TC-05: expected chosen_milestone=v0.42, got ${data.chosen_milestone}`);
@@ -4338,7 +4338,7 @@ describe('default_milestone config feature', () => {
       path.join(tmpDir, '.planning', 'STATE.md'),
       'Milestone: v0.41 — milestone\n'
     );
-    const result = runGsdTools('init quick "test task" --raw', tmpDir);
+    const result = runNfTools('init quick "test task" --raw', tmpDir);
     assert.ok(result.success, `init quick failed: ${result.error}`);
     const data = JSON.parse(result.output);
     assert.strictEqual(data.chosen_milestone, 'v0.99', `DM-TC-06: expected chosen_milestone=v0.99, got ${data.chosen_milestone}`);
@@ -4347,7 +4347,7 @@ describe('default_milestone config feature', () => {
 
   test('DM-TC-07: no config and no STATE.md yields null chosen_milestone', () => {
     // Already have .planning/phases created by createTempProject, no config.json, no STATE.md
-    const result = runGsdTools('init quick "test task" --raw', tmpDir);
+    const result = runNfTools('init quick "test task" --raw', tmpDir);
     assert.ok(result.success, `init quick failed: ${result.error}`);
     const data = JSON.parse(result.output);
     assert.strictEqual(data.chosen_milestone, null, `DM-TC-07: expected chosen_milestone=null, got ${data.chosen_milestone}`);
@@ -4363,7 +4363,7 @@ describe('default_milestone config feature', () => {
       path.join(tmpDir, '.planning', 'STATE.md'),
       'Milestone: v0.41 — milestone\n'
     );
-    const result = runGsdTools('init quick "test task" --raw', tmpDir);
+    const result = runNfTools('init quick "test task" --raw', tmpDir);
     assert.ok(result.success, `init quick failed: ${result.error}`);
     const data = JSON.parse(result.output);
     assert.strictEqual(data.chosen_milestone, 'v0.41', `DM-TC-09: expected chosen_milestone=v0.41, got ${data.chosen_milestone}`);
@@ -4388,7 +4388,7 @@ objective: Test milestone context
 ## Task 1: Placeholder
 `
     );
-    const result = runGsdTools('phase-plan-index 03 --raw', tmpDir);
+    const result = runNfTools('phase-plan-index 03 --raw', tmpDir);
     assert.ok(result.success, `phase-plan-index failed: ${result.error}`);
     const data = JSON.parse(result.output);
     assert.strictEqual(data.chosen_milestone, 'v0.42', `DM-TC-10: expected chosen_milestone=v0.42, got ${data.chosen_milestone}`);
@@ -4401,11 +4401,124 @@ objective: Test milestone context
     if (fs.existsSync(configPath)) {
       fs.unlinkSync(configPath);
     }
-    const result = runGsdTools('config-ensure-section --raw', tmpDir);
+    const result = runNfTools('config-ensure-section --raw', tmpDir);
     assert.ok(result.success, `config-ensure-section failed: ${result.error}`);
     assert.strictEqual(result.output, 'created', `DM-TC-08: expected 'created' output`);
     // Now read the created config file and check for default_milestone
     const createdConfig = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
     assert.ok(createdConfig.hasOwnProperty('default_milestone'), `DM-TC-08: default_milestone key not found in created config.json`);
+  });
+});
+
+describe('init quick atomic task_id assignment', () => {
+  let tmpDir;
+
+  beforeEach(() => {
+    tmpDir = createTempProject();
+  });
+
+  afterEach(() => {
+    cleanup(tmpDir);
+  });
+
+  test('RC-01: init quick creates .claimed file in task directory', () => {
+    const result = runNfTools('init quick "race condition fix" --raw', tmpDir);
+    assert.ok(result.success, `init quick failed: ${result.error}`);
+    const data = JSON.parse(result.output);
+    assert.strictEqual(data.next_num, 1, `RC-01: expected next_num=1, got ${data.next_num}`);
+    const claimedPath = path.join(tmpDir, '.planning', 'quick', '1-race-condition-fix', '.claimed');
+    assert.ok(fs.existsSync(claimedPath), `RC-01: .claimed file should exist at ${claimedPath}`);
+    const claimed = JSON.parse(fs.readFileSync(claimedPath, 'utf8'));
+    assert.strictEqual(claimed.task_id, 1, `RC-01: .claimed task_id should be 1, got ${claimed.task_id}`);
+    assert.ok(claimed.pid, 'RC-01: .claimed should have pid');
+    assert.ok(claimed.ts, 'RC-01: .claimed should have ts');
+  });
+
+  test('RC-02: init quick creates task directory atomically', () => {
+    const result = runNfTools('init quick "atomic test" --raw', tmpDir);
+    assert.ok(result.success, `init quick failed: ${result.error}`);
+    const data = JSON.parse(result.output);
+    const taskDir = path.join(tmpDir, '.planning', 'quick', `${data.next_num}-atomic-test`);
+    assert.ok(fs.existsSync(taskDir), `RC-02: task directory should exist at ${taskDir}`);
+  });
+
+  test('RC-03: sequential init quick calls produce monotonically increasing task_ids', () => {
+    const r1 = runNfTools('init quick "first task" --raw', tmpDir);
+    assert.ok(r1.success, `first init quick failed: ${r1.error}`);
+    const d1 = JSON.parse(r1.output);
+
+    const r2 = runNfTools('init quick "second task" --raw', tmpDir);
+    assert.ok(r2.success, `second init quick failed: ${r2.error}`);
+    const d2 = JSON.parse(r2.output);
+
+    assert.strictEqual(d1.next_num, 1, `RC-03: first next_num should be 1, got ${d1.next_num}`);
+    assert.strictEqual(d2.next_num, 2, `RC-03: second next_num should be 2, got ${d2.next_num}`);
+  });
+
+  test('RC-04: init quick without description does not create task directory', () => {
+    const result = runNfTools('init quick --raw', tmpDir);
+    assert.ok(result.success, `init quick failed: ${result.error}`);
+    const data = JSON.parse(result.output);
+    assert.strictEqual(data.next_num, 1, `RC-04: expected next_num=1, got ${data.next_num}`);
+    const quickDir = path.join(tmpDir, '.planning', 'quick');
+    const numDirs = fs.readdirSync(quickDir).filter(f => /^\d+-/.test(f));
+    assert.strictEqual(numDirs.length, 0, `RC-04: no numbered dirs should exist without description, got ${numDirs.length}`);
+  });
+
+  test('RC-05: init quick lock file is cleaned up after execution', () => {
+    const result = runNfTools('init quick "lock cleanup" --raw', tmpDir);
+    assert.ok(result.success, `init quick failed: ${result.error}`);
+    const lockPath = path.join(tmpDir, '.planning', 'quick', '.init-lock');
+    assert.ok(!fs.existsSync(lockPath), `RC-05: .init-lock should not exist after init quick, found at ${lockPath}`);
+  });
+
+  test('RC-06: init quick skips .claimed directories in task_id scan', () => {
+    const quickDir = path.join(tmpDir, '.planning', 'quick');
+    fs.mkdirSync(path.join(quickDir, '1-existing-task'), { recursive: true });
+    fs.writeFileSync(path.join(quickDir, '1-existing-task', '.claimed'), JSON.stringify({ pid: 12345, ts: new Date().toISOString(), task_id: 1 }));
+
+    const result = runNfTools('init quick "next task" --raw', tmpDir);
+    assert.ok(result.success, `init quick failed: ${result.error}`);
+    const data = JSON.parse(result.output);
+    assert.strictEqual(data.next_num, 2, `RC-06: next_num should be 2, got ${data.next_num}`);
+  });
+
+  test('RC-07: concurrent init quick calls produce unique task_ids', () => {
+    const { spawnSync } = require('child_process');
+    const quickDir = path.join(tmpDir, '.planning', 'quick');
+    fs.mkdirSync(quickDir, { recursive: true });
+
+    const concurrency = 4;
+    const results = [];
+    for (let i = 0; i < concurrency; i++) {
+      const res = spawnSync('node', [TOOLS_PATH, 'init', 'quick', `concurrent-task-${i}`, '--raw'], {
+        cwd: tmpDir,
+        encoding: 'utf-8',
+        stdio: ['pipe', 'pipe', 'pipe'],
+        timeout: 30000,
+      });
+      if (res.status === 0 && res.stdout) {
+        try {
+          results.push(JSON.parse(res.stdout.trim()));
+        } catch {}
+      }
+    }
+
+    assert.ok(results.length >= 2, `RC-07: expected at least 2 successful results, got ${results.length}`);
+    const taskIds = results.map(r => r.next_num);
+    const uniqueIds = new Set(taskIds);
+    assert.strictEqual(uniqueIds.size, taskIds.length, `RC-07: task_ids should be unique, got duplicates: ${taskIds.join(', ')}`);
+  });
+
+  test('RC-08: stale init lock is removed and init quick succeeds', () => {
+    const quickDir = path.join(tmpDir, '.planning', 'quick');
+    fs.mkdirSync(quickDir, { recursive: true });
+    const lockPath = path.join(quickDir, '.init-lock');
+    fs.writeFileSync(lockPath, JSON.stringify({ pid: 99999999, ts: new Date(Date.now() - 10 * 60 * 1000).toISOString() }));
+
+    const result = runNfTools('init quick "stale lock test" --raw', tmpDir);
+    assert.ok(result.success, `init quick with stale lock failed: ${result.error}`);
+    const data = JSON.parse(result.output);
+    assert.strictEqual(data.next_num, 1, `RC-08: next_num should be 1, got ${data.next_num}`);
   });
 });

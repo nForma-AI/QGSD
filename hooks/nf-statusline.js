@@ -198,13 +198,13 @@ process.stdin.on('end', () => {
     }
 
     // nForma update available?
-    let gsdUpdate = '';
+    let nfUpdate = '';
     const cacheFile = path.join(homeDir, '.claude', 'cache', 'nf-update-check.json');
     if (fs.existsSync(cacheFile)) {
       try {
         const cache = JSON.parse(fs.readFileSync(cacheFile, 'utf8'));
         if (cache.update_available) {
-          gsdUpdate = '\x1b[33m⬆ /nf:update\x1b[0m │ ';
+          nfUpdate = '\x1b[33m⬆ /nf:update\x1b[0m │ ';
         }
       } catch (e) {}
     }
@@ -212,9 +212,9 @@ process.stdin.on('end', () => {
     // Output
     const dirname = path.basename(dir);
     if (task) {
-      process.stdout.write(`${gsdUpdate}\x1b[2m${model}\x1b[0m │ \x1b[1m${task}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}${riverIndicator}`);
+      process.stdout.write(`${nfUpdate}\x1b[2m${model}\x1b[0m │ \x1b[1m${task}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}${riverIndicator}`);
     } else {
-      process.stdout.write(`${gsdUpdate}\x1b[2m${model}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}${riverIndicator}`);
+      process.stdout.write(`${nfUpdate}\x1b[2m${model}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}${riverIndicator}`);
     }
   } catch (e) {
     if (e instanceof SyntaxError) {

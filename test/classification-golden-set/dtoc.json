@@ -20,7 +20,7 @@
   { "input": { "doc_file": "README.md", "value": "package-lock.json", "reason": "package-lock.json: gitignored lockfile", "claimType": "file_ref" }, "expected_verdict": "fp" },
   { "input": { "doc_file": "docs/testing.md", "value": ".nyc_output/coverage.json", "reason": ".nyc_output/coverage.json: ephemeral coverage data", "claimType": "file_ref" }, "expected_verdict": "fp" },
   { "input": { "doc_file": "CHANGELOG.md", "value": "bin/legacy-dispatch.cjs", "reason": "bin/legacy-dispatch.cjs: historical reference in changelog", "claimType": "file_ref" }, "expected_verdict": "review" },
-  { "input": { "doc_file": "CHANGELOG.md", "value": "hooks/qgsd-stop.js", "reason": "hooks/qgsd-stop.js: pre-rebrand hook name in changelog", "claimType": "file_ref" }, "expected_verdict": "review" },
+  { "input": { "doc_file": "CHANGELOG.md", "value": "hooks/qnf-stop.js", "reason": "hooks/qnf-stop.js: pre-rebrand hook name in changelog", "claimType": "file_ref" }, "expected_verdict": "review" },
   { "input": { "doc_file": "docs/migration.md", "value": "bin/v1-compat-shim.cjs", "reason": "bin/v1-compat-shim.cjs: migration-era compatibility layer", "claimType": "file_ref" }, "expected_verdict": "review" },
   { "input": { "doc_file": "README.md", "value": "docs/ADVANCED.md", "reason": "docs/ADVANCED.md: planned documentation file", "claimType": "file_ref" }, "expected_verdict": "review" },
   { "input": { "doc_file": "docs/roadmap.md", "value": "bin/planned-feature.cjs", "reason": "bin/planned-feature.cjs: forward-looking roadmap reference", "claimType": "file_ref" }, "expected_verdict": "review" }

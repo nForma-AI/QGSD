@@ -886,8 +886,8 @@
 │ █ █   ││                        ││  CALIB-02      ✓    Quorum & Dispatc  `run-prism.cjs` reads `policy.yaml` and writes `writeCheckResult` with `observation_window` metadata                                  │
 │  F2   ││                        ││  CALIB-03      ✓    Quorum & Dispatc  `read-policy.cjs` exposes all policy fields with typed interface                                                                      │
 │ ───── ││                        ││  CALIB-04      ✓    Quorum & Dispatc  `policy.conservative_priors.tp_rate` and `policy.conservative_priors.unavail` from `.formal/policy.yaml` wire directly to `run-prism… │
-│       ││                        ││  DISP-01       ✓    Quorum & Dispatc  qgsd-prompt.js runs a fast health probe (<3s) per provider before building the dispatch list -- dead providers' slots excluded from … │
-│ ▄▀▀   ││                        ││  DISP-02       ✓    Quorum & Dispatc  qgsd-prompt.js reads scoreboard `availability` windows and excludes slots whose `available_at` is in the future from dispatch         │
+│       ││                        ││  DISP-01       ✓    Quorum & Dispatc  nf-prompt.js runs a fast health probe (<3s) per provider before building the dispatch list -- dead providers' slots excluded from … │
+│ ▄▀▀   ││                        ││  DISP-02       ✓    Quorum & Dispatc  nf-prompt.js reads scoreboard `availability` windows and excludes slots whose `available_at` is in the future from dispatch         │
 │ █     ││                        ││  DISP-03       ✓    Quorum & Dispatc  Dispatch list ordered by recent success rate (from scoreboard slot stats) rather than static FALLBACK-01 tier sequence -- most relia… │
 │ ▀▄▄   ││                        ││  DISP-04       ✓    Quorum & Dispatc  Prompt construction (Mode A/B, Round 1/2+, artifact injection, prior_positions, review_context, improvements request) happens         │
 │  F3   ││                        ││determ…                                                                                                                                                                      │
@@ -953,8 +953,8 @@
 │ █ █   ││                        ││  CALIB-02      ✓    Quorum & Dispatc  `run-prism.cjs` reads `policy.yaml` and writes `writeCheckResult` with `observation_window` metadata                                  │
 │  F2   ││                        ││  CALIB-03      ✓    Quorum & Dispatc  `read-policy.cjs` exposes all policy fields with typed interface                                                                      │
 │ ───── ││                        ││  CALIB-04      ✓    Quorum & Dispatc  `policy.conservative_priors.tp_rate` and `policy.conservative_priors.unavail` from `.formal/policy.yaml` wire directly to `run-prism… │
-│       ││                        ││  DISP-01       ✓    Quorum & Dispatc  qgsd-prompt.js runs a fast health probe (<3s) per provider before building the dispatch list -- dead providers' slots excluded from … │
-│ ▄▀▀   ││                        ││  DISP-02       ✓    Quorum & Dispatc  qgsd-prompt.js reads scoreboard `availability` windows and excludes slots whose `available_at` is in the future from dispatch         │
+│       ││                        ││  DISP-01       ✓    Quorum & Dispatc  nf-prompt.js runs a fast health probe (<3s) per provider before building the dispatch list -- dead providers' slots excluded from … │
+│ ▄▀▀   ││                        ││  DISP-02       ✓    Quorum & Dispatc  nf-prompt.js reads scoreboard `availability` windows and excludes slots whose `available_at` is in the future from dispatch         │
 │ █     ││                        ││  DISP-03       ✓    Quorum & Dispatc  Dispatch list ordered by recent success rate (from scoreboard slot stats) rather than static FALLBACK-01 tier sequence -- most relia… │
 │ ▀▄▄   ││                        ││  DISP-04       ✓    Quorum & Dispatc  Prompt construction (Mode A/B, Round 1/2+, artifact injection, prior_positions, review_context, improvements request) happens         │
 │  F3   ││                        ││determ…                                                                                                                                                                      │
@@ -1020,8 +1020,8 @@
 │ █ █   ││                        ││  CALIB-02      ✓    Quorum & Dispatc  `run-prism.cjs` reads `policy.yaml` and writes `writeCheckResult` with `observation_window` metadata                                  │
 │  F2   ││                        ││  CALIB-03      ✓    Quorum & Dispatc  `read-policy.cjs` exposes all policy fields with typed interface                                                                      │
 │ ───── ││                        ││  CALIB-04      ✓    Quorum & Dispatc  `policy.conservative_priors.tp_rate` and `policy.conservative_priors.unavail` from `.formal/policy.yaml` wire directly to `run-prism… │
-│       ││                        ││  DISP-01       ✓    Quorum & Dispatc  qgsd-prompt.js runs a fast health probe (<3s) per provider before building the dispatch list -- dead providers' slots excluded from … │
-│ ▄▀▀   ││                        ││  DISP-02       ✓    Quorum & Dispatc  qgsd-prompt.js reads scoreboard `availability` windows and excludes slots whose `available_at` is in the future from dispatch         │
+│       ││                        ││  DISP-01       ✓    Quorum & Dispatc  nf-prompt.js runs a fast health probe (<3s) per provider before building the dispatch list -- dead providers' slots excluded from … │
+│ ▄▀▀   ││                        ││  DISP-02       ✓    Quorum & Dispatc  nf-prompt.js reads scoreboard `availability` windows and excludes slots whose `available_at` is in the future from dispatch         │
 │ █     ││                        ││  DISP-03       ✓    Quorum & Dispatc  Dispatch list ordered by recent success rate (from scoreboard slot stats) rather than static FALLBACK-01 tier sequence -- most relia… │
 │ ▀▄▄   ││                        ││  DISP-04       ✓    Quorum & Dispatc  Prompt construction (Mode A/B, Round 1/2+, artifact injection, prior_positions, review_context, improvements request) happens         │
 │  F3   ││                        ││determ…                                                                                                                                                                      │
@@ -1087,8 +1087,8 @@
 │ █ █   ││                        ││  CALIB-02      ✓    Quorum & Dispatc  `run-prism.cjs` reads `policy.yaml` and writes `writeCheckResult` with `observation_window` metadata                                  │
 │  F2   ││                        ││  CALIB-03      ✓    Quorum & Dispatc  `read-policy.cjs` exposes all policy fields with typed interface                                                                      │
 │ ───── ││                        ││  CALIB-04      ✓    Quorum & Dispatc  `policy.conservative_priors.tp_rate` and `policy.conservative_priors.unavail` from `.formal/policy.yaml` wire directly to `run-prism… │
-│       ││                        ││  DISP-01       ✓    Quorum & Dispatc  qgsd-prompt.js runs a fast health probe (<3s) per provider before building the dispatch list -- dead providers' slots excluded from … │
-│ ▄▀▀   ││                        ││  DISP-02       ✓    Quorum & Dispatc  qgsd-prompt.js reads scoreboard `availability` windows and excludes slots whose `available_at` is in the future from dispatch         │
+│       ││                        ││  DISP-01       ✓    Quorum & Dispatc  nf-prompt.js runs a fast health probe (<3s) per provider before building the dispatch list -- dead providers' slots excluded from … │
+│ ▄▀▀   ││                        ││  DISP-02       ✓    Quorum & Dispatc  nf-prompt.js reads scoreboard `availability` windows and excludes slots whose `available_at` is in the future from dispatch         │
 │ █     ││                        ││  DISP-03       ✓    Quorum & Dispatc  Dispatch list ordered by recent success rate (from scoreboard slot stats) rather than static FALLBACK-01 tier sequence -- most relia… │
 │ ▀▄▄   ││                        ││  DISP-04       ✓    Quorum & Dispatc  Prompt construction (Mode A/B, Round 1/2+, artifact injection, prior_positions, review_context, improvements request) happens         │
 │  F3   ││                        ││determ…                                                                                                                                                                      │
@@ -1154,8 +1154,8 @@
 │ █ █   ││                        ││  CALIB-02      ✓    Quorum & Dispatc  `run-prism.cjs` reads `policy.yaml` and writes `writeCheckResult` with `observation_window` metadata                                  │
 │  F2   ││                        ││  CALIB-03      ✓    Quorum & Dispatc  `read-policy.cjs` exposes all policy fields with typed interface                                                                      │
 │ ───── ││                        ││  CALIB-04      ✓    Quorum & Dispatc  `policy.conservative_priors.tp_rate` and `policy.conservative_priors.unavail` from `.formal/policy.yaml` wire directly to `run-prism… │
-│       ││                        ││  DISP-01       ✓    Quorum & Dispatc  qgsd-prompt.js runs a fast health probe (<3s) per provider before building the dispatch list -- dead providers' slots excluded from … │
-│ ▄▀▀   ││                        ││  DISP-02       ✓    Quorum & Dispatc  qgsd-prompt.js reads scoreboard `availability` windows and excludes slots whose `available_at` is in the future from dispatch         │
+│       ││                        ││  DISP-01       ✓    Quorum & Dispatc  nf-prompt.js runs a fast health probe (<3s) per provider before building the dispatch list -- dead providers' slots excluded from … │
+│ ▄▀▀   ││                        ││  DISP-02       ✓    Quorum & Dispatc  nf-prompt.js reads scoreboard `availability` windows and excludes slots whose `available_at` is in the future from dispatch         │
 │ █     ││                        ││  DISP-03       ✓    Quorum & Dispatc  Dispatch list ordered by recent success rate (from scoreboard slot stats) rather than static FALLBACK-01 tier sequence -- most relia… │
 │ ▀▄▄   ││                        ││  DISP-04       ✓    Quorum & Dispatc  Prompt construction (Mode A/B, Round 1/2+, artifact injection, prior_positions, review_context, improvements request) happens         │
 │  F3   ││                        ││determ…                                                                                                                                                                      │

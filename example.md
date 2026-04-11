@@ -63,7 +63,7 @@
 
   Now re-running quorum on the revised plans (R3.6 loop iteration check):
 
-⏺ Bash(node /Users/jonathanborduas/.claude/nf/bin/gsd-tools.cjs activity-set '{"activity":"plan_phase","sub_activity":"quorum","phase":"v0.38-02","quorum_round":2}')
+⏺ Bash(node /Users/jonathanborduas/.claude/nf/bin/nf-tools.cjs activity-set '{"activity":"plan_phase","sub_activity":"quorum","phase":"v0.38-02","quorum_round":2}')
   ⎿  {
        "written": true,
        "path": ".planning/current-activity.json"

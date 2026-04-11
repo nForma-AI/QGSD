@@ -2,11 +2,11 @@
 
 Calculate the next decimal phase number for urgent insertions.
 
-## Using gsd-tools
+## Using nf-tools
 
 ```bash
 # Get next decimal phase after phase 6
-node ~/.claude/nf/bin/gsd-tools.cjs phase next-decimal 6
+node ~/.claude/nf/bin/nf-tools.cjs phase next-decimal 6
 ```
 
 Output:
@@ -32,14 +32,14 @@ With existing decimals:
 ## Extract Values
 
 ```bash
-DECIMAL_INFO=$(node ~/.claude/nf/bin/gsd-tools.cjs phase next-decimal "${AFTER_PHASE}")
+DECIMAL_INFO=$(node ~/.claude/nf/bin/nf-tools.cjs phase next-decimal "${AFTER_PHASE}")
 DECIMAL_PHASE=$(echo "$DECIMAL_INFO" | jq -r '.next')
 BASE_PHASE=$(echo "$DECIMAL_INFO" | jq -r '.base_phase')
 ```
 
 Or with --raw flag:
 ```bash
-DECIMAL_PHASE=$(node ~/.claude/nf/bin/gsd-tools.cjs phase next-decimal "${AFTER_PHASE}" --raw)
+DECIMAL_PHASE=$(node ~/.claude/nf/bin/nf-tools.cjs phase next-decimal "${AFTER_PHASE}" --raw)
 # Returns just: 06.1
 ```
 
@@ -57,7 +57,7 @@ DECIMAL_PHASE=$(node ~/.claude/nf/bin/gsd-tools.cjs phase next-decimal "${AFTER_
 Decimal phase directories use the full decimal number:
 
 ```bash
-SLUG=$(node ~/.claude/nf/bin/gsd-tools.cjs generate-slug "$DESCRIPTION" --raw)
+SLUG=$(node ~/.claude/nf/bin/nf-tools.cjs generate-slug "$DESCRIPTION" --raw)
 PHASE_DIR=".planning/phases/${DECIMAL_PHASE}-${SLUG}"
 mkdir -p "$PHASE_DIR"
 ```
@@ -69,11 +69,11 @@ Example: `.planning/phases/06.1-fix-critical-auth-bug/`
 For milestone-scoped phases, decimal gap insertion follows the same pattern but uses
 the full milestone-scoped phase ID as the base:
 
-Using gsd-tools:
+Using nf-tools:
 
 ```bash
 # Insert gap phase after v0.7-01
-node /path/to/gsd-tools.cjs phase insert v0.7-01 "Fix critical config bug"
+node /path/to/nf-tools.cjs phase insert v0.7-01 "Fix critical config bug"
 # Creates: .planning/phases/v0.7-01.1-fix-critical-config-bug/
 ```
 

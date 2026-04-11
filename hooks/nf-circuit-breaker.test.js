@@ -701,16 +701,16 @@ test('CB-TC-BR3: Deny message still references --reset-breaker instruction', () 
 // Test CB-TC20: TDD pattern — same file extended with new content each time does not trigger oscillation
 test('CB-TC20: TDD pattern — same file extended with new content each time does not trigger oscillation', () => {
   // Simulate Phase 18 false-positive scenario:
-  // gsd-tools.cjs (new fn A) → gsd-tools.test.cjs (tests A) →
-  // gsd-tools.cjs (new fn B) → gsd-tools.test.cjs (tests B) →
-  // planning file → gsd-tools.cjs (new fn C)
+  // nf-tools.cjs (new fn A) → nf-tools.test.cjs (tests A) →
+  // nf-tools.cjs (new fn B) → nf-tools.test.cjs (tests B) →
+  // planning file → nf-tools.cjs (new fn C)
   //
-  // Each commit to gsd-tools.cjs ADDS new lines — never reverts previous content.
+  // Each commit to nf-tools.cjs ADDS new lines — never reverts previous content.
   // Result: should NOT trigger circuit breaker.
   const repoDir = createTempGitRepo();
   try {
-    const implFile = 'gsd-tools.cjs';
-    const testFile = 'gsd-tools.test.cjs';
+    const implFile = 'nf-tools.cjs';
+    const testFile = 'nf-tools.test.cjs';
     const planFile = 'planning-note.md';
 
     // Commit 1: implement fn A (initial content)
@@ -718,7 +718,7 @@ test('CB-TC20: TDD pattern — same file extended with new content each time doe
     commitInRepo(repoDir, implFile, 'function fnA() { return "a"; }\nmodule.exports = { fnA };\n', 'feat: implement fn A');
 
     // Commit 2: tests for fn A (different file → creates run-group boundary for implFile)
-    commitInRepo(repoDir, testFile, 'const { fnA } = require("./gsd-tools.cjs");\nconsole.assert(fnA() === "a");\n', 'test: add tests for fn A');
+    commitInRepo(repoDir, testFile, 'const { fnA } = require("./nf-tools.cjs");\nconsole.assert(fnA() === "a");\n', 'test: add tests for fn A');
 
     // Commit 3: implement fn B — append to implFile (purely additive, no deletions)
     commitInRepo(repoDir, implFile,
@@ -727,7 +727,7 @@ test('CB-TC20: TDD pattern — same file extended with new content each time doe
 
     // Commit 4: tests for fn B (different file → creates another run-group boundary for implFile)
     commitInRepo(repoDir, testFile,
-      'const { fnA, fnB } = require("./gsd-tools.cjs");\nconsole.assert(fnA() === "a");\nconsole.assert(fnB() === "b");\n',
+      'const { fnA, fnB } = require("./nf-tools.cjs");\nconsole.assert(fnA() === "a");\nconsole.assert(fnB() === "b");\n',
       'test: add tests for fn B');
 
     // Commit 5: planning file (yet another file between impl commits)
@@ -738,7 +738,7 @@ test('CB-TC20: TDD pattern — same file extended with new content each time doe
       'function fnA() { return "a"; }\nfunction fnB() { return "b"; }\nfunction fnC() { return "c"; }\nmodule.exports = { fnA, fnB, fnC };\n',
       'feat: implement fn C');
 
-    // Now gsd-tools.cjs has 3 run-groups but all consecutive pairs are purely additive.
+    // Now nf-tools.cjs has 3 run-groups but all consecutive pairs are purely additive.
     // Circuit breaker must NOT trigger.
     const { stdout, exitCode } = runHook({
       tool_name: 'Bash',

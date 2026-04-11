@@ -164,7 +164,7 @@ Your custom files in other locations are preserved:
 - Custom hooks ✓
 - Your CLAUDE.md files ✓
 
-If you've modified any nForma files directly, they'll be automatically backed up to `gsd-local-patches/` and can be reapplied with `/nf:reapply-patches` after the update.
+If you've modified any nForma files directly, they'll be automatically backed up to `nf-local-patches/` and can be reapplied with `/nf:reapply-patches` after the update.
 ```
 
 Use AskUserQuestion:
@@ -224,12 +224,12 @@ Clear the update cache so statusline indicator disappears:
 
 **If LOCAL install:**
 ```bash
-rm -f ./.claude/cache/gsd-update-check.json
+rm -f ./.claude/cache/nf-update-check.json
 ```
 
 **If GLOBAL install:**
 ```bash
-rm -f ~/.claude/cache/gsd-update-check.json
+rm -f ~/.claude/cache/nf-update-check.json
 ```
 (Paths are templated at install time for runtime compatibility)
 </step>
@@ -252,7 +252,7 @@ Format completion message (changelog was already shown in confirmation step):
 <step name="check_local_patches">
 After update completes, check if the installer detected and backed up any locally modified files:
 
-Check for gsd-local-patches/backup-meta.json in the config directory.
+Check for nf-local-patches/backup-meta.json in the config directory.
 
 **If patches found:**
 

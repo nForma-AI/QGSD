@@ -325,7 +325,7 @@ const banner = '\n' +
   salmon + ' ╚═╝  ╚═╝ ' + cyan + '╚═╝' + reset + '\n' +
   '\n' +
   '  nForma — Consensus before code. Proof before production. ' + dim + 'v' + pkg.version + reset + '\n' +
-  '  Built on GSD-CC by TÂCHES.\n' +
+  '  Built on NF-CC by TÂCHES.\n' +
   '  A quorum of diverse coding agents + formal verification. By Jonathan Borduas.\n' +
   '\n' +
   cyan + '  The task of leadership is to create an alignment of strengths\n' +
@@ -571,7 +571,7 @@ function buildQuorumInstructions(requiredModels) {
     'Before presenting any planning output to the user, you MUST:\n' +
     steps + '\n' +
     `  ${required.length + 1}. Present all model responses, resolve any concerns, then deliver your final output\n` +
-    `  ${required.length + 2}. Include the token <!-- GSD_DECISION --> somewhere in your FINAL output (not in intermediate messages or status updates — only when you are delivering the completed plan, research, verification report, or filtered question list to the user)\n\n` +
+    `  ${required.length + 2}. Include the token <!-- NF_DECISION --> somewhere in your FINAL output (not in intermediate messages or status updates — only when you are delivering the completed plan, research, verification report, or filtered question list to the user)\n\n` +
     'Fail-open: if a model is UNAVAILABLE (quota/error), note it and proceed with available models.\n' +
     'The Stop hook reads the transcript — skipping quorum will block your response.'
   );
@@ -659,7 +659,7 @@ console.log(banner);
 
 // Show help if requested
 if (hasHelp) {
-  console.log(`  ${yellow}Usage:${reset} npx get-shit-done-cc [options]\n\n  ${yellow}Options:${reset}\n    ${cyan}-g, --global${reset}              Install globally (to config directory)\n    ${cyan}-l, --local${reset}               Install locally (to current directory)\n    ${cyan}--claude${reset}                  Install for Claude Code only\n    ${cyan}--opencode${reset}                Install for OpenCode only\n    ${cyan}--gemini${reset}                  Install for Gemini CLI only\n    ${cyan}--kilo${reset}                    Install for Kilo only\n    ${cyan}--cursor${reset}                  Install for Cursor only\n    ${cyan}--windsurf${reset}                Install for Windsurf only\n    ${cyan}--codex${reset}                   Install for Codex only\n    ${cyan}--copilot${reset}                 Install for GitHub Copilot only\n    ${cyan}--antigravity${reset}             Install for Antigravity only\n    ${cyan}--augment${reset}                 Install for Augment only\n    ${cyan}--trae${reset}                    Install for Trae only\n    ${cyan}--cline${reset}                   Install for Cline only\n    ${cyan}--all${reset}                     Install for all runtimes\n    ${cyan}-u, --uninstall${reset}           Uninstall GSD (remove all GSD files)\n    ${cyan}-c, --config-dir <path>${reset}   Specify custom config directory\n    ${cyan}-h, --help${reset}                Show this help message\n    ${cyan}--force-statusline${reset}        Replace existing statusline config\n    ${cyan}--formal${reset}                  Install formal verification tools (TLA+, Alloy, PRISM)\n    ${cyan}--uninstall-formal${reset}        Remove formal verification tools\n\n  ${yellow}Examples:${reset}\n    ${dim}# Interactive install (prompts for runtime and location)${reset}\n    npx get-shit-done-cc\n\n    ${dim}# Install for Claude Code globally${reset}\n    npx get-shit-done-cc --claude --global\n\n    ${dim}# Install for Gemini globally${reset}\n    npx get-shit-done-cc --gemini --global\n\n    ${dim}# Install for Kilo globally${reset}\n    npx get-shit-done-cc --kilo --global\n\n    ${dim}# Install for Cursor globally${reset}\n    npx get-shit-done-cc --cursor --global\n\n    ${dim}# Install for Windsurf globally${reset}\n    npx get-shit-done-cc --windsurf --global\n\n    ${dim}# Install for Codex globally${reset}\n    npx get-shit-done-cc --codex --global\n\n    ${dim}# Install for GitHub Copilot globally${reset}\n    npx get-shit-done-cc --copilot --global\n\n    ${dim}# Install for Antigravity globally${reset}\n    npx get-shit-done-cc --antigravity --global\n\n    ${dim}# Install for Augment globally${reset}\n    npx get-shit-done-cc --augment --global\n\n    ${dim}# Install for Trae globally${reset}\n    npx get-shit-done-cc --trae --global\n\n    ${dim}# Install for Cline globally${reset}\n    npx get-shit-done-cc --cline --global\n\n    ${dim}# Install for all runtimes globally${reset}\n    npx get-shit-done-cc --all --global\n\n    ${dim}# Install locally to current project${reset}\n    npx get-shit-done-cc --local\n\n    ${dim}# Uninstall from global location${reset}\n    npx get-shit-done-cc --uninstall --global`);
+  console.log(`  ${yellow}Usage:${reset} npx get-shit-done-cc [options]\n\n  ${yellow}Options:${reset}\n    ${cyan}-g, --global${reset}              Install globally (to config directory)\n    ${cyan}-l, --local${reset}               Install locally (to current directory)\n    ${cyan}--claude${reset}                  Install for Claude Code only\n    ${cyan}--opencode${reset}                Install for OpenCode only\n    ${cyan}--gemini${reset}                  Install for Gemini CLI only\n    ${cyan}--kilo${reset}                    Install for Kilo only\n    ${cyan}--cursor${reset}                  Install for Cursor only\n    ${cyan}--windsurf${reset}                Install for Windsurf only\n    ${cyan}--codex${reset}                   Install for Codex only\n    ${cyan}--copilot${reset}                 Install for GitHub Copilot only\n    ${cyan}--antigravity${reset}             Install for Antigravity only\n    ${cyan}--augment${reset}                 Install for Augment only\n    ${cyan}--trae${reset}                    Install for Trae only\n    ${cyan}--cline${reset}                   Install for Cline only\n    ${cyan}--all${reset}                     Install for all runtimes\n    ${cyan}-u, --uninstall${reset}           Uninstall NF (remove all NF files)\n    ${cyan}-c, --config-dir <path>${reset}   Specify custom config directory\n    ${cyan}-h, --help${reset}                Show this help message\n    ${cyan}--force-statusline${reset}        Replace existing statusline config\n    ${cyan}--formal${reset}                  Install formal verification tools (TLA+, Alloy, PRISM)\n    ${cyan}--uninstall-formal${reset}        Remove formal verification tools\n\n  ${yellow}Examples:${reset}\n    ${dim}# Interactive install (prompts for runtime and location)${reset}\n    npx get-shit-done-cc\n\n    ${dim}# Install for Claude Code globally${reset}\n    npx get-shit-done-cc --claude --global\n\n    ${dim}# Install for Gemini globally${reset}\n    npx get-shit-done-cc --gemini --global\n\n    ${dim}# Install for Kilo globally${reset}\n    npx get-shit-done-cc --kilo --global\n\n    ${dim}# Install for Cursor globally${reset}\n    npx get-shit-done-cc --cursor --global\n\n    ${dim}# Install for Windsurf globally${reset}\n    npx get-shit-done-cc --windsurf --global\n\n    ${dim}# Install for Codex globally${reset}\n    npx get-shit-done-cc --codex --global\n\n    ${dim}# Install for GitHub Copilot globally${reset}\n    npx get-shit-done-cc --copilot --global\n\n    ${dim}# Install for Antigravity globally${reset}\n    npx get-shit-done-cc --antigravity --global\n\n    ${dim}# Install for Augment globally${reset}\n    npx get-shit-done-cc --augment --global\n\n    ${dim}# Install for Trae globally${reset}\n    npx get-shit-done-cc --trae --global\n\n    ${dim}# Install for Cline globally${reset}\n    npx get-shit-done-cc --cline --global\n\n    ${dim}# Install for all runtimes globally${reset}\n    npx get-shit-done-cc --all --global\n\n    ${dim}# Install locally to current project${reset}\n    npx get-shit-done-cc --local\n\n    ${dim}# Uninstall from global location${reset}\n    npx get-shit-done-cc --uninstall --global`);
   process.exit(0);
 }
 
@@ -704,7 +704,7 @@ function readSettings(settingsPath) {
  */
 function extractHookName(hookEntry) {
   const cmd = (hookEntry.hooks && hookEntry.hooks[0] && hookEntry.hooks[0].command) || '';
-  const match = cmd.match(/\/(nf-[a-z-]+|gsd-[a-z-]+)\.js/);
+  const match = cmd.match(/\/(nf-[a-z-]+)\.js/);
   return match ? match[1] : '';
 }
 
@@ -991,7 +991,7 @@ function convertClaudeToGeminiAgent(content) {
   // Escape ${VAR} patterns in agent body for Gemini CLI compatibility.
   // Gemini's templateString() treats all ${word} patterns as template variables
   // and throws "Template validation failed: Missing required input parameters"
-  // when they can't be resolved. GSD agents use ${PHASE}, ${PLAN}, etc. as
+  // when they can't be resolved. NF agents use ${PHASE}, ${PLAN}, etc. as
   // shell variables in bash code blocks — convert to $VAR (no braces) which
   // is equivalent bash and invisible to Gemini's /\$\{(\w+)\}/g regex.
   const escapedBody = body.replace(/\$\{(\w+)\}/g, '$$$1');
@@ -1259,24 +1259,24 @@ function copyWithPathReplacement(srcDir, destDir, pathPrefix, runtime) {
 }
 
 /**
- * Clean up orphaned files from previous GSD versions
+ * Clean up orphaned files from previous NF versions
  */
 function cleanupOrphanedFiles(configDir) {
   const orphanedFiles = [
-    'hooks/gsd-notify.sh',        // Removed in v1.6.x
-    'hooks/statusline.js',         // Renamed to gsd-statusline.js in v1.9.0
-    'hooks/gsd-statusline.js',     // Renamed to nf-statusline.js in v0.2
-    'hooks/gsd-check-update.js',   // Renamed to nf-check-update.js in v0.2
-    'hooks/qgsd-prompt.js',        // Renamed to nf-prompt.js in v0.2
-    'hooks/qgsd-stop.js',          // Renamed to nf-stop.js in v0.2
-    'hooks/qgsd-circuit-breaker.js', // Renamed to nf-circuit-breaker.js in v0.2
-    'hooks/qgsd-session-start.js', // Renamed to nf-session-start.js in v0.2
-    'hooks/qgsd-check-update.js',  // Renamed to nf-check-update.js in v0.2
-    'hooks/qgsd-statusline.js',    // Renamed to nf-statusline.js in v0.2
-    'hooks/qgsd-precompact.js',    // Renamed to nf-precompact.js in v0.2
-    'hooks/qgsd-slot-correlator.js', // Renamed to nf-slot-correlator.js in v0.2
-    'hooks/qgsd-token-collector.js', // Renamed to nf-token-collector.js in v0.2
-    'hooks/qgsd-spec-regen.js',    // Removed — functionality merged into nf-solve
+    'hooks/nf-notify.sh',        // Removed in v1.6.x
+    'hooks/statusline.js',         // Renamed to nf-statusline.js in v1.9.0
+    'hooks/nf-statusline.js',     // Renamed to nf-statusline.js in v0.2
+    'hooks/nf-check-update.js',   // Renamed to nf-check-update.js in v0.2
+    'hooks/nf-prompt.js',        // Renamed to nf-prompt.js in v0.2
+    'hooks/nf-stop.js',          // Renamed to nf-stop.js in v0.2
+    'hooks/nf-circuit-breaker.js', // Renamed to nf-circuit-breaker.js in v0.2
+    'hooks/nf-session-start.js', // Renamed to nf-session-start.js in v0.2
+    'hooks/nf-check-update.js',  // Renamed to nf-check-update.js in v0.2
+    'hooks/nf-statusline.js',    // Renamed to nf-statusline.js in v0.2
+    'hooks/nf-precompact.js',    // Renamed to nf-precompact.js in v0.2
+    'hooks/nf-slot-correlator.js', // Renamed to nf-slot-correlator.js in v0.2
+    'hooks/nf-token-collector.js', // Renamed to nf-token-collector.js in v0.2
+    'hooks/nf-spec-regen.js',    // Removed — functionality merged into nf-solve
   ];
 
   for (const relPath of orphanedFiles) {
@@ -1293,19 +1293,19 @@ function cleanupOrphanedFiles(configDir) {
  */
 function cleanupOrphanedHooks(settings) {
   const orphanedHookPatterns = [
-    'gsd-notify.sh',  // Removed in v1.6.x
-    'hooks/statusline.js',  // Renamed to gsd-statusline.js in v1.9.0
-    'gsd-intel-index.js',  // Removed in v1.9.2
-    'gsd-intel-session.js',  // Removed in v1.9.2
-    'gsd-intel-prune.js',  // Removed in v1.9.2
-    'hooks/gsd-check-update.js',  // Renamed to nf-check-update.js in v0.2
-    'hooks/gsd-statusline.js',  // Renamed to nf-statusline.js in v0.2
-    'qgsd-prompt.js',  // Renamed to nf-prompt.js in v0.2
-    'qgsd-stop.js',  // Renamed to nf-stop.js in v0.2
-    'qgsd-circuit-breaker.js',  // Renamed to nf-circuit-breaker.js in v0.2
-    'qgsd-session-start.js',  // Renamed to nf-session-start.js in v0.2
-    'qgsd-check-update.js',  // Renamed to nf-check-update.js in v0.2
-    'qgsd-statusline.js',  // Renamed to nf-statusline.js in v0.2
+    'nf-notify.sh',  // Removed in v1.6.x
+    'hooks/statusline.js',  // Renamed to nf-statusline.js in v1.9.0
+    'nf-intel-index.js',  // Removed in v1.9.2
+    'nf-intel-session.js',  // Removed in v1.9.2
+    'nf-intel-prune.js',  // Removed in v1.9.2
+    'hooks/nf-check-update.js',  // Renamed to nf-check-update.js in v0.2
+    'hooks/nf-statusline.js',  // Renamed to nf-statusline.js in v0.2
+    'nf-prompt.js',  // Renamed to nf-prompt.js in v0.2
+    'nf-stop.js',  // Renamed to nf-stop.js in v0.2
+    'nf-circuit-breaker.js',  // Renamed to nf-circuit-breaker.js in v0.2
+    'nf-session-start.js',  // Renamed to nf-session-start.js in v0.2
+    'nf-check-update.js',  // Renamed to nf-check-update.js in v0.2
+    'nf-statusline.js',  // Renamed to nf-statusline.js in v0.2
   ];
 
   let cleanedHooks = false;
@@ -1341,11 +1341,11 @@ function cleanupOrphanedHooks(settings) {
   // Fix #330 + nf migration: update statusLine if it points to old statusline path
   if (settings.statusLine && settings.statusLine.command) {
     const cmd = settings.statusLine.command;
-    if ((cmd.includes('statusline.js') || cmd.includes('gsd-statusline.js') || cmd.includes('qgsd-statusline.js')) &&
+    if ((cmd.includes('statusline.js') || cmd.includes('nf-statusline.js')) &&
         !cmd.includes('nf-statusline.js')) {
       settings.statusLine.command = cmd
-        .replace(/\bqgsd-statusline\.js\b/, 'nf-statusline.js')
-        .replace(/\bgsd-statusline\.js\b/, 'nf-statusline.js')
+        .replace(/\bnf-statusline\.js\b/, 'nf-statusline.js')
+        .replace(/\bnf-statusline\.js\b/, 'nf-statusline.js')
         .replace(/\bstatusline\.js\b/, 'nf-statusline.js');
       console.log(`  ${green}✓${reset} Updated statusline path → nf-statusline.js`);
     }
@@ -1355,8 +1355,8 @@ function cleanupOrphanedHooks(settings) {
 }
 
 /**
- * Uninstall GSD from the specified directory for a specific runtime
- * Removes only GSD-specific files/directories, preserves user content
+ * Uninstall NF from the specified directory for a specific runtime
+ * Removes only NF-specific files/directories, preserves user content
  * @param {boolean} isGlobal - Whether to uninstall from global or local
  * @param {string} runtime - Target runtime ('claude', 'opencode', 'gemini')
  */
@@ -1386,7 +1386,7 @@ function uninstall(isGlobal, runtime = 'claude') {
   if (runtime === 'trae') runtimeLabel = 'Trae';
   if (runtime === 'cline') runtimeLabel = 'Cline';
 
-  console.log(`  Uninstalling GSD from ${cyan}${runtimeLabel}${reset} at ${cyan}${locationLabel}${reset}\n`);
+  console.log(`  Uninstalling NF from ${cyan}${runtimeLabel}${reset} at ${cyan}${locationLabel}${reset}\n`);
 
   // Check if target directory exists
   if (!fs.existsSync(targetDir)) {
@@ -1397,9 +1397,9 @@ function uninstall(isGlobal, runtime = 'claude') {
 
   let removedCount = 0;
 
-  // 1. Remove GSD commands directory
+  // 1. Remove NF commands directory
   if (isOpencode) {
-    // OpenCode: remove command/nf-*.md files (and legacy qgsd-*.md)
+    // OpenCode: remove command/nf-*.md files (and legacy nf-*.md)
     const commandDir = path.join(targetDir, 'command');
     if (fs.existsSync(commandDir)) {
       const files = fs.readdirSync(commandDir);
@@ -1409,41 +1409,41 @@ function uninstall(isGlobal, runtime = 'claude') {
           removedCount++;
         }
       }
-      console.log(`  ${green}✓${reset} Removed GSD commands from command/`);
+      console.log(`  ${green}✓${reset} Removed NF commands from command/`);
     }
   } else {
     // Claude Code & Gemini: remove commands/nf/ directory
-    const gsdCommandsDir = path.join(targetDir, 'commands', 'nf');
-    if (fs.existsSync(gsdCommandsDir)) {
-      fs.rmSync(gsdCommandsDir, { recursive: true });
+    const nfCommandsDir = path.join(targetDir, 'commands', 'nf');
+    if (fs.existsSync(nfCommandsDir)) {
+      fs.rmSync(nfCommandsDir, { recursive: true });
       removedCount++;
       console.log(`  ${green}✓${reset} Removed commands/nf/`);
     }
   }
 
   // 2. Remove nf directory
-  const gsdDir = path.join(targetDir, 'nf');
-  if (fs.existsSync(gsdDir)) {
-    fs.rmSync(gsdDir, { recursive: true });
+  const nfDir = path.join(targetDir, 'nf');
+  if (fs.existsSync(nfDir)) {
+    fs.rmSync(nfDir, { recursive: true });
     removedCount++;
     console.log(`  ${green}✓${reset} Removed nf/`);
   }
 
-  // 2b. Migration: warn about old get-shit-done/ and commands/gsd/ paths from pre-v0.2 nForma installs
+  // 2b. Migration: warn about old get-shit-done/ and commands/nf/ paths from pre-v0.2 nForma installs
   // REN-03: intentional legacy path reference for migration detection
-  const oldGsdDir = path.join(targetDir, 'get-shit-done');
-  const oldCommandsGsdDir = path.join(targetDir, 'commands', 'gsd');
-  if (fs.existsSync(oldGsdDir) || fs.existsSync(oldCommandsGsdDir)) {
+  const oldNfDir = path.join(targetDir, 'get-shit-done');
+  const oldCommandsNfDir = path.join(targetDir, 'commands', 'nf');
+  if (fs.existsSync(oldNfDir) || fs.existsSync(oldCommandsNfDir)) {
     console.log(`\n  ${yellow}⚠ Migration notice:${reset} Old nForma paths detected from a pre-v0.2 install:`);
-    if (fs.existsSync(oldGsdDir)) console.log(`    ${yellow}•${reset} ${oldGsdDir}`);
-    if (fs.existsSync(oldCommandsGsdDir)) console.log(`    ${yellow}•${reset} ${oldCommandsGsdDir}`);
-    console.log(`  ${yellow}  If you don't have upstream GSD installed, these can be safely removed:${reset}`);
-    if (fs.existsSync(oldGsdDir)) console.log(`    rm -rf ${oldGsdDir}`);
-    if (fs.existsSync(oldCommandsGsdDir)) console.log(`    rm -rf ${oldCommandsGsdDir}`);
+    if (fs.existsSync(oldNfDir)) console.log(`    ${yellow}•${reset} ${oldNfDir}`);
+    if (fs.existsSync(oldCommandsNfDir)) console.log(`    ${yellow}•${reset} ${oldCommandsNfDir}`);
+    console.log(`  ${yellow}  If you don't have upstream NF installed, these can be safely removed:${reset}`);
+    if (fs.existsSync(oldNfDir)) console.log(`    rm -rf ${oldNfDir}`);
+    if (fs.existsSync(oldCommandsNfDir)) console.log(`    rm -rf ${oldCommandsNfDir}`);
     console.log();
   }
 
-  // 3. Remove GSD agents (nf-*.md files only)
+  // 3. Remove NF agents (nf-*.md files only)
   const agentsDir = path.join(targetDir, 'agents');
   if (fs.existsSync(agentsDir)) {
     const files = fs.readdirSync(agentsDir);
@@ -1459,26 +1459,26 @@ function uninstall(isGlobal, runtime = 'claude') {
       console.log(`  ${green}✓${reset} Removed ${agentCount} nForma agents`);
     }
 
-    // Migration: warn about old gsd-*.md agents from pre-v0.2 nForma installs
-    const oldAgents = fs.readdirSync(agentsDir).filter(f => f.startsWith('gsd-') && f.endsWith('.md'));
+    // Migration: warn about old nf-*.md agents from pre-v0.2 nForma installs
+    const oldAgents = fs.readdirSync(agentsDir).filter(f => f.startsWith('nf-') && f.endsWith('.md'));
     if (oldAgents.length > 0) {
-      console.log(`\n  ${yellow}⚠ Migration notice:${reset} Old nForma agents (gsd-*.md) detected from a pre-v0.2 install:`);
+      console.log(`\n  ${yellow}⚠ Migration notice:${reset} Old nForma agents (nf-*.md) detected from a pre-v0.2 install:`);
       oldAgents.forEach(f => console.log(`    ${yellow}•${reset} ${path.join(agentsDir, f)}`));
-      console.log(`  ${yellow}  If you don't use upstream GSD, these can be safely removed:${reset}`);
-      console.log(`    for f in ~/.claude/agents/gsd-*.md; do rm "$f"; done\n`);
+      console.log(`  ${yellow}  If you don't use upstream NF, these can be safely removed:${reset}`);
+      console.log(`    for f in ~/.claude/agents/nf-*.md; do rm "$f"; done\n`);
     }
   }
 
-  // 4. Remove GSD hooks
+  // 4. Remove NF hooks
   const hooksDir = path.join(targetDir, 'hooks');
   if (fs.existsSync(hooksDir)) {
-    const gsdHooks = [
-      'nf-statusline.js', 'nf-check-update.js', 'gsd-check-update.sh',
-      'qgsd-prompt.js', 'qgsd-stop.js', 'qgsd-circuit-breaker.js',
-      'qgsd-session-start.js', 'qgsd-check-update.js', 'qgsd-statusline.js',
+    const nfHooks = [
+      'nf-statusline.js', 'nf-check-update.js', 'nf-check-update.sh',
+      'nf-prompt.js', 'nf-stop.js', 'nf-circuit-breaker.js',
+      'nf-session-start.js', 'nf-check-update.js', 'nf-statusline.js',
     ];
     let hookCount = 0;
-    for (const hook of gsdHooks) {
+    for (const hook of nfHooks) {
       const hookPath = path.join(hooksDir, hook);
       if (fs.existsSync(hookPath)) {
         fs.unlinkSync(hookPath);
@@ -1487,11 +1487,11 @@ function uninstall(isGlobal, runtime = 'claude') {
     }
     if (hookCount > 0) {
       removedCount++;
-      console.log(`  ${green}✓${reset} Removed ${hookCount} GSD hooks`);
+      console.log(`  ${green}✓${reset} Removed ${hookCount} NF hooks`);
     }
   }
 
-  // 5. Remove GSD package.json (CommonJS mode marker)
+  // 5. Remove NF package.json (CommonJS mode marker)
   const pkgJsonPath = path.join(targetDir, 'package.json');
   if (fs.existsSync(pkgJsonPath)) {
     try {
@@ -1500,50 +1500,50 @@ function uninstall(isGlobal, runtime = 'claude') {
       if (content === '{"type":"commonjs"}') {
         fs.unlinkSync(pkgJsonPath);
         removedCount++;
-        console.log(`  ${green}✓${reset} Removed GSD package.json`);
+        console.log(`  ${green}✓${reset} Removed NF package.json`);
       }
     } catch (e) {
       // Ignore read errors
     }
   }
 
-  // 6. Clean up settings.json (remove GSD hooks and statusline)
+  // 6. Clean up settings.json (remove NF hooks and statusline)
   const settingsPath = path.join(targetDir, 'settings.json');
   if (fs.existsSync(settingsPath)) {
     let settings = readSettings(settingsPath);
     let settingsModified = false;
 
-    // Remove GSD statusline if it references our hook (nf-* or old qgsd-*)
+    // Remove NF statusline if it references our hook (nf-* or old nf-*)
     if (settings.statusLine && settings.statusLine.command &&
-        (settings.statusLine.command.includes('nf-statusline') || settings.statusLine.command.includes('qgsd-statusline'))) {
+        (settings.statusLine.command.includes('nf-statusline') || settings.statusLine.command.includes('nf-statusline'))) {
       delete settings.statusLine;
       settingsModified = true;
-      console.log(`  ${green}✓${reset} Removed GSD statusline from settings`);
+      console.log(`  ${green}✓${reset} Removed NF statusline from settings`);
     }
 
-    // Remove GSD hooks from SessionStart
+    // Remove NF hooks from SessionStart
     if (settings.hooks && settings.hooks.SessionStart) {
       const before = settings.hooks.SessionStart.length;
       settings.hooks.SessionStart = settings.hooks.SessionStart.filter(entry => {
         if (entry.hooks && Array.isArray(entry.hooks)) {
-          // Filter out GSD hooks
-          const hasGsdHook = entry.hooks.some(h =>
+          // Filter out NF hooks
+          const hasNfHook = entry.hooks.some(h =>
             h.command && (
               h.command.includes('nf-check-update') ||
               h.command.includes('nf-statusline') ||
               h.command.includes('nf-session-start') ||
-              h.command.includes('qgsd-check-update') ||
-              h.command.includes('qgsd-statusline') ||
-              h.command.includes('qgsd-session-start')
+              h.command.includes('nf-check-update') ||
+              h.command.includes('nf-statusline') ||
+              h.command.includes('nf-session-start')
             )
           );
-          return !hasGsdHook;
+          return !hasNfHook;
         }
         return true;
       });
       if (settings.hooks.SessionStart.length < before) {
         settingsModified = true;
-        console.log(`  ${green}✓${reset} Removed GSD hooks from settings`);
+        console.log(`  ${green}✓${reset} Removed NF hooks from settings`);
       }
       // Clean up empty array
       if (settings.hooks.SessionStart.length === 0) {
@@ -1554,7 +1554,7 @@ function uninstall(isGlobal, runtime = 'claude') {
     if (settings.hooks && settings.hooks.UserPromptSubmit) {
       const before = settings.hooks.UserPromptSubmit.length;
       settings.hooks.UserPromptSubmit = settings.hooks.UserPromptSubmit.filter(entry =>
-        !(entry.hooks && entry.hooks.some(h => h.command && (h.command.includes('nf-prompt') || h.command.includes('qgsd-prompt'))))
+        !(entry.hooks && entry.hooks.some(h => h.command && (h.command.includes('nf-prompt') || h.command.includes('nf-prompt'))))
       );
       if (settings.hooks.UserPromptSubmit.length < before) {
         settingsModified = true;
@@ -1565,7 +1565,7 @@ function uninstall(isGlobal, runtime = 'claude') {
     if (settings.hooks && settings.hooks.Stop) {
       const before = settings.hooks.Stop.length;
       settings.hooks.Stop = settings.hooks.Stop.filter(entry =>
-        !(entry.hooks && entry.hooks.some(h => h.command && (h.command.includes('nf-stop') || h.command.includes('qgsd-stop'))))
+        !(entry.hooks && entry.hooks.some(h => h.command && (h.command.includes('nf-stop') || h.command.includes('nf-stop'))))
       );
       if (settings.hooks.Stop.length < before) {
         settingsModified = true;
@@ -1576,7 +1576,7 @@ function uninstall(isGlobal, runtime = 'claude') {
     if (settings.hooks && settings.hooks.PreToolUse) {
       const before = settings.hooks.PreToolUse.length;
       settings.hooks.PreToolUse = settings.hooks.PreToolUse.filter(entry =>
-        !(entry.hooks && entry.hooks.some(h => h.command && (h.command.includes('nf-circuit-breaker') || h.command.includes('qgsd-circuit-breaker'))))
+        !(entry.hooks && entry.hooks.some(h => h.command && (h.command.includes('nf-circuit-breaker') || h.command.includes('nf-circuit-breaker'))))
       );
       if (settings.hooks.PreToolUse.length < before) {
         settingsModified = true;
@@ -1703,7 +1703,7 @@ function uninstall(isGlobal, runtime = 'claude') {
         const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
         let modified = false;
 
-        // Remove GSD permission entries
+        // Remove NF permission entries
         if (config.permission) {
           for (const permType of ['read', 'external_directory']) {
             if (config.permission[permType]) {
@@ -1728,7 +1728,7 @@ function uninstall(isGlobal, runtime = 'claude') {
         if (modified) {
           fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n');
           removedCount++;
-          console.log(`  ${green}✓${reset} Removed GSD permissions from opencode.json`);
+          console.log(`  ${green}✓${reset} Removed NF permissions from opencode.json`);
         }
       } catch (e) {
         // Ignore JSON parse errors
@@ -1737,7 +1737,7 @@ function uninstall(isGlobal, runtime = 'claude') {
   }
 
   if (removedCount === 0) {
-    console.log(`  ${yellow}⚠${reset} No GSD files found to remove.`);
+    console.log(`  ${yellow}⚠${reset} No NF files found to remove.`);
   }
 
   // Also clean up system-wide formal verification tools (only for global uninstall)
@@ -1746,7 +1746,7 @@ function uninstall(isGlobal, runtime = 'claude') {
   }
 
   console.log(`
-  ${green}Done!${reset} GSD has been uninstalled from ${runtimeLabel}.
+  ${green}Done!${reset} NF has been uninstalled from ${runtimeLabel}.
   Your other files and settings have been preserved.
 `);
 }
@@ -1813,8 +1813,8 @@ function parseJsonc(content) {
 }
 
 /**
- * Configure OpenCode permissions to allow reading GSD reference docs
- * This prevents permission prompts when GSD accesses the nf directory
+ * Configure OpenCode permissions to allow reading NF reference docs
+ * This prevents permission prompts when NF accesses the nf directory
  * @param {boolean} isGlobal - Whether this is a global or local install
  */
 function configureOpencodePermissions(isGlobal = true) {
@@ -1848,10 +1848,10 @@ function configureOpencodePermissions(isGlobal = true) {
     config.permission = {};
   }
 
-  // Build the GSD path using the actual config directory
+  // Build the NF path using the actual config directory
   // Use ~ shorthand if it's in the default location, otherwise use full path
   const defaultConfigDir = path.join(os.homedir(), '.config', 'opencode');
-  const gsdPath = opencodeConfigDir === defaultConfigDir
+  const nfPath = opencodeConfigDir === defaultConfigDir
     ? '~/.config/opencode/nf/*'
     : `${opencodeConfigDir.replace(/\\/g, '/')}/nf/*`;
   
@@ -1861,8 +1861,8 @@ function configureOpencodePermissions(isGlobal = true) {
   if (!config.permission.read || typeof config.permission.read !== 'object') {
     config.permission.read = {};
   }
-  if (config.permission.read[gsdPath] !== 'allow') {
-    config.permission.read[gsdPath] = 'allow';
+  if (config.permission.read[nfPath] !== 'allow') {
+    config.permission.read[nfPath] = 'allow';
     modified = true;
   }
 
@@ -1870,8 +1870,8 @@ function configureOpencodePermissions(isGlobal = true) {
   if (!config.permission.external_directory || typeof config.permission.external_directory !== 'object') {
     config.permission.external_directory = {};
   }
-  if (config.permission.external_directory[gsdPath] !== 'allow') {
-    config.permission.external_directory[gsdPath] = 'allow';
+  if (config.permission.external_directory[nfPath] !== 'allow') {
+    config.permission.external_directory[nfPath] = 'allow';
     modified = true;
   }
 
@@ -1881,7 +1881,7 @@ function configureOpencodePermissions(isGlobal = true) {
 
   // Write config back
   fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n');
-  console.log(`  ${green}✓${reset} Configured read permission for GSD docs`);
+  console.log(`  ${green}✓${reset} Configured read permission for NF docs`);
 }
 
 /**
@@ -2150,13 +2150,13 @@ function generateManifest(dir, baseDir) {
  * Write file manifest after installation for future modification detection
  */
 function writeManifest(configDir) {
-  const gsdDir = path.join(configDir, 'nf');
+  const nfDir = path.join(configDir, 'nf');
   const commandsDir = path.join(configDir, 'commands', 'nf');
   const agentsDir = path.join(configDir, 'agents');
   const manifest = { version: pkg.version, timestamp: new Date().toISOString(), files: {} };
 
-  const gsdHashes = generateManifest(gsdDir);
-  for (const [rel, hash] of Object.entries(gsdHashes)) {
+  const nfHashes = generateManifest(nfDir);
+  for (const [rel, hash] of Object.entries(nfHashes)) {
     manifest.files['nf/' + rel] = hash;
   }
   if (fs.existsSync(commandsDir)) {
@@ -2178,7 +2178,7 @@ function writeManifest(configDir) {
 }
 
 /**
- * Detect user-modified GSD files by comparing against install manifest.
+ * Detect user-modified NF files by comparing against install manifest.
  * Backs up modified files to nf-local-patches/ for reapply after update.
  */
 function saveLocalPatches(configDir) {
@@ -2210,7 +2210,7 @@ function saveLocalPatches(configDir) {
       files: modified
     };
     fs.writeFileSync(path.join(patchesDir, 'backup-meta.json'), JSON.stringify(meta, null, 2));
-    console.log('  ' + yellow + 'i' + reset + '  Found ' + modified.length + ' locally modified GSD file(s) — backed up to ' + PATCHES_DIR_NAME + '/');
+    console.log('  ' + yellow + 'i' + reset + '  Found ' + modified.length + ' locally modified NF file(s) — backed up to ' + PATCHES_DIR_NAME + '/');
     for (const f of modified) {
       console.log('     ' + dim + f + reset);
     }
@@ -2284,7 +2284,7 @@ function install(isGlobal, runtime = 'claude') {
   // Track installation failures
   const failures = [];
 
-  // Save any locally modified GSD files before they get wiped
+  // Save any locally modified NF files before they get wiped
   saveLocalPatches(targetDir);
 
   // Clean up orphaned files from previous versions
@@ -2298,8 +2298,8 @@ function install(isGlobal, runtime = 'claude') {
     fs.mkdirSync(commandDir, { recursive: true });
     
     // Copy commands/nf/*.md as command/nf-*.md (flatten structure)
-    const gsdSrc = path.join(src, 'commands', 'nf');
-    copyFlattenedCommands(gsdSrc, commandDir, 'nf', pathPrefix, runtime);
+    const nfSrc = path.join(src, 'commands', 'nf');
+    copyFlattenedCommands(nfSrc, commandDir, 'nf', pathPrefix, runtime);
     if (verifyInstalled(commandDir, 'command/nf-*')) {
       const count = fs.readdirSync(commandDir).filter(f => f.startsWith('nf-')).length;
       log(`  ${green}✓${reset} Installed ${count} commands to command/`);
@@ -2311,10 +2311,10 @@ function install(isGlobal, runtime = 'claude') {
     const commandsDir = path.join(targetDir, 'commands');
     fs.mkdirSync(commandsDir, { recursive: true });
     
-    const gsdSrc = path.join(src, 'commands', 'nf');
-    const gsdDest = path.join(commandsDir, 'nf');
-    copyWithPathReplacement(gsdSrc, gsdDest, pathPrefix, runtime);
-    if (verifyInstalled(gsdDest, 'commands/nf')) {
+    const nfSrc = path.join(src, 'commands', 'nf');
+    const nfDest = path.join(commandsDir, 'nf');
+    copyWithPathReplacement(nfSrc, nfDest, pathPrefix, runtime);
+    if (verifyInstalled(nfDest, 'commands/nf')) {
       log(`  ${green}✓${reset} Installed commands/nf`);
     } else {
       failures.push('commands/nf');
@@ -2412,7 +2412,7 @@ function install(isGlobal, runtime = 'claude') {
     failures.push('VERSION');
   }
 
-  // Write package.json to force CommonJS mode for GSD scripts
+  // Write package.json to force CommonJS mode for NF scripts
   // Prevents "require is not defined" errors when project has "type": "module"
   // Node.js walks up looking for package.json - this stops inheritance from project
   const pkgJsonDest = path.join(targetDir, 'package.json');
@@ -2505,7 +2505,7 @@ function install(isGlobal, runtime = 'claude') {
 
     // Mirror nf-bin/ scripts into nf/bin/ so both paths resolve
     // (LLMs often guess ~/.claude/nf/bin/ instead of ~/.claude/nf-bin/)
-    // nf/bin/ already has core/bin/ files (gsd-tools.cjs); we add nf-bin/ scripts alongside them
+    // nf/bin/ already has core/bin/ files (nf-tools.cjs); we add nf-bin/ scripts alongside them
     const nfBinDir = path.join(targetDir, 'nf', 'bin');
     if (fs.existsSync(nfBinDir) && !fs.lstatSync(nfBinDir).isSymbolicLink()) {
       let mirrored = 0;
@@ -2634,11 +2634,11 @@ function install(isGlobal, runtime = 'claude') {
       settings.hooks.SessionStart = [];
     }
 
-    const hasGsdUpdateHook = settings.hooks.SessionStart.some(entry =>
+    const hasNfUpdateHook = settings.hooks.SessionStart.some(entry =>
       entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-check-update'))
     );
 
-    if (!hasGsdUpdateHook) {
+    if (!hasNfUpdateHook) {
       settings.hooks.SessionStart.push({
         hooks: [
           {
@@ -2651,10 +2651,10 @@ function install(isGlobal, runtime = 'claude') {
     }
 
     // Register nForma session-start secret sync hook
-    const hasGsdSessionStartHook = settings.hooks.SessionStart.some(entry =>
+    const hasNfSessionStartHook = settings.hooks.SessionStart.some(entry =>
       entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-session-start'))
     );
-    if (!hasGsdSessionStartHook) {
+    if (!hasNfSessionStartHook) {
       settings.hooks.SessionStart.push({
         hooks: [
           {
@@ -2669,15 +2669,15 @@ function install(isGlobal, runtime = 'claude') {
     // INST-05: Warn (yellow) if quorum MCP servers are absent — runs every install
     warnMissingMcpServers();
 
-    // ── MIGRATION: remove old qgsd-* hook entries ─────────────────────────
-    // Old installs registered hooks as qgsd-prompt.js, qgsd-stop.js, qgsd-circuit-breaker.js.
+    // ── MIGRATION: remove old nf-* hook entries ─────────────────────────
+    // Old installs registered hooks as nf-prompt.js, nf-stop.js, nf-circuit-breaker.js.
     // Remove them so the nf-* replacements below can register cleanly.
     const OLD_HOOK_MAP = {
-      UserPromptSubmit: 'qgsd-prompt',
-      Stop: 'qgsd-stop',
-      PreToolUse: 'qgsd-circuit-breaker',
-      PostToolUse: ['qgsd-spec-regen', 'qgsd-context-monitor', 'gsd-context-monitor'],
-      SessionStart: ['qgsd-check-update', 'qgsd-session-start'],
+      UserPromptSubmit: 'nf-prompt',
+      Stop: 'nf-stop',
+      PreToolUse: 'nf-circuit-breaker',
+      PostToolUse: ['nf-spec-regen', 'nf-context-monitor', 'nf-context-monitor'],
+      SessionStart: ['nf-check-update', 'nf-session-start'],
     };
     for (const [event, oldNames] of Object.entries(OLD_HOOK_MAP)) {
       if (settings.hooks[event]) {
@@ -3221,12 +3221,12 @@ function handleStatusline(settings, isInteractive, callback) {
   }
 
   if (!isInteractive) {
-    // Only overwrite if current statusline is an nForma/GSD one (or unrecognized legacy)
+    // Only overwrite if current statusline is an nForma/NF one (or unrecognized legacy)
     // Respect third-party statuslines (e.g. cship) — don't silently replace them
     const existingCmd = settings.statusLine.command || settings.statusLine.url || '';
     const isNfOwned = existingCmd.includes('nf-statusline') ||
-                      existingCmd.includes('gsd-statusline') ||
-                      existingCmd.includes('qgsd-statusline') ||
+                      existingCmd.includes('nf-statusline') ||
+                      existingCmd.includes('nf-statusline') ||
                       existingCmd.includes('statusline.js');
     callback(isNfOwned);
     return;
@@ -3558,7 +3558,7 @@ ${nudge}
 }
 
 /**
- * Install GSD for all selected runtimes
+ * Install NF for all selected runtimes
  */
 function installAllRuntimes(runtimes, isGlobal, isInteractive) {
   const results = [];

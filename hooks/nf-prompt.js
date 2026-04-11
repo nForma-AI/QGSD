@@ -987,8 +987,8 @@ process.stdin.on('end', () => {
     // Anchored allowlist — requires /nf:, /gsd:, or /qgsd: prefix and word boundary after command name.
     // Strict mode: match ANY /nf: or /gsd: or /qgsd: command, not just quorum_commands list.
     const cmdPattern = profile === 'strict'
-      ? /^\s*\/(nf|q?gsd):[\w][\w-]*(\s|$)/
-      : new RegExp('^\\s*\\/(nf|q?gsd):(' + commands.join('|') + ')(\\s|$)');
+      ? /^\s*\/(nf|q?nf|q?gsd):[\w][\w-]*(\s|$)/
+      : new RegExp('^\\s*\\/(nf|q?nf|q?gsd):(' + commands.join('|') + ')(\\s|$)');
     if (!cmdPattern.test(prompt)) {
       process.exit(0); // Silent pass — UPS-05
     }
@@ -996,7 +996,7 @@ process.stdin.on('end', () => {
     // EXEC-01: Detect review/verification commands for review_mode injection.
     // These commands should trigger review-only dispatch (--review-only flag)
     // so review slots are restricted to read-only tools.
-    const reviewCmdPattern = /^\s*\/(nf|q?gsd):(verify-work|check)\b/;
+    const reviewCmdPattern = /^\s*\/(nf|q?nf|q?gsd):(verify-work|check)\b/;
     const isReviewTask = reviewCmdPattern.test(prompt);
 
     // ── CACHE MISS: Embed cache key marker and write pending entry ──────────

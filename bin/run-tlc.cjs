@@ -351,11 +351,11 @@ if (require.main === module) {
       const nfFuzzy = nfFiles.find(f => normalize(f).includes(stripped));
       if (nfFuzzy) return nfFuzzy;
       // 2b: QGSD-prefixed files (exact then fuzzy)
-      const qgsdFiles = allTla.filter(f => f.startsWith('QGSD'));
-      const qgsdMatch = qgsdFiles.find(f => normalize(f.replace('QGSD', '').replace('.tla', '')) === stripped);
-      if (qgsdMatch) return qgsdMatch;
-      const qgsdFuzzy = qgsdFiles.find(f => normalize(f).includes(stripped));
-      if (qgsdFuzzy) return qgsdFuzzy;
+      const qnfFiles = allTla.filter(f => f.startsWith('QNF'));
+      const qnfMatch = qnfFiles.find(f => normalize(f.replace('QNF', '').replace('.tla', '')) === stripped);
+      if (qnfMatch) return qnfMatch;
+      const qnfFuzzy = qnfFiles.find(f => normalize(f).includes(stripped));
+      if (qnfFuzzy) return qnfFuzzy;
       // 2c: Non-prefixed files (exact match on stripped name)
       const nonPrefixed = allTla.find(f => normalize(f.replace('.tla', '')) === stripped);
       if (nonPrefixed) return nonPrefixed;

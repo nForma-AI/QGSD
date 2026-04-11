@@ -40,10 +40,10 @@ function runHook(stdinPayload, extraEnv) {
 }
 
 // TC1: non-planning command exits 0 with no stdout output
-// /qgsd:execute-phase is NOT in default quorum_commands → silent pass
-test('TC1: non-planning command (/qgsd:execute-phase) exits 0 with no stdout', () => {
+// /qnf:execute-phase is NOT in default quorum_commands → silent pass
+test('TC1: non-planning command (/qnf:execute-phase) exits 0 with no stdout', () => {
   const { stdout, exitCode } = runHook({
-    prompt: '/qgsd:execute-phase',
+    prompt: '/qnf:execute-phase',
     cwd: process.cwd(),
   });
   assert.strictEqual(exitCode, 0, 'exit code must be 0');
@@ -51,10 +51,10 @@ test('TC1: non-planning command (/qgsd:execute-phase) exits 0 with no stdout', (
 });
 
 // TC2: planning command triggers quorum injection
-// /qgsd:plan-phase is in quorum_commands → should inject additionalContext with "QUORUM REQUIRED"
-test('TC2: planning command (/qgsd:plan-phase) triggers quorum injection', () => {
+// /qnf:plan-phase is in quorum_commands → should inject additionalContext with "QUORUM REQUIRED"
+test('TC2: planning command (/qnf:plan-phase) triggers quorum injection', () => {
   const { stdout, exitCode } = runHook({
-    prompt: '/qgsd:plan-phase 03-auth',
+    prompt: '/qnf:plan-phase 03-auth',
     cwd: process.cwd(),
   });
   assert.strictEqual(exitCode, 0, 'exit code must be 0');
@@ -67,11 +67,11 @@ test('TC2: planning command (/qgsd:plan-phase) triggers quorum injection', () =>
   );
 });
 
-// TC3: /gsd:plan-phase (GSD prefix) also triggers injection
-// The hook accepts both /gsd: and /qgsd: prefixes via the ^\\s*\\/q?gsd: pattern
-test('TC3: /gsd:plan-phase (GSD prefix) also triggers quorum injection', () => {
+// TC3: /nf:plan-phase (NF prefix) also triggers injection
+// The hook accepts both /nf: and /qnf: prefixes via the ^\\s*\\/q?nf: pattern
+test('TC3: /nf:plan-phase (NF prefix) also triggers quorum injection', () => {
   const { stdout, exitCode } = runHook({
-    prompt: '/gsd:plan-phase 03-auth',
+    prompt: '/nf:plan-phase 03-auth',
     cwd: process.cwd(),
   });
   assert.strictEqual(exitCode, 0, 'exit code must be 0');
@@ -83,10 +83,10 @@ test('TC3: /gsd:plan-phase (GSD prefix) also triggers quorum injection', () => {
   );
 });
 
-// TC4: /qgsd:research-phase triggers injection
-test('TC4: /qgsd:research-phase triggers quorum injection', () => {
+// TC4: /qnf:research-phase triggers injection
+test('TC4: /qnf:research-phase triggers quorum injection', () => {
   const { stdout, exitCode } = runHook({
-    prompt: '/qgsd:research-phase',
+    prompt: '/qnf:research-phase',
     cwd: process.cwd(),
   });
   assert.strictEqual(exitCode, 0, 'exit code must be 0');
@@ -98,10 +98,10 @@ test('TC4: /qgsd:research-phase triggers quorum injection', () => {
   );
 });
 
-// TC5: /qgsd:verify-work triggers injection
-test('TC5: /qgsd:verify-work triggers quorum injection', () => {
+// TC5: /qnf:verify-work triggers injection
+test('TC5: /qnf:verify-work triggers quorum injection', () => {
   const { stdout, exitCode } = runHook({
-    prompt: '/qgsd:verify-work',
+    prompt: '/qnf:verify-work',
     cwd: process.cwd(),
   });
   assert.strictEqual(exitCode, 0, 'exit code must be 0');
@@ -113,10 +113,10 @@ test('TC5: /qgsd:verify-work triggers quorum injection', () => {
   );
 });
 
-// TC6: /qgsd:discuss-phase triggers injection
-test('TC6: /qgsd:discuss-phase triggers quorum injection', () => {
+// TC6: /qnf:discuss-phase triggers injection
+test('TC6: /qnf:discuss-phase triggers quorum injection', () => {
   const { stdout, exitCode } = runHook({
-    prompt: '/qgsd:discuss-phase',
+    prompt: '/qnf:discuss-phase',
     cwd: process.cwd(),
   });
   assert.strictEqual(exitCode, 0, 'exit code must be 0');
@@ -135,11 +135,11 @@ test('TC7: malformed JSON stdin exits 0 with no output (fail-open)', () => {
   assert.strictEqual(stdout, '', 'stdout must be empty — fail-open produces no output');
 });
 
-// TC8: prefix boundary — /qgsd:plan-phase-extra does NOT trigger (trailing non-space after command)
+// TC8: prefix boundary — /qnf:plan-phase-extra does NOT trigger (trailing non-space after command)
 // The regex uses (\s|$) word boundary, so "plan-phase-extra" must not match "plan-phase"
-test('TC8: /qgsd:plan-phase-extra does NOT trigger injection (word boundary enforced)', () => {
+test('TC8: /qnf:plan-phase-extra does NOT trigger injection (word boundary enforced)', () => {
   const { stdout, exitCode } = runHook({
-    prompt: '/qgsd:plan-phase-extra something',
+    prompt: '/qnf:plan-phase-extra something',
     cwd: process.cwd(),
   });
   assert.strictEqual(exitCode, 0, 'exit code must be 0');
@@ -164,7 +164,7 @@ test('TC9: circuit breaker active → injects CIRCUIT BREAKER ACTIVE context', (
     );
 
     const { stdout, exitCode } = runHook({
-      prompt: '/qgsd:execute-phase',
+      prompt: '/qnf:execute-phase',
       cwd: tempDir,
     });
 
@@ -194,7 +194,7 @@ test('TC11: activeSlots path uses Task dispatch syntax (not direct MCP calls)', 
       JSON.stringify({ quorum_active: ['codex-1', 'gemini-1'] }),
       'utf8'
     );
-    const { stdout } = runHook({ prompt: '/qgsd:plan-phase', cwd: tempDir });
+    const { stdout } = runHook({ prompt: '/qnf:plan-phase', cwd: tempDir });
     const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
     assert.ok(
       ctx.includes('nf-quorum-slot-worker'),
@@ -218,7 +218,7 @@ test('TC12: activeSlots path has no mcp__*__* tool names in instructions', () =>
       JSON.stringify({ quorum_active: ['codex-1', 'gemini-1'] }),
       'utf8'
     );
-    const { stdout } = runHook({ prompt: '/qgsd:plan-phase', cwd: tempDir });
+    const { stdout } = runHook({ prompt: '/qnf:plan-phase', cwd: tempDir });
     const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
     // The escape hatch was "fall back to direct MCP calls" + a step list of "Call mcp__X__Y".
     // The NEVER directive legitimately contains "mcp__*__*" as a warning, so we test for
@@ -253,7 +253,7 @@ test('TC13: activeSlots path suppresses model_preferences override (no mcp__ lea
       }),
       'utf8'
     );
-    const { stdout } = runHook({ prompt: '/qgsd:plan-phase', cwd: tempDir });
+    const { stdout } = runHook({ prompt: '/qnf:plan-phase', cwd: tempDir });
     const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
     // The AGENT_TOOL_MAP block generates "When calling mcp__<slot>__<tool>, include model=..."
     // This must not appear when activeSlots is configured.
@@ -284,7 +284,7 @@ test('TC10: circuit breaker disabled flag → no injection (silent pass)', () =>
     );
 
     const { stdout, exitCode } = runHook({
-      prompt: '/qgsd:execute-phase',
+      prompt: '/qnf:execute-phase',
       cwd: tempDir,
     });
 
@@ -307,7 +307,7 @@ test('TC-PROMPT-N-CAP: --n 3 caps injected slot list to N-1=2 external slots', (
       JSON.stringify({ quorum_active: ['codex-1', 'gemini-1', 'opencode-1', 'copilot-1', 'claude-1'] }),
       'utf8'
     );
-    const { stdout } = runHook({ prompt: '/qgsd:plan-phase --n 3', cwd: tempDir });
+    const { stdout } = runHook({ prompt: '/qnf:plan-phase --n 3', cwd: tempDir });
     const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
     // Must announce the override
     assert.ok(ctx.includes('--n 3') && ctx.includes('QUORUM REQUIRED'), 'must announce --n 3 override in QUORUM REQUIRED header');
@@ -331,7 +331,7 @@ test('TC-PROMPT-SOLO: --n 1 injects SOLO MODE ACTIVE, no Task slot lines', () =>
       JSON.stringify({ quorum_active: ['codex-1', 'gemini-1'] }),
       'utf8'
     );
-    const { stdout } = runHook({ prompt: '/qgsd:plan-phase --n 1', cwd: tempDir });
+    const { stdout } = runHook({ prompt: '/qnf:plan-phase --n 1', cwd: tempDir });
     const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
     assert.ok(ctx.includes('SOLO MODE ACTIVE (--n 1)'), 'must inject SOLO MODE ACTIVE marker');
     assert.ok(ctx.includes('<!-- NF_SOLO_MODE -->'), 'must include NF_SOLO_MODE XML comment');
@@ -362,7 +362,7 @@ test('TC-PROMPT-PREFER-SUB-DEFAULT: preferSub=true reorders sub slots before api
       }),
       'utf8'
     );
-    const { stdout } = runHook({ prompt: '/qgsd:plan-phase', cwd: tempDir });
+    const { stdout } = runHook({ prompt: '/qnf:plan-phase', cwd: tempDir });
     const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
     const subPos = ctx.indexOf('sub-slot-1');
     const apiPos = ctx.indexOf('api-slot-1');
@@ -389,7 +389,7 @@ test('TC-PROMPT-FAILOVER-RULE: injected context includes skip-if-UNAVAIL failove
       JSON.stringify({ quorum_active: ['gemini-1', 'opencode-1', 'copilot-1'] }),
       'utf8'
     );
-    const { stdout } = runHook({ prompt: '/qgsd:plan-phase', cwd: tempDir });
+    const { stdout } = runHook({ prompt: '/qnf:plan-phase', cwd: tempDir });
     const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
     // Two variants: simple "Failover rule: ...skip..." or structured "SLOT DISPATCH SEQUENCE (FALLBACK-01)..."
     // Both must reference UNAVAIL and contain "skip" (skip individual unavail slots or skip to next step).
@@ -437,7 +437,7 @@ test('TC-PROMPT-FALLBACK-T1-PRIORITY: unused sub-CLI slots listed as T1 before c
       }),
       'utf8'
     );
-    const { stdout } = runHook({ prompt: '/qgsd:plan-phase', cwd: tempDir });
+    const { stdout } = runHook({ prompt: '/qnf:plan-phase', cwd: tempDir });
     const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
 
     // Must use the FALLBACK-01 tiered rule, not the simple skip rule
@@ -489,7 +489,7 @@ test('TC-PROMPT-FALLBACK-ROUTINE: routine risk_level → FAN_OUT_COUNT=2, 3 T1 s
     );
     // Simulate routine risk_level via context_yaml in the hook payload
     const payload = {
-      prompt: '/qgsd:plan-phase',
+      prompt: '/qnf:plan-phase',
       cwd: tempDir,
       context_yaml: 'risk_level: routine\n',
     };
@@ -533,7 +533,7 @@ test('TC-PROMPT-FALLBACK-NO-T1: all sub slots dispatched → no FALLBACK-01, sim
       }),
       'utf8'
     );
-    const { stdout } = runHook({ prompt: '/qgsd:plan-phase', cwd: tempDir });
+    const { stdout } = runHook({ prompt: '/qnf:plan-phase', cwd: tempDir });
     const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
 
     // No T1 unused → should NOT emit FALLBACK-01 or Step 2 T1
@@ -570,7 +570,7 @@ test('TC-PROMPT-FALLBACK-T1-EXCLUDES-PRIMARIES: T1 list excludes slots already i
       }),
       'utf8'
     );
-    const { stdout } = runHook({ prompt: '/qgsd:plan-phase', cwd: tempDir });
+    const { stdout } = runHook({ prompt: '/qnf:plan-phase', cwd: tempDir });
     const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
 
     assert.ok(ctx.includes('FALLBACK-01'), 'FALLBACK-01 must fire (1 T1 unused)');
@@ -633,7 +633,7 @@ test('TC-PROMPT-FALLBACK-AUTHTYPE-DYNAMIC: T1/T2 classification driven by auth_t
       }),
       'utf8'
     );
-    const { stdout } = runHook({ prompt: '/qgsd:plan-phase', cwd: tempDir });
+    const { stdout } = runHook({ prompt: '/qnf:plan-phase', cwd: tempDir });
     const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
 
     // FALLBACK-01 must fire — claude-2 is an unused sub slot
@@ -686,7 +686,7 @@ test('TC-PROMPT-FALLBACK-T2-EXCLUDES-PRIMARIES: api slots dispatched as primary 
       }),
       'utf8'
     );
-    const { stdout } = runHook({ prompt: '/qgsd:plan-phase', cwd: tempDir });
+    const { stdout } = runHook({ prompt: '/qnf:plan-phase', cwd: tempDir });
     const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
 
     assert.ok(ctx.includes('FALLBACK-01'), 'FALLBACK-01 must fire (sub-slot-B is T1 unused)');
@@ -730,7 +730,7 @@ test('TC-PROMPT-FALLBACK-EMPTY-AGENTCONFIG: empty agent_config → no T1, simple
       }),
       'utf8'
     );
-    const { stdout, exitCode } = runHook({ prompt: '/qgsd:plan-phase', cwd: tempDir });
+    const { stdout, exitCode } = runHook({ prompt: '/qnf:plan-phase', cwd: tempDir });
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
     assert.ok(stdout.length > 0, 'stdout must contain quorum injection');
 

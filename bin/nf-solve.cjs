@@ -2018,7 +2018,7 @@ function sweepDtoC() {
             /-\d+$/.test(claim.value) ||                          // slot names (copilot-1, gemini-cli-1)
             /^mcp-/.test(claim.value) ||                          // nForma MCP commands
             /-server$/.test(claim.value) ||                       // MCP server references
-            /qgsd/.test(claim.value) ||                           // old project name references
+            /qnf/.test(claim.value) ||                            // old project name references
             projectCommands.has(claim.value);                     // matches a known command/skill name
 
           // Context-aware: skip deps in requirement spec text (describes behavior, not claims deps)
@@ -2045,11 +2045,11 @@ function sweepDtoC() {
           continue;
         }
 
-        // Auto-suppress known rebrand patterns (qgsd->nf renames from quick-186)
+        // Auto-suppress known rebrand patterns (qnf->nf renames from quick-186)
         const REBRAND_PATTERNS = [
-          /qgsd-core\//,          // old qgsd-core/ directory references
-          /qgsd[_-](?!.*\.md$)/,  // qgsd- or qgsd_ prefixes (not in .md filenames which are historical)
-          /\/qgsd\//,             // /qgsd/ path segments
+          /qnf-core\//,           // old qnf-core/ directory references
+          /qnf[_-](?!.*\.md$)/,  // qnf- or qnf_ prefixes (not in .md filenames which are historical)
+          /\/qnf\//,              // /qnf/ path segments
         ];
         if (claim.type === 'file_path') {
           const isRebrandArtifact = REBRAND_PATTERNS.some(rx => rx.test(claim.value));

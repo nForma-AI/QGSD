@@ -66,7 +66,7 @@ Gap: Flow "View dashboard" broken at data fetch
 Find highest existing phase:
 ```bash
 # Get sorted phase list, extract last one
-PHASES=$(node ~/.claude/nf/bin/gsd-tools.cjs phases list)
+PHASES=$(node ~/.claude/nf/bin/nf-tools.cjs phases list)
 HIGHEST=$(echo "$PHASES" | jq -r '.directories[-1]')
 ```
 
@@ -146,7 +146,7 @@ node "$HOME/.claude/nf-bin/update-scoreboard.cjs" \
 Complete all scoreboard updates BEFORE proceeding to Step 6.
 
 Route on quorum_result:
-- **APPROVED**: Display `<!-- GSD_DECISION --> Quorum approved gap closure phases for milestone {version}.` then proceed to Step 6.
+- **APPROVED**: Display `<!-- NF_DECISION --> Quorum approved gap closure phases for milestone {version}.` then proceed to Step 6.
 - **BLOCKED**: Report the block:
   ```
   ## ⛔ Gap Closure Phases Blocked by Quorum
@@ -201,7 +201,7 @@ mkdir -p ".planning/phases/{NN}-{name}"
 ## 9. Commit Roadmap and Requirements Update
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "docs(roadmap): add gap closure phases {N}-{M}" --files .planning/ROADMAP.md .planning/REQUIREMENTS.md
+node ~/.claude/nf/bin/nf-tools.cjs commit "docs(roadmap): add gap closure phases {N}-{M}" --files .planning/ROADMAP.md .planning/REQUIREMENTS.md
 ```
 
 ## 10. Auto-Spawn Plan-Phase for First Gap Closure Phase (LOOP-04)
@@ -328,7 +328,7 @@ becomes:
 - [ ] MILESTONE-AUDIT.md loaded and gaps parsed
 - [ ] Gaps prioritized (must/should/nice)
 - [ ] Gaps grouped into logical phases
-- [ ] Quorum approved gap closure phases (GSD_DECISION marker present in Step 5 output)
+- [ ] Quorum approved gap closure phases (NF_DECISION marker present in Step 5 output)
 - [ ] ROADMAP.md updated with new phases
 - [ ] REQUIREMENTS.md traceability table updated with gap closure phase assignments
 - [ ] Unsatisfied requirement checkboxes reset (`[x]` → `[ ]`)

@@ -6,7 +6,7 @@ color: cyan
 ---
 
 <role>
-You are a GSD phase researcher. You answer "What do I need to know to PLAN this phase well?" and produce a single RESEARCH.md that the planner consumes.
+You are a NF phase researcher. You answer "What do I need to know to PLAN this phase well?" and produce a single RESEARCH.md that the planner consumes.
 
 Spawned by `/nf:plan-phase` (integrated) or `/nf:research-phase` (standalone).
 
@@ -121,7 +121,7 @@ When researching "best library for X": find what the ecosystem actually uses, do
 Check `brave_search` from init context. If `true`, use Brave Search for higher quality results:
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs websearch "your query" --limit 10
+node ~/.claude/nf/bin/nf-tools.cjs websearch "your query" --limit 10
 ```
 
 **Options:**
@@ -342,7 +342,7 @@ Orchestrator provides: phase number/name, description/goal, requirements, constr
 
 Load phase context using init command:
 ```bash
-INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init phase-op "${PHASE}")
+INIT=$(node ~/.claude/nf/bin/nf-tools.cjs init phase-op "${PHASE}")
 ```
 
 Extract from init JSON: `phase_dir`, `padded_phase`, `phase_number`, `commit_docs`.
@@ -451,7 +451,7 @@ Write to: `$PHASE_DIR/$PADDED_PHASE-RESEARCH.md`
 ## Step 6: Commit Research (optional)
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "docs($PHASE): research phase domain" --files "$PHASE_DIR/$PADDED_PHASE-RESEARCH.md"
+node ~/.claude/nf/bin/nf-tools.cjs commit "docs($PHASE): research phase domain" --files "$PHASE_DIR/$PADDED_PHASE-RESEARCH.md"
 ```
 
 ## Step 7: Return Structured Result
