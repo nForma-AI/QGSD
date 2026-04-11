@@ -17,6 +17,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { spawnSync } = require('child_process');
 
 /**
  * Resolve the PRISM binary from the PRISM_BIN environment variable.
@@ -34,6 +35,15 @@ function resolvePrismBin() {
       if (fs.existsSync(resolved)) return resolved;
     } catch (_) {
       // fail-open
+    }
+
+    // Support bare command names such as `PRISM_BIN=prism`.
+    if (!resolved.includes(path.sep)) {
+      const which = spawnSync('which', [resolved], { encoding: 'utf8' });
+      if (which.status === 0) {
+        const discovered = which.stdout.trim();
+        if (discovered && fs.existsSync(discovered)) return discovered;
+      }
     }
   }
 
