@@ -34,7 +34,7 @@ Validate first argument is an integer.
 Load phase operation context:
 
 ```bash
-INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init phase-op "${after_phase}")
+INIT=$(node ~/.claude/nf/bin/nf-tools.cjs init phase-op "${after_phase}")
 ```
 
 Check `roadmap_exists` from init JSON. If false:
@@ -45,10 +45,10 @@ Exit.
 </step>
 
 <step name="insert_phase">
-**Delegate the phase insertion to gsd-tools:**
+**Delegate the phase insertion to nf-tools:**
 
 ```bash
-RESULT=$(node ~/.claude/nf/bin/gsd-tools.cjs phase insert "${after_phase}" "${description}")
+RESULT=$(node ~/.claude/nf/bin/nf-tools.cjs phase insert "${after_phase}" "${description}")
 ```
 
 The CLI handles:
@@ -121,7 +121,7 @@ Project state updated: .planning/STATE.md
 <success_criteria>
 Phase insertion is complete when:
 
-- [ ] `gsd-tools phase insert` executed successfully
+- [ ] `nf-tools phase insert` executed successfully
 - [ ] Phase directory created
 - [ ] Roadmap updated with new phase entry (includes "(INSERTED)" marker)
 - [ ] STATE.md updated with roadmap evolution note

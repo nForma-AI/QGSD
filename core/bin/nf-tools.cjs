@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 /**
- * GSD Tools — CLI utility for GSD workflow operations
+ * NF Tools — CLI utility for NF workflow operations
  *
- * Replaces repetitive inline bash patterns across ~50 GSD command/workflow/agent files.
+ * Replaces repetitive inline bash patterns across ~50 NF command/workflow/agent files.
  * Centralizes: config parsing, model resolution, phase lookup, git commits, summary verification.
  *
- * Usage: node gsd-tools.cjs <command> [args] [--raw]
+ * Usage: node nf-tools.cjs <command> [args] [--raw]
  *
  * Atomic Commands:
  *   state load                         Load project config + state
@@ -147,16 +147,16 @@ const { execSync, spawnSync, spawn } = require('child_process');
 // ─── Model Profile Table ─────────────────────────────────────────────────────
 
 const MODEL_PROFILES = {
-  'gsd-planner':              { quality: 'opus', balanced: 'opus',   budget: 'sonnet' },
-  'gsd-roadmapper':           { quality: 'opus', balanced: 'sonnet', budget: 'sonnet' },
-  'gsd-executor':             { quality: 'opus', balanced: 'sonnet', budget: 'sonnet' },
-  'gsd-phase-researcher':     { quality: 'opus', balanced: 'sonnet', budget: 'haiku' },
-  'gsd-project-researcher':   { quality: 'opus', balanced: 'sonnet', budget: 'haiku' },
-  'gsd-research-synthesizer': { quality: 'sonnet', balanced: 'sonnet', budget: 'haiku' },
-  'gsd-debugger':             { quality: 'opus', balanced: 'sonnet', budget: 'sonnet' },
-  'gsd-codebase-mapper':      { quality: 'sonnet', balanced: 'haiku', budget: 'haiku' },
-  'gsd-verifier':             { quality: 'sonnet', balanced: 'sonnet', budget: 'haiku' },
-  'gsd-plan-checker':         { quality: 'sonnet', balanced: 'sonnet', budget: 'haiku' },
+  'nf-planner':              { quality: 'opus', balanced: 'opus',   budget: 'sonnet' },
+  'nf-roadmapper':           { quality: 'opus', balanced: 'sonnet', budget: 'sonnet' },
+  'nf-executor':             { quality: 'opus', balanced: 'sonnet', budget: 'sonnet' },
+  'nf-phase-researcher':     { quality: 'opus', balanced: 'sonnet', budget: 'haiku' },
+  'nf-project-researcher':   { quality: 'opus', balanced: 'sonnet', budget: 'haiku' },
+  'nf-research-synthesizer': { quality: 'sonnet', balanced: 'sonnet', budget: 'haiku' },
+  'nf-debugger':             { quality: 'opus', balanced: 'sonnet', budget: 'sonnet' },
+  'nf-codebase-mapper':      { quality: 'sonnet', balanced: 'haiku', budget: 'haiku' },
+  'nf-verifier':             { quality: 'sonnet', balanced: 'sonnet', budget: 'haiku' },
+  'nf-plan-checker':         { quality: 'sonnet', balanced: 'sonnet', budget: 'haiku' },
   'nf-integration-checker': { quality: 'sonnet', balanced: 'sonnet', budget: 'haiku' },
 };
 
@@ -183,8 +183,8 @@ function loadConfig(cwd) {
     commit_docs: true,
     search_gitignored: false,
     branching_strategy: 'none',
-    phase_branch_template: 'gsd/phase-{phase}-{slug}',
-    milestone_branch_template: 'gsd/{milestone}-{slug}',
+    phase_branch_template: 'nf/phase-{phase}-{slug}',
+    milestone_branch_template: 'nf/{milestone}-{slug}',
     additional_protected_branches: [],
     quick_branch_template: 'nf/quick-{number}-{slug}',
     research: true,
@@ -194,7 +194,7 @@ function loadConfig(cwd) {
     brave_search: false,
     auto_advance: true,
     nyquist_validation: true,
-    model_tier_planner: 'opus',   // Planner agents (gsd-planner, gsd-roadmapper) default to opus
+    model_tier_planner: 'opus',   // Planner agents (nf-planner, nf-roadmapper) default to opus
     model_tier_worker: 'haiku',   // Worker agents (researcher, checker, executor) default to haiku
     default_milestone: null,
   };
@@ -530,7 +530,7 @@ function output(result, raw, rawValue) {
     // Large payloads exceed Claude Code's Bash tool buffer (~50KB).
     // Write to tmpfile and output the path prefixed with @file: so callers can detect it.
     if (json.length > 50000) {
-      const tmpPath = path.join(require('os').tmpdir(), `gsd-${Date.now()}.json`);
+      const tmpPath = path.join(require('os').tmpdir(), `nf-${Date.now()}.json`);
       fs.writeFileSync(tmpPath, json, 'utf-8');
       data = '@file:' + tmpPath;
     } else {
@@ -661,11 +661,11 @@ function cmdConfigEnsureSection(cwd, raw) {
 
   // Detect Brave Search API key availability
   const homedir = require('os').homedir();
-  const braveKeyFile = path.join(homedir, '.gsd', 'brave_api_key');
+  const braveKeyFile = path.join(homedir, '.nf', 'brave_api_key');
   const hasBraveSearch = !!(process.env.BRAVE_API_KEY || fs.existsSync(braveKeyFile));
 
-  // Load user-level defaults from ~/.gsd/defaults.json if available
-  const globalDefaultsPath = path.join(homedir, '.gsd', 'defaults.json');
+  // Load user-level defaults from ~/.nf/defaults.json if available
+  const globalDefaultsPath = path.join(homedir, '.nf', 'defaults.json');
   let userDefaults = {};
   try {
     if (fs.existsSync(globalDefaultsPath)) {
@@ -681,8 +681,8 @@ function cmdConfigEnsureSection(cwd, raw) {
     commit_docs: true,
     search_gitignored: false,
     branching_strategy: 'none',
-    phase_branch_template: 'gsd/phase-{phase}-{slug}',
-    milestone_branch_template: 'gsd/{milestone}-{slug}',
+    phase_branch_template: 'nf/phase-{phase}-{slug}',
+    milestone_branch_template: 'nf/{milestone}-{slug}',
     workflow: {
       research: true,
       plan_check: true,
@@ -2907,7 +2907,7 @@ function cmdPhaseAdd(cwd, description, raw) {
   fs.writeFileSync(path.join(dirPath, '.gitkeep'), '');
 
   // Build phase entry
-  const phaseEntry = `\n### Phase ${newPhaseNum}: ${description}\n\n**Goal**: [To be planned]\n**Depends on:** Phase ${prevPhaseNum}\n**Plans:** 0 plans\n\nPlans:\n- [ ] TBD (run /gsd:plan-phase ${newPhaseNum} to break down)\n`;
+  const phaseEntry = `\n### Phase ${newPhaseNum}: ${description}\n\n**Goal**: [To be planned]\n**Depends on:** Phase ${prevPhaseNum}\n**Plans:** 0 plans\n\nPlans:\n- [ ] TBD (run /nf:plan-phase ${newPhaseNum} to break down)\n`;
 
   // Find insertion point: before last "---" or at end
   let updatedContent;
@@ -2984,7 +2984,7 @@ function cmdPhaseInsert(cwd, afterPhase, description, raw) {
   fs.writeFileSync(path.join(dirPath, '.gitkeep'), '');
 
   // Build phase entry
-  const phaseEntry = `\n### Phase ${decimalPhase}: ${description} (INSERTED)\n\n**Goal**: [Urgent work - to be planned]\n**Depends on:** Phase ${afterPhase}\n**Plans:** 0 plans\n\nPlans:\n- [ ] TBD (run /gsd:plan-phase ${decimalPhase} to break down)\n`;
+  const phaseEntry = `\n### Phase ${decimalPhase}: ${description} (INSERTED)\n\n**Goal**: [Urgent work - to be planned]\n**Depends on:** Phase ${afterPhase}\n**Plans:** 0 plans\n\nPlans:\n- [ ] TBD (run /nf:plan-phase ${decimalPhase} to break down)\n`;
 
   // Insert after the target phase section
   const headerPattern = isMilestoneScoped
@@ -3925,7 +3925,7 @@ function cmdValidateHealth(cwd, options, raw) {
 
   // ─── Check 1: .planning/ exists ───────────────────────────────────────────
   if (!fs.existsSync(planningDir)) {
-    addIssue('error', 'E001', '.planning/ directory not found', 'Run /gsd:new-project to initialize');
+    addIssue('error', 'E001', '.planning/ directory not found', 'Run /nf:new-project to initialize');
     output({
       status: 'broken',
       errors,
@@ -3938,7 +3938,7 @@ function cmdValidateHealth(cwd, options, raw) {
 
   // ─── Check 2: PROJECT.md exists and has required sections ─────────────────
   if (!fs.existsSync(projectPath)) {
-    addIssue('error', 'E002', 'PROJECT.md not found', 'Run /gsd:new-project to create');
+    addIssue('error', 'E002', 'PROJECT.md not found', 'Run /nf:new-project to create');
   } else {
     const content = fs.readFileSync(projectPath, 'utf-8');
     const requiredSections = ['## What This Is', '## Core Value', '## Requirements'];
@@ -3951,12 +3951,12 @@ function cmdValidateHealth(cwd, options, raw) {
 
   // ─── Check 3: ROADMAP.md exists ───────────────────────────────────────────
   if (!fs.existsSync(roadmapPath)) {
-    addIssue('error', 'E003', 'ROADMAP.md not found', 'Run /gsd:new-milestone to create roadmap');
+    addIssue('error', 'E003', 'ROADMAP.md not found', 'Run /nf:new-milestone to create roadmap');
   }
 
   // ─── Check 4: STATE.md exists and references valid phases ─────────────────
   if (!fs.existsSync(statePath)) {
-    addIssue('error', 'E004', 'STATE.md not found', 'Run /gsd:health --repair to regenerate', true);
+    addIssue('error', 'E004', 'STATE.md not found', 'Run /nf:health --repair to regenerate', true);
     repairs.push('regenerateState');
   } else {
     const stateContent = fs.readFileSync(statePath, 'utf-8');
@@ -3983,7 +3983,7 @@ function cmdValidateHealth(cwd, options, raw) {
       if (!diskPhases.has(ref) && !diskPhases.has(normalizedRef) && !diskPhases.has(unpaddedRef)) {
         // Only warn if phases dir has any content (not just an empty project)
         if (diskPhases.size > 0) {
-          addIssue('warning', 'W002', `STATE.md references phase ${ref}, but only phases ${[...diskPhases].sort().join(', ')} exist`, 'Run /gsd:health --repair to regenerate STATE.md', true);
+          addIssue('warning', 'W002', `STATE.md references phase ${ref}, but only phases ${[...diskPhases].sort().join(', ')} exist`, 'Run /nf:health --repair to regenerate STATE.md', true);
           if (!repairs.includes('regenerateState')) repairs.push('regenerateState');
         }
       }
@@ -3992,7 +3992,7 @@ function cmdValidateHealth(cwd, options, raw) {
 
   // ─── Check 5: config.json valid JSON + valid schema ───────────────────────
   if (!fs.existsSync(configPath)) {
-    addIssue('warning', 'W003', 'config.json not found', 'Run /gsd:health --repair to create with defaults', true);
+    addIssue('warning', 'W003', 'config.json not found', 'Run /nf:health --repair to create with defaults', true);
     repairs.push('createConfig');
   } else {
     try {
@@ -4004,7 +4004,7 @@ function cmdValidateHealth(cwd, options, raw) {
         addIssue('warning', 'W004', `config.json: invalid model_profile "${parsed.model_profile}"`, `Valid values: ${validProfiles.join(', ')}`);
       }
     } catch (err) {
-      addIssue('error', 'E005', `config.json: JSON parse error - ${err.message}`, 'Run /gsd:health --repair to reset to defaults', true);
+      addIssue('error', 'E005', `config.json: JSON parse error - ${err.message}`, 'Run /nf:health --repair to reset to defaults', true);
       repairs.push('resetConfig');
     }
   }
@@ -4194,7 +4194,7 @@ function cmdValidateHealth(cwd, options, raw) {
             stateContent += `**Current phase:** (determining...)\n`;
             stateContent += `**Status:** Resuming\n\n`;
             stateContent += `## Session Log\n\n`;
-            stateContent += `- ${new Date().toISOString().split('T')[0]}: STATE.md regenerated by /gsd:health --repair\n`;
+            stateContent += `- ${new Date().toISOString().split('T')[0]}: STATE.md regenerated by /nf:health --repair\n`;
             fs.writeFileSync(statePath, stateContent, 'utf-8');
             repairActions.push({ action: repair, success: true, path: 'STATE.md' });
             break;
@@ -4352,7 +4352,7 @@ function cmdScaffold(cwd, type, options, raw) {
   switch (type) {
     case 'context': {
       filePath = path.join(phaseDir, `${padded}-CONTEXT.md`);
-      content = `---\nphase: "${padded}"\nname: "${name || phaseInfo?.phase_name || 'Unnamed'}"\ncreated: ${today}\n---\n\n# Phase ${phase}: ${name || phaseInfo?.phase_name || 'Unnamed'} — Context\n\n## Decisions\n\n_Decisions will be captured during /gsd:discuss-phase ${phase}_\n\n## Discretion Areas\n\n_Areas where the executor can use judgment_\n\n## Deferred Ideas\n\n_Ideas to consider later_\n`;
+      content = `---\nphase: "${padded}"\nname: "${name || phaseInfo?.phase_name || 'Unnamed'}"\ncreated: ${today}\n---\n\n# Phase ${phase}: ${name || phaseInfo?.phase_name || 'Unnamed'} — Context\n\n## Decisions\n\n_Decisions will be captured during /nf:discuss-phase ${phase}_\n\n## Discretion Areas\n\n_Areas where the executor can use judgment_\n\n## Deferred Ideas\n\n_Ideas to consider later_\n`;
       break;
     }
     case 'uat': {
@@ -4406,16 +4406,16 @@ function resolveModelInternal(cwd, agentType) {
   // NEW: Tier lookup (after per-agent override, before profile fallback)
   // Maps agent types to cost tiers: planner (high-value) vs worker (repetitive/cheap)
   const agentToTier = {
-    'gsd-planner': 'planner',
-    'gsd-roadmapper': 'planner',
-    'gsd-phase-researcher': 'worker',
-    'gsd-plan-checker': 'worker',
-    'gsd-executor': 'worker',
-    'gsd-verifier': 'worker',
-    'gsd-codebase-mapper': 'worker',
-    'gsd-project-researcher': 'worker',
-    'gsd-research-synthesizer': 'worker',
-    'gsd-debugger': 'worker',
+    'nf-planner': 'planner',
+    'nf-roadmapper': 'planner',
+    'nf-phase-researcher': 'worker',
+    'nf-plan-checker': 'worker',
+    'nf-executor': 'worker',
+    'nf-verifier': 'worker',
+    'nf-codebase-mapper': 'worker',
+    'nf-project-researcher': 'worker',
+    'nf-research-synthesizer': 'worker',
+    'nf-debugger': 'worker',
   };
   const tier = agentToTier[agentType] || 'worker';
   const tierKey = 'model_tier_' + tier; // 'model_tier_planner' or 'model_tier_worker'
@@ -4661,8 +4661,8 @@ function cmdInitExecutePhase(cwd, phase, raw) {
 
   const result = {
     // Models
-    executor_model: resolveModelInternal(cwd, 'gsd-executor'),
-    verifier_model: resolveModelInternal(cwd, 'gsd-verifier'),
+    executor_model: resolveModelInternal(cwd, 'nf-executor'),
+    verifier_model: resolveModelInternal(cwd, 'nf-verifier'),
 
     // Config flags
     commit_docs: config.commit_docs,
@@ -4725,9 +4725,9 @@ function cmdInitPlanPhase(cwd, phase, raw) {
 
   const result = {
     // Models
-    researcher_model: resolveModelInternal(cwd, 'gsd-phase-researcher'),
-    planner_model: resolveModelInternal(cwd, 'gsd-planner'),
-    checker_model: resolveModelInternal(cwd, 'gsd-plan-checker'),
+    researcher_model: resolveModelInternal(cwd, 'nf-phase-researcher'),
+    planner_model: resolveModelInternal(cwd, 'nf-planner'),
+    checker_model: resolveModelInternal(cwd, 'nf-plan-checker'),
 
     // Workflow flags
     research_enabled: config.research,
@@ -4791,7 +4791,7 @@ function cmdInitNewProject(cwd, raw) {
 
   // Detect Brave Search API key availability
   const homedir = require('os').homedir();
-  const braveKeyFile = path.join(homedir, '.gsd', 'brave_api_key');
+  const braveKeyFile = path.join(homedir, '.nf', 'brave_api_key');
   const hasBraveSearch = !!(process.env.BRAVE_API_KEY || fs.existsSync(braveKeyFile));
 
   // Detect existing code
@@ -4814,9 +4814,9 @@ function cmdInitNewProject(cwd, raw) {
 
   const result = {
     // Models
-    researcher_model: resolveModelInternal(cwd, 'gsd-project-researcher'),
-    synthesizer_model: resolveModelInternal(cwd, 'gsd-research-synthesizer'),
-    roadmapper_model: resolveModelInternal(cwd, 'gsd-roadmapper'),
+    researcher_model: resolveModelInternal(cwd, 'nf-project-researcher'),
+    synthesizer_model: resolveModelInternal(cwd, 'nf-research-synthesizer'),
+    roadmapper_model: resolveModelInternal(cwd, 'nf-roadmapper'),
 
     // Config
     commit_docs: config.commit_docs,
@@ -4851,9 +4851,9 @@ function cmdInitNewMilestone(cwd, raw) {
 
   const result = {
     // Models
-    researcher_model: resolveModelInternal(cwd, 'gsd-project-researcher'),
-    synthesizer_model: resolveModelInternal(cwd, 'gsd-research-synthesizer'),
-    roadmapper_model: resolveModelInternal(cwd, 'gsd-roadmapper'),
+    researcher_model: resolveModelInternal(cwd, 'nf-project-researcher'),
+    synthesizer_model: resolveModelInternal(cwd, 'nf-research-synthesizer'),
+    roadmapper_model: resolveModelInternal(cwd, 'nf-roadmapper'),
 
     // Config
     commit_docs: config.commit_docs,
@@ -4877,23 +4877,90 @@ function cmdInitNewMilestone(cwd, raw) {
   output(result, raw);
 }
 
+function acquireInitLock(quickDir, timeoutMs) {
+  if (!fs.existsSync(quickDir)) {
+    fs.mkdirSync(quickDir, { recursive: true });
+  }
+  const lockPath = path.join(quickDir, '.init-lock');
+  const staleTtlMs = 5 * 60 * 1000;
+  const isProcessRunning = (pid) => { try { process.kill(pid, 0); return true; } catch { return false; } };
+  const cleanupStale = () => {
+    try {
+      if (!fs.existsSync(lockPath)) return;
+      const content = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
+      const ageMs = Date.now() - new Date(content.ts).getTime();
+      if (!isProcessRunning(content.pid) || ageMs > staleTtlMs) {
+        try { fs.unlinkSync(lockPath); } catch {}
+      }
+    } catch { try { fs.unlinkSync(lockPath); } catch {} }
+  };
+  const startTime = Date.now();
+  const backoffMs = [50, 100, 200, 400, 800, 1600, 3200];
+  let attempt = 0;
+  while (true) {
+    cleanupStale();
+    try {
+      const lockContent = JSON.stringify({ pid: process.pid, ts: new Date().toISOString() });
+      fs.writeFileSync(lockPath, lockContent, { flag: 'wx' });
+      return { acquired: true, lockPath, release: () => { try { fs.unlinkSync(lockPath); } catch {} } };
+    } catch (e) {
+      if (e.code !== 'EEXIST') throw e;
+    }
+    if (Date.now() - startTime >= timeoutMs) {
+      return { acquired: false, lockPath: null, release: () => {} };
+    }
+    const delay = backoffMs[Math.min(attempt, backoffMs.length - 1)];
+    const jitter = Math.floor(Math.random() * 50);
+    const sleepMs = Math.min(delay + jitter, timeoutMs - (Date.now() - startTime));
+    if (sleepMs > 0) { const end = Date.now() + sleepMs; while (Date.now() < end) {} }
+    attempt++;
+  }
+}
+
 function cmdInitQuick(cwd, description, raw) {
   const config = loadConfig(cwd);
   const now = new Date();
   const slug = description ? generateSlugInternal(description)?.substring(0, 40) : null;
 
-  // Find next quick task number
   const quickDir = path.join(cwd, '.planning', 'quick');
+  const INIT_LOCK_TIMEOUT_MS = 10000;
+  const lock = acquireInitLock(quickDir, INIT_LOCK_TIMEOUT_MS);
+  if (!lock.acquired) {
+    process.stderr.write(
+      `[init-quick] ERROR: Could not acquire init lock within ${INIT_LOCK_TIMEOUT_MS / 1000}s. ` +
+      `Another /nf:quick invocation appears to be initializing. Wait a few seconds and retry.\n`
+    );
+    process.exit(1);
+  }
   let nextNum = 1;
   try {
-    const existing = fs.readdirSync(quickDir)
-      .filter(f => /^\d+-/.test(f))
-      .map(f => parseInt(f.split('-')[0], 10))
-      .filter(n => !isNaN(n));
-    if (existing.length > 0) {
-      nextNum = Math.max(...existing) + 1;
+    try {
+      const existing = fs.readdirSync(quickDir)
+        .filter(f => /^\d+-/.test(f))
+        .map(f => parseInt(f.split('-')[0], 10))
+        .filter(n => !isNaN(n));
+      if (existing.length > 0) {
+        nextNum = Math.max(...existing) + 1;
+      }
+    } catch {}
+
+    if (slug) {
+      const taskDir = path.join(quickDir, `${nextNum}-${slug}`);
+      fs.mkdirSync(taskDir, { recursive: true });
+      const claimedPath = path.join(taskDir, '.claimed');
+      fs.writeFileSync(claimedPath, JSON.stringify({ pid: process.pid, ts: now.toISOString(), task_id: nextNum }));
     }
-  } catch {}
+
+    const collisionDirs = fs.readdirSync(quickDir).filter(f => f.startsWith(`${nextNum}-`) && /^\d+-/.test(f));
+    if (collisionDirs.length > 1) {
+      process.stderr.write(
+        `[init-quick] WARNING: task_id ${nextNum} has ${collisionDirs.length} directories. ` +
+        `This should not happen. Directories: ${collisionDirs.join(', ')}\n`
+      );
+    }
+  } finally {
+    lock.release();
+  }
 
   // Branch detection: detect current branch
   let currentBranch = 'unknown';
@@ -4947,10 +5014,10 @@ function cmdInitQuick(cwd, description, raw) {
 
   const result = {
     // Models
-    planner_model: resolveModelInternal(cwd, 'gsd-planner'),
-    executor_model: resolveModelInternal(cwd, 'gsd-executor'),
-    checker_model: resolveModelInternal(cwd, 'gsd-plan-checker'),
-    verifier_model: resolveModelInternal(cwd, 'gsd-verifier'),
+    planner_model: resolveModelInternal(cwd, 'nf-planner'),
+    executor_model: resolveModelInternal(cwd, 'nf-executor'),
+    checker_model: resolveModelInternal(cwd, 'nf-plan-checker'),
+    verifier_model: resolveModelInternal(cwd, 'nf-verifier'),
 
     // Config
     commit_docs: config.commit_docs,
@@ -5046,8 +5113,8 @@ function cmdInitVerifyWork(cwd, phase, raw) {
 
   const result = {
     // Models
-    planner_model: resolveModelInternal(cwd, 'gsd-planner'),
-    checker_model: resolveModelInternal(cwd, 'gsd-plan-checker'),
+    planner_model: resolveModelInternal(cwd, 'nf-planner'),
+    checker_model: resolveModelInternal(cwd, 'nf-plan-checker'),
 
     // Config
     commit_docs: config.commit_docs,
@@ -5278,7 +5345,7 @@ function cmdInitMapCodebase(cwd, raw) {
 
   const result = {
     // Models
-    mapper_model: resolveModelInternal(cwd, 'gsd-codebase-mapper'),
+    mapper_model: resolveModelInternal(cwd, 'nf-codebase-mapper'),
 
     // Config
     commit_docs: config.commit_docs,
@@ -5362,8 +5429,8 @@ function cmdInitProgress(cwd, raw) {
 
   const result = {
     // Models
-    executor_model: resolveModelInternal(cwd, 'gsd-executor'),
-    planner_model: resolveModelInternal(cwd, 'gsd-planner'),
+    executor_model: resolveModelInternal(cwd, 'nf-executor'),
+    planner_model: resolveModelInternal(cwd, 'nf-planner'),
 
     // Config
     commit_docs: config.commit_docs,
@@ -5410,7 +5477,7 @@ async function main() {
   const cwd = process.cwd();
 
   if (!command) {
-    error('Usage: gsd-tools <command> [args] [--raw]\nCommands: state, resolve-model, find-phase, commit, verify-summary, verify, frontmatter, template, generate-slug, current-timestamp, list-todos, verify-path-exists, config-ensure-section, init');
+    error('Usage: nf-tools <command> [args] [--raw]\nCommands: state, resolve-model, find-phase, commit, verify-summary, verify, frontmatter, template, generate-slug, current-timestamp, list-todos, verify-path-exists, config-ensure-section, init');
   }
 
   switch (command) {

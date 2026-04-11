@@ -1,5 +1,5 @@
 'use strict';
-// bin/gsd-quorum-slot-worker-improvements.test.cjs
+// bin/nf-quorum-slot-worker-improvements.test.cjs
 // Unit tests for improvements parsing in nf-quorum-slot-worker
 // Requirements: IMPR-01
 //

@@ -15,10 +15,10 @@ If `--config` is present: skip directly to the `config_flow` step (the original 
 </step>
 
 <step name="init_hub">
-Load project state using the same gsd-tools calls as `progress.md`:
+Load project state using the same nf-tools calls as `progress.md`:
 
 ```bash
-INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init progress)
+INIT=$(node ~/.claude/nf/bin/nf-tools.cjs init progress)
 ```
 
 Extract from init JSON: `project_exists`, `roadmap_exists`, `state_exists`, `phases`, `current_phase`, `next_phase`, `milestone_version`, `completed_count`, `phase_count`, `paused_at`.
@@ -28,9 +28,9 @@ If `project_exists` is false: go to the `no_project` step.
 Also load:
 
 ```bash
-ROADMAP=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap analyze)
-STATE=$(node ~/.claude/nf/bin/gsd-tools.cjs state-snapshot)
-PROGRESS_BAR=$(node ~/.claude/nf/bin/gsd-tools.cjs progress bar --raw)
+ROADMAP=$(node ~/.claude/nf/bin/nf-tools.cjs roadmap analyze)
+STATE=$(node ~/.claude/nf/bin/nf-tools.cjs state-snapshot)
+PROGRESS_BAR=$(node ~/.claude/nf/bin/nf-tools.cjs progress bar --raw)
 CONFIG=$(cat .planning/config.json)
 ```
 
@@ -483,8 +483,8 @@ This is the PRESERVED original 6-question settings form. Reached via `--config` 
 Ensure config exists and load current state:
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs config-ensure-section
-INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs state load)
+node ~/.claude/nf/bin/nf-tools.cjs config-ensure-section
+INIT=$(node ~/.claude/nf/bin/nf-tools.cjs state load)
 ```
 
 Creates `.planning/config.json` with defaults if missing and loads current config values.
@@ -560,8 +560,8 @@ AskUserQuestion([
     multiSelect: false,
     options: [
       { label: "None (Recommended)", description: "Commit directly to current branch" },
-      { label: "Per Phase", description: "Create branch for each phase (gsd/phase-{N}-{name})" },
-      { label: "Per Milestone", description: "Create branch for entire milestone (gsd/{version}-{name})" }
+      { label: "Per Phase", description: "Create branch for each phase (nf/phase-{N}-{name})" },
+      { label: "Per Milestone", description: "Create branch for entire milestone (nf/{version}-{name})" }
     ]
   }
 ])
@@ -600,20 +600,20 @@ AskUserQuestion([
     header: "Defaults",
     multiSelect: false,
     options: [
-      { label: "Yes", description: "New projects start with these settings (saved to ~/.gsd/defaults.json)" },
+      { label: "Yes", description: "New projects start with these settings (saved to ~/.nf/defaults.json)" },
       { label: "No", description: "Only apply to this project" }
     ]
   }
 ])
 ```
 
-If "Yes": write the same config object (minus project-specific fields like `brave_search`) to `~/.gsd/defaults.json`:
+If "Yes": write the same config object (minus project-specific fields like `brave_search`) to `~/.nf/defaults.json`:
 
 ```bash
-mkdir -p ~/.gsd
+mkdir -p ~/.nf
 ```
 
-Write `~/.gsd/defaults.json` with:
+Write `~/.nf/defaults.json` with:
 ```json
 {
   "mode": <current>,

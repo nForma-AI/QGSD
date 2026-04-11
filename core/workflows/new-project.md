@@ -46,7 +46,7 @@ The document should describe what you want to build.
 **MANDATORY FIRST STEP — Execute these checks before ANY user interaction:**
 
 ```bash
-INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init new-project)
+INIT=$(node ~/.claude/nf/bin/nf-tools.cjs init new-project)
 ```
 
 Parse JSON for: `researcher_model`, `synthesizer_model`, `roadmapper_model`, `commit_docs`, `project_exists`, `has_codebase_map`, `planning_exists`, `has_existing_code`, `has_package_file`, `is_brownfield`, `needs_codebase_map`, `has_git`, `project_path`.
@@ -188,13 +188,13 @@ Create `.planning/config.json` with mode set to "yolo":
 
 ```bash
 mkdir -p .planning
-node ~/.claude/nf/bin/gsd-tools.cjs commit "chore: add project config" --files .planning/config.json
+node ~/.claude/nf/bin/nf-tools.cjs commit "chore: add project config" --files .planning/config.json
 ```
 
 **Persist auto-advance to config (survives context compaction):**
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs config-set workflow.auto_advance true
+node ~/.claude/nf/bin/nf-tools.cjs config-set workflow.auto_advance true
 ```
 
 Proceed to Step 4 (skip Steps 3 and 5).
@@ -338,19 +338,19 @@ Do not compress. Capture everything gathered.
 
 ```bash
 mkdir -p .planning
-node ~/.claude/nf/bin/gsd-tools.cjs commit "docs: initialize project" --files .planning/PROJECT.md
+node ~/.claude/nf/bin/nf-tools.cjs commit "docs: initialize project" --files .planning/PROJECT.md
 ```
 
 ## 5. Workflow Preferences
 
 **If auto mode:** Skip — config was collected in Step 2a. Proceed to Step 5.5.
 
-**Check for global defaults** at `~/.gsd/defaults.json`. If the file exists, offer to use saved defaults:
+**Check for global defaults** at `~/.nf/defaults.json`. If the file exists, offer to use saved defaults:
 
 ```
 AskUserQuestion([
   {
-    question: "Use your saved default settings? (from ~/.gsd/defaults.json)",
+    question: "Use your saved default settings? (from ~/.nf/defaults.json)",
     header: "Defaults",
     multiSelect: false,
     options: [
@@ -361,9 +361,9 @@ AskUserQuestion([
 ])
 ```
 
-If "Yes": read `~/.gsd/defaults.json`, use those values for config.json, and skip directly to **Commit config.json** below.
+If "Yes": read `~/.nf/defaults.json`, use those values for config.json, and skip directly to **Commit config.json** below.
 
-If "No" or `~/.gsd/defaults.json` doesn't exist: proceed with the questions below.
+If "No" or `~/.nf/defaults.json` doesn't exist: proceed with the questions below.
 
 **Round 1 — Core workflow settings (4 questions):**
 
@@ -490,7 +490,7 @@ Create `.planning/config.json` with all settings:
 **Commit config.json:**
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "chore: add project config" --files .planning/config.json
+node ~/.claude/nf/bin/nf-tools.cjs commit "chore: add project config" --files .planning/config.json
 ```
 
 **Note:** Run `/nf:settings` anytime to update these preferences.
@@ -991,7 +991,7 @@ If "adjust": Return to scoping.
 **Commit requirements:**
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "docs: define v1 requirements" --files .planning/REQUIREMENTS.md
+node ~/.claude/nf/bin/nf-tools.cjs commit "docs: define v1 requirements" --files .planning/REQUIREMENTS.md
 ```
 
 **Sync baselines into formal envelope:**
@@ -1007,7 +1007,7 @@ This merges baseline requirements into the formal envelope with idempotent text 
 If any requirements were added, commit:
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "req(baseline): sync baseline requirements into formal envelope" --files .planning/formal/requirements.json
+node ~/.claude/nf/bin/nf-tools.cjs commit "req(baseline): sync baseline requirements into formal envelope" --files .planning/formal/requirements.json
 ```
 
 ## 8. Create Roadmap
@@ -1137,7 +1137,7 @@ Use AskUserQuestion:
 **Commit roadmap (after approval or auto mode):**
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "docs: create roadmap ([N] phases)" --files .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md
+node ~/.claude/nf/bin/nf-tools.cjs commit "docs: create roadmap ([N] phases)" --files .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md
 ```
 
 ## 9. Done
@@ -1165,8 +1165,8 @@ Present completion summary:
 **Auto-advance check:**
 
 ```bash
-AUTO_CFG=$(node ~/.claude/nf/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
-FIRST_PHASE=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase 1 2>/dev/null | jq -r '.phase_number // "1"')
+AUTO_CFG=$(node ~/.claude/nf/bin/nf-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
+FIRST_PHASE=$(node ~/.claude/nf/bin/nf-tools.cjs roadmap get-phase 1 2>/dev/null | jq -r '.phase_number // "1"')
 ```
 
 **If `--auto` flag present OR `AUTO_CFG` is true:**
@@ -1181,7 +1181,7 @@ Roadmap complete. Spawning plan-phase...
 ```
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/nf-tools.cjs activity-set \
   "{\"activity\":\"new_project\",\"sub_activity\":\"plan_phase_1\"}"
 ```
 
@@ -1213,7 +1213,7 @@ Task(
   ```
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs activity-clear
+node ~/.claude/nf/bin/nf-tools.cjs activity-clear
 ```
 
 **If neither `--auto` nor `AUTO_CFG` enabled:**

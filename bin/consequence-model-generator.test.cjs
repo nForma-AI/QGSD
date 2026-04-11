@@ -12,7 +12,7 @@ const { generateConsequenceModel, applyMutation } = require('./consequence-model
 
 // Helper: Create temporary test files
 function createTempFile(content, extension = '.tla') {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-test-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-test-'));
   const filePath = path.join(tempDir, `test-model${extension}`);
   fs.writeFileSync(filePath, content, 'utf-8');
   return { tempDir, filePath };

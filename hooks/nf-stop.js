@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // hooks/nf-stop.js
-// Stop hook — quorum verification gate for GSD planning commands.
+// Stop hook — quorum verification gate for NF planning commands.
 //
 // Reads JSON from stdin (Claude Code Stop event payload), applies guards in
 // strict order, then scans the current-turn transcript window for quorum
@@ -74,9 +74,9 @@ function autoCommitFormalArtifacts() {
     const allFiles = [...new Set([...unstagedFiles, ...stagedFiles, ...untrackedFiles])];
     if (allFiles.length === 0) return; // Nothing to commit — exit silently
 
-    // 4. Stage and commit via gsd-tools.cjs
-    const gsdToolsPath = resolveBin('gsd-tools.cjs');
-    const commitArgs = [gsdToolsPath, 'commit', 'chore: [auto] sync regenerated formal artifacts', '--files', ...allFiles];
+    // 4. Stage and commit via nf-tools.cjs
+    const nfToolsPath = resolveBin('nf-tools.cjs');
+    const commitArgs = [nfToolsPath, 'commit', 'chore: [auto] sync regenerated formal artifacts', '--files', ...allFiles];
     const commitResult = spawnSync(process.execPath, commitArgs, SPAWN_OPTS);
     if (commitResult.status !== 0) {
       const errMsg = (commitResult.stderr || '').toString().trim();
@@ -87,10 +87,10 @@ function autoCommitFormalArtifacts() {
   }
 }
 
-// Builds the regex that matches /nf:<cmd>, /gsd:<cmd>, or /qgsd:<cmd> in any text.
+// Builds the regex that matches /nf:<cmd> or /qnf:<cmd> in any text.
 function buildCommandPattern(quorumCommands) {
   const escaped = quorumCommands.map(c => c.replace(/-/g, '\\-'));
-  return new RegExp('\\/(nf|q?gsd):(' + escaped.join('|') + ')');
+  return new RegExp('\\/(q?nf):(' + escaped.join('|') + ')');
 }
 
 // Returns true if a parsed JSONL user entry is a human text message.
@@ -140,7 +140,7 @@ function extractCommandTag(entry) {
   return m ? m[1].trim() : null;
 }
 
-// Returns true if any user entry in currentTurnLines contains a GSD quorum command.
+// Returns true if any user entry in currentTurnLines contains an NF quorum command.
 // Uses XML-tag-first strategy: if a <command-name> tag is present, only that tag is tested
 // against cmdPattern (never the full body). Falls back to first 300 chars of message text
 // when no tag is found, to avoid matching @file-expanded workflow content.
@@ -172,7 +172,7 @@ function hasQuorumCommand(currentTurnLines, cmdPattern) {
   return false;
 }
 
-// Extracts the matched /nf:<cmd>, /gsd:<cmd>, or /qgsd:<cmd> text from the first matching user line.
+// Extracts the matched /nf:<cmd> or /qnf:<cmd> text from the first matching user line.
 // Uses XML-tag-first strategy: prefers the <command-name> tag for accurate command identification.
 // Falls back to first 300 chars of message text, then to '/nf:plan-phase' as ultimate fallback.
 function extractCommand(currentTurnLines, cmdPattern) {
@@ -396,7 +396,7 @@ function countDeliberationRounds(currentTurnLines) {
 }
 
 // Returns true if the current turn contains a Bash tool_use block that BOTH:
-// (a) invokes gsd-tools.cjs commit, AND
+// (a) invokes nf-tools.cjs commit, AND
 // (b) references a planning artifact file path (not codebase/*.md).
 // Requiring both conditions prevents false positives from ls/cat/grep commands.
 function hasArtifactCommit(currentTurnLines) {
@@ -411,7 +411,7 @@ function hasArtifactCommit(currentTurnLines) {
         if (block.name !== 'Bash') continue;
         const cmdStr = JSON.stringify(block.input || '');
         // Both conditions must hold in the same Bash block
-        if (!cmdStr.includes('gsd-tools.cjs commit')) continue;
+        if (!cmdStr.includes('nf-tools.cjs commit')) continue;
         if (ARTIFACT_PATTERNS.some(p => p.test(cmdStr))) return true;
       }
     } catch { /* skip */ }
@@ -531,7 +531,7 @@ function detectUnavailWithoutFallback(currentTurnLines) {
 
 // The exact token Claude must include in its final output to mark a decision turn.
 // Used by hasDecisionMarker (Stop hook) and injected into Claude's context (Prompt hook).
-const DECISION_MARKER = '<!-- GSD_DECISION -->';
+const DECISION_MARKER = '<!-- NF_DECISION -->';
 
 // Returns true if the last assistant text block in currentTurnLines contains DECISION_MARKER.
 // Walks lines in reverse to find the most recent assistant entry with a text content block.
@@ -687,9 +687,9 @@ function main() {
       const currentTurnLines = getCurrentTurnLines(lines);
 
       // Build command pattern once; reuse for detection and extraction
-      // Strict mode: match ANY /nf: or /gsd: or /qgsd: command, not just quorum_commands list.
+      // Strict mode: match ANY /nf: or /qnf: command, not just quorum_commands list.
       const cmdPattern = profile === 'strict'
-        ? /\/(nf|q?gsd):[\w][\w-]*/
+        ? /\/(q?nf):[\w][\w-]*/
         : buildCommandPattern(config.quorum_commands);
 
       // GUARD 4: Only enforce quorum if a planning command is in current turn (STOP-06)
@@ -699,10 +699,10 @@ function main() {
 
       // GUARD 5: Only enforce quorum on project decision turns (SCOPE-01, SCOPE-02, SCOPE-03)
       // A turn is a decision turn if it contains a planning artifact commit OR a decision marker.
-      // GSD-internal operation turns (routing, agent spawning, questioning) have neither.
+      // NF-internal operation turns (routing, agent spawning, questioning) have neither.
       const isDecisionTurn = hasArtifactCommit(currentTurnLines) || hasDecisionMarker(currentTurnLines);
       if (!isDecisionTurn) {
-        process.exit(0); // GSD-internal operation — not a project decision turn
+        process.exit(0); // NF-internal operation — not a project decision turn
       }
 
       // Extract --n N flag from current-turn user prompt (if present)

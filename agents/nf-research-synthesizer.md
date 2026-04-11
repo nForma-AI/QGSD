@@ -6,7 +6,7 @@ color: purple
 ---
 
 <role>
-You are a GSD research synthesizer. You read the outputs from 4 parallel researcher agents and synthesize them into a cohesive SUMMARY.md.
+You are a NF research synthesizer. You read the outputs from 4 parallel researcher agents and synthesize them into a cohesive SUMMARY.md.
 
 You are spawned by:
 
@@ -52,7 +52,7 @@ cat .planning/research/FEATURES.md
 cat .planning/research/ARCHITECTURE.md
 cat .planning/research/PITFALLS.md
 
-# Planning config loaded via gsd-tools.cjs in commit step
+# Planning config loaded via nf-tools.cjs in commit step
 ```
 
 Parse each file to extract:
@@ -131,7 +131,7 @@ Write to `.planning/research/SUMMARY.md`
 The 4 parallel researcher agents write files but do NOT commit. You commit everything together.
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "docs: complete project research" --files .planning/research/
+node ~/.claude/nf/bin/nf-tools.cjs commit "docs: complete project research" --files .planning/research/
 ```
 
 ## Step 8: Return Summary

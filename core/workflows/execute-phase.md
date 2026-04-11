@@ -16,7 +16,7 @@ Read STATE.md before any operation to load project context.
 Load all context in one call:
 
 ```bash
-INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init execute-phase "${PHASE_ARG}")
+INIT=$(node ~/.claude/nf/bin/nf-tools.cjs init execute-phase "${PHASE_ARG}")
 ```
 
 Parse JSON for: `executor_model`, `verifier_model`, `commit_docs`, `parallelization`, `branching_strategy`, `branch_name`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `phase_slug`, `plans`, `incomplete_plans`, `plan_count`, `incomplete_count`, `state_exists`, `roadmap_exists`.
@@ -51,7 +51,7 @@ Report: "Found {plan_count} plans in {phase_dir} ({incomplete_count} incomplete)
 Load plan inventory with wave grouping in one call:
 
 ```bash
-PLAN_INDEX=$(node ~/.claude/nf/bin/gsd-tools.cjs phase-plan-index "${PHASE_NUMBER}")
+PLAN_INDEX=$(node ~/.claude/nf/bin/nf-tools.cjs phase-plan-index "${PHASE_NUMBER}")
 ```
 
 Parse JSON for: `phase`, `plans[]` (each with `id`, `wave`, `autonomous`, `objective`, `files_modified`, `task_count`, `has_summary`), `waves` (map of wave number → plan IDs), `incomplete`, `has_checkpoints`.
@@ -79,7 +79,7 @@ Execute each wave in sequence. Within a wave: parallel if `PARALLELIZATION=true`
 Run this Bash command at the start of each plan execution (before spawning the executor agent), substituting `${PHASE_NUMBER}` (from init JSON), the current plan filename (e.g. `14-02-PLAN.md`), and the current wave number (e.g. `2`):
 ```bash
 # Track current activity
-node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/nf-tools.cjs activity-set \
   "{\"activity\":\"execute_phase\",\"sub_activity\":\"executing_plan\",\"phase\":\"${PHASE_NUMBER}\",\"plan\":\"${PLAN_FILE}\",\"wave\":${WAVE_N}}"
 ```
 
@@ -319,10 +319,10 @@ node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
 
    Then execute these steps inline (no user gate):
    ```bash
-   INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init quick "$DESCRIPTION")
+   INIT=$(node ~/.claude/nf/bin/nf-tools.cjs init quick "$DESCRIPTION")
    # Parse next_num, slug, task_dir, planner_model, executor_model from INIT
    mkdir -p "${task_dir}"
-   node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
+   node ~/.claude/nf/bin/nf-tools.cjs activity-set \
      "{\"activity\":\"quick\",\"sub_activity\":\"planning\"}"
    ```
    Then spawn nf-planner Task with the description and QUICK_DIR (same prompt as quick.md Step 5 standard mode).
@@ -346,7 +346,7 @@ Plans with `autonomous: false` require user interaction.
 When an executor agent returns a `checkpoint:verify` result, run this Bash command before spawning `/nf:quorum-test`, substituting `${PHASE_NUMBER}` and the current plan filename:
 ```bash
 # Track checkpoint:verify activity
-node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/nf-tools.cjs activity-set \
   "{\"activity\":\"execute_phase\",\"sub_activity\":\"checkpoint_verify\",\"phase\":\"${PHASE_NUMBER}\",\"plan\":\"${PLAN_FILE}\",\"checkpoint\":\"checkpoint:verify\"}"
 ```
 
@@ -354,7 +354,7 @@ node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
 
 Read auto-advance config:
 ```bash
-AUTO_CFG=$(node ~/.claude/nf/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
+AUTO_CFG=$(node ~/.claude/nf/bin/nf-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
 ```
 
 When executor returns a checkpoint AND `AUTO_CFG` is `"true"`:
@@ -393,7 +393,7 @@ When executor returns a checkpoint AND `AUTO_CFG` is `"true"`:
 If quorum-test returns BLOCK or REVIEW-NEEDED and you enter a `/nf:debug` loop, run this Bash command before each debug round, substituting `${PHASE_NUMBER}`, the current plan filename, and the debug round counter (1, 2, or 3):
 ```bash
 # Track debug loop activity
-node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/nf-tools.cjs activity-set \
   "{\"activity\":\"execute_phase\",\"sub_activity\":\"debug_loop\",\"phase\":\"${PHASE_NUMBER}\",\"plan\":\"${PLAN_FILE}\",\"debug_round\":${DEBUG_ROUND}}"
 ```
 
@@ -416,7 +416,7 @@ node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
    After presenting `checkpoint:human-verify` to the user, run this Bash command, substituting `${PHASE_NUMBER}` and the current plan filename:
    ```bash
    # Track human-verify pause
-   node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
+   node ~/.claude/nf/bin/nf-tools.cjs activity-set \
      "{\"activity\":\"execute_phase\",\"sub_activity\":\"awaiting_human_verify\",\"phase\":\"${PHASE_NUMBER}\",\"plan\":\"${PLAN_FILE}\"}"
    ```
 
@@ -472,7 +472,7 @@ fi
 
 **2. Find parent UAT file:**
 ```bash
-PARENT_INFO=$(node ~/.claude/nf/bin/gsd-tools.cjs find-phase "${PARENT_PHASE}" --raw)
+PARENT_INFO=$(node ~/.claude/nf/bin/nf-tools.cjs find-phase "${PARENT_PHASE}" --raw)
 # Extract directory from PARENT_INFO JSON, then find UAT file in that directory
 ```
 
@@ -503,7 +503,7 @@ mv .planning/debug/{slug}.md .planning/debug/resolved/
 
 **6. Commit updated artifacts:**
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "docs(phase-${PARENT_PHASE}): resolve UAT gaps and debug sessions after ${PHASE_NUMBER} gap closure" --files .planning/phases/*${PARENT_PHASE}*/*-UAT.md .planning/debug/resolved/*.md
+node ~/.claude/nf/bin/nf-tools.cjs commit "docs(phase-${PARENT_PHASE}): resolve UAT gaps and debug sessions after ${PHASE_NUMBER} gap closure" --files .planning/phases/*${PARENT_PHASE}*/*-UAT.md .planning/debug/resolved/*.md
 ```
 </step>
 
@@ -511,13 +511,13 @@ node ~/.claude/nf/bin/gsd-tools.cjs commit "docs(phase-${PARENT_PHASE}): resolve
 Verify phase achieved its GOAL, not just completed tasks.
 
 ```bash
-PHASE_REQ_IDS=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase "${PHASE_NUMBER}" | jq -r '.section' | grep -i "Requirements:" | sed 's/.*Requirements:\*\*\s*//' | sed 's/[\[\]]//g')
+PHASE_REQ_IDS=$(node ~/.claude/nf/bin/nf-tools.cjs roadmap get-phase "${PHASE_NUMBER}" | jq -r '.section' | grep -i "Requirements:" | sed 's/.*Requirements:\*\*\s*//' | sed 's/[\[\]]//g')
 ```
 
 Before spawning the verifier Task, run this Bash command to track the verification activity:
 ```bash
 # Track phase verification activity
-node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/nf-tools.cjs activity-set \
   "{\"activity\":\"execute_phase\",\"sub_activity\":\"verifying_phase\",\"phase\":\"${PHASE_NUMBER}\"}"
 ```
 
@@ -530,7 +530,7 @@ Reference matcher shape: `tr ' -/'` plus `grep -qF "$KEYWORD" || echo "$KEYWORD"
 # Formal scope scan — uses centralized bin/formal-scope-scan.cjs
 FORMAL_SPEC_CONTEXT=()
 if [ -d ".planning/formal/spec" ]; then
-  PHASE_DESC=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase "${PHASE_NUMBER}" | jq -r '.goal // .phase_name')
+  PHASE_DESC=$(node ~/.claude/nf/bin/nf-tools.cjs roadmap get-phase "${PHASE_NUMBER}" | jq -r '.goal // .phase_name')
   while IFS=$'\t' read -r mod modpath; do
     FORMAL_SPEC_CONTEXT+=("{\"module\":\"$mod\",\"path\":\"$modpath\"}")
   done < <(node bin/formal-scope-scan.cjs --description "$PHASE_DESC" --format lines)
@@ -872,7 +872,7 @@ The cleanup report is informational only. Do NOT fail the phase or block update_
 **Mark phase complete and update all tracking files:**
 
 ```bash
-COMPLETION=$(node ~/.claude/nf/bin/gsd-tools.cjs phase complete "${PHASE_NUMBER}" 2>&1)
+COMPLETION=$(node ~/.claude/nf/bin/nf-tools.cjs phase complete "${PHASE_NUMBER}" 2>&1)
 COMPLETION_EXIT=$?
 ```
 
@@ -884,7 +884,7 @@ The CLI's verification gate blocked completion because `verify_phase_goal` was s
 2. Run the full `verify_phase_goal` step (above) — formal check + nf-verifier Task spawn + status routing.
 3. If verifier produces VERIFICATION.md with `status: passed` → retry `phase complete`:
    ```bash
-   COMPLETION=$(node ~/.claude/nf/bin/gsd-tools.cjs phase complete "${PHASE_NUMBER}")
+   COMPLETION=$(node ~/.claude/nf/bin/nf-tools.cjs phase complete "${PHASE_NUMBER}")
    ```
 4. If verifier produces `gaps_found` or `human_needed` → route through existing `verify_phase_goal` handlers (do NOT retry `phase complete`).
 
@@ -904,11 +904,11 @@ Extract from result: `next_phase`, `next_phase_name`, `is_last_phase`.
 After the `phase complete` call succeeds, run this Bash command to clear the activity state:
 ```bash
 # Clear activity on successful completion
-node ~/.claude/nf/bin/gsd-tools.cjs activity-clear
+node ~/.claude/nf/bin/nf-tools.cjs activity-clear
 ```
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "docs(phase-{X}): complete phase execution" --files .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md {phase_dir}/*-VERIFICATION.md
+node ~/.claude/nf/bin/nf-tools.cjs commit "docs(phase-{X}): complete phase execution" --files .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md {phase_dir}/*-VERIFICATION.md
 ```
 </step>
 
@@ -921,7 +921,7 @@ node ~/.claude/nf/bin/gsd-tools.cjs commit "docs(phase-{X}): complete phase exec
 1. Parse `--auto` flag from $ARGUMENTS
 2. Read `workflow.auto_advance` from config:
    ```bash
-   AUTO_CFG=$(node ~/.claude/nf/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
+   AUTO_CFG=$(node ~/.claude/nf/bin/nf-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
    ```
 
 **If `--auto` flag present OR `AUTO_CFG` is true (AND verification passed with no gaps):**

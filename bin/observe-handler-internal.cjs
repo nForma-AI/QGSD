@@ -15,7 +15,7 @@
  * 12. Sensitivity sweep prediction mismatches (sensitivity-sweep-feedback.cjs)
  * 13. Security findings (security-sweep.cjs)
  * 14. Issue classification from telemetry (issue-classifier.cjs)
- * 15. Health diagnostics (gsd-tools validate health) — QGSD repo only
+ * 15. Health diagnostics (nf-tools validate health) — QNF repo only
  * 16. Accumulated error patterns (errors.jsonl via memory-store.cjs)
  * 17. Feature usefulness report (feature-report.cjs)
  *
@@ -747,9 +747,9 @@ function handleInternal(sourceConfig, options) {
 
     // Category 15: nf:health diagnostics (self-development only)
     try {
-      const gsdToolsPath = path.join(projectRoot, 'core', 'bin', 'gsd-tools.cjs');
-      if (fs.existsSync(gsdToolsPath)) {
-        const result = spawnSync(process.execPath, [gsdToolsPath, 'validate', 'health'], {
+      const nfToolsPath = path.join(projectRoot, 'core', 'bin', 'nf-tools.cjs');
+      if (fs.existsSync(nfToolsPath)) {
+        const result = spawnSync(process.execPath, [nfToolsPath, 'validate', 'health'], {
           encoding: 'utf8',
           timeout: 15000,
           cwd: projectRoot

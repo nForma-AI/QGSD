@@ -1,5 +1,5 @@
 <overview>
-Git integration for GSD framework.
+Git integration for NF framework.
 </overview>
 
 <core_principle>
@@ -29,7 +29,7 @@ The git log should read like a changelog of what shipped, not a diary of plannin
 [ -d .git ] && echo "GIT_EXISTS" || echo "NO_GIT"
 ```
 
-If NO_GIT: Run `git init` silently. GSD projects always get their own repo.
+If NO_GIT: Run `git init` silently. NF projects always get their own repo.
 </git_check>
 
 <commit_formats>
@@ -51,7 +51,7 @@ Phases:
 What to commit:
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "docs: initialize [project-name] ([N] phases)" --files .planning/
+node ~/.claude/nf/bin/nf-tools.cjs commit "docs: initialize [project-name] ([N] phases)" --files .planning/
 ```
 
 </format>
@@ -129,7 +129,7 @@ SUMMARY: .planning/phases/XX-name/{phase}-{plan}-SUMMARY.md
 What to commit:
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "docs({phase}-{plan}): complete [plan-name] plan" --files .planning/phases/XX-name/{phase}-{plan}-PLAN.md .planning/phases/XX-name/{phase}-{plan}-SUMMARY.md .planning/STATE.md .planning/ROADMAP.md
+node ~/.claude/nf/bin/nf-tools.cjs commit "docs({phase}-{plan}): complete [plan-name] plan" --files .planning/phases/XX-name/{phase}-{plan}-PLAN.md .planning/phases/XX-name/{phase}-{plan}-SUMMARY.md .planning/STATE.md .planning/ROADMAP.md
 ```
 
 **Note:** Code files NOT included - already committed per-task.
@@ -149,7 +149,7 @@ Current: [task name]
 What to commit:
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "wip: [phase-name] paused at task [X]/[Y]" --files .planning/
+node ~/.claude/nf/bin/nf-tools.cjs commit "wip: [phase-name] paused at task [X]/[Y]" --files .planning/
 ```
 
 </format>

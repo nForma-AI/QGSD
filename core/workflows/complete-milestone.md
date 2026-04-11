@@ -40,7 +40,7 @@ When a milestone completes:
 **Use `roadmap analyze` for comprehensive readiness check:**
 
 ```bash
-ROADMAP=$(node /Users/jonathanborduas/.claude/nf/bin/gsd-tools.cjs roadmap analyze)
+ROADMAP=$(node /Users/jonathanborduas/.claude/nf/bin/nf-tools.cjs roadmap analyze)
 ```
 
 This returns all phases with plan/summary counts and disk status. Use this to verify:
@@ -154,7 +154,7 @@ Extract one-liners from SUMMARY.md files using summary-extract:
 ```bash
 # For each phase in milestone, extract one-liner
 for summary in .planning/phases/*-*/*-SUMMARY.md; do
-  node /Users/jonathanborduas/.claude/nf/bin/gsd-tools.cjs summary-extract "$summary" --fields one_liner | jq -r '.one_liner'
+  node /Users/jonathanborduas/.claude/nf/bin/nf-tools.cjs summary-extract "$summary" --fields one_liner | jq -r '.one_liner'
 done
 ```
 
@@ -173,7 +173,7 @@ Key accomplishments for this milestone:
 
 <step name="create_milestone_entry">
 
-**Note:** MILESTONES.md entry is now created automatically by `gsd-tools milestone complete` in the archive_milestone step. The entry includes version, date, phase/plan/task counts, and accomplishments extracted from SUMMARY.md files.
+**Note:** MILESTONES.md entry is now created automatically by `nf-tools milestone complete` in the archive_milestone step. The entry includes version, date, phase/plan/task counts, and accomplishments extracted from SUMMARY.md files.
 
 If additional details are needed (e.g., user-provided "Delivered" summary, git range, LOC stats), add them manually after the CLI creates the base entry.
 
@@ -364,10 +364,10 @@ Update `.planning/ROADMAP.md` — group completed milestone phases:
 
 <step name="archive_milestone">
 
-**Delegate archival to gsd-tools:**
+**Delegate archival to nf-tools:**
 
 ```bash
-ARCHIVE=$(node /Users/jonathanborduas/.claude/nf/bin/gsd-tools.cjs milestone complete "v[X.Y]" --name "[Milestone Name]")
+ARCHIVE=$(node /Users/jonathanborduas/.claude/nf/bin/nf-tools.cjs milestone complete "v[X.Y]" --name "[Milestone Name]")
 ```
 
 The CLI handles:
@@ -467,7 +467,7 @@ Check branching strategy and offer merge options.
 Use `init milestone-op` for context, or load config directly:
 
 ```bash
-INIT=$(node /Users/jonathanborduas/.claude/nf/bin/gsd-tools.cjs init execute-phase "1")
+INIT=$(node /Users/jonathanborduas/.claude/nf/bin/nf-tools.cjs init execute-phase "1")
 ```
 
 Extract `branching_strategy`, `phase_branch_template`, `milestone_branch_template`, and `commit_docs` from init JSON.
@@ -642,7 +642,7 @@ RELEASE_EOF
 Commit milestone completion.
 
 ```bash
-node /Users/jonathanborduas/.claude/nf/bin/gsd-tools.cjs commit "chore: complete v[X.Y] milestone" --files .planning/milestones/v[X.Y]-ROADMAP.md .planning/milestones/v[X.Y]-REQUIREMENTS.md .planning/milestones/v[X.Y]-MILESTONE-AUDIT.md .planning/MILESTONES.md .planning/PROJECT.md .planning/STATE.md
+node /Users/jonathanborduas/.claude/nf/bin/nf-tools.cjs commit "chore: complete v[X.Y] milestone" --files .planning/milestones/v[X.Y]-ROADMAP.md .planning/milestones/v[X.Y]-REQUIREMENTS.md .planning/milestones/v[X.Y]-MILESTONE-AUDIT.md .planning/MILESTONES.md .planning/PROJECT.md .planning/STATE.md
 ```
 ```
 

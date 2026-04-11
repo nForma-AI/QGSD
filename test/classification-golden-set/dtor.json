@@ -11,7 +11,7 @@
   { "input": { "doc_file": "docs/troubleshooting.md", "line": 78, "claim_text": "Haiku model version is configurable via nf.json" }, "expected_verdict": "genuine" },
   { "input": { "doc_file": "CHANGELOG.md", "line": 15, "claim_text": "fixed bug in solve-tui pagination for large item sets" }, "expected_verdict": "fp" },
   { "input": { "doc_file": "CHANGELOG.md", "line": 28, "claim_text": "v0.34 shipped semantic gate validation" }, "expected_verdict": "fp" },
-  { "input": { "doc_file": "CHANGELOG.md", "line": 42, "claim_text": "removed deprecated qgsd-stop hook" }, "expected_verdict": "fp" },
+  { "input": { "doc_file": "CHANGELOG.md", "line": 42, "claim_text": "removed deprecated qnf-stop hook" }, "expected_verdict": "fp" },
   { "input": { "doc_file": "CHANGELOG.md", "line": 56, "claim_text": "updated dependencies to latest versions" }, "expected_verdict": "fp" },
   { "input": { "doc_file": "CHANGELOG.md", "line": 71, "claim_text": "fixed race condition in parallel quorum dispatch" }, "expected_verdict": "fp" },
   { "input": { "doc_file": "LICENSE", "line": 3, "claim_text": "MIT License" }, "expected_verdict": "fp" },

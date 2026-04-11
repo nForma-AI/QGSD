@@ -6,7 +6,7 @@ color: green
 ---
 
 <role>
-You are a GSD planner. You create executable phase plans with task breakdown, dependency analysis, and goal-backward verification.
+You are a NF planner. You create executable phase plans with task breakdown, dependency analysis, and goal-backward verification.
 
 Spawned by:
 - `/nf:plan-phase` orchestrator (standard phase planning)
@@ -889,7 +889,7 @@ Group by plan, dimension, severity.
 ### Step 6: Commit
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "fix($PHASE): revise plans based on checker feedback" --files .planning/phases/$PHASE-*/$PHASE-*-PLAN.md
+node ~/.claude/nf/bin/nf-tools.cjs commit "fix($PHASE): revise plans based on checker feedback" --files .planning/phases/$PHASE-*/$PHASE-*-PLAN.md
 ```
 
 ### Step 7: Return Revision Summary
@@ -928,7 +928,7 @@ node ~/.claude/nf/bin/gsd-tools.cjs commit "fix($PHASE): revise plans based on c
 Load planning context:
 
 ```bash
-INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init plan-phase "${PHASE}")
+INIT=$(node ~/.claude/nf/bin/nf-tools.cjs init plan-phase "${PHASE}")
 ```
 
 Extract from init JSON: `planner_model`, `researcher_model`, `checker_model`, `commit_docs`, `research_enabled`, `phase_dir`, `phase_number`, `has_research`, `has_context`.
@@ -984,7 +984,7 @@ Apply discovery level protocol (see discovery_levels section).
 
 **Step 1 — Generate digest index:**
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs history-digest
+node ~/.claude/nf/bin/nf-tools.cjs history-digest
 ```
 
 **Step 2 — Select relevant phases (typically 2-4):**
@@ -1101,10 +1101,10 @@ Include all frontmatter fields.
 </step>
 
 <step name="validate_plan">
-Validate each created PLAN.md using gsd-tools:
+Validate each created PLAN.md using nf-tools:
 
 ```bash
-VALID=$(node ~/.claude/nf/bin/gsd-tools.cjs frontmatter validate "$PLAN_PATH" --schema plan)
+VALID=$(node ~/.claude/nf/bin/nf-tools.cjs frontmatter validate "$PLAN_PATH" --schema plan)
 ```
 
 Returns JSON: `{ valid, missing, present, schema }`
@@ -1117,7 +1117,7 @@ Required plan frontmatter fields:
 Also validate plan structure:
 
 ```bash
-STRUCTURE=$(node ~/.claude/nf/bin/gsd-tools.cjs verify plan-structure "$PLAN_PATH")
+STRUCTURE=$(node ~/.claude/nf/bin/nf-tools.cjs verify plan-structure "$PLAN_PATH")
 ```
 
 Returns JSON: `{ valid, errors, warnings, task_count, tasks }`
@@ -1154,7 +1154,7 @@ Plans:
 
 <step name="git_commit">
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "docs($PHASE): create phase plan" --files .planning/phases/$PHASE-*/$PHASE-*-PLAN.md .planning/ROADMAP.md
+node ~/.claude/nf/bin/nf-tools.cjs commit "docs($PHASE): create phase plan" --files .planning/phases/$PHASE-*/$PHASE-*-PLAN.md .planning/ROADMAP.md
 ```
 </step>
 

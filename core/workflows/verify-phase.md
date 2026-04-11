@@ -33,7 +33,7 @@ silently weaken ROADMAP criteria.
 
 ```bash
 # Read ROADMAP success criteria for this phase
-PHASE_DATA=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase "${PHASE_ARG}" --raw 2>/dev/null)
+PHASE_DATA=$(node ~/.claude/nf/bin/nf-tools.cjs roadmap get-phase "${PHASE_ARG}" --raw 2>/dev/null)
 ROADMAP_CRITERIA=$(echo "$PHASE_DATA" | node -e "
   const d = JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
   const sc = d.success_criteria || [];
@@ -75,14 +75,14 @@ If ROADMAP success_criteria are empty, skip comparison — PLAN must_haves are t
 Load phase operation context:
 
 ```bash
-INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init phase-op "${PHASE_ARG}")
+INIT=$(node ~/.claude/nf/bin/nf-tools.cjs init phase-op "${PHASE_ARG}")
 ```
 
 Extract from init JSON: `phase_dir`, `phase_number`, `phase_name`, `has_plans`, `plan_count`.
 
 Then load phase details and list plans/summaries:
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase "${phase_number}"
+node ~/.claude/nf/bin/nf-tools.cjs roadmap get-phase "${phase_number}"
 grep -E "^| ${phase_number}" .planning/REQUIREMENTS.md 2>/dev/null
 ls "$phase_dir"/*-SUMMARY.md "$phase_dir"/*-PLAN.md 2>/dev/null
 ```
@@ -107,11 +107,11 @@ will inherit the weakness. Flag this in the R9 Baseline Comparison section.
 
 **Option A: Must-haves in PLAN frontmatter**
 
-Use gsd-tools to extract must_haves from each PLAN:
+Use nf-tools to extract must_haves from each PLAN:
 
 ```bash
 for plan in "$PHASE_DIR"/*-PLAN.md; do
-  MUST_HAVES=$(node ~/.claude/nf/bin/gsd-tools.cjs frontmatter get "$plan" --field must_haves)
+  MUST_HAVES=$(node ~/.claude/nf/bin/nf-tools.cjs frontmatter get "$plan" --field must_haves)
   echo "=== $plan ===" && echo "$MUST_HAVES"
 done
 ```
@@ -125,7 +125,7 @@ Aggregate all must_haves across plans for phase-level verification.
 If no must_haves in frontmatter (MUST_HAVES returns error or empty), check for Success Criteria:
 
 ```bash
-PHASE_DATA=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase "${phase_number}" --raw)
+PHASE_DATA=$(node ~/.claude/nf/bin/nf-tools.cjs roadmap get-phase "${phase_number}" --raw)
 ```
 
 Parse the `success_criteria` array from the JSON output. If non-empty:
@@ -157,11 +157,11 @@ For each truth: identify supporting artifacts → check artifact status → chec
 </step>
 
 <step name="verify_artifacts">
-Use gsd-tools for artifact verification against must_haves in each PLAN:
+Use nf-tools for artifact verification against must_haves in each PLAN:
 
 ```bash
 for plan in "$PHASE_DIR"/*-PLAN.md; do
-  ARTIFACT_RESULT=$(node ~/.claude/nf/bin/gsd-tools.cjs verify artifacts "$plan")
+  ARTIFACT_RESULT=$(node ~/.claude/nf/bin/nf-tools.cjs verify artifacts "$plan")
   echo "=== $plan ===" && echo "$ARTIFACT_RESULT"
 done
 ```
@@ -189,11 +189,11 @@ WIRED = imported AND used. ORPHANED = exists but not imported/used.
 </step>
 
 <step name="verify_wiring">
-Use gsd-tools for key link verification against must_haves in each PLAN:
+Use nf-tools for key link verification against must_haves in each PLAN:
 
 ```bash
 for plan in "$PHASE_DIR"/*-PLAN.md; do
-  LINKS_RESULT=$(node ~/.claude/nf/bin/gsd-tools.cjs verify key-links "$plan")
+  LINKS_RESULT=$(node ~/.claude/nf/bin/nf-tools.cjs verify key-links "$plan")
   echo "=== $plan ===" && echo "$LINKS_RESULT"
 done
 ```

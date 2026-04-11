@@ -15,7 +15,7 @@ Read all files referenced by the invoking prompt's execution_context before star
 Load all context in one call (paths only to minimize orchestrator context):
 
 ```bash
-INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init plan-phase "$PHASE")
+INIT=$(node ~/.claude/nf/bin/nf-tools.cjs init plan-phase "$PHASE")
 ```
 
 Parse JSON for: `researcher_model`, `planner_model`, `checker_model`, `research_enabled`, `plan_checker_enabled`, `nyquist_validation_enabled`, `commit_docs`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `phase_slug`, `padded_phase`, `has_research`, `has_context`, `has_plans`, `plan_count`, `planning_exists`, `roadmap_exists`.
@@ -40,7 +40,7 @@ mkdir -p ".planning/phases/${padded_phase}-${phase_slug}"
 ## 3. Validate Phase
 
 ```bash
-PHASE_INFO=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase "${PHASE}")
+PHASE_INFO=$(node ~/.claude/nf/bin/nf-tools.cjs roadmap get-phase "${PHASE}")
 ```
 
 **If `found` is false:** Error with available phases. **If `found` is true:** Extract `phase_number`, `phase_name`, `goal` from JSON.
@@ -87,7 +87,7 @@ Before spawning the researcher, scan `.planning/formal/spec/` for modules matchi
 ```bash
 FORMAL_SPEC_CONTEXT=()
 if [ -d ".planning/formal/spec" ]; then
-  PHASE_DESC=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase "${PHASE}" | jq -r '.goal // .phase_name')
+  PHASE_DESC=$(node ~/.claude/nf/bin/nf-tools.cjs roadmap get-phase "${PHASE}" | jq -r '.goal // .phase_name')
   while IFS=$'\t' read -r mod modpath; do
     FORMAL_SPEC_CONTEXT+=("{\"module\":\"$mod\",\"path\":\"$modpath\"}")
   done < <(node bin/formal-scope-scan.cjs --description "$PHASE_DESC" --format lines)
@@ -124,13 +124,13 @@ Display banner:
 ### Spawn nf-phase-researcher
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/nf-tools.cjs activity-set \
   "{\"activity\":\"plan_phase\",\"sub_activity\":\"researching\",\"phase\":${PHASE_NUMBER}}"
 ```
 
 ```bash
-PHASE_DESC=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase "${PHASE}" | jq -r '.section')
-PHASE_REQ_IDS=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase "${PHASE}" | jq -r '.section // empty' | grep -i "Requirements:" | head -1 | sed 's/.*Requirements:\*\*\s*//' | sed 's/[\[\]]//g' | tr ',' '\n' | sed 's/^ *//;s/ *$//' | grep -v '^$' | tr '\n' ',' | sed 's/,$//')
+PHASE_DESC=$(node ~/.claude/nf/bin/nf-tools.cjs roadmap get-phase "${PHASE}" | jq -r '.section')
+PHASE_REQ_IDS=$(node ~/.claude/nf/bin/nf-tools.cjs roadmap get-phase "${PHASE}" | jq -r '.section // empty' | grep -i "Requirements:" | head -1 | sed 's/.*Requirements:\*\*\s*//' | sed 's/[\[\]]//g' | tr ',' '\n' | sed 's/^ *//;s/ *$//' | grep -v '^$' | tr '\n' ',' | sed 's/,$//')
 ```
 
 Research prompt:
@@ -197,7 +197,7 @@ grep -l "## Validation Architecture" "${PHASE_DIR}"/*-RESEARCH.md 2>/dev/null
 3. Fill frontmatter: replace `{N}` with phase number, `{phase-slug}` with phase slug, `{date}` with current date
 4. If `commit_docs` is true:
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "docs(phase-${PHASE}): add validation strategy" --files "${PHASE_DIR}/${PADDED_PHASE}-VALIDATION.md"
+node ~/.claude/nf/bin/nf-tools.cjs commit "docs(phase-${PHASE}): add validation strategy" --files "${PHASE_DIR}/${PADDED_PHASE}-VALIDATION.md"
 ```
 
 **If not found (and nyquist enabled):**
@@ -209,7 +209,7 @@ ERROR: Nyquist validation is enabled but no "## Validation Architecture" section
 
 To fix: Either
   1. Re-run research (the researcher must include ## Validation Architecture in its output), or
-  2. Disable Nyquist: node ~/.claude/nf/bin/gsd-tools.cjs config-set workflow.nyquist_validation false
+  2. Disable Nyquist: node ~/.claude/nf/bin/nf-tools.cjs config-set workflow.nyquist_validation false
 
 Do NOT proceed to plan creation without VALIDATION.md when nyquist_validation_enabled is true.
 ```
@@ -220,7 +220,7 @@ After researcher completes and VALIDATION.md is written:
 
 ```bash
 # Initialize task envelope with research context
-TASK_ENVELOPE_ENABLED=$(node ~/.claude/nf/bin/gsd-tools.cjs config-get task_envelope_enabled 2>/dev/null || echo "true")
+TASK_ENVELOPE_ENABLED=$(node ~/.claude/nf/bin/nf-tools.cjs config-get task_envelope_enabled 2>/dev/null || echo "true")
 if [ "$TASK_ENVELOPE_ENABLED" = "true" ]; then
   PHASE_NUM="${PADDED_PHASE}"
   RISK_LEVEL=$(grep -oE '"risk_level"\s*:\s*"(low|medium|high)"' "${PHASE_DIR}/${PADDED_PHASE}-RESEARCH.md" 2>/dev/null | grep -oE '(low|medium|high)' | head -1 || echo "medium")
@@ -257,7 +257,7 @@ CONTEXT_PATH=$(echo "$INIT" | jq -r '.context_path // empty')
 ## 8. Spawn nf-planner Agent
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/nf-tools.cjs activity-set \
   "{\"activity\":\"plan_phase\",\"sub_activity\":\"planning\",\"phase\":${PHASE_NUMBER}}"
 ```
 
@@ -361,7 +361,7 @@ After planner completes and PLAN.md files are committed:
 
 ```bash
 # Update envelope with plan metadata
-TASK_ENVELOPE_ENABLED=$(node ~/.claude/nf/bin/gsd-tools.cjs config-get task_envelope_enabled 2>/dev/null || echo "true")
+TASK_ENVELOPE_ENABLED=$(node ~/.claude/nf/bin/nf-tools.cjs config-get task_envelope_enabled 2>/dev/null || echo "true")
 if [ "$TASK_ENVELOPE_ENABLED" = "true" ]; then
   # Find first PLAN.md path for this phase
   PLAN_PATH=$(ls "${PHASE_DIR}/${PADDED_PHASE}-"*"-PLAN.md" 2>/dev/null | head -1 || echo "")
@@ -395,7 +395,7 @@ Initialize: `improvement_iteration = 0`
 **LOOP** (while `improvement_iteration <= 10`):
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/nf-tools.cjs activity-set \
   "{\"activity\":\"plan_phase\",\"sub_activity\":\"quorum\",\"phase\":${PHASE_NUMBER},\"quorum_round\":${improvement_iteration + 1}}"
 ```
 
@@ -447,7 +447,7 @@ If the signal is absent, the delimiters don't match, or JSON.parse would fail: s
 - **ESCALATED** → Present escalation to user. Do not proceed until resolved. **Break loop.**
 
 - **APPROVED AND ($QUORUM_IMPROVEMENTS is empty OR improvement_iteration >= 10)**:
-    Include `<!-- GSD_DECISION -->` in your response summarizing quorum results.
+    Include `<!-- NF_DECISION -->` in your response summarizing quorum results.
     If `improvement_iteration > 0`: note "R3.6: ${improvement_iteration} iteration(s) ran."
     If `improvement_iteration >= 10` AND improvements remained: note
       "R3.6 cap reached — improvements not incorporated."
@@ -510,7 +510,7 @@ If the signal is absent, the delimiters don't match, or JSON.parse would fail: s
     - **If planner returns `## PLANNING INCONCLUSIVE` or fails to update files:**
       Do NOT loop again on the same improvements. Display:
       > "R3.6: planner could not incorporate improvements in iteration ${improvement_iteration}. Proceeding with current plan."
-      Include `<!-- GSD_DECISION -->` summarizing quorum results. Proceed to step 9. **Break loop.**
+      Include `<!-- NF_DECISION -->` summarizing quorum results. Proceed to step 9. **Break loop.**
 
 **END LOOP**
 
@@ -523,7 +523,7 @@ If the signal is absent, the delimiters don't match, or JSON.parse would fail: s
 ## 10. Spawn nf-plan-checker Agent
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/nf-tools.cjs activity-set \
   "{\"activity\":\"plan_phase\",\"sub_activity\":\"checking_plan\",\"phase\":${PHASE_NUMBER}}"
 ```
 
@@ -655,7 +655,7 @@ After plan-checker passes, the orchestrator populates VALIDATION.md with real da
 
 5. **Commit if `commit_docs` is true:**
    ```bash
-   node ~/.claude/nf/bin/gsd-tools.cjs commit "docs(phase-${PHASE}): populate validation strategy from approved plans" --files "${PHASE_DIR}/${PADDED_PHASE}-VALIDATION.md"
+   node ~/.claude/nf/bin/nf-tools.cjs commit "docs(phase-${PHASE}): populate validation strategy from approved plans" --files "${PHASE_DIR}/${PADDED_PHASE}-VALIDATION.md"
    ```
 
 Proceed to step 13.
@@ -716,7 +716,7 @@ Route to `<offer_next>` OR `auto_advance` depending on flags/config.
 After presenting final status to the user (offer_next output displayed OR auto-advance complete):
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs activity-clear
+node ~/.claude/nf/bin/nf-tools.cjs activity-clear
 ```
 
 ## 14. Auto-Advance Check
@@ -726,7 +726,7 @@ Check for auto-advance trigger:
 1. Parse `--auto` flag from $ARGUMENTS
 2. Read `workflow.auto_advance` from config:
    ```bash
-   AUTO_CFG=$(node ~/.claude/nf/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
+   AUTO_CFG=$(node ~/.claude/nf/bin/nf-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
    ```
 
 **If `--auto` flag present OR `AUTO_CFG` is true:**
@@ -840,7 +840,7 @@ Verification: {Passed | Passed with override | Skipped}
 - [ ] nf-plan-checker spawned with CONTEXT.md
 - [ ] Verification passed OR user override OR max iterations with user decision
 - [ ] Quorum ran (step 8.5) with `request_improvements: true`
-- [ ] R3.6 loop ran: if improvements were proposed, planner revision was spawned; if none, loop exited cleanly; `<!-- GSD_DECISION -->` present in response
+- [ ] R3.6 loop ran: if improvements were proposed, planner revision was spawned; if none, loop exited cleanly; `<!-- NF_DECISION -->` present in response
 - [ ] User sees status between agent spawns
 - [ ] User knows next steps
 </success_criteria>
@@ -850,6 +850,6 @@ Verification: {Passed | Passed with override | Skipped}
 - Do NOT skip the R3.6 loop because the plan "looks complete" or improvements "seem minor." The loop is MANDATORY when `request_improvements: true` returns a non-empty array.
 - Do NOT pre-filter or discard improvements before passing them to the planner. Pass the full `$QUORUM_IMPROVEMENTS` array.
 - Do NOT count the initial quorum run (improvement_iteration=0) as one of the 10 R3.6 iterations. Iteration counting starts at 1 when the first planner revision is spawned.
-- Do NOT emit `<!-- GSD_DECISION -->` before the loop exits. Only emit it on the final break.
+- Do NOT emit `<!-- NF_DECISION -->` before the loop exits. Only emit it on the final break.
 - Do NOT run the R3.6 improvement planner as a parallel Task alongside anything else. It must be sequential — quorum → planner → quorum → ...
 </anti_patterns>

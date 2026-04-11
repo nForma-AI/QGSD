@@ -31,7 +31,7 @@ Backward compatible: /nf:settings --config goes directly to workflow settings (o
 
 The workflow handles all logic including:
 1. Flag check (--config for backward compat)
-2. Dashboard state loading via gsd-tools
+2. Dashboard state loading via nf-tools
 3. Status dashboard display
 4. Main menu presentation (4 categories)
 5. Sub-menu routing and action execution

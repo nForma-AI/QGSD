@@ -20,14 +20,14 @@ Instantly restore full project context so "Where were we?" has an immediate, com
 Load all context in one call:
 
 ```bash
-INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init resume)
+INIT=$(node ~/.claude/nf/bin/nf-tools.cjs init resume)
 ```
 
 Parse JSON for: `state_exists`, `roadmap_exists`, `project_exists`, `planning_exists`, `has_interrupted_agent`, `interrupted_agent_id`, `commit_docs`.
 
 ```bash
 # Check for mid-workflow interruption
-ACTIVITY=$(node ~/.claude/nf/bin/gsd-tools.cjs activity-get)
+ACTIVITY=$(node ~/.claude/nf/bin/nf-tools.cjs activity-get)
 ```
 
 Parse ACTIVITY JSON: if the result is `{}` or empty, set `HAS_ACTIVITY=false`. Otherwise set `HAS_ACTIVITY=true` and extract `activity`, `sub_activity`, `phase`, `plan`, `debug_round`, `quorum_round`, `checkpoint`, `updated` fields.
@@ -134,7 +134,7 @@ Present complete project status to user:
 
 ```bash
 # Get formal coverage summary
-FORMAL=$(node ~/.claude/nf/bin/gsd-tools.cjs formal-summary 2>/dev/null)
+FORMAL=$(node ~/.claude/nf/bin/nf-tools.cjs formal-summary 2>/dev/null)
 ```
 
 ```

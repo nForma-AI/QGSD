@@ -67,7 +67,7 @@ test('result emission export: emitResultBlock is exported as a function', () => 
 test('parseImprovements exported: parseImprovements is exported as a function', () => {
   assert.ok(mod, 'bin/quorum-slot-dispatch.cjs not found — expected after Plan 02');
   assert.strictEqual(typeof mod.parseImprovements, 'function',
-    'parseImprovements must be exported from bin/quorum-slot-dispatch.cjs — migration from gsd-quorum-slot-worker-improvements.test.cjs');
+    'parseImprovements must be exported from bin/quorum-slot-dispatch.cjs — migration from nf-quorum-slot-worker-improvements.test.cjs');
 });
 
 // ── BEHAVIORAL TESTS — buildModeAPrompt ─────────────────────────────────────

@@ -47,10 +47,10 @@ function appendConformanceEvent(event) {
 function detectCleanBoundary(toolName, toolInput) {
   if (toolName !== 'Bash' || !toolInput) return null;
   const input = typeof toolInput === 'string' ? toolInput : (toolInput.command || '');
-  if (input.includes('gsd-tools.cjs phase-complete')) return 'phase_complete';
-  if (input.includes('gsd-tools.cjs commit') && input.includes('VERIFICATION')) return 'verification_done';
-  if (input.includes('gsd-tools.cjs commit') && input.includes('SUMMARY')) return 'plan_complete';
-  if (input.includes('gsd-tools.cjs commit')) return 'commit';
+  if (input.includes('nf-tools.cjs phase-complete')) return 'phase_complete';
+  if (input.includes('nf-tools.cjs commit') && input.includes('VERIFICATION')) return 'verification_done';
+  if (input.includes('nf-tools.cjs commit') && input.includes('SUMMARY')) return 'plan_complete';
+  if (input.includes('nf-tools.cjs commit')) return 'commit';
   if (input.includes('execute-plan') && input.includes('wave')) return 'wave_barrier';
   return null;
 }

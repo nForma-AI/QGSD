@@ -240,7 +240,7 @@ test('smart compact suggestion at phase_complete boundary', () => {
   const { parsed } = runHook({
     context_window: { remaining_percentage: 35 }, // used = 65%
     tool_name: 'Bash',
-    tool_input: { command: 'node gsd-tools.cjs phase-complete v0.28-03' },
+    tool_input: { command: 'node nf-tools.cjs phase-complete v0.28-03' },
     cwd: tmpDir,
   });
   assert.ok(parsed, 'Should emit output');
@@ -258,7 +258,7 @@ test('no smart compact when below threshold', () => {
   const { stdout } = runHook({
     context_window: { remaining_percentage: 75 }, // used = 25%, below compact threshold
     tool_name: 'Bash',
-    tool_input: { command: 'node gsd-tools.cjs phase-complete v0.28-03' },
+    tool_input: { command: 'node nf-tools.cjs phase-complete v0.28-03' },
     cwd: tmpDir,
   });
   assert.equal(stdout, '', 'No output when below compact threshold');
@@ -271,7 +271,7 @@ test('no smart compact when disabled', () => {
   const { stdout } = runHook({
     context_window: { remaining_percentage: 35 }, // used = 65%
     tool_name: 'Bash',
-    tool_input: { command: 'node gsd-tools.cjs phase-complete v0.28-03' },
+    tool_input: { command: 'node nf-tools.cjs phase-complete v0.28-03' },
     cwd: tmpDir,
   });
   assert.equal(stdout, '', 'No output when smart compact disabled');
@@ -307,14 +307,14 @@ test('smart compact at wave_barrier boundary', () => {
   assert.ok(ctx.includes('wave_barrier'));
 });
 
-test('smart compact at plan_complete boundary (gsd-tools.cjs SUMMARY)', () => {
+test('smart compact at plan_complete boundary (nf-tools.cjs SUMMARY)', () => {
   const tmpDir = makeTmpDir();
   writeNfConfig(tmpDir, { smart_compact: { enabled: true, context_warn_pct: 60 }, smart_compact_threshold_pct: 65, context_monitor: { warn_pct: 99, critical_pct: 100 } });
 
   const { parsed } = runHook({
     context_window: { remaining_percentage: 30 }, // used = 70%
     tool_name: 'Bash',
-    tool_input: { command: 'node gsd-tools.cjs commit "docs: SUMMARY.md"' },
+    tool_input: { command: 'node nf-tools.cjs commit "docs: SUMMARY.md"' },
     cwd: tmpDir,
   });
   assert.ok(parsed, 'Should emit output');
@@ -336,7 +336,7 @@ test('compaction suppressed when quorum-in-progress flag exists', () => {
   const { stdout } = runHook({
     context_window: { remaining_percentage: 30 }, // used = 70%, above threshold
     tool_name: 'Bash',
-    tool_input: { command: 'node gsd-tools.cjs phase-complete v0.28-03' },
+    tool_input: { command: 'node nf-tools.cjs phase-complete v0.28-03' },
     cwd: tmpDir,
   });
   assert.equal(stdout, '', 'No output when quorum is in progress');
@@ -351,7 +351,7 @@ test('compaction triggers at 65% threshold from smart_compact_threshold_pct conf
   const { parsed } = runHook({
     context_window: { remaining_percentage: 35 }, // used = 65%, exactly at threshold
     tool_name: 'Bash',
-    tool_input: { command: 'node gsd-tools.cjs phase-complete v0.28-03' },
+    tool_input: { command: 'node nf-tools.cjs phase-complete v0.28-03' },
     cwd: tmpDir,
   });
   assert.ok(parsed, 'Should emit output at 65% threshold');
@@ -367,7 +367,7 @@ test('no compaction below 65% threshold', () => {
   const { stdout } = runHook({
     context_window: { remaining_percentage: 36 }, // used = 64%, below 65% threshold
     tool_name: 'Bash',
-    tool_input: { command: 'node gsd-tools.cjs phase-complete v0.28-03' },
+    tool_input: { command: 'node nf-tools.cjs phase-complete v0.28-03' },
     cwd: tmpDir,
   });
   assert.equal(stdout, '', 'No output below 65% threshold');

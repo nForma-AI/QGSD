@@ -1064,30 +1064,6 @@ See [docs/agent-skills.md](docs/agent-skills.md) for routing guidance and the up
 
 </details>
 
-<details>
-<summary><strong>GSD-Compatible Commands</strong></summary>
-
-All core GSD commands work with the `/gsd:` prefix for backward compatibility:
-
-| `/gsd:` command | Maps to |
-|-----------------|---------|
-| `/gsd:new-project` | `/nf:new-project` |
-| `/gsd:plan-phase` | `/nf:plan-phase` |
-| `/gsd:execute-phase` | `/nf:execute-phase` |
-| `/gsd:discuss-phase` | `/nf:discuss-phase` |
-| `/gsd:verify-work` | `/nf:verify-work` |
-| `/gsd:quick` | `/nf:quick` |
-| `/gsd:debug` | `/nf:debug` |
-| `/gsd:progress` | `/nf:progress` |
-| `/gsd:help` | `/nf:help` |
-| `/gsd:settings` | `/nf:settings` |
-| `/gsd:map-codebase` | `/nf:map-codebase` |
-| `/gsd:complete-milestone` | `/nf:complete-milestone` |
-| `/gsd:new-milestone` | `/nf:new-milestone` |
-| `/gsd:pause-work` | `/nf:pause-work` |
-| `/gsd:resume-work` | `/nf:resume-work` |
-
-</details>
 
 ---
 

@@ -78,7 +78,7 @@ function taskBlock(name, slotName = 'gemini-1') {
 // FAN-STOP-TC1: --n 2 in prompt text → ceiling = 1 external model required
 test('FAN-STOP-TC1: --n 2 in prompt text → ceiling = 1 external model required', () => {
   const tmpFile = writeTempTranscript([
-    userLine('/qgsd:plan-phase --n 2'),
+    userLine('/qnf:plan-phase --n 2'),
     assistantLine([
       { type: 'text', text: 'Running with --n 2' },
       taskBlock('Task', 'gemini-1'),
@@ -99,7 +99,7 @@ test('FAN-STOP-TC1: --n 2 in prompt text → ceiling = 1 external model required
 // FAN-STOP-TC2: --n 3 in prompt text → ceiling = 2 external models required
 test('FAN-STOP-TC2: --n 3 in prompt text → ceiling = 2 external models required', () => {
   const tmpFile = writeTempTranscript([
-    userLine('/qgsd:plan-phase --n 3'),
+    userLine('/qnf:plan-phase --n 3'),
     assistantLine([
       { type: 'text', text: 'Running with --n 3' },
       taskBlock('Task', 'gemini-1'),
@@ -121,7 +121,7 @@ test('FAN-STOP-TC2: --n 3 in prompt text → ceiling = 2 external models require
 // FAN-STOP-TC3: --n 1 solo mode → no external models required (existing behavior preserved)
 test('FAN-STOP-TC3: --n 1 solo mode → no external models required (existing behavior)', () => {
   const tmpFile = writeTempTranscript([
-    userLine('/qgsd:plan-phase --n 1'),
+    userLine('/qnf:plan-phase --n 1'),
     assistantLine([
       { type: 'text', text: 'Solo mode: Claude only' },
     ]),
@@ -141,7 +141,7 @@ test('FAN-STOP-TC3: --n 1 solo mode → no external models required (existing be
 // FAN-STOP-TC4: no --n flag → ceiling falls back to config.quorum.maxSize (existing behavior)
 test('FAN-STOP-TC4: no --n flag → ceiling falls back to config.quorum.maxSize', () => {
   const tmpFile = writeTempTranscript([
-    userLine('/qgsd:plan-phase'),
+    userLine('/qnf:plan-phase'),
     assistantLine([
       { type: 'text', text: 'Running with default maxSize' },
       taskBlock('Task', 'gemini-1'),

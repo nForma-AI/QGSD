@@ -64,7 +64,7 @@ When automated verification passes, auto-mark the test as passed and move to the
 If $ARGUMENTS contains a phase number, load context:
 
 ```bash
-INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init verify-work "${PHASE_ARG}")
+INIT=$(node ~/.claude/nf/bin/nf-tools.cjs init verify-work "${PHASE_ARG}")
 ```
 
 Parse JSON for: `planner_model`, `checker_model`, `commit_docs`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `has_verification`.
@@ -223,7 +223,7 @@ Read Current Test section from UAT file.
     ```bash
     # Discover tests (writes JSON with `runners`, `test_files`, `by_runner`)
     DISCOVER_JSON=$(mktemp)
-    node ~/.claude/nf/bin/gsd-tools.cjs maintain-tests discover --dir "${phase_dir:-.}" --output-file "$DISCOVER_JSON" || true
+    node ~/.claude/nf/bin/nf-tools.cjs maintain-tests discover --dir "${phase_dir:-.}" --output-file "$DISCOVER_JSON" || true
     ```
 
     2. If Playwright tests were discovered, prefer running only those (e2e). Otherwise fall back to Jest single-file runs when available.
@@ -243,7 +243,7 @@ Read Current Test section from UAT file.
 
     # If manifest has files, run a short batch (timeout short to keep verify-work responsive)
     if [ -s "$BATCH_FILE" ] && grep -q '"files"' "$BATCH_FILE"; then
-      node ~/.claude/nf/bin/gsd-tools.cjs maintain-tests run-batch --batch-file "$BATCH_FILE" --output-file "$OUTPUT_JSON" --timeout 300 || true
+      node ~/.claude/nf/bin/nf-tools.cjs maintain-tests run-batch --batch-file "$BATCH_FILE" --output-file "$OUTPUT_JSON" --timeout 300 || true
 
       # Inspect results: if no failures, mark automated verification passed
       if grep -q '"failed_count": 0' "$OUTPUT_JSON" >/dev/null 2>&1; then
@@ -383,7 +383,7 @@ Clear Current Test section:
 
 Commit the UAT file:
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "test({phase_num}): complete UAT - {passed} passed, {issues} issues" --files ".planning/phases/XX-name/{phase_num}-UAT.md"
+node ~/.claude/nf/bin/nf-tools.cjs commit "test({phase_num}): complete UAT - {passed} passed, {issues} issues" --files ".planning/phases/XX-name/{phase_num}-UAT.md"
 ```
 
 Present summary:
@@ -611,7 +611,7 @@ Plans verified and ready for execution.
 
 Check for --auto flag and config:
 ```bash
-AUTO_CFG=$(node ~/.claude/nf/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
+AUTO_CFG=$(node ~/.claude/nf/bin/nf-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
 ```
 
 **If `--auto` flag present OR `AUTO_CFG` is true:**
@@ -638,7 +638,7 @@ All tests pass. Advancing to next phase...
 ```
 Invoke: `SlashCommand("/nf:discuss-phase ${NEXT_PHASE} --auto")`
 
-(NEXT_PHASE = the phase number immediately after the current phase, read from ROADMAP.md or `gsd-tools.cjs roadmap get-phase` next field)
+(NEXT_PHASE = the phase number immediately after the current phase, read from ROADMAP.md or `nf-tools.cjs roadmap get-phase` next field)
 
 **If neither --auto nor config enabled:** Keep existing display-and-stop behavior unchanged.
 

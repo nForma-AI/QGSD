@@ -15,7 +15,7 @@ allowed-tools:
 ---
 
 <objective>
-Execute all plans in a phase. Delegates to the gsd:execute-phase workflow for wave-based plan execution. Extends the workflow with automated verification gates: when a plan step has type checkpoint:verify, the executor runs /nf:quorum-test instead of waiting for human input. Escalates to checkpoint:human-verify only on failure.
+Execute all plans in a phase. Delegates to the nf:execute-phase workflow for wave-based plan execution. Extends the workflow with automated verification gates: when a plan step has type checkpoint:verify, the executor runs /nf:quorum-test instead of waiting for human input. Escalates to checkpoint:human-verify only on failure.
 </objective>
 
 <execution_context>
@@ -35,14 +35,14 @@ Execute the execute-phase workflow from @~/.claude/nf/workflows/execute-phase.md
 
 ## Agent Substitution (nForma override)
 
-The GSD workflow uses GSD-specific agent types. When following that workflow, substitute:
+The NF workflow uses NF-specific agent types. When following that workflow, substitute:
 
-| GSD agent type (in workflow) | Use instead (nForma) |
+| NF agent type (in workflow) | Use instead (nForma) |
 |------------------------------|---------------------|
-| `gsd-executor` | `nf-executor` |
-| `gsd-verifier` | `nf-verifier` |
+| `nf-executor` | `nf-executor` |
+| `nf-verifier` | `nf-verifier` |
 
-This applies everywhere the workflow calls `Task(subagent_type="gsd-executor", ...)` or `Task(subagent_type="gsd-verifier", ...)`. All other agent types pass through unchanged.
+This applies everywhere the workflow calls `Task(subagent_type="nf-executor", ...)` or `Task(subagent_type="nf-verifier", ...)`. All other agent types pass through unchanged.
 
 ## Checkpoint Type Handling Rules
 

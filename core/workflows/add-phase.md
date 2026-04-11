@@ -29,7 +29,7 @@ Exit.
 Load phase operation context:
 
 ```bash
-INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init phase-op "0")
+INIT=$(node ~/.claude/nf/bin/nf-tools.cjs init phase-op "0")
 ```
 
 Check `roadmap_exists` from init JSON. If false:
@@ -41,10 +41,10 @@ Exit.
 </step>
 
 <step name="add_phase">
-**Delegate the phase addition to gsd-tools:**
+**Delegate the phase addition to nf-tools:**
 
 ```bash
-RESULT=$(node ~/.claude/nf/bin/gsd-tools.cjs phase add "${description}")
+RESULT=$(node ~/.claude/nf/bin/nf-tools.cjs phase add "${description}")
 ```
 
 The CLI handles:
@@ -103,7 +103,7 @@ Roadmap updated: .planning/ROADMAP.md
 </process>
 
 <success_criteria>
-- [ ] `gsd-tools phase add` executed successfully
+- [ ] `nf-tools phase add` executed successfully
 - [ ] Phase directory created
 - [ ] Roadmap updated with new phase entry
 - [ ] STATE.md updated with roadmap evolution note
