@@ -98,29 +98,29 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PACK-01 | — | — |
-| PACK-02 | — | — |
-| PACK-03 | — | — |
-| PACK-04 | — | — |
-| SKEL-01 | — | — |
-| SKEL-02 | — | — |
-| SKEL-03 | — | — |
-| SKEL-04 | — | — |
-| HOT-01 | — | — |
-| HOT-02 | — | — |
-| HOT-03 | — | — |
-| HOT-04 | — | — |
-| HOT-05 | — | — |
-| COCH-01 | — | — |
-| COCH-02 | — | — |
-| COCH-03 | — | — |
-| COCH-04 | — | — |
+| PACK-01 | Phase 54 | Pending |
+| PACK-02 | Phase 54 | Pending |
+| PACK-03 | Phase 54 | Pending |
+| PACK-04 | Phase 58 | Pending |
+| SKEL-01 | Phase 57 | Pending |
+| SKEL-02 | Phase 57 | Pending |
+| SKEL-03 | Phase 57 | Pending |
+| SKEL-04 | Phase 57 | Pending |
+| HOT-01 | Phase 55 | Pending |
+| HOT-02 | Phase 57 | Pending |
+| HOT-03 | Phase 55 | Pending |
+| HOT-04 | Phase 55 | Pending |
+| HOT-05 | Phase 55 | Pending |
+| COCH-01 | Phase 56 | Pending |
+| COCH-02 | Phase 56 | Pending |
+| COCH-03 | Phase 56 | Pending |
+| COCH-04 | Phase 56 | Pending |
 
 **Coverage:**
 - v0.42 requirements: 16 total
 - Baseline requirements: 13 (carried forward)
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 16
+- Mapped to phases: 16/16 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-04-11*
