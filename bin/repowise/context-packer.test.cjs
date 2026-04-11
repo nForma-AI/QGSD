@@ -116,4 +116,17 @@ describe('packContext — edge cases', () => {
     assert.ok(xml.includes('<hotspot available="true">'), 'hotspot should be available');
     assert.ok(xml.includes('<cochange available="true">'), 'cochange should be available');
   });
+
+  it('hotspot signal with _hotspotData enriches JSON output', () => {
+    const { json } = packContext({
+      files: [],
+      projectRoot: '/tmp',
+      signals: {
+        hotspot: '<files><file path="a.js"/></files>',
+        _hotspotData: { files: [{ path: 'a.js', churn: 5 }], summary: { total_files: 1 } },
+      },
+    });
+    assert.ok(json.repowise.hotspot.available, 'hotspot should be available');
+    assert.ok(json.repowise.hotspot.summary, 'should include summary from _hotspotData');
+  });
 });

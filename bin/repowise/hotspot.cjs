@@ -19,7 +19,7 @@ const DEFAULT_EXCLUDE_PATTERNS = [
   /\.min\.css$/,
   /package-lock\.json/,
   /\.generated\./,
-  /\/\.planning\//,
+  /\/\.planning\/|^[.]planning\//,
   /\/__snapshots__\//,
 ];
 
@@ -45,7 +45,7 @@ function isExcluded(filePath, excludePatterns) {
 
 function parseGitNumstat(projectRoot, options) {
   const opts = options || {};
-  const args = ['log', '--all', '--no-merges', '--numstat', '--diff-filter=AMD'];
+  const args = ['log', '--all', '--no-merges', '--numstat', '--diff-filter=AMD', '--format=%h %s'];
   if (opts.since) args.push(`--since=${opts.since}`);
 
   let result;

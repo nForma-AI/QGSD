@@ -5,6 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 const { packFile } = require('./pack-file.cjs');
+const { computeHotspots, formatHotspotXml } = require('./hotspot.cjs');
 
 // ---------------------------------------------------------------------------
 // Project root resolution
@@ -46,7 +47,7 @@ function packContext({ files, projectRoot, signals }) {
   const json = {
     repowise: {
       skeleton: { available: !!sig.skeleton, data: sig.skeleton || null },
-      hotspot: { available: !!sig.hotspot, data: sig.hotspot || null },
+      hotspot: { available: !!sig.hotspot, data: sig.hotspot || null, ...(sig._hotspotData ? { summary: sig._hotspotData.summary, files: sig._hotspotData.files } : {}) },
       cochange: { available: !!sig.cochange, data: sig.cochange || null },
       files: files.map(f => ({
         path: f.filePath,
@@ -95,6 +96,8 @@ Options:
   --stdin               Read file paths from stdin (one per line)
   --json                Output structured JSON instead of XML
   --project-root=/path  Override project root directory
+  --hotspot             Include hotspot detection data in output
+  --cochange            Include co-change prediction data in output (placeholder)
   --help                Show this help message
 
 Exit codes:
@@ -116,6 +119,8 @@ async function main() {
   })();
   const stdinMode = args.includes('--stdin');
   const jsonOutput = args.includes('--json');
+  const includeHotspot = args.includes('--hotspot');
+  const includeCochange = args.includes('--cochange');
   const projectRoot = resolveProjectRoot();
 
   if (!filesArg && !stdinMode) {
@@ -125,7 +130,16 @@ async function main() {
 
   try {
     const files = resolveFileList(filesArg, stdinMode, projectRoot);
-    const { xml, json } = packContext({ files, projectRoot });
+
+    const signals = {};
+    if (includeHotspot) {
+      const hotspots = computeHotspots(projectRoot);
+      signals.hotspot = formatHotspotXml(hotspots);
+      signals._hotspotData = hotspots;
+    }
+    // cochange is a placeholder until Phase 56
+
+    const { xml, json } = packContext({ files, projectRoot, signals });
 
     if (jsonOutput) {
       console.log(JSON.stringify(json, null, 2));

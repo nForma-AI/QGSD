@@ -36,6 +36,7 @@ describe('isExcluded', () => {
 
   it('excludes .planning paths', () => {
     assert.equal(isExcluded('foo/.planning/ROADMAP.md'), true);
+    assert.equal(isExcluded('.planning/ROADMAP.md'), true);
   });
 
   it('does NOT exclude normal source paths', () => {
