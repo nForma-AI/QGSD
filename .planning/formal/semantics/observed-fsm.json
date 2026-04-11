@@ -1,38 +1,38 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-10T09:34:20.336Z",
+  "generated": "2026-04-10T22:00:43.485Z",
   "observed_transitions": {
     "IDLE": {
-      "QUORUM_START": {
-        "to_state": "COLLECTING_VOTES",
-        "count": 3725,
-        "source": "both"
-      },
       "CIRCUIT_BREAK": {
         "to_state": "IDLE",
-        "count": 766,
+        "count": 30,
+        "source": "both"
+      },
+      "QUORUM_START": {
+        "to_state": "COLLECTING_VOTES",
+        "count": 159,
         "source": "both"
       },
       "DECIDE": {
         "to_state": "IDLE",
-        "count": 304,
+        "count": 12,
         "source": "per_event"
       }
     },
     "COLLECTING_VOTES": {
       "QUORUM_START": {
         "to_state": "COLLECTING_VOTES",
-        "count": 3706,
+        "count": 158,
         "source": "per_session"
       },
       "CIRCUIT_BREAK": {
         "to_state": "COLLECTING_VOTES",
-        "count": 749,
+        "count": 26,
         "source": "per_session"
       },
       "DECIDE": {
         "to_state": "COLLECTING_VOTES",
-        "count": 304,
+        "count": 12,
         "source": "per_session"
       }
     }
@@ -140,14 +140,14 @@
   },
   "coverage": {
     "model_coverage": 0.3157894736842105,
-    "vocabulary_coverage": 0.9730113636363636,
-    "total_events": 4928,
-    "mapped_events": 4795,
-    "unmapped_events": 133
+    "vocabulary_coverage": 0.8104838709677419,
+    "total_events": 248,
+    "mapped_events": 201,
+    "unmapped_events": 47
   },
   "replay_modes": {
     "per_event_transitions": 3,
     "per_session_transitions": 5,
-    "sessions_replayed": 22
+    "sessions_replayed": 1
   }
 }

@@ -5,11 +5,13 @@
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
+const path = require('path');
+const ROOT = path.resolve(__dirname, '..', '..', '..');
 
 const {
   readEarlyEscalationThreshold,
   computeEarlyEscalation,
-} = require('/Users/jonathanborduas/code/QGSD/bin/quorum-consensus-gate.cjs');
+} = require(path.join(ROOT, 'bin', 'quorum-consensus-gate.cjs'));
 
 test('HEAL-01: readEarlyEscalationThreshold returns default 0.10 when no config exists', () => {
   // Pass non-existent paths so it falls through to default

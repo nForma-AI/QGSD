@@ -4,6 +4,8 @@
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
+const path = require('path');
+const ROOT = path.resolve(__dirname, '..', '..', '..');
 
 const {
   generateSuspects,
@@ -11,7 +13,7 @@ const {
   buildCurrentSnapshot,
   formatDiffReport,
   formatSuspectsReport,
-} = require('/Users/jonathanborduas/code/QGSD/bin/generate-triage-bundle.cjs');
+} = require(path.join(ROOT, 'bin', 'generate-triage-bundle.cjs'));
 
 test('TRIAGE-01: generateSuspects filters fail and tagged results', () => {
   const results = [

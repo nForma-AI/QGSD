@@ -781,6 +781,55 @@
       "reason": "quorum-no-consensus (external slots unavailable/stalled during solve iteration 1)",
       "acknowledged_at": "2026-04-02T12:16:27.479Z",
       "scanner": "d_to_r"
+    },
+    {
+      "file_or_claim": "bin/analyze-solve-convergence.cjs",
+      "category": "A",
+      "reason": "quorum-no-consensus (all slots UNAVAIL — infrastructure failure)",
+      "acknowledged_at": "2026-04-10T15:38:12.232Z",
+      "note": "Revisit: module analyzes solve convergence — likely needs a SOLVE-* requirement"
+    },
+    {
+      "file_or_claim": "bin/check-model-staleness.cjs",
+      "category": "A",
+      "reason": "quorum-no-consensus (all slots UNAVAIL — infrastructure failure)",
+      "acknowledged_at": "2026-04-10T15:38:12.232Z",
+      "note": "Revisit: module checks formal model staleness — likely needs a MDLST-* requirement"
+    },
+    {
+      "file_or_claim": "bin/checklist-match.cjs",
+      "category": "A",
+      "reason": "quorum-no-consensus (all slots UNAVAIL — infrastructure failure)",
+      "acknowledged_at": "2026-04-10T15:38:12.232Z",
+      "note": "Revisit: module implements checklist matching — likely needs a PLAN-* requirement"
+    },
+    {
+      "file_or_claim": "bin/feature-report.cjs",
+      "category": "A",
+      "reason": "quorum-no-consensus (all slots UNAVAIL — infrastructure failure)",
+      "acknowledged_at": "2026-04-10T15:38:12.232Z",
+      "note": "Revisit: high git churn + bugfix signals — likely needs a FEAT-* requirement"
+    },
+    {
+      "file_or_claim": "bin/feature-telemetry-schema.cjs",
+      "category": "A",
+      "reason": "quorum-no-consensus (all slots UNAVAIL — infrastructure failure)",
+      "acknowledged_at": "2026-04-10T15:38:12.232Z",
+      "note": "Revisit: defines telemetry schema — likely needs a TELEM-* requirement"
+    },
+    {
+      "file_or_claim": "bin/routing-policy.cjs",
+      "category": "A",
+      "reason": "quorum-no-consensus (all slots UNAVAIL — infrastructure failure)",
+      "acknowledged_at": "2026-04-10T15:38:12.232Z",
+      "note": "Revisit: implements routing policy — may overlap ROUTE-05..07 or need new req"
+    },
+    {
+      "file_or_claim": "bin/nf-solve-baseline-check.test.cjs",
+      "category": "A",
+      "reason": "quorum-no-consensus (all slots UNAVAIL — infrastructure failure)",
+      "acknowledged_at": "2026-04-10T15:38:12.232Z",
+      "note": "Revisit: tests solve baseline checking — likely needs a SOLVE-* requirement"
     }
   ]
 }

@@ -1,0 +1,25 @@
+{
+  "feature/issue-84-sync-baseline-requirements": {
+    "task_id": 387,
+    "task_description": "Sync baseline requirements and audit solver-generated formal models and test stubs",
+    "approach": "Run sync-baseline-requirements.cjs to populate requirements.json, then review the 6 auto-generated formal models and f_to_t test stubs for semantic correctness and delete or revise hollow scaffolding.",
+    "out_of_scope": [
+      "Implementing new features or functionality in formal models",
+      "Executing or validating formal model correctness through model checkers",
+      "Writing comprehensive test cases or test data",
+      "Refactoring the sync script or its underlying dependencies",
+      "Modifying the baseline requirements schema or structure itself"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.75,
+      "routed_through_debug": false
+    },
+    "risk_level": "high",
+    "risk_reason": "Task modifies formal model files (.tla, .als), requirements.json, and multiple test stubs across the codebase, with potential deletions and semantic validation changes.",
+    "branches_affected": ["feature/issue-84-sync-baseline-requirements"],
+    "created_at": "2026-04-10T21:13:09.909Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

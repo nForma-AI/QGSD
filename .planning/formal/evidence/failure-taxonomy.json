@@ -1,40 +1,174 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-10T09:34:06.591Z",
-  "total_failures": 2,
+  "generated": "2026-04-10T22:00:49.763Z",
+  "total_failures": 10,
   "categories": {
     "crash": [
       {
         "tool": "run-tlc",
         "formalism": "tla",
         "result": "error",
-        "timestamp": "2026-04-10T09:34:05.605Z",
-        "check_id": "tla:mcp-environment",
-        "surface": "mcp-calls",
-        "property": "MCP environment — MCPEnvSafety, MCPEnvLiveness",
+        "timestamp": "2026-04-10T22:00:49.027Z",
+        "check_id": "tla:mcagentloop",
+        "surface": "agent-loop",
+        "property": "MCAgentLoop",
         "runtime_ms": 0,
-        "summary": "error: state-space guard blocked MCMCPEnv (HIGH risk, ~null states)",
+        "summary": "error: state-space guard blocked MCAgentLoop (HIGH risk, ~null states)",
         "triage_tags": [
           "state-space-blocked"
         ],
-        "requirement_ids": [
-          "MCPENV-01",
-          "MCPENV-02",
-          "MCPENV-03"
-        ],
+        "requirement_ids": [],
         "metadata": {
-          "config": "MCMCPEnv",
+          "config": "MCAgentLoop",
           "estimated_states": null,
           "risk": "HIGH"
         },
         "category": "crash",
-        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCMCPEnv (HIGH risk, ~null states)"
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCAgentLoop (HIGH risk, ~null states)"
       },
       {
         "tool": "run-tlc",
         "formalism": "tla",
         "result": "error",
-        "timestamp": "2026-04-10T09:34:05.665Z",
+        "timestamp": "2026-04-10T22:00:49.195Z",
+        "check_id": "tla:mcbugmodellookup",
+        "surface": "tla",
+        "property": "MCBugModelLookup",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCBugModelLookup (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCBugModelLookup",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCBugModelLookup (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-alloy",
+        "formalism": "alloy",
+        "result": "error",
+        "timestamp": "2026-04-10T22:00:49.298Z",
+        "check_id": "alloy:quorum-votes",
+        "surface": "alloy",
+        "property": "Alloy assertions for quorum-votes",
+        "runtime_ms": 0,
+        "summary": "error: alloy:quorum-votes (Java not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "QUORUM-02",
+          "SAFE-01",
+          "SAFE-04"
+        ],
+        "metadata": {
+          "verification_mode": "validation"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: alloy:quorum-votes (Java not found)"
+      },
+      {
+        "tool": "run-alloy",
+        "formalism": "alloy",
+        "result": "error",
+        "timestamp": "2026-04-10T22:00:49.335Z",
+        "check_id": "alloy:quorum-votes",
+        "surface": "alloy",
+        "property": "Alloy assertions for quorum-votes",
+        "runtime_ms": 0,
+        "summary": "error: alloy:quorum-votes (Java not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "QUORUM-02",
+          "SAFE-01",
+          "SAFE-04"
+        ],
+        "metadata": {
+          "verification_mode": "validation"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: alloy:quorum-votes (Java not found)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-04-10T22:00:49.391Z",
+        "check_id": "tla:mcconvergencetest",
+        "surface": "convergence",
+        "property": "MCConvergenceTest",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCConvergenceTest (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCConvergenceTest",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCConvergenceTest (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-oauth-rotation-prism",
+        "formalism": "prism",
+        "result": "error",
+        "timestamp": "2026-04-10T22:00:49.459Z",
+        "check_id": "prism:oauth-rotation",
+        "surface": "prism",
+        "property": "OAuth token rotation probability — successful rotation under expiry and concurrency",
+        "runtime_ms": 0,
+        "summary": "error: prism:oauth-rotation (binary not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "CRED-01"
+        ],
+        "metadata": {},
+        "observation_window": {
+          "window_start": "2026-04-10T22:00:49.458Z",
+          "window_end": "2026-04-10T22:00:49.459Z",
+          "n_traces": 0,
+          "n_events": 0,
+          "window_days": 0
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: prism:oauth-rotation (binary not found)"
+      },
+      {
+        "tool": "run-oauth-rotation-prism",
+        "formalism": "prism",
+        "result": "error",
+        "timestamp": "2026-04-10T22:00:49.505Z",
+        "check_id": "prism:oauth-rotation",
+        "surface": "prism",
+        "property": "OAuth token rotation probability — successful rotation under expiry and concurrency",
+        "runtime_ms": 0,
+        "summary": "error: prism:oauth-rotation (binary not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "CRED-01"
+        ],
+        "metadata": {},
+        "observation_window": {
+          "window_start": "2026-04-10T22:00:49.504Z",
+          "window_end": "2026-04-10T22:00:49.505Z",
+          "n_traces": 0,
+          "n_events": 0,
+          "window_days": 0
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: prism:oauth-rotation (binary not found)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-04-10T22:00:49.558Z",
         "check_id": "tla:mcdeliberationrevision",
         "surface": "deliberation-revision",
         "property": "MCDeliberationRevision",
@@ -51,6 +185,50 @@
         },
         "category": "crash",
         "classification_reason": "Error pattern in summary: error: state-space guard blocked MCDeliberationRevision (HIGH risk, ~null states"
+      },
+      {
+        "tool": "run-oscillation-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-04-10T22:00:49.615Z",
+        "check_id": "tla:oscillation",
+        "surface": "tla",
+        "property": "Run-collapse oscillation detection algorithm correctness",
+        "runtime_ms": 0,
+        "summary": "error: Java not found in 0ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "DETECT-04",
+          "DETECT-05",
+          "DETECT-06"
+        ],
+        "metadata": {
+          "config": "MCoscillation"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: Java not found in 0ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-04-10T22:00:49.721Z",
+        "check_id": "tla:mcgatepromotion",
+        "surface": "tla",
+        "property": "MCGatePromotion",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCGatePromotion (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCGatePromotion",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCGatePromotion (HIGH risk, ~null states)"
       }
     ],
     "timeout": [],
@@ -59,7 +237,7 @@
     "degradation": []
   },
   "category_counts": {
-    "crash": 2,
+    "crash": 10,
     "timeout": 0,
     "logic_violation": 0,
     "drift": 0,
@@ -67,5 +245,5 @@
   },
   "degradation_fallback_note": "When no baseline exists, potential degradation entries are classified as logic_violation",
   "unclassified": [],
-  "summary": "2 failures classified: crash=2, timeout=0, logic_violation=0, drift=0, degradation=0. 0 unclassified."
+  "summary": "10 failures classified: crash=10, timeout=0, logic_violation=0, drift=0, degradation=0. 0 unclassified."
 }

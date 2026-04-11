@@ -5,9 +5,11 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
+const path = require('path');
+const ROOT = path.resolve(__dirname, '..', '..', '..');
 
 test('COMP-03 — check-provider-health.cjs reads quorum_active from nf.json config', () => {
-  const content = fs.readFileSync('/Users/jonathanborduas/code/QGSD/bin/check-provider-health.cjs', 'utf8');
+  const content = fs.readFileSync(path.join(ROOT, 'bin', 'check-provider-health.cjs'), 'utf8');
 
   // Must load quorum_active from nf.json config file
   assert.match(content, /quorum_active/, 'Should reference quorum_active config key');

@@ -125,7 +125,6 @@ states/
 
 # Planning migration marker
 .planning/.migrated
-.planning/.gitignore
 
 # Screenshots / images (keep in docs/assets/ instead)
 *.png

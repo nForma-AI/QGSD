@@ -1,6 +1,6 @@
 {
   "schema_version": "2",
-  "generated": "2026-04-10T09:33:12.808Z",
+  "generated": "2026-04-10T22:00:30.893Z",
   "layers": {
     "L1": [
       {
@@ -1152,14 +1152,34 @@
         "grounding_status": "ungrounded"
       },
       {
-        "path": ".planning/formal/tla/NFWaveDAG.tla",
-        "description": "Graph-driven wave scheduling with Tarjan SCC collapsing and topological wave assignment",
+        "path": ".planning/formal/alloy/shell-prompt-quorum-dedup.als",
+        "description": "Shell-safe prompt delivery via stdin pipe and quorum slot model deduplication diversity guarantee",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/tla/NFSolveResidual.tla",
+        "description": "Net residual computation (FP subtraction) and solve convergence layer-transition sweeps",
         "grounding_status": "ungrounded"
       },
       {
-        "path": ".planning/formal/tla/DistTagAlignment.tla",
-        "description": "npm dist-tag alignment: @next must never fall behind @latest after stable publish",
-        "grounding_status": "has_semantic_declarations"
+        "path": ".planning/formal/alloy/debug-invariants-instrumentation.als",
+        "description": "Debug invariant constraint extraction and per-file trace instrumentation source registration",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/code-standards-debt-audit.als",
+        "description": "Standardized code patterns: JSON serialization, path resolution, error propagation, and debt audit process",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFDistTag.tla",
+        "description": "npm dist-tag ordering invariant: @next must never fall behind @latest after stable publish",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFRiverPolicy.tla",
+        "description": "River ML policy: 3-tier slot routing, Q-learning with Bellman updates, epsilon-greedy exploration, E2E learning loop",
+        "grounding_status": "ungrounded"
       }
     ]
   },
@@ -1183,18 +1203,18 @@
   "collapsed_layers": {
     "L2": {
       "reason": "Empty layer — zero entries permanently blocked Gate B (STRUCT-01)",
-      "collapsed_at": "2026-04-10T09:33:12.808Z"
+      "collapsed_at": "2026-04-10T22:00:30.893Z"
     }
   },
   "summary": {
-    "total_models": 231,
+    "total_models": 235,
     "L1_count": 2,
     "L2_count": 0,
-    "L3_count": 229,
+    "L3_count": 233,
     "maturity_distribution": {
-      "0": 193,
+      "0": 197,
       "1": 38
     },
-    "spec_modules_with_invariants": 19
+    "spec_modules_with_invariants": 18
   }
 }

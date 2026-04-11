@@ -32,8 +32,8 @@ function _syncFromBaseline(baseline, projectRoot) {
     requirements = [];
   }
 
-  // 3. Build lookup of existing requirement texts -> id
-  const existingTexts = new Map(requirements.map(r => [r.text, r.id]));
+  // 3. Build lookup of existing requirement texts -> requirement object
+  const existingByText = new Map(requirements.map(r => [r.text, r]));
 
   // 4. Build map of highest existing ID number per prefix
   const maxId = {};
@@ -50,6 +50,7 @@ function _syncFromBaseline(baseline, projectRoot) {
 
   const added = [];
   const skipped = [];
+  const updated = [];
   const totalBefore = requirements.length;
 
   // 5-6. Process each baseline category
@@ -62,12 +63,23 @@ function _syncFromBaseline(baseline, projectRoot) {
     const prefix = firstId.substring(0, dashIdx);
 
     for (const req of cat.requirements) {
-      if (existingTexts.has(req.text)) {
-        // 6a. Skip duplicate
+      const existing = existingByText.get(req.text);
+      if (existing) {
+        // 6a. Skip duplicate, but normalize baseline provenance on matched entries.
+        if (!existing.provenance || existing.provenance.source_file !== 'nf-baseline') {
+          existing.provenance = {
+            ...(existing.provenance || {}),
+            source_file: 'nf-baseline',
+          };
+          updated.push({
+            id: existing.id,
+            text: existing.text,
+          });
+        }
         skipped.push({
           id: req.id,
           text: req.text,
-          existingId: existingTexts.get(req.text),
+          existingId: existing.id,
         });
       } else {
         // 6c. Assign next available ID
@@ -88,14 +100,14 @@ function _syncFromBaseline(baseline, projectRoot) {
         };
 
         requirements.push(newReq);
-        existingTexts.set(req.text, newId);
+        existingByText.set(req.text, newReq);
         added.push({ id: newId, text: req.text });
       }
     }
   }
 
-  // 7. Write if anything was added
-  if (added.length > 0) {
+  // 7. Write if anything changed
+  if (added.length > 0 || updated.length > 0) {
     const contentHash = 'sha256:' + crypto
       .createHash('sha256')
       .update(JSON.stringify(requirements, null, 2))
@@ -105,6 +117,7 @@ function _syncFromBaseline(baseline, projectRoot) {
     const existingHash = rawEnvelope.content_hash || null;
     if (existingHash !== contentHash) {
       const envelope = {
+        ...rawEnvelope,
         aggregated_at: new Date().toISOString(),
         content_hash: contentHash,
         frozen_at: rawEnvelope.frozen_at || null,
@@ -122,6 +135,7 @@ function _syncFromBaseline(baseline, projectRoot) {
   return {
     added,
     skipped,
+    updated,
     total_before: totalBefore,
     total_after: requirements.length,
   };
@@ -185,6 +199,7 @@ function printReport(result, profile) {
   console.log(`Baseline sync: ${profile} profile`);
   console.log(`  Before: ${result.total_before} requirements`);
   console.log(`  Added:  ${result.added.length} new requirements`);
+  console.log(`  Updated: ${result.updated.length} existing requirements retagged`);
   console.log(`  Skipped: ${result.skipped.length} (already present by text match)`);
   console.log(`  After:  ${result.total_after} requirements`);
 
@@ -199,6 +214,13 @@ function printReport(result, profile) {
     console.log('\nSkipped:');
     for (const s of result.skipped) {
       console.log(`  ~ [${s.id}] matched existing [${s.existingId}]`);
+    }
+  }
+
+  if (result.updated.length > 0) {
+    console.log('\nUpdated:');
+    for (const u of result.updated) {
+      console.log(`  * [${u.id}] provenance.source_file -> nf-baseline`);
     }
   }
 }

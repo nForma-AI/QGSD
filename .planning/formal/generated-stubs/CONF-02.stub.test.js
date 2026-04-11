@@ -6,10 +6,11 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
+const ROOT = path.resolve(__dirname, '..', '..', '..');
 const os = require('os');
 
 test('CONF-02 — ConfigLayer: config-loader.js implements two-layer merge with project precedence', () => {
-  const configLoaderPath = '/Users/jonathanborduas/code/QGSD/hooks/config-loader.js';
+  const configLoaderPath = path.join(ROOT, 'hooks', 'config-loader.js');
   const content = fs.readFileSync(configLoaderPath, 'utf8');
 
   // Must reference both global (~/.claude/nf.json) and project (.claude/nf.json) config paths
@@ -26,7 +27,7 @@ test('CONF-02 — ConfigLayer: config-loader.js implements two-layer merge with 
 });
 
 test('CONF-02 — ConfigLayer: loadConfig exports are available', () => {
-  const { loadConfig, DEFAULT_CONFIG } = require('/Users/jonathanborduas/code/QGSD/hooks/config-loader.js');
+  const { loadConfig, DEFAULT_CONFIG } = require(path.join(ROOT, 'hooks', 'config-loader.js'));
   assert.strictEqual(typeof loadConfig, 'function', 'loadConfig must be a function');
   assert.strictEqual(typeof DEFAULT_CONFIG, 'object', 'DEFAULT_CONFIG must be an object');
 });

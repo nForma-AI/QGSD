@@ -1,5 +1,10 @@
 {
-  "aggregated_at": "2026-04-09T19:03:55.797Z",
+  "aggregated_at": "2026-04-11T07:19:13.227Z",
+  "content_hash": "sha256:af9771fb33a6d73bc2e777745c20bce585e75d1962273ae7bf6485e825b3cac3",
+  "frozen_at": "2026-04-10T21:49:42.228Z",
+  "schema_version": "1",
+  "source": ".planning/REQUIREMENTS.md",
+  "last_sync": "2026-03-31T09:45:23.686Z",
   "requirements": [
     {
       "id": "ACT-01",
@@ -541,7 +546,7 @@
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "source_file": "nf-baseline",
         "milestone": "v0.33"
       },
       "formal_models": [
@@ -556,7 +561,7 @@
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "source_file": "nf-baseline",
         "milestone": "v0.33"
       },
       "formal_models": [
@@ -571,7 +576,7 @@
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "source_file": "nf-baseline",
         "milestone": "v0.33"
       },
       "formal_models": [
@@ -1133,6 +1138,135 @@
       }
     },
     {
+      "id": "DEBT-07",
+      "text": "Formalize constraint extraction for debug invariants in propose-debug-invariants.cjs",
+      "category": "Technical Debt",
+      "tier": "engineering",
+      "phase": "unknown",
+      "status": "Open",
+      "provenance": {
+        "source_file": ".planning/quick/384-standardize-process-resolve-technical-de/384-AUDIT.md",
+        "milestone": "v0.41"
+      },
+      "category_raw": "Code Markers"
+    },
+    {
+      "id": "DEBT-08",
+      "text": "Add future instrumentation source for per-file trace data in formalization-candidates.cjs",
+      "category": "Technical Debt",
+      "tier": "engineering",
+      "phase": "unknown",
+      "status": "Open",
+      "provenance": {
+        "source_file": ".planning/quick/384-standardize-process-resolve-technical-de/384-AUDIT.md",
+        "milestone": "v0.41"
+      },
+      "category_raw": "Code Markers"
+    },
+    {
+      "id": "DEBT-09",
+      "text": "Standardize JSON read/write serialization patterns across bin/ scripts (aggregate-requirements.cjs, check-provider-health.cjs, call-quorum-slot.cjs, telemetry-collector.cjs, verify-formal-results.cjs)",
+      "category": "Technical Debt",
+      "tier": "engineering",
+      "phase": "unknown",
+      "status": "Open",
+      "provenance": {
+        "source_file": ".planning/quick/384-standardize-process-resolve-technical-de/384-AUDIT.md",
+        "milestone": "v0.41"
+      },
+      "category_raw": "Logic Patterns"
+    },
+    {
+      "id": "DEBT-10",
+      "text": "Standardize path resolution: consolidate _nfBin helper usage across bin/ module imports (solve-inline-dispatch.cjs, observe-pipeline.cjs, and others)",
+      "category": "Technical Debt",
+      "tier": "engineering",
+      "phase": "unknown",
+      "status": "Open",
+      "provenance": {
+        "source_file": ".planning/quick/384-standardize-process-resolve-technical-de/384-AUDIT.md",
+        "milestone": "v0.41"
+      },
+      "category_raw": "Logic Patterns"
+    },
+    {
+      "id": "DEBT-11",
+      "text": "Reduce empty catch block proliferation: replace silent catch (_) {} with explicit logging or error propagation in check-provider-health.cjs, call-quorum-slot.cjs, nForma.cjs",
+      "category": "Technical Debt",
+      "tier": "engineering",
+      "phase": "unknown",
+      "status": "Open",
+      "provenance": {
+        "source_file": ".planning/quick/384-standardize-process-resolve-technical-de/384-AUDIT.md",
+        "milestone": "v0.41"
+      },
+      "category_raw": "Logic Patterns"
+    },
+    {
+      "id": "DEBT-12",
+      "text": "Create formal model for shell-safe prompt delivery (stdin piping, no escaping required)",
+      "category": "Technical Debt",
+      "tier": "engineering",
+      "phase": "unknown",
+      "status": "Open",
+      "provenance": {
+        "source_file": ".planning/quick/384-standardize-process-resolve-technical-de/384-AUDIT.md",
+        "milestone": "v0.41"
+      },
+      "category_raw": "Formal Verification Gap"
+    },
+    {
+      "id": "DEBT-13",
+      "text": "Create formal model for quorum slot model deduplication (diversity guarantee)",
+      "category": "Technical Debt",
+      "tier": "engineering",
+      "phase": "unknown",
+      "status": "Open",
+      "provenance": {
+        "source_file": ".planning/quick/384-standardize-process-resolve-technical-de/384-AUDIT.md",
+        "milestone": "v0.41"
+      },
+      "category_raw": "Formal Verification Gap"
+    },
+    {
+      "id": "DEBT-14",
+      "text": "Create formal model for net_residual computation (FP subtraction from raw sweep residuals)",
+      "category": "Technical Debt",
+      "tier": "engineering",
+      "phase": "unknown",
+      "status": "Open",
+      "provenance": {
+        "source_file": ".planning/quick/384-standardize-process-resolve-technical-de/384-AUDIT.md",
+        "milestone": "v0.41"
+      },
+      "category_raw": "Formal Verification Gap"
+    },
+    {
+      "id": "DEBT-15",
+      "text": "Create formal model for solve convergence layer-transition sweeps (L1->L2, L2->L3, L3->TC)",
+      "category": "Technical Debt",
+      "tier": "engineering",
+      "phase": "unknown",
+      "status": "Open",
+      "provenance": {
+        "source_file": ".planning/quick/384-standardize-process-resolve-technical-de/384-AUDIT.md",
+        "milestone": "v0.41"
+      },
+      "category_raw": "Formal Verification Gap"
+    },
+    {
+      "id": "DEBT-16",
+      "text": "Implement standardized process for auditing technical debt markers, documenting findings in requirements.json as trackable DEBT-* items, and maintaining traceability in REQUIREMENTS.md",
+      "category": "Technical Debt",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Quick task 384 established a repeatable audit methodology (code comment markers, traceability gaps, logic inconsistencies, unmapped TODOs) to prevent technical debt accumulation by making each identified item a first-class trackable requirement rather than informal comments or stale documentation. This process ensures engineering tasks arising from debt discovery are formally captured and monitored.",
+      "provenance": {
+        "source_file": ".planning/quick/384-standardize-process-resolve-technical-de/384-PLAN.md",
+        "milestone": "quick-384"
+      }
+    },
+    {
       "id": "DECOMP-01",
       "text": "`bin/analyze-state-space.cjs` reads TLA+ .cfg files and model variables to estimate state-space size per model and classifies risk as MINIMAL/LOW/MODERATE/HIGH based on configurable thresholds",
       "category": "Planning & Tracking",
@@ -1477,10 +1611,7 @@
         "source_file": "manual",
         "milestone": "v0.41"
       },
-      "background": "Implemented in 0.41.14. Automated in release.yml (CI), publish.sh (manual publish), and documented in CLAUDE.md. Prevents stale prerelease tags from confusing consumers who install via @next.",
-      "formal_models": [
-        ".planning/formal/tla/DistTagAlignment.tla"
-      ]
+      "background": "Implemented in 0.41.14. Automated in release.yml (CI), publish.sh (manual publish), and documented in CLAUDE.md. Prevents stale prerelease tags from confusing consumers who install via @next."
     },
     {
       "id": "DRIFT-01",
@@ -2265,16 +2396,6 @@
       "category_raw": "Installer Extensions"
     },
     {
-      "id": "INST-11",
-      "text": "Installer automatically downloads and installs coderlm binary to ~/.claude/nf-bin/coderlm when missing on install",
-      "category": "Installer & CLI",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Users need the coderlm binary available as part of the standard install flow to avoid lifecycle errors on first use. Without automatic download, users must manually fetch coderlm, adding friction and causing breakage when the binary is missing.",
-      "source_file": ".planning/quick/389-make-install-js-automatically-download-a/389-PLAN.md",
-      "milestone": "quick-389"
-    },
-    {
       "id": "INTENT-01",
       "text": "When a quick task is triggered (`/nf:quick`), the workflow derives an APPROACH block (what will be done, what is explicitly out of scope) from the task description before spawning the planner",
       "category": "Intent Declaration",
@@ -2380,18 +2501,6 @@
       "provenance": {
         "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
         "milestone": "v0.29"
-      }
-    },
-    {
-      "id": "INTG-07",
-      "text": "nf:solve integrates a coderlm HTTP adapter with graph-driven wave scheduling via Tarjan SCC collapsing, falling back to heuristic waves when coderlm is unavailable or disabled",
-      "category": "Integration",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The coderlm service provides an indexed symbol/call graph that enables precise dependency edges across a codebase. By integrating coderlm into nf:solve's wave scheduler, remediation can be ordered using Tarjan's SCC algorithm to detect and collapse dependency cycles. Backward compatibility is preserved through fail-open design.",
-      "provenance": {
-        "source_file": ".planning/quick/380-integrate-coderlm-adapter-and-graph-driv/380-PLAN.md",
-        "milestone": "quick-380"
       }
     },
     {
@@ -2701,51 +2810,6 @@
       "category_raw": "MCP Server Detection"
     },
     {
-      "id": "MCP-07",
-      "text": "nf:mcp-repair calls all MCP identity, health_check, and deep_health_check tools directly in the orchestrator, never via Task() sub-agents which lack access to the parent session's MCP servers.",
-      "category": "MCP & Agents",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Sub-agents spawned via the Agent/Task tool do not inherit the parent session's MCP servers, causing all MCP calls inside Task() blocks to silently fail or throw 'tool not found'. The fix ensures nf:mcp-repair issues all 30 MCP tool calls (identity, health_check, and deep_health_check for each of 10 slots) directly in the main orchestrator context where MCP servers are accessible.",
-      "provenance": {
-        "source_file": ".planning/quick/384-fix-nf-mcp-repair-to-call-mcp-tools-dire/384-PLAN.md",
-        "milestone": "quick-384"
-      }
-    },
-    {
-      "id": "MCP-08",
-      "text": "nf:mcp-repair discovers slot names dynamically from ~/.claude.json mcpServers at runtime instead of using hardcoded enumeration, allowing the tool to work with any slot configuration.",
-      "category": "MCP & Agents",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The previous implementation of nf:mcp-repair hardcoded 10 specific slot names (codex-1, gemini-1, opencode-1, copilot-1, claude-1..6) in both the allowed-tools frontmatter and the Step 1 diagnostic call list. Users with different slot counts or renamed slots experienced silent failures. This requirement ensures the repair tool dynamically reads ~/.claude.json mcpServers keys at session startup and adapts its diagnostic workflow to whatever slots are actually configured, making it portable across environments.",
-      "provenance": {
-        "source_file": ".planning/quick/385-make-nf-mcp-repair-discover-slot-names-d/385-PLAN.md",
-        "milestone": "quick-385"
-      }
-    },
-    {
-      "id": "MCP-09",
-      "text": "nf:mcp-status banner text SHALL compute agent counts dynamically from ~/.claude.json mcpServers instead of hardcoding provider counts",
-      "category": "MCP Observability",
-      "status": "Pending",
-      "background": "The current nf:mcp-status skill Step 2 prints a hardcoded string 'Querying 4 CLI agents + 6 HTTP providers...' regardless of actual mcpServers configuration. The count must be derived at runtime from ~/.claude.json.",
-      "provenance": {
-        "source_file": "manual",
-        "milestone": "v0.42"
-      }
-    },
-    {
-      "id": "MCP-10",
-      "text": "MCP server dynamically detects installed CLI providers at startup and excludes slots whose binaries are not found, using deduplication and fail-open logic to handle errors gracefully.",
-      "category": "MCP & Agents",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Slots defined in providers.json but not installed on the user's machine produce confusing errors at dispatch time. Dynamic CLI detection at server startup filters the active provider list to only slots with reachable binaries; HTTP-only slots are always included; deduplication avoids repeated fs checks for shared binaries (e.g. ccr-1..ccr-6); fails open on unexpected errors.",
-      "source_file": ".planning/quick/395-make-providers-slot-list-dynamic-detect-/395-PLAN.md",
-      "milestone": "quick-395"
-    },
-    {
       "id": "MCPENV-01",
       "text": "`.formal/spec/mcp-calls/` contains TLA+ model of MCP environment behavior",
       "category": "MCP & Agents",
@@ -3031,7 +3095,7 @@
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "source_file": "nf-baseline",
         "milestone": "v0.33"
       },
       "formal_models": [
@@ -3143,30 +3207,6 @@
       "formal_models": [
         ".planning/formal/alloy/observability-analysis.als"
       ]
-    },
-    {
-      "id": "OBS-09",
-      "text": "nf-statusline renders a green ● coderlm indicator when the coderlm server process is running, reads PID liveness via process.kill(pid, 0), and renders nothing (fail-open) when the PID file is absent or process is dead.",
-      "category": "Observability & Diagnostics",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Developers need runtime visibility into coderlm server status directly in the Claude statusline. The indicator serves as a quick visual check that the symbol server is available and running without requiring separate commands or manual PID inspection.",
-      "provenance": {
-        "source_file": ".planning/quick/386-add-coderlm-status-indicator-to-nf-statu/386-PLAN.md",
-        "milestone": "quick-386"
-      }
-    },
-    {
-      "id": "OBS-10",
-      "text": "nf-statusline renders compact dot-style River ML indicators using green ● for active state, cyan ● for exploring state, and yellow ● with recommendation text for shadow state.",
-      "category": "Observability & Diagnostics",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The River ML service-health status was previously displayed with verbose text indicators (River: active, River: exploring, etc.) that were visually inconsistent with the coderlm indicator pattern. This requirement updates the River indicator to use the same compact dot-style format as coderlm, improving visual consistency in the statusline and making service health status more scannable at a glance.",
-      "provenance": {
-        "source_file": ".planning/quick/387-improve-river-ml-statusline-indicator-to/387-PLAN.md",
-        "milestone": "quick-387"
-      }
     },
     {
       "id": "ORCH-01",
@@ -4084,7 +4124,7 @@
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "source_file": "nf-baseline",
         "milestone": "v0.33"
       },
       "formal_models": [
@@ -4099,7 +4139,7 @@
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "source_file": "nf-baseline",
         "milestone": "v0.33"
       },
       "formal_models": [
@@ -4504,7 +4544,7 @@
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "source_file": "nf-baseline",
         "milestone": "v0.33"
       },
       "formal_models": [
@@ -4519,7 +4559,7 @@
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "source_file": "nf-baseline",
         "milestone": "v0.33"
       },
       "formal_models": [
@@ -4534,7 +4574,7 @@
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "source_file": "nf-baseline",
         "milestone": "v0.33"
       },
       "formal_models": [
@@ -4549,7 +4589,7 @@
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "source_file": "nf-baseline",
         "milestone": "v0.33"
       },
       "formal_models": [
@@ -6002,7 +6042,7 @@
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "source_file": "nf-baseline",
         "milestone": "v0.33"
       },
       "formal_models": [
@@ -6017,7 +6057,7 @@
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "source_file": "nf-baseline",
         "milestone": "v0.33"
       },
       "formal_models": [
@@ -6032,7 +6072,7 @@
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "source_file": "nf-baseline",
         "milestone": "v0.33"
       },
       "formal_models": [
@@ -6118,6 +6158,16 @@
         ".planning/formal/alloy/verification-integration.als"
       ],
       "category_raw": "Verification Gate"
+    },
+    {
+      "id": "VERIFY-03",
+      "text": "Generated formal model test stubs use ROOT-relative path resolution via `path.resolve(__dirname, '..', '..', '..')` and contain semantic assertions (`assert.match()` checks) verifying configuration and tool references, eliminating hardcoded absolute paths for CI portability.",
+      "category": "Testing & Quality",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Solver-generated test stubs initially contained hardcoded absolute paths (e.g., `/Users/jonathanborduas/code/QGSD/bin/...`) that blocked CI portability and broke on different systems. This requirement ensures all 16 formal model test stubs use portable ROOT-relative path resolution and include semantic verification checks consistent with their associated requirements.",
+      "source_file": ".planning/quick/387-issue-84/387-PLAN.md",
+      "milestone": "quick-387"
     },
     {
       "id": "VIS-01",
@@ -6298,7 +6348,5 @@
         "milestone": "unknown"
       }
     }
-  ],
-  "content_hash": "f7123c37efcfefd813d2f3a3d9ac14402ec90418f42e15a8dc2aa69854175d67",
-  "frozen_at": "2026-04-09T19:03:55.799Z"
+  ]
 }

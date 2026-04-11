@@ -9,6 +9,7 @@ const { test } = require('node:test');
 const assert   = require('node:assert');
 const { spawnSync } = require('child_process');
 const path = require('path');
+const { resolveTlaJar } = require('./resolve-formal-tools.cjs');
 
 const RUN_PROTOCOL_TLC = path.join(__dirname, 'run-protocol-tlc.cjs');
 
@@ -30,9 +31,7 @@ test('exits non-zero and prints download URL when tla2tools.jar is not found', (
   // If no Java available, skip this test — it cannot reach JAR check without Java.
   if (!javaHome) { return; }  // test is skipped, not failed
   // If the JAR is present on disk (gitignored but downloaded), skip — cannot test absence.
-  const fs = require('fs');
-  const jarPath = require('path').join(__dirname, '..', '.planning', 'formal', 'tla', 'tla2tools.jar');
-  if (fs.existsSync(jarPath)) { return; }  // test is skipped, not failed
+  if (resolveTlaJar(path.join(__dirname, '..'))) { return; }  // test is skipped, not failed
   const result = spawnSync(process.execPath, [RUN_PROTOCOL_TLC], {
     encoding: 'utf8',
     env: { ...process.env, JAVA_HOME: javaHome },

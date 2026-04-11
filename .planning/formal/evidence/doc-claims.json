@@ -1,12 +1,12 @@
 {
-  "generated": "2026-04-10T09:37:27.152Z",
-  "total_claims_checked": 171,
-  "doc_files_scanned": 8,
-  "raw_broken_count": 34,
-  "weighted_residual": 67,
+  "generated": "2026-04-10T22:01:57.489Z",
+  "total_claims_checked": 162,
+  "doc_files_scanned": 7,
+  "raw_broken_count": 26,
+  "weighted_residual": 51,
   "suppressed_fp_count": 11,
   "category_breakdown": {
-    "user": 33,
+    "user": 25,
     "developer": 1
   },
   "broken_claims": [
@@ -240,78 +240,6 @@
       "line": 90,
       "type": "dependency",
       "value": "using-agent-skills",
-      "reason": "not in any dependency manifest",
-      "category": "user",
-      "weight": 2
-    },
-    {
-      "doc_file": "docs/coderlm-integration.md",
-      "line": 144,
-      "type": "dependency",
-      "value": "coderlm-darwin-arm64",
-      "reason": "not in any dependency manifest",
-      "category": "user",
-      "weight": 2
-    },
-    {
-      "doc_file": "docs/coderlm-integration.md",
-      "line": 145,
-      "type": "dependency",
-      "value": "coderlm-darwin-x64",
-      "reason": "not in any dependency manifest",
-      "category": "user",
-      "weight": 2
-    },
-    {
-      "doc_file": "docs/coderlm-integration.md",
-      "line": 146,
-      "type": "dependency",
-      "value": "coderlm-linux-x64",
-      "reason": "not in any dependency manifest",
-      "category": "user",
-      "weight": 2
-    },
-    {
-      "doc_file": "docs/coderlm-integration.md",
-      "line": 147,
-      "type": "dependency",
-      "value": "coderlm-linux-arm64",
-      "reason": "not in any dependency manifest",
-      "category": "user",
-      "weight": 2
-    },
-    {
-      "doc_file": "docs/coderlm-integration.md",
-      "line": 404,
-      "type": "dependency",
-      "value": "coderlm-darwin-arm64",
-      "reason": "not in any dependency manifest",
-      "category": "user",
-      "weight": 2
-    },
-    {
-      "doc_file": "docs/coderlm-integration.md",
-      "line": 405,
-      "type": "dependency",
-      "value": "coderlm-darwin-x64",
-      "reason": "not in any dependency manifest",
-      "category": "user",
-      "weight": 2
-    },
-    {
-      "doc_file": "docs/coderlm-integration.md",
-      "line": 406,
-      "type": "dependency",
-      "value": "coderlm-linux-x64",
-      "reason": "not in any dependency manifest",
-      "category": "user",
-      "weight": 2
-    },
-    {
-      "doc_file": "docs/coderlm-integration.md",
-      "line": 407,
-      "type": "dependency",
-      "value": "coderlm-linux-arm64",
       "reason": "not in any dependency manifest",
       "category": "user",
       "weight": 2

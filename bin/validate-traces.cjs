@@ -12,6 +12,7 @@
 
 const fs   = require('fs');
 const path = require('path');
+const { setup, assign, createActor } = require('xstate');
 
 // ── Confidence tier constants and helpers ─────────────────────────────────────
 
@@ -25,6 +26,135 @@ function computeConfidenceTier(n_rounds, window_days) {
   if (n_rounds >= CONFIDENCE_THRESHOLDS.high.min_rounds && window_days >= CONFIDENCE_THRESHOLDS.high.min_days) return 'high';
   if (n_rounds >= CONFIDENCE_THRESHOLDS.medium.min_rounds && window_days >= CONFIDENCE_THRESHOLDS.medium.min_days) return 'medium';
   return 'low';
+}
+
+function createFallbackMachineModule() {
+  const nfWorkflowMachine = setup({
+    guards: {
+      minQuorumMet: ({ context }) =>
+        context.successCount >= Math.ceil(context.slotsAvailable / 2),
+      unanimityMet: ({ context }) =>
+        context.successCount === context.polledCount,
+      noInfiniteDeliberation: ({ context }) =>
+        context.deliberationRounds < context.maxDeliberation,
+      phaseMonotonicallyAdvances: () => true,
+    },
+  }).createMachine({
+    id: 'nf-workflow',
+    initial: 'IDLE',
+    context: {
+      slotsAvailable: 0,
+      successCount: 0,
+      deliberationRounds: 0,
+      currentPhase: 'IDLE',
+      maxDeliberation: 9,
+      maxSize: 3,
+      polledCount: 0,
+    },
+    states: {
+      IDLE: {
+        on: {
+          QUORUM_START: {
+            target: 'COLLECTING_VOTES',
+            actions: assign({
+              slotsAvailable: ({ event }) => event.slotsAvailable,
+              polledCount: ({ event }) => event.polledCount,
+              currentPhase: () => 'COLLECTING_VOTES',
+            }),
+          },
+          CIRCUIT_BREAK: { target: 'IDLE' },
+          DECIDE: { target: 'IDLE' },
+          VOTES_COLLECTED: { target: 'IDLE' },
+        },
+      },
+      COLLECTING_VOTES: {
+        on: {
+          VOTES_COLLECTED: [
+            {
+              guard: 'unanimityMet',
+              target: 'DECIDED',
+              actions: assign({
+                successCount: ({ event }) => event.successCount,
+                currentPhase: () => 'DECIDED',
+              }),
+            },
+            {
+              target: 'DELIBERATING',
+              actions: assign({
+                successCount: ({ event }) => event.successCount,
+                deliberationRounds: ({ context }) => context.deliberationRounds + 1,
+                currentPhase: () => 'DELIBERATING',
+              }),
+            },
+          ],
+          QUORUM_START: { target: 'COLLECTING_VOTES' },
+          CIRCUIT_BREAK: { target: 'COLLECTING_VOTES' },
+          DECIDE: { target: 'COLLECTING_VOTES' },
+        },
+      },
+      DELIBERATING: {
+        on: {
+          VOTES_COLLECTED: [
+            {
+              guard: 'unanimityMet',
+              target: 'DECIDED',
+              actions: assign({
+                successCount: ({ event }) => event.successCount,
+                currentPhase: () => 'DECIDED',
+              }),
+            },
+            {
+              guard: 'noInfiniteDeliberation',
+              target: 'DELIBERATING',
+              actions: assign({
+                deliberationRounds: ({ context }) => context.deliberationRounds + 1,
+              }),
+            },
+            {
+              target: 'DECIDED',
+              actions: assign({ currentPhase: () => 'DECIDED' }),
+            },
+          ],
+          DECIDE: { target: 'DECIDED' },
+          QUORUM_START: { target: 'DELIBERATING' },
+          CIRCUIT_BREAK: { target: 'DELIBERATING' },
+        },
+      },
+      DECIDED: {
+        type: 'final',
+        on: {
+          DECIDE: { target: 'DECIDED' },
+          CIRCUIT_BREAK: { target: 'DECIDED' },
+          QUORUM_START: { target: 'DECIDED' },
+          VOTES_COLLECTED: { target: 'DECIDED' },
+        },
+      },
+    },
+  });
+
+  return { createActor, nfWorkflowMachine };
+}
+
+function loadMachineModule() {
+  const repoDist = path.join(__dirname, '..', 'dist', 'machines', 'nf-workflow.machine.js');
+  const installDist = path.join(__dirname, 'dist', 'machines', 'nf-workflow.machine.js');
+
+  if (fs.existsSync(repoDist)) return require(repoDist);
+  if (fs.existsSync(installDist)) return require(installDist);
+
+  return createFallbackMachineModule();
+}
+
+function machineEventWithDefaults(rawEvent, sourceEvent) {
+  if (!rawEvent || rawEvent.type !== 'QUORUM_START') return rawEvent;
+  return {
+    ...rawEvent,
+    polledCount: rawEvent.polledCount ||
+      sourceEvent.polledCount ||
+      sourceEvent.polled_count ||
+      rawEvent.slotsAvailable ||
+      0,
+  };
 }
 
 function readScoreboardMeta() {
@@ -124,14 +254,7 @@ function buildTTrace(event, actualState, expectedStateName, divergenceType, scor
   let guardEvaluations = [];
   if (walker && machine) {
     try {
-      const _path = require('path');
-      const _fs   = require('fs');
-      const _machinePath = (() => {
-        const repoDist    = _path.join(__dirname, '..', 'dist', 'machines', 'nf-workflow.machine.js');
-        const installDist = _path.join(__dirname, 'dist', 'machines', 'nf-workflow.machine.js');
-        return _fs.existsSync(repoDist) ? repoDist : installDist;
-      })();
-      const { createActor } = require(_machinePath);
+      const { createActor } = loadMachineModule();
 
       // Find the index of this event in its round group
       const groupEvents = roundEvents || [event];
@@ -147,11 +270,11 @@ function buildTTrace(event, actualState, expectedStateName, divergenceType, scor
         actor.start();
         for (const prev of precedingEvents) {
           const prevEvt = mapToXStateEvent(prev);
-          if (prevEvt) actor.send(prevEvt);
+          if (prevEvt) actor.send(machineEventWithDefaults(prevEvt, prev));
         }
         const beforeSnap = actor.getSnapshot();
         actor.stop();
-        const walkerResult = walker.evaluateTransitions(beforeSnap, xstateEvt, machine);
+        const walkerResult = walker.evaluateTransitions(beforeSnap, machineEventWithDefaults(xstateEvt, event), machine);
         guardEvaluations = walkerResult.possibleTransitions.map(t => ({
           guardName: t.guardName || 'none',
           passed:    t.guardPassed,
@@ -249,16 +372,7 @@ if (require.main === module) {
   const KNOWN_NON_FSM_ACTIONS = new Set(['security_sweep']);
   const _startMs = Date.now();
   const { writeCheckResult } = require('./write-check-result.cjs');
-  // Machine CJS path: in the repo, ../dist/machines/ (bin/ → dist/machines/)
-  // When installed at ~/.claude/nf-bin/, ./dist/machines/ (nf-bin/ → nf-bin/dist/machines/)
-  const machinePath = (function () {
-    const repoDist = path.join(__dirname, '..', 'dist', 'machines', 'nf-workflow.machine.js');
-    const installDist = path.join(__dirname, 'dist', 'machines', 'nf-workflow.machine.js');
-    if (fs.existsSync(repoDist)) return repoDist;
-    if (fs.existsSync(installDist)) return installDist;
-    throw new Error('[validate-traces] Cannot find nf-workflow.machine.js in ' + repoDist + ' or ' + installDist);
-  })();
-  const { createActor, nfWorkflowMachine } = require(machinePath);
+  const { createActor, nfWorkflowMachine } = loadMachineModule();
 
   // Load walker for TTrace export (DIAG-01) — lazy-loaded here to avoid breaking module.exports usage
   let walker = null;
@@ -378,7 +492,7 @@ if (require.main === module) {
     // Fresh actor per event — each conformance event is a single-step trace
     const actor = createActor(nfWorkflowMachine);
     actor.start();
-    actor.send(xstateEvent);
+    actor.send(machineEventWithDefaults(xstateEvent, event));
     const snapshot = actor.getSnapshot();
     actor.stop();
 

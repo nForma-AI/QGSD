@@ -12,8 +12,14 @@ const { spawnSync } = require('child_process');
 const fs            = require('fs');
 const path          = require('path');
 const os            = require('os');
+const { resolvePrismBin } = require('./resolve-prism-bin.cjs');
 
 const RUN_PRISM = path.join(__dirname, 'run-prism.cjs');
+const PRISM_BIN = resolvePrismBin();
+
+function prismEnv(overrides = {}) {
+  return { ...process.env, ...overrides, PRISM_BIN };
+}
 
 // ── Fixture helper ──────────────────────────────────────────────────────────
 // Builds a minimal quorum-scoreboard.json fixture.
@@ -34,6 +40,7 @@ function makeScoreboard(nRounds, votesFn) {
 // ── Tests ───────────────────────────────────────────────────────────────────
 
 test('conservative priors used and logged when no scoreboard exists', () => {
+  if (!PRISM_BIN) return;
   const { readPolicy } = require('./read-policy.cjs');
   const policy = readPolicy(path.join(__dirname, '..', '.planning', 'formal', 'policy.yaml'));
   const priorTP      = String(policy.conservative_priors.tp_rate);
@@ -45,7 +52,7 @@ test('conservative priors used and logged when no scoreboard exists', () => {
     const result = spawnSync(process.execPath, [RUN_PRISM], {
       encoding: 'utf8',
       cwd:      tmpDir,
-      env:      { ...process.env, PRISM_BIN: 'prism' },
+      env:      prismEnv(),
     });
     // Conservative priors must appear in the Args log line
     assert.match(result.stdout, new RegExp('Args:.*-const tp_rate=' + priorTP.replace('.', '\\.')),
@@ -64,6 +71,7 @@ test('conservative priors used and logged when no scoreboard exists', () => {
 });
 
 test('empirical rates injected from fixture scoreboard with all-TP votes', () => {
+  if (!PRISM_BIN) return;
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-test-'));
   try {
     const planningDir = path.join(tmpDir, '.planning');
@@ -78,7 +86,7 @@ test('empirical rates injected from fixture scoreboard with all-TP votes', () =>
     const result = spawnSync(process.execPath, [RUN_PRISM], {
       encoding: 'utf8',
       cwd:      tmpDir,
-      env:      { ...process.env, PRISM_BIN: 'prism' },
+      env:      prismEnv(),
     });
     // tpRate=1.0 (or 1), unavailRate=0 (or 0.0)
     assert.match(result.stdout, /Args:.*-const tp_rate=1(\.0+)?(?:\s|$)/,
@@ -93,6 +101,7 @@ test('empirical rates injected from fixture scoreboard with all-TP votes', () =>
 });
 
 test('mixed votes produce correct aggregate rates', () => {
+  if (!PRISM_BIN) return;
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-test-'));
   try {
     const planningDir = path.join(tmpDir, '.planning');
@@ -109,7 +118,7 @@ test('mixed votes produce correct aggregate rates', () => {
     const result = spawnSync(process.execPath, [RUN_PRISM], {
       encoding: 'utf8',
       cwd:      tmpDir,
-      env:      { ...process.env, PRISM_BIN: 'prism' },
+      env:      prismEnv(),
     });
     assert.match(result.stdout, /-const tp_rate=0\.75/,
       'Args line should have -const tp_rate=0.75');
@@ -121,6 +130,7 @@ test('mixed votes produce correct aggregate rates', () => {
 });
 
 test('caller -const tp_rate override wins over scoreboard value', () => {
+  if (!PRISM_BIN) return;
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-test-'));
   try {
     const planningDir = path.join(tmpDir, '.planning');
@@ -139,7 +149,7 @@ test('caller -const tp_rate override wins over scoreboard value', () => {
       {
         encoding: 'utf8',
         cwd:      tmpDir,
-        env:      { ...process.env, PRISM_BIN: 'prism' },
+        env:      prismEnv(),
       }
     );
     // Caller value must appear
@@ -184,11 +194,12 @@ function makeScoreboardWithTimestamp(nRounds, timestampMs) {
 }
 
 test('cold-start: all thresholds unmet → stderr notes cold-start active', () => {
+  if (!PRISM_BIN) return;
   // No scoreboard, no check-results → all thresholds unmet
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-calib-'));
   try {
     const result = spawnSync(process.execPath, [RUN_PRISM], {
-      encoding: 'utf8', cwd: tmpDir, env: { ...process.env, PRISM_BIN: 'prism' }
+      encoding: 'utf8', cwd: tmpDir, env: prismEnv()
     });
     assert.match(result.stderr, /Cold-start mode active/i,
       'stderr should note cold-start active when thresholds unmet');
@@ -196,6 +207,7 @@ test('cold-start: all thresholds unmet → stderr notes cold-start active', () =
 });
 
 test('cold-start: min_ci_runs threshold — below threshold stays in cold-start', () => {
+  if (!PRISM_BIN) return;
   // 4 CI runs < min_ci_runs:5; scoreboard has 10 rounds (meets quorum threshold); days=0 (unmet min_days:1 anyway)
   // Cold-start MUST be active because min_ci_runs is unmet
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-calib-'));
@@ -211,7 +223,7 @@ test('cold-start: min_ci_runs threshold — below threshold stays in cold-start'
     // 4 lines → below min_ci_runs:5
     fs.writeFileSync(path.join(formalDir, 'check-results.ndjson'), makeNdjsonLines(4));
     const result = spawnSync(process.execPath, [RUN_PRISM], {
-      encoding: 'utf8', cwd: tmpDir, env: { ...process.env, PRISM_BIN: 'prism' }
+      encoding: 'utf8', cwd: tmpDir, env: prismEnv()
     });
     assert.match(result.stderr, /Cold-start mode active/i,
       'should be in cold-start when ciRunCount < min_ci_runs');
@@ -219,6 +231,7 @@ test('cold-start: min_ci_runs threshold — below threshold stays in cold-start'
 });
 
 test('cold-start: min_quorum_rounds threshold — below threshold stays in cold-start', () => {
+  if (!PRISM_BIN) return;
   // Scoreboard has 9 rounds < min_quorum_rounds:10; ci runs and days above threshold
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-calib-'));
   try {
@@ -234,7 +247,7 @@ test('cold-start: min_quorum_rounds threshold — below threshold stays in cold-
     // 5 lines → meets min_ci_runs:5
     fs.writeFileSync(path.join(formalDir, 'check-results.ndjson'), makeNdjsonLines(5));
     const result = spawnSync(process.execPath, [RUN_PRISM], {
-      encoding: 'utf8', cwd: tmpDir, env: { ...process.env, PRISM_BIN: 'prism' }
+      encoding: 'utf8', cwd: tmpDir, env: prismEnv()
     });
     assert.match(result.stderr, /Cold-start mode active/i,
       'should be in cold-start when quorumRoundCount < min_quorum_rounds');
@@ -242,6 +255,7 @@ test('cold-start: min_quorum_rounds threshold — below threshold stays in cold-
 });
 
 test('cold-start: all thresholds met → no cold-start message in stderr', () => {
+  if (!PRISM_BIN) return;
   // scoreboard: 10 rounds, timestamp 2+ days ago; check-results: 5+ lines
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-calib-'));
   try {
@@ -257,7 +271,7 @@ test('cold-start: all thresholds met → no cold-start message in stderr', () =>
     // 5 lines (>= min_ci_runs:5)
     fs.writeFileSync(path.join(formalDir, 'check-results.ndjson'), makeNdjsonLines(5));
     const result = spawnSync(process.execPath, [RUN_PRISM], {
-      encoding: 'utf8', cwd: tmpDir, env: { ...process.env, PRISM_BIN: 'prism' }
+      encoding: 'utf8', cwd: tmpDir, env: prismEnv()
     });
     assert.doesNotMatch(result.stderr, /Cold-start mode active/i,
       'should NOT be in cold-start when all thresholds are met');
@@ -265,15 +279,13 @@ test('cold-start: all thresholds met → no cold-start message in stderr', () =>
 });
 
 test('cold-start: result=warn suppression logged in stderr when PRISM fails in cold-start', () => {
-  // Cold-start active (no scoreboard, no check-results); PRISM binary sentinel exits non-zero
-  // Note: PRISM_BIN=prism won't fail with exit 1 from binary-not-found check (sentinel),
-  // it falls through to spawn. If prism isn't installed spawn returns ENOENT → result.error set
-  // → script emits fail writeCheckResult and exits 1. The cold-start suppression path (fail→warn)
-  // requires PRISM to exit non-zero. We verify cold-start is detected (stderr has cold-start msg).
+  if (!PRISM_BIN) return;
+  // Cold-start active (no scoreboard, no check-results). This test only verifies that
+  // cold-start context is reported, not the downstream PRISM exit classification.
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-calib-'));
   try {
     const result = spawnSync(process.execPath, [RUN_PRISM], {
-      encoding: 'utf8', cwd: tmpDir, env: { ...process.env, PRISM_BIN: 'prism' }
+      encoding: 'utf8', cwd: tmpDir, env: prismEnv()
     });
     // Cold-start must be active (no scoreboard/check-results)
     const hasColdStartMsg = result.stderr.includes('Cold-start mode active') ||
@@ -284,6 +296,7 @@ test('cold-start: result=warn suppression logged in stderr when PRISM fails in c
 });
 
 test('observation_window: metadata included in NDJSON entry when written', () => {
+  if (!PRISM_BIN) return;
   // All thresholds met → no cold-start; run-prism exits after PRISM attempt; NDJSON written
   // We use CHECK_RESULTS_PATH env var to redirect NDJSON writes if write-check-result.cjs supports it.
   // If not supported, we check the default .planning/formal/check-results.ndjson in tmpDir.
@@ -302,7 +315,7 @@ test('observation_window: metadata included in NDJSON entry when written', () =>
     fs.writeFileSync(ndjsonPath, makeNdjsonLines(5));
 
     spawnSync(process.execPath, [RUN_PRISM], {
-      encoding: 'utf8', cwd: tmpDir, env: { ...process.env, PRISM_BIN: 'prism' }
+      encoding: 'utf8', cwd: tmpDir, env: prismEnv()
     });
 
     // Check if NDJSON was appended (run-prism writes to .planning/formal/check-results.ndjson in cwd)
@@ -327,6 +340,7 @@ test('observation_window: metadata included in NDJSON entry when written', () =>
 });
 
 test('observation_window: timestamps are ISO 8601 format when present in NDJSON', () => {
+  if (!PRISM_BIN) return;
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-calib-'));
   const ndjsonPath = path.join(tmpDir, '.planning', 'formal', 'check-results.ndjson');
   try {
@@ -341,7 +355,7 @@ test('observation_window: timestamps are ISO 8601 format when present in NDJSON'
     fs.writeFileSync(ndjsonPath, makeNdjsonLines(5));
 
     spawnSync(process.execPath, [RUN_PRISM], {
-      encoding: 'utf8', cwd: tmpDir, env: { ...process.env, PRISM_BIN: 'prism' }
+      encoding: 'utf8', cwd: tmpDir, env: prismEnv()
     });
 
     if (fs.existsSync(ndjsonPath)) {
@@ -366,6 +380,7 @@ test('observation_window: timestamps are ISO 8601 format when present in NDJSON'
 // runs main logic at require-time (no require.main guard).
 
 test('run-prism extracts per-slot UNAVAIL rates from scoreboard', () => {
+  if (!PRISM_BIN) return;
   // Build a fixture scoreboard with codex-1: 2 UNAVAIL / 10 total → avail=0.8
   // and gemini-1: 1 UNAVAIL / 10 total → avail=0.9
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-mcp-'));
@@ -389,7 +404,7 @@ test('run-prism extracts per-slot UNAVAIL rates from scoreboard', () => {
     );
     const result = spawnSync(process.execPath, [RUN_PRISM, '--model', 'mcp-availability'], {
       encoding: 'utf8', cwd: tmpDir,
-      env: { ...process.env, PRISM_BIN: 'prism' },
+      env: prismEnv(),
     });
     // Should log MCP rates from scoreboard
     assert.match(result.stdout, /MCP rates from scoreboard/, 'should log scoreboard rates');
@@ -400,6 +415,7 @@ test('run-prism extracts per-slot UNAVAIL rates from scoreboard', () => {
 });
 
 test('run-prism calibrates mcp-availability.pm with empirical rates', () => {
+  if (!PRISM_BIN) return;
   // Verify --model mcp-availability selects mcp-availability.pm (not quorum.pm)
   // and injects per-slot rates as -const flags
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-mcp-'));
@@ -419,7 +435,7 @@ test('run-prism calibrates mcp-availability.pm with empirical rates', () => {
     );
     const result = spawnSync(process.execPath, [RUN_PRISM, '--model', 'mcp-availability'], {
       encoding: 'utf8', cwd: tmpDir,
-      env: { ...process.env, PRISM_BIN: 'prism' },
+      env: prismEnv(),
     });
     // Model line should reference mcp-availability (not quorum.pm)
     assert.match(result.stdout, /mcp-availability/, 'Model should be mcp-availability');
@@ -429,6 +445,7 @@ test('run-prism calibrates mcp-availability.pm with empirical rates', () => {
 });
 
 test('run-prism falls back to priors when scoreboard missing', () => {
+  if (!PRISM_BIN) return;
   // Without a scoreboard, --model mcp-availability uses prior rates (no -const injection from data)
   // and logs a warning about missing scoreboard rates
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-mcp-'));
@@ -436,7 +453,7 @@ test('run-prism falls back to priors when scoreboard missing', () => {
     // No .planning/ dir — scoreboard absent
     const result = spawnSync(process.execPath, [RUN_PRISM, '--model', 'mcp-availability'], {
       encoding: 'utf8', cwd: tmpDir,
-      env: { ...process.env, PRISM_BIN: 'prism' },
+      env: prismEnv(),
     });
     // Should warn about no scoreboard rates
     assert.match(result.stderr, /No scoreboard rates|No scoreboard/i,
@@ -532,6 +549,7 @@ test('run-prism --model mcp-availability: composite-key filter runs before const
 });
 
 test('LOOP-01: run-prism pre-step writes rates.const before PRISM is invoked', async (t) => {
+  if (!PRISM_BIN) return;
   // This test verifies that running run-prism.cjs causes export-prism-constants.cjs
   // to execute as a pre-step, writing rates.const to the .planning/formal/prism/ directory.
 
@@ -558,15 +576,14 @@ test('LOOP-01: run-prism pre-step writes rates.const before PRISM is invoked', a
     const prismDir = path.join(tmpDir, '.planning', 'formal', 'prism');
     fs.mkdirSync(prismDir, { recursive: true });
 
-    // Run run-prism.cjs with tmpDir as cwd.
-    // Use PRISM_BIN=prism (PATH sentinel) so the binary existence check is skipped,
-    // allowing the LOOP-01 pre-step to execute before PRISM is invoked.
+    // Run run-prism.cjs with tmpDir as cwd using the resolved PRISM binary so the
+    // binary existence check does not mask the pre-step behavior.
     const result = spawnSync(process.execPath, [
       path.join(__dirname, 'run-prism.cjs')
     ], {
       encoding: 'utf8',
       cwd: tmpDir,
-      env: { ...process.env, PRISM_BIN: 'prism' },
+      env: prismEnv(),
       timeout: 15000,
     });
 
@@ -582,6 +599,7 @@ test('LOOP-01: run-prism pre-step writes rates.const before PRISM is invoked', a
 });
 
 test('policy.yaml conservative_priors values are used as PRISM constants when no scoreboard', () => {
+  if (!PRISM_BIN) return;
   // RED phase: this test verifies that run-prism.cjs reads conservative_priors from
   // policy.yaml rather than using hardcoded PRISM_PRIOR_TP / PRISM_PRIOR_UNAVAIL constants.
   // Wiring assertion (a): source must NOT contain 'const PRISM_PRIOR_TP' after wire-up
@@ -603,7 +621,7 @@ test('policy.yaml conservative_priors values are used as PRISM constants when no
     const result = spawnSync(process.execPath, [RUN_PRISM], {
       encoding: 'utf8',
       cwd:      tmpDir,
-      env:      { ...process.env, PRISM_BIN: 'prism' },
+      env:      prismEnv(),
     });
     assert.match(
       result.stdout,

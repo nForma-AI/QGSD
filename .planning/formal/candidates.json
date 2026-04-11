@@ -1,15 +1,15 @@
 {
   "metadata": {
-    "generated": "2026-04-10T09:33:55.058Z",
-    "proximity_index_hash": "2596bd82",
+    "generated": "2026-04-10T22:00:48.529Z",
+    "proximity_index_hash": "a6575657",
     "threshold": 0.7,
     "max_hops": 5,
     "total_pairs_checked": 0,
     "candidates_found": 0,
     "candidates_filtered": 0,
     "orphan_models_count": 1,
-    "orphan_requirements_count": 7,
-    "uncovered_requirements_count": 18,
+    "orphan_requirements_count": 0,
+    "uncovered_requirements_count": 11,
     "non_neighbor_top": 20,
     "fast_path": true
   },
@@ -21,36 +21,7 @@
         "edges": 0
       }
     ],
-    "requirements": [
-      {
-        "id": "MCP-07",
-        "edges": 0
-      },
-      {
-        "id": "MCP-08",
-        "edges": 0
-      },
-      {
-        "id": "MCP-09",
-        "edges": 0
-      },
-      {
-        "id": "MCP-10",
-        "edges": 0
-      },
-      {
-        "id": "ROUTE-05",
-        "edges": 0
-      },
-      {
-        "id": "ROUTE-06",
-        "edges": 0
-      },
-      {
-        "id": "ROUTE-07",
-        "edges": 0
-      }
-    ]
+    "requirements": []
   },
   "uncovered_requirements": [
     {
@@ -86,22 +57,6 @@
       "text": "Debug skill produces a reproducing formal model as a deliverable (not just a fix)"
     },
     {
-      "id": "MCP-07",
-      "text": "nf:mcp-repair calls all MCP identity, health_check, and deep_health_check tools directly in the orchestrator, never via Task() sub-agents which lack access to the parent session's MCP servers."
-    },
-    {
-      "id": "MCP-08",
-      "text": "nf:mcp-repair discovers slot names dynamically from ~/.claude.json mcpServers at runtime instead of using hardcoded enumeration, allowing the tool to work with any slot configuration."
-    },
-    {
-      "id": "MCP-09",
-      "text": "nf:mcp-status banner text SHALL compute agent counts dynamically from ~/.claude.json mcpServers instead of hardcoding provider counts"
-    },
-    {
-      "id": "MCP-10",
-      "text": "MCP server dynamically detects installed CLI providers at startup and excludes slots whose binaries are not found, using deduplication and fail-open logic to handle errors gracefully."
-    },
-    {
       "id": "MRF-01",
       "text": "close-formal-gaps.md accepts `--bug-context` flag that injects failure description into spec generation, biasing toward capturing the failure mode"
     },
@@ -112,18 +67,6 @@
     {
       "id": "MRF-03",
       "text": "model-driven-fix.md workflow orchestrates the 6-phase prescriptive cycle (discovery, reproduction, refinement, constraint extraction, constrained fix, pre-verification)"
-    },
-    {
-      "id": "ROUTE-05",
-      "text": "selectSlot delegates to pluggable 3-tier policy interface enabling learned slot routing via PresetPolicy (Tier 0) and RiverPolicy (Tier 1) contextual bandit with confidence gates."
-    },
-    {
-      "id": "ROUTE-06",
-      "text": "RiverPolicy implements Q-learning with Bellman updates, epsilon-greedy exploration, and learning rate decay to optimize slot selection based on historical task outcomes."
-    },
-    {
-      "id": "ROUTE-07",
-      "text": "E2E learning loop test validates full River ML pipeline (rewards recorded → Q-table updated → learned preference → shadow recommendation) and nf-statusline displays shadow recommendations with confidence"
     }
   ]
 }

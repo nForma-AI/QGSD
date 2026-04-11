@@ -1,44 +1,38 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-10T09:34:47.139Z",
+  "generated": "2026-04-10T22:09:15.202Z",
   "total_unmapped_events": 0,
   "candidates": [],
   "missing_transitions": [
     {
-      "from_action": "quorum_start",
-      "to_action": "security_sweep",
-      "count": 30,
-      "note": "XState mapping missing: from=[object Object], to=null"
-    },
-    {
       "from_action": "security_sweep",
       "to_action": "security_sweep",
-      "count": 95,
+      "count": 49,
       "note": "XState mapping missing: from=null, to=null"
     },
     {
       "from_action": "security_sweep",
       "to_action": "circuit_break",
-      "count": 10,
+      "count": 7,
       "note": "XState mapping missing: from=null, to=[object Object]"
-    },
-    {
-      "from_action": "security_sweep",
-      "to_action": "quorum_start",
-      "count": 28,
-      "note": "XState mapping missing: from=null, to=[object Object]"
-    },
-    {
-      "from_action": "quorum_block",
-      "to_action": "security_sweep",
-      "count": 3,
-      "note": "XState mapping missing: from=[object Object], to=null"
     },
     {
       "from_action": "circuit_break",
       "to_action": "security_sweep",
-      "count": 7,
+      "count": 2,
       "note": "XState mapping missing: from=[object Object], to=null"
+    },
+    {
+      "from_action": "quorum_start",
+      "to_action": "security_sweep",
+      "count": 9,
+      "note": "XState mapping missing: from=[object Object], to=null"
+    },
+    {
+      "from_action": "security_sweep",
+      "to_action": "quorum_start",
+      "count": 3,
+      "note": "XState mapping missing: from=null, to=[object Object]"
     },
     {
       "from_action": "security_sweep",
@@ -47,5 +41,5 @@
       "note": "XState mapping missing: from=null, to=[object Object]"
     }
   ],
-  "summary": "0 unmapped events found. 0 candidate(s): . 7 potentially missing transitions."
+  "summary": "0 unmapped events found. 0 candidate(s): . 6 potentially missing transitions."
 }

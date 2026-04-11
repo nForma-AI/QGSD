@@ -4,8 +4,10 @@
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
+const path = require('path');
+const ROOT = path.resolve(__dirname, '..', '..', '..');
 
-const mod = require('/Users/jonathanborduas/code/QGSD/bin/quorum-consensus-gate.cjs');
+const mod = require(path.join(ROOT, 'bin', 'quorum-consensus-gate.cjs'));
 
 test('SIG-04: exports poissonBinomialCDF function', () => {
   assert.equal(typeof mod.poissonBinomialCDF, 'function');

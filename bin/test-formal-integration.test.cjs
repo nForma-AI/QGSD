@@ -52,11 +52,13 @@ describe('IVL-01 smoke: run-formal-check.cjs basic validation', () => {
     assert.ok(typeof mod.MODULE_CHECKS === 'object', 'MODULE_CHECKS should be exported');
   });
 
-  test('IVL-01 smoke: MODULE_CHECKS contains all 10 known modules', () => {
+  test('IVL-01 smoke: MODULE_CHECKS contains the current formal module registry', () => {
     const expected = [
-      'account-manager', 'breaker', 'convergence', 'deliberation',
-      'mcp-calls', 'oscillation', 'prefilter', 'quorum',
-      'recruiting', 'tui-nav'
+      'account-manager', 'agent-loop', 'breaker', 'convergence',
+      'deliberation', 'deliberation-revision', 'formal-proximity-index',
+      'installer', 'mcp-calls', 'oscillation', 'prefilter', 'quorum',
+      'recruiting', 'safety', 'sessionpersistence', 'solve-convergence',
+      'stop-hook', 'tui-nav', 'uppaal-races'
     ];
     assert.deepStrictEqual(Object.keys(MODULE_CHECKS).sort(), expected);
   });

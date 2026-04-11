@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-10T09:37:35.703Z",
+  "generated_at": "2026-04-10T22:01:42.277Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -222,7 +222,7 @@
       "test_cases": [
         {
           "test_file": ".planning/formal/generated-stubs/BML-02.stub.test.js",
-          "test_name": "BML-02: MaxThreeCheckers — default cap is 3 (maxModels=undefined)"
+          "test_name": "BML-02 — MaxThreeCheckers: constant verification"
         }
       ]
     },
@@ -680,6 +680,96 @@
         }
       ]
     },
+    "DEBT-07": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DEBT-07.stub.test.js",
+          "test_name": "DEBT-07 — InvariantKind: structural verification"
+        }
+      ]
+    },
+    "DEBT-08": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DEBT-08.stub.test.js",
+          "test_name": "DEBT-08 — InvariantKind: structural verification"
+        }
+      ]
+    },
+    "DEBT-09": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DEBT-09.stub.test.js",
+          "test_name": "DEBT-09 — Bool: behavioral verification"
+        }
+      ]
+    },
+    "DEBT-10": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DEBT-10.stub.test.js",
+          "test_name": "DEBT-10 — Bool: structural verification"
+        }
+      ]
+    },
+    "DEBT-11": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DEBT-11.stub.test.js",
+          "test_name": "DEBT-11 — Bool: structural verification"
+        }
+      ]
+    },
+    "DEBT-12": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DEBT-12.stub.test.js",
+          "test_name": "DEBT-12 — Prompt: structural verification"
+        }
+      ]
+    },
+    "DEBT-13": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DEBT-13.stub.test.js",
+          "test_name": "DEBT-13 — Prompt: structural verification"
+        }
+      ]
+    },
+    "DEBT-14": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DEBT-14.stub.test.js",
+          "test_name": "DEBT-14 — TypeOK: structural verification"
+        }
+      ]
+    },
+    "DEBT-15": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DEBT-15.stub.test.js",
+          "test_name": "DEBT-15 — TypeOK: structural verification"
+        }
+      ]
+    },
+    "DEBT-16": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DEBT-16.stub.test.js",
+          "test_name": "DEBT-16 — Bool: structural verification"
+        }
+      ]
+    },
     "DECOMP-01": {
       "covered": true,
       "test_cases": [
@@ -900,7 +990,7 @@
       "test_cases": [
         {
           "test_file": ".planning/formal/generated-stubs/DIST-01.stub.test.js",
-          "test_name": "DIST-01: publish.sh aligns @next dist-tag after stable publish"
+          "test_name": "DIST-01 — TypeOK: structural verification"
         }
       ]
     },
@@ -1425,15 +1515,6 @@
         }
       ]
     },
-    "INST-11": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/INST-11.stub.test.js",
-          "test_name": "INST-11: bin scripts resolve ROOT from process.cwd(), not __dirname"
-        }
-      ]
-    },
     "INTENT-01": {
       "covered": true,
       "test_cases": [
@@ -1512,15 +1593,6 @@
         {
           "test_file": ".planning/formal/generated-stubs/INTG-06.stub.test.js",
           "test_name": "INTG-06 — Layer: structural verification"
-        }
-      ]
-    },
-    "INTG-07": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/INTG-07.stub.test.js",
-          "test_name": "INTG-07 — TypeOK: structural verification"
         }
       ]
     },
@@ -1944,24 +2016,6 @@
         {
           "test_file": ".planning/formal/generated-stubs/OBS-08.stub.test.js",
           "test_name": "OBS-08: classifyTier is exported"
-        }
-      ]
-    },
-    "OBS-09": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/OBS-09.stub.test.js",
-          "test_name": "OBS-09: all handler files reference standard schema fields in return objects"
-        }
-      ]
-    },
-    "OBS-10": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/OBS-10.stub.test.js",
-          "test_name": "OBS-10: observe-utils.cjs exports formatAge, parseDuration, classifySeverityFromLabels"
         }
       ]
     },
@@ -2663,7 +2717,7 @@
       "test_cases": [
         {
           "test_file": ".planning/formal/generated-stubs/ROUTE-02.stub.test.js",
-          "test_name": "ROUTE-02: BugFixRoutesToDebug — scope-contract files with bug_fix type have routed_through_debug field"
+          "test_name": "ROUTE-02 — BugFixRoutesToDebug: structural verification"
         }
       ]
     },
@@ -2672,7 +2726,7 @@
       "test_cases": [
         {
           "test_file": ".planning/formal/generated-stubs/ROUTE-03.stub.test.js",
-          "test_name": "ROUTE-03: NonBugRoutesToNormal — feature/refactor tasks have routed_through_debug=false"
+          "test_name": "ROUTE-03 — NonBugRoutesToNormal: structural verification"
         }
       ]
     },
@@ -2681,7 +2735,34 @@
       "test_cases": [
         {
           "test_file": ".planning/formal/generated-stubs/ROUTE-04.stub.test.js",
-          "test_name": "ROUTE-04: StoredBeforeRouting — scope-contract.json files exist on disk (storage occurred)"
+          "test_name": "ROUTE-04 — StoredBeforeRouting: behavioral verification"
+        }
+      ]
+    },
+    "ROUTE-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/ROUTE-05.stub.test.js",
+          "test_name": "ROUTE-05 — TypeOK: structural verification"
+        }
+      ]
+    },
+    "ROUTE-06": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/ROUTE-06.stub.test.js",
+          "test_name": "ROUTE-06 — TypeOK: structural verification"
+        }
+      ]
+    },
+    "ROUTE-07": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/ROUTE-07.stub.test.js",
+          "test_name": "ROUTE-07 — TypeOK: structural verification"
         }
       ]
     },
@@ -3909,6 +3990,15 @@
         }
       ]
     },
+    "VERIFY-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/VERIFY-03.stub.test.js",
+          "test_name": "VERIFY-03 — Bool: structural verification"
+        }
+      ]
+    },
     "VIS-01": {
       "covered": true,
       "test_cases": [
@@ -4049,22 +4139,6 @@
       "covered": false,
       "test_cases": []
     },
-    "MCP-07": {
-      "covered": false,
-      "test_cases": []
-    },
-    "MCP-08": {
-      "covered": false,
-      "test_cases": []
-    },
-    "MCP-09": {
-      "covered": false,
-      "test_cases": []
-    },
-    "MCP-10": {
-      "covered": false,
-      "test_cases": []
-    },
     "MRF-01": {
       "covered": false,
       "test_cases": []
@@ -4074,18 +4148,6 @@
       "test_cases": []
     },
     "MRF-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ROUTE-05": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ROUTE-06": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ROUTE-07": {
       "covered": false,
       "test_cases": []
     },
