@@ -6,6 +6,24 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.42.3] - 2026-04-11 — Repowise Intelligence Integration (v0.42 milestone)
+
+### Added
+- `feat(repowise)`: XML context packing — `escape-xml.cjs`, `pack-file.cjs`, `context-packer.cjs` deliver file contents in `<file path="...">...</file>` XML format with proper escaping (PACK-01, PACK-02, PACK-03)
+- `feat(repowise)`: Hotspot detection — `hotspot.cjs` computes per-file churn×complexity risk scores from git log with streaming parsing, mass-refactor weighting, and noise filtering (HOT-01, HOT-03, HOT-04)
+- `feat(repowise)`: AST-based cyclomatic complexity — `computeAstComplexity()` uses skeleton.cjs tree-sitter AST parsing for per-file complexity, with line-count heuristic fallback; `computeHotspotsAst()` async variant and `--use-ast-complexity` CLI flag (HOT-02)
+- `feat(repowise)`: Quorum escalation from hotspots — `resolve-hotspot-risk.cjs` + nf-prompt.js HOT-05 automatically escalate quorum fan-out for high-risk files (HOT-05)
+- `feat(repowise)`: Co-change prediction — `cochange.cjs` mines file co-occurrence pairs from git history with temporal coupling scoring and inverse file-count weighting; `inject-cochange-debug.cjs` surfaces partners in debug context (COCH-01, COCH-02, COCH-03, COCH-04)
+- `feat(repowise)`: Skeleton views — `skeleton.cjs` extracts structural code views via web-tree-sitter WASM (lazy init) with regex fallback; enriches entries with hotspot risk and coupling degree (SKEL-01, SKEL-02, SKEL-03, SKEL-04)
+- `feat(repowise)`: Budget-aware compression — `budget-compressor.cjs` adapts context detail level to token budget with risk-weighted allocation; `--budget=N` flag in context-packer (PACK-04)
+- `feat(context-retriever)`: `repowise` domain added to context-retriever — hotspot-cache.json, cochange-cache.json, and repowise keyword detection
+- `feat(task-classifier)`: `adjustForHotspotRisk()` reads hotspot cache to escalate task complexity when touching high-risk files (simple→moderate at score >0.4, →complex at >0.7)
+- `feat(workflows)`: Context-packer wired into plan-phase.md (step 4.7), quick.md (step 2.75), debug.md (step A.3) with fail-open pattern
+- `feat(hotspot)`: `loadHeatmapChurn()` reuses git-heatmap.json churn ranking data instead of re-parsing git log
+
+### Changed
+- `refactor(repowise)`: hotspot.cjs now tries heatmap cache data first before git log reparse, merging existing git-heatmap.cjs signals
+
 ## [0.41.18] - 2026-04-09 — River ML Q-learning and tech debt standardization
 
 ### Added
