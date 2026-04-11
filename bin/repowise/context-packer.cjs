@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const { packFile } = require('./pack-file.cjs');
 const { computeHotspots, formatHotspotXml } = require('./hotspot.cjs');
+const { computeCoChange, formatCoChangeXml } = require('./cochange.cjs');
 
 // ---------------------------------------------------------------------------
 // Project root resolution
@@ -48,7 +49,7 @@ function packContext({ files, projectRoot, signals }) {
     repowise: {
       skeleton: { available: !!sig.skeleton, data: sig.skeleton || null },
       hotspot: { available: !!sig.hotspot, data: sig.hotspot || null, ...(sig._hotspotData ? { summary: sig._hotspotData.summary, files: sig._hotspotData.files } : {}) },
-      cochange: { available: !!sig.cochange, data: sig.cochange || null },
+      cochange: { available: !!sig.cochange, data: sig.cochange || null, ...(sig._cochangeData ? { summary: sig._cochangeData.summary, pairs: sig._cochangeData.pairs } : {}) },
       files: files.map(f => ({
         path: f.filePath,
         lang: f.lang !== undefined ? f.lang : (path.extname(f.filePath) ? null : null),
@@ -137,7 +138,11 @@ async function main() {
       signals.hotspot = formatHotspotXml(hotspots);
       signals._hotspotData = hotspots;
     }
-    // cochange is a placeholder until Phase 56
+    if (includeCochange) {
+      const cochange = computeCoChange(projectRoot);
+      signals.cochange = formatCoChangeXml(cochange);
+      signals._cochangeData = cochange;
+    }
 
     const { xml, json } = packContext({ files, projectRoot, signals });
 
