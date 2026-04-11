@@ -5,8 +5,10 @@
 const fs = require('fs');
 const path = require('path');
 const { packFile } = require('./pack-file.cjs');
+const { escapeXml } = require('./escape-xml.cjs');
 const { computeHotspots, formatHotspotXml } = require('./hotspot.cjs');
 const { computeCoChange, formatCoChangeXml } = require('./cochange.cjs');
+const { extractSkeleton, formatSkeletonXml, enrichSkeleton } = require('./skeleton.cjs');
 
 // ---------------------------------------------------------------------------
 // Project root resolution
@@ -47,7 +49,7 @@ function packContext({ files, projectRoot, signals }) {
 
   const json = {
     repowise: {
-      skeleton: { available: !!sig.skeleton, data: sig.skeleton || null },
+      skeleton: { available: !!sig.skeleton, data: sig.skeleton || null, ...(sig._skeletonData ? { files: sig._skeletonData } : {}) },
       hotspot: { available: !!sig.hotspot, data: sig.hotspot || null, ...(sig._hotspotData ? { summary: sig._hotspotData.summary, files: sig._hotspotData.files } : {}) },
       cochange: { available: !!sig.cochange, data: sig.cochange || null, ...(sig._cochangeData ? { summary: sig._cochangeData.summary, pairs: sig._cochangeData.pairs } : {}) },
       files: files.map(f => ({
@@ -98,7 +100,8 @@ Options:
   --json                Output structured JSON instead of XML
   --project-root=/path  Override project root directory
   --hotspot             Include hotspot detection data in output
-  --cochange            Include co-change prediction data in output (placeholder)
+  --cochange            Include co-change prediction data in output
+  --skeleton            Include skeleton views for packed files
   --help                Show this help message
 
 Exit codes:
@@ -122,6 +125,7 @@ async function main() {
   const jsonOutput = args.includes('--json');
   const includeHotspot = args.includes('--hotspot');
   const includeCochange = args.includes('--cochange');
+  const includeSkeleton = args.includes('--skeleton');
   const projectRoot = resolveProjectRoot();
 
   if (!filesArg && !stdinMode) {
@@ -142,6 +146,22 @@ async function main() {
       const cochange = computeCoChange(projectRoot);
       signals.cochange = formatCoChangeXml(cochange);
       signals._cochangeData = cochange;
+    }
+    if (includeSkeleton) {
+      const skeletonEntries = [];
+      for (const f of files) {
+        const skeleton = await extractSkeleton(f.filePath, projectRoot);
+        const enriched = enrichSkeleton(
+          { ...skeleton, filePath: f.filePath },
+          signals._hotspotData,
+          signals._cochangeData
+        );
+        skeletonEntries.push(enriched);
+      }
+      signals.skeleton = skeletonEntries.map(s =>
+        `<file path="${escapeXml(s.filePath || '')}" lang="${s.lang || ''}" method="${s.method}" lines="${s.lineCount}">\n${formatSkeletonXml(s.entries)}\n</file>`
+      ).join('\n');
+      signals._skeletonData = skeletonEntries;
     }
 
     const { xml, json } = packContext({ files, projectRoot, signals });
