@@ -9,6 +9,7 @@ const { escapeXml } = require('./escape-xml.cjs');
 const { computeHotspots, formatHotspotXml } = require('./hotspot.cjs');
 const { computeCoChange, formatCoChangeXml } = require('./cochange.cjs');
 const { extractSkeleton, formatSkeletonXml, enrichSkeleton } = require('./skeleton.cjs');
+const { compressContext } = require('./budget-compressor.cjs');
 
 // ---------------------------------------------------------------------------
 // Project root resolution
@@ -102,6 +103,7 @@ Options:
   --hotspot             Include hotspot detection data in output
   --cochange            Include co-change prediction data in output
   --skeleton            Include skeleton views for packed files
+  --budget=N            Token budget for budget-aware compression
   --help                Show this help message
 
 Exit codes:
@@ -126,6 +128,10 @@ async function main() {
   const includeHotspot = args.includes('--hotspot');
   const includeCochange = args.includes('--cochange');
   const includeSkeleton = args.includes('--skeleton');
+  const budgetArg = (() => {
+    const a = args.find(a => a.startsWith('--budget='));
+    return a ? parseInt(a.split('=')[1], 10) : null;
+  })();
   const projectRoot = resolveProjectRoot();
 
   if (!filesArg && !stdinMode) {
@@ -166,7 +172,23 @@ async function main() {
 
     const { xml, json } = packContext({ files, projectRoot, signals });
 
-    if (jsonOutput) {
+    if (budgetArg !== null) {
+      const budgetFiles = files.map(f => ({
+        filePath: f.filePath,
+        hotspotRisk: (signals._hotspotData?.files || []).find(h => h.path === f.filePath)?.hotspot_score || 0,
+        skeletonEntries: (signals._skeletonData || []).find(s => s.filePath === f.filePath)?.entries || [],
+        fullContent: f.content,
+        skeletonXml: (signals._skeletonData || []).find(s => s.filePath === f.filePath)
+          ? formatSkeletonXml((signals._skeletonData.find(s => s.filePath === f.filePath) || {}).entries || [])
+          : '',
+      }));
+      const compressed = compressContext(budgetFiles, budgetArg);
+      if (jsonOutput) {
+        console.log(JSON.stringify(compressed.json, null, 2));
+      } else {
+        console.log(compressed.xml);
+      }
+    } else if (jsonOutput) {
       console.log(JSON.stringify(json, null, 2));
     } else {
       console.log(xml);
