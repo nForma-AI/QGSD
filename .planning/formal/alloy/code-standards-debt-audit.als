@@ -37,7 +37,7 @@ fact AllJsonOperationsStandard {
 assert NoAdHocJsonSerialization {
   all op : JsonOperation | op.pattern != AdHocPattern
 }
-check NoAdHocJsonSerialization for 8 JsonOperation
+check NoAdHocJsonSerialization for 8 JsonOperation, 4 ModuleImport, 4 CatchBlock, 4 DebtMarker
 
 -- ── Path resolution standardization (DEBT-10) ────────────────────────────────
 
@@ -60,7 +60,7 @@ fact AllImportsUseNfBin {
 assert NoHardcodedPaths {
   all imp : ModuleImport | imp.strategy != HardcodedPath
 }
-check NoHardcodedPaths for 8 ModuleImport
+check NoHardcodedPaths for 4 JsonOperation, 8 ModuleImport, 4 CatchBlock, 4 DebtMarker
 
 -- ── Error propagation pattern (DEBT-11) ──────────────────────────────────────
 
@@ -83,7 +83,7 @@ fact NoCatchBlocksSilent {
 assert ErrorsNeverSilent {
   no cb : CatchBlock | cb.pattern = SilentCatch
 }
-check ErrorsNeverSilent for 8 CatchBlock
+check ErrorsNeverSilent for 4 JsonOperation, 4 ModuleImport, 8 CatchBlock, 4 DebtMarker
 
 -- ── Technical debt audit process (DEBT-16) ───────────────────────────────────
 
@@ -117,7 +117,7 @@ assert DocumentedDebtIsTraceable {
     (dm.status = Tracked or dm.status = Resolved) implies
     (dm.hasRequirementId = True and dm.hasTraceability = True)
 }
-check DocumentedDebtIsTraceable for 8 DebtMarker
+check DocumentedDebtIsTraceable for 4 JsonOperation, 4 ModuleImport, 4 CatchBlock, 8 DebtMarker
 
 -- Satisfiability
 run {} for 4 JsonOperation, 4 ModuleImport, 4 CatchBlock, 4 DebtMarker
