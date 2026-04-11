@@ -52,6 +52,21 @@ Store as $TEST_OUTPUT and $EXIT_CODE. If exit code is 0 and ARGUMENTS is empty, 
   QUORUM-DEBUG: No failure detected — tests pass (exit 0).
   If you have a symptom not captured by tests, run: /nf:debug [describe the symptom]
 
+### Step A.3: Repowise Context Injection
+
+Pack Repowise intelligence context for the debug session. This injects hotspot risk data and co-change coupling, so quorum workers can see which files are structurally risky or implicitly coupled.
+
+```bash
+REPOWISE_CONTEXT=""
+if command -v node >/dev/null 2>&1; then
+  REPOWISE_CONTEXT=$(node ~/.claude/nf-bin/context-packer.cjs --hotspot --cochange --focus "$ARGUMENTS" --project-root="$(pwd)" 2>/dev/null || node bin/repowise/context-packer.cjs --hotspot --cochange --project-root="$(pwd)" 2>/dev/null || echo "")
+fi
+```
+
+Fail-open: if the script is not found, errors, or returns empty, skip silently. `$REPOWISE_CONTEXT` stays empty and the debug session proceeds without Repowise context.
+
+If `$REPOWISE_CONTEXT` is non-empty, include it in the $BUNDLE (Step B) under a `<repowise_context>` tag so quorum workers can factor in hotspot risk and co-change coupling.
+
 ### Step A.5: Formal Model Consultation
 
 Run formal model consultation to check if formal models cover this failure:

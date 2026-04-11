@@ -6,46 +6,23 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-## [0.42.2-rc.1] - 2026-04-10 — fix CI test isolation for River ML statusline
-
-### Fixed
-- `fix(test)`: River ML statusline tests (TC15/16/19/21/22/23) now mock `HOME` with a fake `nf-python-env/bin/python` — these tests passed locally (where `~/.claude/nf-python-env` exists) but failed in CI where the runner has no python env, causing the River indicator gate to skip the state file check entirely
-
-## [0.42.1-rc.1] - 2026-04-10 — coderlm operational hardening
-
-### Fixed
-- `fix(coderlm)`: circuit-breaker in `sweepGitHeatmap` stops querying after 3 consecutive `getCallersSync` failures — prevents 5 s timeout × N-files overhead when server is unresponsive
-- `fix(coderlm)`: pre-flight `healthSync()` before first sweep emits availability to stderr so fail-open status is visible before queries start
-- `fix(coderlm)`: CDIAG-03 wired into solve loop — in `--skip-layers` incremental mode, call-graph expansion via `computeAffectedLayers` un-skips layers whose transitive callers were affected by remediation
-
-## [0.42.0-rc.1] - 2026-04-10 — Deep coderlm Solve Integration
+## [0.42.3] - 2026-04-11 — Repowise Intelligence Integration (v0.42 milestone)
 
 ### Added
-- `feat(coderlm)`: LRU cache (100 entries, 5min TTL) for all coderlm query results — cleared at solve loop start, metrics emitted to stderr (CADP-01, CADP-03)
-- `feat(coderlm)`: `queryEdgesSync` uses `getImplementation()` for symbol-level dependency edges in `computeWaves` (CDIAG-01)
-- `feat(coderlm)`: coderlm adapter reindexed between solve iterations after each autoClose remediation (CDIAG-04)
-- `feat(remediation)`: R→F dispatch seeds `--seed-files` from `getImplementation()` + `getCallers()` per requirement (CREM-01)
-- `feat(remediation)`: F→T dispatch uses `findTests()` + `peek()` to pre-populate test stub recipes in `formal-test-sync.cjs` (CREM-02)
-- `feat(diagnostics)`: Git heatmap priority weighting enriched with callee count via `Math.log1p(calleeCount)` — sublinear boost without explosion (CREM-03)
-- `feat(diagnostics)`: C→R and T→R reverse-discovery candidates enriched with `caller_count` + `dead_code_flag`; solve report annotates dead code candidates (CREM-04)
-- `feat(scope-scan)`: Layer 2.5 backward call-graph walk in `formal-scope-scan.cjs` discovers files via `getCallersSync` not reachable by static Layer 2 analysis (CDIAG-02)
-- `feat(incremental-filter)`: `expandWithCallGraph()` in `solve-incremental-filter.cjs` expands affected set with transitive call-graph dependencies — monotone-safe add-only (CDIAG-03)
+- `feat(repowise)`: XML context packing — `escape-xml.cjs`, `pack-file.cjs`, `context-packer.cjs` deliver file contents in `<file path="...">...</file>` XML format with proper escaping (PACK-01, PACK-02, PACK-03)
+- `feat(repowise)`: Hotspot detection — `hotspot.cjs` computes per-file churn×complexity risk scores from git log with streaming parsing, mass-refactor weighting, and noise filtering (HOT-01, HOT-03, HOT-04)
+- `feat(repowise)`: AST-based cyclomatic complexity — `computeAstComplexity()` uses skeleton.cjs tree-sitter AST parsing for per-file complexity, with line-count heuristic fallback; `computeHotspotsAst()` async variant and `--use-ast-complexity` CLI flag (HOT-02)
+- `feat(repowise)`: Quorum escalation from hotspots — `resolve-hotspot-risk.cjs` + nf-prompt.js HOT-05 automatically escalate quorum fan-out for high-risk files (HOT-05)
+- `feat(repowise)`: Co-change prediction — `cochange.cjs` mines file co-occurrence pairs from git history with temporal coupling scoring and inverse file-count weighting; `inject-cochange-debug.cjs` surfaces partners in debug context (COCH-01, COCH-02, COCH-03, COCH-04)
+- `feat(repowise)`: Skeleton views — `skeleton.cjs` extracts structural code views via web-tree-sitter WASM (lazy init) with regex fallback; enriches entries with hotspot risk and coupling degree (SKEL-01, SKEL-02, SKEL-03, SKEL-04)
+- `feat(repowise)`: Budget-aware compression — `budget-compressor.cjs` adapts context detail level to token budget with risk-weighted allocation; `--budget=N` flag in context-packer (PACK-04)
+- `feat(context-retriever)`: `repowise` domain added to context-retriever — hotspot-cache.json, cochange-cache.json, and repowise keyword detection
+- `feat(task-classifier)`: `adjustForHotspotRisk()` reads hotspot cache to escalate task complexity when touching high-risk files (simple→moderate at score >0.4, →complex at >0.7)
+- `feat(workflows)`: Context-packer wired into plan-phase.md (step 4.7), quick.md (step 2.75), debug.md (step A.3) with fail-open pattern
+- `feat(hotspot)`: `loadHeatmapChurn()` reuses git-heatmap.json churn ranking data instead of re-parsing git log
 
 ### Changed
-- All coderlm integration points are fail-open: health check gates every query site; unavailability routes to pre-integration behavior with zero errors (CADP-02)
-
-## [0.41.19-rc.1] - 2026-04-10 — uv-backed River, active embed signal, solve embedding refresh
-
-## [0.41.19] - 2026-04-10 — uv-backed River, active embed signal, solve embedding refresh
-
-### Added
-- `feat(statusline)`: embed indicator now shows `● embed` (green/active) when `embedding-cache.json` exists, `· embed` (dim) when only installed
-- `feat(solve)`: Phase 0 in `/nf:solve` rebuilds embedding cache via `proximity-embed.mjs` before each diagnostic run — ensures fresh vectors for similarity fallback
-- `feat(statusline)`: River ML import check now uses `~/.claude/nf-python-env` (uv-managed venv) — avoids PEP 668 Homebrew conflicts
-- Installer creates `~/.claude/nf-python-env` via `uv venv` and installs river with `uv pip install`
-
-### Changed
-- `chore(commands)`: MCP command agent slots renamed (`codex-cli-1` → `codex-1`, `gemini-cli-1` → `gemini-1`); `nf:mcp-update` now discovers valid slots dynamically from `~/.claude.json` instead of a hardcoded list
+- `refactor(repowise)`: hotspot.cjs now tries heatmap cache data first before git log reparse, merging existing git-heatmap.cjs signals
 
 ## [0.41.18] - 2026-04-09 — River ML Q-learning and tech debt standardization
 

@@ -307,6 +307,23 @@ Store `$APPROACH_BLOCK` for use in Step 5 (planner spawn). The planner prompt in
 
 ---
 
+**Step 2.75: Repowise Context Packing**
+
+Pack Repowise intelligence context for the quick task. This provides hotspot risk data and co-change coupling to the planner, enabling risk-aware task planning.
+
+```bash
+REPOWISE_CONTEXT=""
+if command -v node >/dev/null 2>&1; then
+  REPOWISE_CONTEXT=$(node ~/.claude/nf-bin/context-packer.cjs --hotspot --cochange --project-root="$(pwd)" 2>/dev/null || node bin/repowise/context-packer.cjs --hotspot --cochange --project-root="$(pwd)" 2>/dev/null || echo "")
+fi
+```
+
+Fail-open: if the script is not found, errors, or returns empty, skip silently. `$REPOWISE_CONTEXT` stays empty and the planner proceeds without Repowise context.
+
+Store `$REPOWISE_CONTEXT` for use in Step 5 (planner spawn).
+
+---
+
 **Step 2.8: Validate delegate slot (only when `$DELEGATE_SLOT` is set)**
 
 Skip this step if `$DELEGATE_SLOT` is null.

@@ -28,11 +28,16 @@ const DOMAIN_CONFIG = {
       '.planning/formal/solve-state.json',
     ],
     searchPatterns: [/\.(tla|als|pm)$/],
-    // Use explicit subdirectories instead of '.planning/formal/' alone,
-    // because readdirSync is non-recursive and formal models live in
-    // tla/, alloy/, prism/ subdirs -- scanning the parent would miss them.
     searchDirs: ['.planning/formal/tla/', '.planning/formal/alloy/', '.planning/formal/prism/'],
     maxFilesToScan: 15,
+  },
+  repowise: {
+    files: [
+      '.planning/repowise/hotspot-cache.json',
+      '.planning/repowise/cochange-cache.json',
+    ],
+    searchDirs: ['.planning/repowise/'],
+    maxFilesToScan: 5,
   },
 };
 
@@ -40,12 +45,14 @@ const QUESTION_KEYWORDS = {
   test: ['test', 'coverage', 'verify', 'spec', 'assertion'],
   architecture: ['architecture', 'design', 'pattern', 'decision', 'convention'],
   formal: ['formal', 'invariant', 'spec', 'tla', 'alloy', 'prism', 'model'],
+  repowise: ['hotspot', 'churn', 'cochange', 'skeleton', 'repowise', 'risk'],
 };
 
 const PATH_SEGMENTS = {
   test: ['test'],
   formal: ['formal', 'tla', 'alloy'],
   architecture: ['planning', 'state'],
+  repowise: ['repowise'],
 };
 
 /**

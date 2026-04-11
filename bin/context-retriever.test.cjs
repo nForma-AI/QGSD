@@ -63,6 +63,21 @@ describe('analyzeContextNeeds', () => {
     assert.ok(needs.some(n => n.domain === 'test'));
   });
 
+  it('detects repowise domain from hotspot keyword', () => {
+    const needs = analyzeContextNeeds('which files are hotspots?', null, '');
+    assert.ok(needs.some(n => n.domain === 'repowise'));
+  });
+
+  it('detects repowise domain from churn keyword', () => {
+    const needs = analyzeContextNeeds('what is the churn rate?', null, '');
+    assert.ok(needs.some(n => n.domain === 'repowise'));
+  });
+
+  it('detects repowise domain from repowise path segment', () => {
+    const needs = analyzeContextNeeds('what is this?', '.planning/repowise/hotspot-cache.json', '');
+    assert.ok(needs.some(n => n.domain === 'repowise'));
+  });
+
   it('detects formal domain from artifact path with tla', () => {
     const needs = analyzeContextNeeds('what is this?', '.planning/formal/tla/foo.tla', '');
     assert.ok(needs.some(n => n.domain === 'formal'));
@@ -164,10 +179,17 @@ describe('fetchContext', () => {
 // --- DOMAIN_CONFIG structure tests ---
 
 describe('DOMAIN_CONFIG', () => {
-  it('has test, architecture, and formal domains', () => {
+  it('has test, architecture, formal, and repowise domains', () => {
     assert.ok(DOMAIN_CONFIG.test);
     assert.ok(DOMAIN_CONFIG.architecture);
     assert.ok(DOMAIN_CONFIG.formal);
+    assert.ok(DOMAIN_CONFIG.repowise);
+  });
+
+  it('repowise domain has correct files and searchDirs', () => {
+    assert.ok(DOMAIN_CONFIG.repowise.files.includes('.planning/repowise/hotspot-cache.json'));
+    assert.ok(DOMAIN_CONFIG.repowise.files.includes('.planning/repowise/cochange-cache.json'));
+    assert.ok(DOMAIN_CONFIG.repowise.searchDirs.includes('.planning/repowise/'));
   });
 
   it('formal searchDirs use explicit subdirectories', () => {

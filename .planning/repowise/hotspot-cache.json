@@ -1,0 +1,16 @@
+{
+  "files": [
+    {
+      "path": "test.js",
+      "churn": 5,
+      "complexity": 10,
+      "hotspot_score": 0.5,
+      "risk": "medium"
+    }
+  ],
+  "summary": {
+    "total_files": 1,
+    "high_risk_count": 0,
+    "medium_risk_count": 1
+  }
+}

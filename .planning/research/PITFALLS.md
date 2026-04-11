@@ -1,169 +1,343 @@
-# Pitfalls Research
+# Domain Pitfalls: Repowise Intelligence Integration (v0.42)
 
-**Domain:** Adding behavioral enforcement hooks to an existing Claude Code plugin (nForma)
-**Researched:** 2026-03-19
-**Confidence:** HIGH — derived directly from source code inspection of hooks/nf-prompt.js, hooks/nf-session-start.js, hooks/config-loader.js, and bin/install.js
+**Domain:** Adding XML-style context packing, Tree-Sitter AST skeleton views, hotspot detection (Churn + Complexity), and co-change prediction to an existing Node.js CLI tool (nForma)
+**Researched:** 2026-04-11
+**Confidence:** HIGH (Tree-Sitter binding issues verified from GitHub issues/releases; Git performance from nForma's own `spawnSync` patterns; context packing from LLM token engineering community knowledge; hotspot/co-change from static analysis literature and nForma's existing circuit-breaker patterns)
 
 ---
 
 ## Critical Pitfalls
 
-### Pitfall 1: Session State Injection That Fires on Every Message, Not Just the First
+Mistakes that cause rewrites or major issues.
+
+### Pitfall 1: Tree-Sitter NAPI Binding / Grammar ABI Mismatch After Install
 
 **What goes wrong:**
-A "session-start state injection" placed in a UserPromptSubmit hook fires on every prompt, not once per session. The result is that every message receives the state preamble — including mid-task follow-ups where the context is already established — creating noise on every turn.
+After `npm install tree-sitter tree-sitter-javascript tree-sitter-typescript`, calling `parser.setLanguage(JavaScript)` throws `TypeError: Invalid language object` at runtime. The grammar `.node` binaries were compiled against a different Tree-Sitter ABI version than the installed `tree-sitter` core binding.
 
 **Why it happens:**
-UserPromptSubmit has no concept of "first message." There is no built-in session-message-count field in the hook payload. Developers assume the hook name implies first-message-only behavior. It does not. SessionStart is the correct event for first-message work, but it cannot inject into specific prompts — it runs before any prompt arrives and injects via `additionalContext`. The distinction is: SessionStart fires once per session; UserPromptSubmit fires on every prompt.
+Tree-Sitter v0.21 migrated from NAN (Native Abstractions for Node.js) to N-API (Node-API). This was a **breaking change** — all grammar packages must regenerate their `binding.cc` via `tree-sitter generate` with tree-sitter CLI ≥0.22.0. If you install `tree-sitter@0.25.x` (current, NAPI-based) but a grammar package still ships a NAN-based `binding.gyp`, the native module either fails to build or builds successfully but produces an invalid language object at `setLanguage()` time.
 
-The existing nf-session-start.js already demonstrates the correct pattern: it uses SessionStart to inject STATE.md reminders, memory entries, and telemetry. Adding a parallel first-message feature to nf-prompt.js (UserPromptSubmit) without a seen-flag guard causes double injection and every-message noise.
+Additionally, Tree-Sitter has an ABI version (`TREE_SITTER_LANGUAGE_VERSION`). Grammars compiled for ABI 14 won't load under a core that expects ABI 15. npm does not enforce this constraint — you can install incompatible versions side-by-side with no warning.
 
-**How to avoid:**
-- If the injection must happen in UserPromptSubmit, write a session-scoped seen-flag file (e.g., `.claude/session-injected-<sessionId>.flag`) and check it atomically before injecting. Use `fs.renameSync` for the claim — the same pattern as `consumePendingTask` in nf-prompt.js lines 82-110.
-- Prefer using nf-session-start.js (SessionStart event) for state that should appear once per session — it already has the injection machinery. Extend it rather than adding a competing injection path.
-- If both hooks inject additionalContext, the combined text may exceed Claude's attention budget. The existing comment in nf-prompt.js (line 864) already acknowledges a hook-level 800-char cap for context-stack injection because "additionalContext contends with other injections." A new first-message injector competes with circuit breaker recovery, pending task, quorum instructions, thinking budget, and context stack.
+**Consequences:**
+- `npm install` succeeds, tests pass on developer's machine (matching Node version + platform), but CI or another developer gets SIGSEGV or `Invalid language object`.
+- The error message gives zero indication that the problem is an ABI mismatch — it looks like the language module is simply broken.
+- Fix requires regenerating all grammar bindings, which in turn requires the `tree-sitter` CLI binary (a Rust toolchain dependency).
 
-**Warning signs:**
-- The same STATE.md snippet appears verbatim in responses to second and third follow-up messages.
-- Claude acknowledges "session state reminder" in the middle of an in-progress task it already knows about.
-- Unit test for the new injection path does not mock `sessionId` to test the idempotency branch.
+**Prevention:**
+- Pin exact versions for `tree-sitter` AND every grammar package in `package.json`. Never use `^` or `~` ranges.
+- Add a startup validation step: on first use, try `parser.setLanguage(grammar)` in a try/catch with a clear error message: `"tree-sitter-<lang> ABI <found> does not match tree-sitter core ABI <expected>. Regenerate grammar with tree-sitter CLI >= 0.22.0"`.
+- Ship pre-compiled `.node` binaries for the supported platforms (darwin-arm64, linux-x64, win32-x64) using `prebuildify` (the same approach node-tree-sitter uses since v0.21). Do NOT require users to have a C++ compiler.
+- Include a CI gate: `node -e "const P=require('tree-sitter');const J=require('tree-sitter-javascript');const p=new P();p.setLanguage(J);console.log('OK')"` — this catches ABI mismatches before merge.
+- Document the grammar regeneration process in the codebase: `npx tree-sitter generate` after any grammar update.
+
+**Detection:**
+- `npm ci` succeeds but first `parser.setLanguage()` call throws.
+- CI fails on one platform but passes on another (prebuilt binary not available for that platform).
+- SIGSEGV in Node.js process when parsing any file.
 
 **Phase to address:**
-Session state injection feature — implement idempotency gate before shipping. The session-scoped flag file pattern from `consumePendingTask` (nf-prompt.js lines 82-110) is the implementation template.
+Tree-Sitter integration phase — add ABI validation as the FIRST thing the skeleton view module does, before any parsing.
 
 ---
 
-### Pitfall 2: Pattern-Matched Prompt Injection Triggers on False Positives and Suppresses Quorum
+### Pitfall 2: Git Log Parsing Overwhelms Memory on Large Repos (10K+ Commits)
 
 **What goes wrong:**
-A regex that detects "fix" or "debug" in the prompt text matches legitimate planning commands (`/nf:solve`, `/nf:new-milestone`) and applies the pattern-injection branch instead of the quorum-injection branch. The early-exit pattern in nf-prompt.js (multiple `process.exit(0)` after writing to stdout) means whichever branch matches first wins. If the pattern-injection branch fires before the quorum-injection check, the Stop hook sees no `<!-- GSD_DECISION -->` and blocks the response.
+Running `git log --numstat --format=...` on a repository with 50K+ commits produces potentially megabytes of output. Parsing this with `String.split('\n')` and accumulating per-file churn maps in a single pass creates a multi-hundred-MB in-memory object. The CLI invocation becomes the bottleneck: `spawnSync('git', ['log', '--numstat', ...])` blocks the Node.js event loop for 10-30 seconds on large monorepos.
 
 **Why it happens:**
-nf-prompt.js uses priority-ordered branches: circuit breaker -> pending task -> quorum injection. Each branch writes to stdout and exits. A new pattern-matched branch inserted anywhere before the quorum block or without integrating into the quorum block becomes a bypass path. The words "fix" and "debug" appear in: `/nf:solve` prompts ("fix the bug"), follow-up clarifications ("can you debug this?"), and the quorum instructions themselves.
+nForma's existing git operations are all O(1) or O(small): `git rev-parse HEAD`, `git diff HEAD~3 -- <paths>`, `git rev-list --count HEAD --since=10m`. These complete in <100ms. Churn analysis requires `git log --numstat --format="%H"` across the ENTIRE history, which is O(N) in commit count and O(M) in file count.
 
-The existing cmdPattern gate at line 882 (`/^\s*\/(nf|q?gsd):[\w][\w-]*(\s|$)/`) is only checked at the bottom of the quorum block. Pattern matching added before that gate has no knowledge of whether quorum is required.
+The existing `spawnSync` pattern in `nf-circuit-breaker.js` (which reads 6 commits) and `escalation-classifier.cjs` (which reads a bounded diff) works because the output is bounded. Unbounded `git log` on large repos is a fundamentally different operation — it's streaming megabytes of data.
 
-**How to avoid:**
-- Pattern-matched injection must be layered inside the quorum build path, not as a separate early-exit branch. The correct implementation appends to `instructions` (the string already being assembled for quorum output) rather than replacing it.
-- The command allowlist check (line 882) must remain the outer gate. Pattern detection should only affect what gets appended to instructions, not whether quorum fires.
-- Use anchored regexes. `/\bfix\b/i` matches "prefix" and "suffix". Use word-boundary anchors and test against the actual prompt corpus. The circuit breaker's `READ_ONLY_REGEX` in nf-circuit-breaker.js demonstrates anchored matching against real tool command text.
-- Add a unit test in nf-prompt.test.js that sends `/nf:solve fix the authentication bug` and asserts both pattern injection content AND `<!-- GSD_DECISION -->` are present in the output.
+**Consequences:**
+- nForma's hook pipeline has a 10s timeout (configured in `install.js`). If churn analysis is called from a hook, it WILL time out on large repos.
+- Memory usage spikes 200-500MB, causing Node.js heap pressure and potential OOM on constrained environments.
+- The first invocation is slow (full git log); subsequent invocations are also slow unless results are cached.
 
-**Warning signs:**
-- Stop hook blocks `/nf:solve` responses that contain "fix" in the issue description.
-- Pattern injection fires on non-planning freeform messages like "can you fix the typo in README?"
-- No test exercises the interaction between pattern detection and the quorum injection path.
+**Prevention:**
+- **Never run full git log from a hook.** Hotspot detection is a bin/ command, not a hook. It runs on demand, not on every prompt.
+- Use `git log --numstat --format="%H" --since="<date>"` with a bounded window (e.g., last 90 days). For most risk analysis, recent churn is far more relevant than total history.
+- Stream the output: use `child_process.spawn` (async) instead of `spawnSync`, and process line-by-line. Don't buffer the entire output into a single string.
+- Implement incremental caching: write churn results to `.nforma/cache/churn-<git-hash>.json`. On subsequent runs, only process commits after the cached hash. This is the same caching pattern nForma uses in `quorum-cache.cjs` (SHA-256 keyed cache with TTL).
+- Add a `--max-commits N` flag (default 5000) that caps the git log. For repos with >5K commits, this is the responsible default — the top 5K recent commits capture most churn signal.
+- For co-change prediction, use `git log --name-only --format="%H"` (no numstat — just file names per commit). This is ~5x smaller output than `--numstat` and sufficient for co-change analysis.
+
+**Detection:**
+- `time nforma hotspot` takes >10s on first run.
+- Node.js process RSS exceeds 500MB during analysis.
+- Hook timeout errors when hotspot analysis is accidentally invoked from a hook context.
 
 **Phase to address:**
-Pattern injection feature — design phase must specify whether pattern injection is additive to quorum instructions or a replacement. The answer must be additive; any replacement breaks the Stop hook gate.
+Hotspot detection implementation phase — architecture must specify: bin/ command (not hook), bounded window, streaming parser, cache layer.
 
 ---
 
-### Pitfall 3: Approach Declaration Gate in Workflow Files Conflicts with Existing Quorum Decision Token
+### Pitfall 3: XML Context Packing That Increases Token Count Instead of Reducing It
 
 **What goes wrong:**
-An "approach declaration gate" added to a workflow file requires Claude to declare its approach before proceeding. If the gate is enforced by the Stop hook scanning for a new token (e.g., `<!-- APPROACH_DECLARED -->`), and this token is not present in the quorum output path, the Stop hook blocks every planning response — not just those missing an approach declaration.
-
-Conversely, if the gate is enforced only by the workflow instruction text (no hook enforcement), it becomes advisory and Claude skips it under token pressure.
+The XML-style context packing is supposed to reduce token consumption by replacing verbose natural language descriptions with structured XML tags. But poorly designed XML schemas ADD tokens: opening/closing tags, attribute syntax, and namespace prefixes all consume tokens. A skeleton view wrapped in `<file name="foo.js"><function name="bar" start="10" end="50">...</function></file>` can use MORE tokens than the concise `// foo.js:10-50 function bar()` representation.
 
 **Why it happens:**
-Workflow files in `~/.claude/nf/workflows/` are injected as `additionalContext` from nf-session-start.js or nf-prompt.js. They are read by Claude but not structurally verified. The only verified tokens are `<!-- GSD_DECISION -->` (Stop hook) and `<!-- NF_SOLO_MODE -->` / `<!-- NF_CACHE_HIT -->` (nf-prompt.js output). Adding a new required token to a workflow file without updating the Stop hook is inert. Adding it to the Stop hook without also emitting it in the quorum instructions string (built in nf-prompt.js) breaks all planning responses.
+LLM tokenizers (Claude's, GPT's) tokenize XML tags predictably — `<file>` is typically 1-2 tokens, but `<file name="src/hooks/nf-prompt.js" language="javascript">` is 8-12 tokens. Multiply by hundreds of symbols and the XML overhead dominates. The "structured format" benefit (easier for LLMs to parse) is real, but only if the schema is token-efficient.
 
-There is also a workflow sync hazard: workflow files live in two places — `core/workflows/` in the repo (durable) and `~/.claude/nf/workflows/` (installed). An edit to the `core/` file without re-running `node bin/install.js --claude --global` has no effect — the installed copy is stale. Editing the installed copy directly is reverted on next install.
+The Repowise approach works because it packs ONLY the structural skeleton (signatures, not bodies) and uses minimal attribute names. If nForma naively wraps existing context in XML without trimming content, the result is strictly worse than the original.
 
-**How to avoid:**
-- Approach declaration gates enforced by the Stop hook must emit the required token in the quorum instructions string built by nf-prompt.js — the same string that already contains `<!-- GSD_DECISION -->`.
-- Workflow-file-only enforcement is acceptable only if the gate is purely advisory and failure tolerance is high. Document the decision explicitly.
-- Always sync workflow edits: `cp core/workflows/<file> ~/.claude/nf/workflows/` followed by `node bin/install.js --claude --global`. Never edit `~/.claude/nf/workflows/` directly as the durable source.
-- Treat workflow injection as prompt-engineering, not a structural gate. Structural gates belong in hooks.
+Additionally, nForma's existing context injection points (`nf-prompt.js`, `nf-session-start.js`) have a tight character budget (800-char cap on context-stack injection noted at line 862 of nf-prompt.js). XML packing that exceeds this budget silently truncates or crowds out other injections.
 
-**Warning signs:**
-- "Works in dev" (editing core/) but the installed behavior is unchanged — stale installed workflow.
-- Stop hook blocks responses that contain a correct quorum result but no approach declaration token.
-- Approach declaration appears in some planning responses but not others depending on context window pressure.
+**Consequences:**
+- Context packing increases per-turn token cost by 20-40% instead of decreasing it.
+- Other context injections (quorum instructions, state reminders) get crowded out.
+- Claude's context window fills faster, triggering earlier compaction and losing planning state.
+- The packing is "working" structurally but the ROI is negative.
+
+**Prevention:**
+- Measure before and after: implement a `--dry-run` mode that reports token count before/after packing for a given file set. Token count can be approximated by `text.length / 4` (4 chars per token is a rough heuristic for mixed code/English).
+- Use the absolute minimum XML tag names: `<f>` not `<function>`, `<c>` not `<class>`, `<fn>` as a compromise. Every character in a tag name is a token.
+- Pack ONLY skeleton information (signatures, function names, line ranges) — never pack function bodies or comments. The whole point is to replace body content with structural metadata.
+- Use self-closing tags where possible: `<fn n="bar" s="10" e="50"/>` instead of `<fn n="bar" s="10" e="50">...</fn>`.
+- Validate the packing ratio: packed output should be ≤60% of the original token count. If it's >80%, the packing isn't worth doing — just truncate instead.
+- Do NOT inject packed context from hooks (character budget is too tight). Pack context only in bin/ commands and workflow steps that have ample context budget.
+
+**Detection:**
+- Token usage reports (from nForma's existing `token-dashboard.cjs` or `/nf:tokens`) show increased cost after packing is enabled.
+- Packed XML representation is longer than the original content it replaces.
+- Context window compaction happens earlier in sessions using packed context.
 
 **Phase to address:**
-Approach declaration feature — the implementation plan must specify: (a) which layer enforces it (workflow instruction vs Stop hook token), and (b) whether the Stop hook is being modified. If (b), the dist/ sync and install step are mandatory tasks in the plan.
+Context packing implementation phase — define token-efficient schema FIRST, validate with measurement, then build packing logic.
 
 ---
 
-### Pitfall 4: New PreToolUse Edit/Write Guard Hook Fires on Every Tool Call Without Scope Filtering
+### Pitfall 4: Hotspot False Positives from Churn Without Normalization
 
 **What goes wrong:**
-A PreToolUse hook registered without a `matcher` field fires on every tool use — not just Edit/Write. This includes Bash, Read, Task, and all MCP tools. A scope guard intended for file writes becomes a 1-2ms tax on every tool call, including read-only operations. At 200+ tool calls per planning session this is measurable latency and introduces false-positive blocking risk if the guard logic has any path that exits non-zero.
-
-The nForma codebase currently uses unscoped PreToolUse entries for nf-circuit-breaker and nf-mcp-dispatch-guard (install.js lines 2329, 2351). This is correct for those hooks because they legitimately need every-tool coverage. A scope guard does not.
+Hotspot detection combines churn (commit frequency) and complexity (cyclomatic or LOC) to identify risk files. Without normalization, files that are large AND frequently changed always top the hotspot list — but many of these are "known safe" files like configuration files, generated code, or test fixtures that have high churn and high LOC but zero bug risk. The analysis becomes a noise generator that users learn to ignore.
 
 **Why it happens:**
-Claude Code PreToolUse entries in settings.json do not require a matcher. Developers add a new entry following the existing unscoped pattern without realizing existing hooks are intentionally unscoped. The `tool_name` field in the hook payload is the mechanism for inside-hook filtering, but registering without a matcher wastes cycles even before the inside-hook check runs.
+Raw churn × complexity produces an absolute score. A 5000-line generated file that gets regenerated every release has extremely high churn AND high complexity — it dominates every hotspot report. Similarly, test files that are updated with every feature have high churn but low bug risk.
 
-There is also an install.js idempotency pattern to follow: every registered hook checks `hasXxxHook` before pushing (e.g., `hasCircuitBreakerHook`, `hasMcpDispatchGuardHook`). A new hook that omits the duplicate guard gets re-registered on every `node bin/install.js --claude --global` run, resulting in multiple identical entries in settings.json.
+The issue is specifically about ADDING this to an existing system where users already have noise fatigue from circuit-breaker false positives (nForma's oscillation detector already has a precision challenge). Adding another noisy signal erodes trust in ALL nForma signals.
 
-**How to avoid:**
-- In settings.json, use the `matcher` field to restrict PreToolUse hooks to specific tool names. The SubagentStop and SubagentStart hooks in install.js lines 2434 and 2448 use `matcher` for agent-type filtering — that is the verified pattern in this codebase.
-- Inside the hook script, still check `input.tool_name` as defense-in-depth: `if (!['Edit', 'Write', 'MultiEdit'].includes(input.tool_name)) process.exit(0);`
-- Add the idempotency check in install.js using the same `settings.hooks.PreToolUse.some(entry => ...)` pattern.
-- Also add an uninstall filter in the uninstall block (following the nf-mcp-dispatch-guard removal pattern at install.js line 1407-1418).
-- Register the hook in config-loader.js `HOOK_PROFILE_MAP.standard` Set and `DEFAULT_HOOK_PRIORITIES` map (Low/10 for a guard hook). Omitting registration means `shouldRunHook()` returns false in minimal profile.
+**Consequences:**
+- Hotspot reports are ignored after first few uses because 80% of "hotspots" are false positives.
+- Users add per-file overrides that grow without bound, creating maintenance debt.
+- The analysis output competes for context budget with more useful signals (quorum instructions, formal verification results).
 
-**Warning signs:**
-- Every Bash tool call takes 10-20ms longer after the hook is added.
-- Multiple identical entries for the new hook appear in `~/.claude/settings.json` after running install twice.
-- Guard triggers during `Read` tool calls — no-matcher scope bleed.
-- `shouldRunHook('nf-new-guard', 'minimal')` returns false because the hook name was not added to config-loader.js `HOOK_PROFILE_MAP`.
-- Uninstall (`--uninstall`) does not remove the hook from settings.json because no removal filter exists.
+**Prevention:**
+- **Exclude by default:** generated files (`*.generated.*`, `*.min.*`, `dist/`, `build/`), test files (`*.test.*`, `*.spec.*`, `__tests__/`), and lockfiles. These are the top 3 false-positive categories.
+- **Normalize churn:** divide churn count by file age (commits/month) rather than using absolute commit count. A 5-year-old file with 100 commits (20/year) is less hot than a 6-month-old file with 50 commits (100/year).
+- **Normalize complexity:** use complexity-per-function (average cyclomatic per function) rather than total complexity. A 500-line file with 50 simple functions (avg CC=1.2) is less risky than a 50-line file with one CC=15 function.
+- **Weight recent churn higher:** commits in the last 90 days should weight 3x vs. older commits. Stale churn is a much weaker signal.
+- **Add a per-project `.nforma/hotspot-ignore` file** (like `.gitignore` syntax) so users can suppress known false positives. This is cleaner than per-file overrides and self-documents exceptions.
+- **Report confidence tiers:** Tier 1 (high churn + high complexity + recent), Tier 2 (high churn + moderate complexity OR recent churn + high complexity), Tier 3 (moderate both). Only Tier 1 warrants attention.
+
+**Detection:**
+- First hotspot report on nForma's own codebase shows `dist/` files or test files as top hotspots.
+- Users immediately ask "how do I exclude X?" and there's no mechanism.
+- Hotspot analysis takes >5 seconds on nForma's own mid-size repo.
 
 **Phase to address:**
-Edit/Write scope guard feature — install registration task must cover four items: (a) idempotency guard, (b) matcher field, (c) config-loader.js profile map update, (d) DEFAULT_HOOK_PRIORITIES entry. The uninstall removal filter is a fifth required item. Missing any one causes a regression.
+Hotspot detection implementation phase — normalization and exclusion logic are not "nice to have" — they are the core algorithm, not a post-processing step.
 
 ---
 
-## Technical Debt Patterns
+### Pitfall 5: Co-Change Prediction Produces Spurious Coupling for "Boilerplate" Commits
 
-| Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
-|----------|-------------------|----------------|-----------------|
-| Inject via workflow file instead of hook | No install step required | Advisory only — Claude can ignore under context pressure | Only for non-critical UX nudges |
-| Skip dist/ sync, edit installed hook directly | Faster iteration | Reverted on next install; stale source diverges from installed behavior | Never |
-| Omit `shouldRunHook()` profile guard in new hook | Less boilerplate | Hook runs in minimal profile where it should be silent; adds noise | Never — 3 lines, always include |
-| Hard-code command patterns instead of reading from config | No config loading | Breaks if user renames commands or uses strict vs standard profile | Prototyping only, remove before ship |
-| Use `process.stderr.write` for debug output | Fast debugging | Claude Code treats unexpected stderr as a hook error signal; noisy in production | Dev only, behind an env flag |
+**What goes wrong:**
+Co-change prediction mines git history for files that frequently change together (implicit coupling). But many co-changes are spurious: they happen because a developer ran a refactoring tool that touched 30 files, or because a code generator updates all its outputs, or because a linter auto-fixed formatting across the entire codebase. These "boilerplate commits" create massive spurious coupling that drowns out the real signal.
+
+**Why it happens:**
+`git log --name-only` treats all commits equally. A mass-rename commit that touches 200 files creates 200×199/2 = 19,900 co-change pairs — all spurious. A dependency bump that updates 15 lockfiles creates 105 spurious pairs. These dominate the co-change matrix because they inflate pair counts for files that have no real semantic relationship.
+
+This is the same class of problem as nForma's oscillation detector: real signal buried in noise from mechanical changes. The circuit-breaker already filters git-log noise by ignoring read-only operations. Co-change prediction needs an analogous filter.
+
+**Consequences:**
+- Co-change suggestions like "when you change `package.json`, also review `yarn.lock`" are technically correct but useless noise.
+- Real coupling signals ("`nf-prompt.js` and `nf-stop.js` always change together") get buried.
+- Users lose trust in the prediction system.
+
+**Prevention:**
+- **Filter commits before analysis:** exclude commits whose message matches common boilerplate patterns (`/^(chore|style|lint|format|bump|dep|merge|revert|auto)/i`). These are the top sources of spurious co-change.
+- **Weight commits by file count:** a commit that touches 2 files is a much stronger co-change signal than a commit that touches 50 files. Use inverse file-count weighting: `weight = 1 / (1 + log(touched_file_count))`. A 2-file commit gets weight 0.77; a 50-file commit gets weight 0.15.
+- **Set a minimum co-occurrence threshold:** require files to co-occur in ≥3 commits before reporting as coupled. Single co-occurrence is almost always noise.
+- **Report coupling strength, not just coupling existence:** use a confidence metric (e.g., Jaccard similarity or lift) and only surface pairs above a threshold (≥0.3 Jaccard or ≥2.0 lift).
+- **Separate "structural coupling" (always changes together) from "temporal coupling" (changed in same time window):** structural coupling is far more actionable.
+
+**Detection:**
+- Co-change report lists `package.json` ↔ `package-lock.json` as the #1 coupled pair.
+- Top 10 co-change pairs are all trivial (lockfiles, generated files, linter mass-edits).
+- No actionable coupling suggestions appear (all signal drowned by noise).
+
+**Phase to address:**
+Co-change prediction implementation phase — commit filtering and weighting logic are core algorithm, not post-processing.
 
 ---
 
-## Integration Gotchas
+## Moderate Pitfalls
 
-| Integration | Common Mistake | Correct Approach |
-|-------------|----------------|------------------|
-| hooks/dist/ sync | Edit `hooks/nf-*.js` directly without copying to `hooks/dist/` | `cp hooks/nf-X.js hooks/dist/ && node bin/install.js --claude --global` — installer reads dist/ not hooks/ |
-| config-loader profile registration | Add new hook name in hook file only | Also update `HOOK_PROFILE_MAP` and `DEFAULT_HOOK_PRIORITIES` in config-loader.js |
-| Stop hook token verification | Add new required token to workflow file only | Also emit the token in the nf-prompt.js instructions string so it appears in Claude's output |
-| UserPromptSubmit exit priority | Add new branch that writes stdout and exits | All stdout-writing branches are final exits; quorum injection must not be bypassable by any earlier branch |
-| install.js idempotency guard | Omit `hasXxxHook` check for new hook | Every hook registration in install.js must have an idempotency guard matching the command path |
-| `additionalContext` character budget | Inject large context blobs without size check | The 800-char hook-level cap applies; large injections crowd out quorum instructions |
+### Pitfall 6: Tree-Sitter Grammar Package Not Available for Target Language
+
+**What goes wrong:**
+A user runs skeleton view on a `.tsx` file but `tree-sitter-tsx` isn't installed. The command either crashes with `Cannot find module 'tree-sitter-tsx'` or silently produces no output.
+
+**Prevention:**
+- Implement graceful degradation: if the grammar module isn't available, fall back to a regex-based skeleton extraction (function signatures via pattern matching). This is less accurate but always works.
+- Detect language from file extension and check for grammar availability before parsing. Emit a clear message: `"tree-sitter-tsx not installed. Falling back to regex skeleton. Install with: npm install tree-sitter-tsx"`.
+- Bundle the top 5 grammars nForma needs (JavaScript, TypeScript, Python, Bash, JSON) as direct dependencies. All others are optional.
 
 ---
 
-## Performance Traps
+### Pitfall 7: Skeleton View Outputs Full File Content on Small Files
 
-| Trap | Symptoms | Prevention | When It Breaks |
-|------|----------|------------|----------------|
-| Unscoped PreToolUse hook doing file I/O | Every tool call adds 10-50ms | Use matcher field + early `tool_name` exit check to skip non-target tools | Noticeable at 20+ tool calls per session |
-| Pattern regex with backtracking on long prompts | Prompt injection hook slows on 2000-char prompts | Use anchored, non-greedy patterns; test against 2000-char prompts | Any prompt over 500 chars |
-| Reading config or scoreboard on every UserPromptSubmit | Config parse on every keystroke | loadConfig() is already cached; use that cache; avoid new fs.readFileSync calls in the hot path | After 50+ planning sessions |
-| Spawning a child process synchronously in a scope guard | 100-300ms per tool call | Use spawnSync only when result is required for the blocking decision; advisory data should not block | Every tool call where the hook is active |
+**What goes wrong:**
+For a 20-line file, the skeleton view produces a representation that's LONGER than the original file (because of XML tags, line ranges, metadata). This defeats the purpose of skeleton views and wastes context budget.
+
+**Prevention:**
+- Set a threshold: if the file is ≤50 lines OR ≤1500 chars, skip skeleton view and include the original content verbatim. The overhead of skeleton metadata exceeds the savings for small files.
+- Always include a "skeleton ratio" check: if packed size > 0.8 × original size, include original instead.
+
+---
+
+### Pitfall 8: Context Packing Re-Runs on Every Hook Invocation
+
+**What goes wrong:**
+Context packing (XML formatting) is invoked from a hook or a per-turn context injection point. It runs on every prompt, re-packing the same files that haven't changed. This adds 50-100ms latency to every UserPromptSubmit hook.
+
+**Prevention:**
+- Context packing must be a bin/ command or a workflow step, NOT a hook. It runs once at task start, not per-turn.
+- Cache the packed output: `.nforma/cache/packed-<git-hash>.json`. Reuse until the git HEAD changes.
+- The packed context should be injected via a one-time mechanism (like the session-start state injection pattern from nf-session-start.js), not per-prompt.
+
+---
+
+### Pitfall 9: SpawnSync Blocks Event Loop During Churn Analysis
+
+**What goes wrong:**
+Using `spawnSync('git', ['log', '--numstat', ...])` blocks the Node.js event loop for the entire duration of the git command. On a repo with 50K commits, this is 5-30 seconds where nForma is completely unresponsive. If this is called from a hook with a 10s timeout, it times out.
+
+**Prevention:**
+- Use `child_process.spawn` (async) with line-by-line stream processing for any git command that may produce >10KB of output.
+- For bin/ commands (where blocking is acceptable), still use spawnSync but add a progress indicator (stderr dots) for runs >2s.
+- Never use `execSync` for git log (it buffers all output in memory). Use spawnSync with `{ maxBuffer: 10 * 1024 * 1024 }` at most, or better: streaming.
+
+---
+
+### Pitfall 10: Complexity Metric That Doesn't Match nForma's Existing Solve Layer Definitions
+
+**What goes wrong:**
+nForma's solve system already has 18 classification layers (LAYER_KEYS in `layer-constants.cjs`) with per-layer risk scoring. Adding a separate cyclomatic complexity metric creates two competing "complexity" definitions. The hotspot report says a file is "high complexity" for one reason, the solve layer says it's low complexity for another.
+
+**Prevention:**
+- Align the complexity metric with nForma's existing layer classification. Use the same dimension names.
+- Map hotspot output INTO the existing solve layer framework rather than creating a parallel one. Hotspot data should enrich existing layers, not define new ones.
+- The integration point should be: hotspot analysis → `.nforma/cache/hotspot-scores.json` → solve layers read this as supplementary risk context.
+
+---
+
+## Minor Pitfalls
+
+### Pitfall 11: XML Tag Names That Clash with HTML in Claude's Context
+
+**What goes wrong:**
+XML tags like `<file>` or `<class>` can confuse Claude when the same context contains HTML content. Claude may interpret the XML skeleton as HTML markup rather than structured metadata.
+
+**Prevention:**
+- Use namespace-prefixed tags: `<rw:file>`, `<rw:fn>` (rw = Repowise). This disambiguates from HTML.
+- Alternatively, use a non-XML delimiter format for skeleton views: `### file: foo.js\n  fn bar():10-50\n  fn baz():55-80`. Markdown headers are already native to Claude's context and don't clash.
+
+---
+
+### Pitfall 12: Git Log Date Parsing Across Timezones
+
+**What goes wrong:**
+`git log --format="%ai"` outputs author dates in the committer's local timezone. A `--since=90 days ago` filter works in UTC, but the date strings in the log are in local time. Comparing these produces off-by-one-day errors.
+
+**Prevention:**
+- Always use `--date=iso-strict` or `--date=unix` for machine-parseable output. Never parse human-readable dates.
+- Use `--since` with absolute dates computed in UTC from `Date.now()`.
+
+---
+
+### Pitfall 13: Tree-Sitter Parser Crashes on Invalid Syntax
+
+**What goes wrong:**
+Tree-sitter is error-recovery-capable (it produces partial ASTs for invalid syntax), but some grammar edge cases produce parse trees where `rootNode.toString()` is unexpectedly empty or where iterating children hits an ERROR node that breaks the skeleton extraction logic.
+
+**Prevention:**
+- Check for `tree.rootNode.hasError` before extracting skeletons. If the tree has errors, fall back to regex-based extraction.
+- Skip ERROR nodes during traversal: `for (const child of node.children) { if (child.type === 'ERROR') continue; ... }`.
+- Always wrap Tree-Sitter operations in try/catch — never assume the tree is well-formed.
+
+---
+
+## Phase-Specific Warnings
+
+| Phase Topic | Likely Pitfall | Mitigation |
+|-------------|---------------|------------|
+| Tree-Sitter integration | NAPI/ABI mismatch (#1) | Startup validation gate; pin versions; CI gate |
+| Tree-Sitter integration | Grammar not available (#6) | Graceful fallback to regex; bundle top-5 grammars |
+| Tree-Sitter integration | Parser crash on invalid syntax (#13) | Check `hasError`; skip ERROR nodes; try/catch |
+| Git history mining | Memory explosion on large repos (#2) | Bounded window; streaming; caching; bin/ only |
+| Git history mining | SpawnSync blocks event loop (#9) | Use async spawn for >10KB output; progress indicator |
+| Git history mining | Timezone date parsing (#12) | Use `--date=unix`; compute in UTC |
+| Context packing | XML increases token count (#3) | Measure first; minimal tag names; ≤60% ratio target |
+| Context packing | Re-runs every hook invocation (#8) | Cache by git-hash; bin/ command only; one-time injection |
+| Context packing | Small files produce longer output (#7) | Skip skeleton for files ≤50 lines; ratio check |
+| Context packing | XML/HTML tag confusion (#11) | Namespace-prefixed tags or markdown format |
+| Hotspot detection | False positives from generated/test files (#4) | Exclude patterns; normalize churn; confidence tiers |
+| Hotspot detection | Complexity metric clashes with solve layers (#10) | Align with existing LAYER_KEYS; supplementary context |
+| Co-change prediction | Spurious coupling from boilerplate commits (#5) | Filter commit messages; inverse file-count weighting; ≥3 threshold |
+| Integration | Competing context budget with quorum instructions | Context packing is bin/ command output, NOT hook injection |
+| Integration | Cache invalidation on branch switch | Key cache by git HEAD hash (same as quorum-cache.cjs pattern) |
+
+---
+
+## Integration-Specific Pitfalls
+
+### Pitfall: Context Packing Competes with Quorum Instructions for Budget
+
+**What goes wrong:**
+nForma's `nf-prompt.js` has an 800-char context-stack injection cap (line 862). If context packing is injected via the same `additionalContext` path, it competes with quorum instructions, session state, root cause templates, and thinking budget directives. The quorum instructions MUST win this budget competition — they are the core enforcement mechanism.
+
+**Prevention:**
+- Context packing output should NEVER go through hook injection. It goes into workflow step context (plan-phase, execute-phase) where the budget is larger.
+- Skeleton views and hotspot reports are injected as `<files_to_read>` or `<formal_context>` blocks in workflow steps, not as `additionalContext` in hooks.
+- The packed context is consumed by the planner/executor subagents, not by the orchestrator hook pipeline.
+
+---
+
+### Pitfall: Tree-Sitter Native Module Conflicts in npm Package
+
+**What goes wrong:**
+nForma is published as an npm package (`@nforma.ai/nforma`). Adding `tree-sitter` as a dependency introduces a native `.node` binary. npm's package layout can conflict if the user's project also depends on `tree-sitter` (different version). Node.js loads the first `.node` it finds in the require path, not necessarily the version nForma needs.
+
+**Prevention:**
+- Use `optionalDependencies` for tree-sitter grammars, not `dependencies`. If the native module fails to install (no C++ compiler, wrong platform), nForma still works with degraded functionality.
+- Implement the graceful degradation pattern from Pitfall #6: try `require('tree-sitter')` in a try/catch; if it fails, set a flag and use regex fallback.
+- Consider WASM-based tree-sitter as a future option (the `tree-sitter` crate can compile to WASM). This eliminates native binding issues entirely but is slower.
 
 ---
 
 ## "Looks Done But Isn't" Checklist
 
-- [ ] **Session state injection:** Idempotency flag checked — verify the hook does NOT inject on the second prompt in the same session
-- [ ] **Pattern-matched injection:** Quorum path integration tested — verify `/nf:solve fix X` still produces `<!-- GSD_DECISION -->` in the Stop hook scan
-- [ ] **Approach declaration gate:** Workflow sync verified — `diff core/workflows/ ~/.claude/nf/workflows/` returns no differences after install
-- [ ] **Edit/Write scope guard:** Uninstall path in install.js exists — the removal filter matches the new hook command path
-- [ ] **All new hooks:** `shouldRunHook()` call present — verify hook exits cleanly in minimal profile
-- [ ] **All new hooks:** Fail-open catch block present — outer try/catch with `process.exit(0)` in the catch
-- [ ] **All new hooks:** No `process.stderr.write` outside of genuine error paths — leftover debug writes cause false hook-error signals
-- [ ] **All new hooks:** Uninstall removal filter added to install.js — verify `--uninstall` removes the hook from settings.json
+- [ ] **Tree-Sitter integration:** ABI validation gate passes — `parser.setLanguage(grammar)` succeeds on all supported platforms (darwin-arm64, linux-x64, win32-x64)
+- [ ] **Tree-Sitter integration:** `hasError` check present — skeleton extraction skips ERROR nodes and falls back gracefully
+- [ ] **Tree-Sitter integration:** Top-5 grammars installed and tested — JavaScript, TypeScript, Python, Bash, JSON all parse successfully
+- [ ] **Git history mining:** Bounded window used — never runs unbounded `git log --numstat` on entire history
+- [ ] **Git history mining:** Streaming parser — output processed line-by-line, not buffered into single string
+- [ ] **Git history mining:** Cache layer present — `.nforma/cache/churn-<hash>.json` exists and is used on second run
+- [ ] **Context packing:** Token ratio measured — packed output is ≤60% of original token count
+- [ ] **Context packing:** Small file threshold — files ≤50 lines include original content, not skeleton
+- [ ] **Context packing:** NOT injected from hooks — packing output goes through workflow step context, not `additionalContext`
+- [ ] **Hotspot detection:** Exclusion patterns present — generated files, test files, lockfiles excluded by default
+- [ ] **Hotspot detection:** Churn normalized by file age — commits/month, not absolute count
+- [ ] **Hotspot detection:** Confidence tiers reported — Tier 1/2/3 classification, not raw score list
+- [ ] **Co-change prediction:** Commit filtering active — boilerplate commits excluded by message pattern
+- [ ] **Co-change prediction:** Inverse file-count weighting — mass-edit commits contribute less weight
+- [ ] **Co-change prediction:** Minimum co-occurrence threshold — pairs require ≥3 shared commits
 
 ---
 
@@ -171,40 +345,44 @@ Edit/Write scope guard feature — install registration task must cover four ite
 
 | Pitfall | Recovery Cost | Recovery Steps |
 |---------|---------------|----------------|
-| Every-message session injection noise | LOW | Add seen-flag check, re-sync dist/, re-install |
-| Pattern injection bypassing quorum (Stop blocks all responses) | MEDIUM | Revert nf-prompt.js to last known-good, re-sync dist/, re-install, verify with `/nf:plan test` |
-| Stale workflow file (approach gate not firing) | LOW | `cp core/workflows/<file> ~/.claude/nf/workflows/` + `node bin/install.js --claude --global` |
-| Unscoped PreToolUse causing latency | LOW | Add matcher field or inside-hook early exit, re-sync, re-install |
-| Multiple duplicate hook entries in settings.json | LOW | Manually deduplicate `~/.claude/settings.json` PreToolUse array; add idempotency guard to install.js |
-| New hook not running in standard profile | LOW | Add hook name to `HOOK_PROFILE_MAP.standard` in config-loader.js, re-sync dist/, re-install |
+| Tree-Sitter ABI mismatch | MEDIUM | Pin versions, add validation gate, add CI gate; requires all grammar packages to be updated |
+| Git log memory explosion | LOW | Add bounded window and streaming; backward-compatible change |
+| XML packing increases tokens | MEDIUM | Redesign schema with minimal tag names; re-validate token ratio |
+| Hotspot false positives | LOW | Add exclusion patterns and normalization; backward-compatible |
+| Co-change spurious coupling | LOW | Add commit filters and weighting; backward-compatible |
+| Tree-Sitter grammar unavailable | LOW | Add regex fallback; graceful degradation |
+| Context packing in hooks | MEDIUM | Move to workflow step context; requires architecture change |
 
 ---
 
-## Pitfall-to-Phase Mapping
+## Technical Debt Patterns
 
-| Pitfall | Prevention Phase | Verification |
-|---------|------------------|--------------|
-| Session injection every-message noise | Session state injection implementation phase | Unit test: send two prompts with same sessionId, assert second gets no injection |
-| Pattern injection bypasses quorum gate | Pattern injection design phase — before writing code | Integration test: `/nf:solve fix X` must pass Stop hook scan |
-| Approach gate workflow sync | Approach declaration delivery phase | `diff core/workflows/ ~/.claude/nf/workflows/` in verification step |
-| PreToolUse scope bleed | Edit/Write guard implementation phase | Bash tool_name test: assert guard exits 0 without triggering on Bash calls |
-| Missing profile registration | Any new hook — implementation phase | `shouldRunHook('new-hook', 'minimal')` returns false; `shouldRunHook('new-hook', 'standard')` returns true |
-| dist/ sync forgotten | Any hook edit — delivery phase | Verify `diff hooks/nf-X.js hooks/dist/nf-X.js` returns no differences before running install |
-| Missing uninstall path | Edit/Write guard implementation phase | Run `node bin/install.js --uninstall`; verify hook entry is gone from settings.json |
+| Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
+|----------|-------------------|----------------|-----------------|
+| Use `spawnSync` for git log (blocking) | Faster to implement | Blocks event loop; OOM on large repos | Never for unbounded git log |
+| Skip grammar ABI validation | Less startup code | Cryptic `Invalid language object` errors in production | Never — 10 lines of validation prevents hours of debugging |
+| Use full XML tag names `<function>` | More readable | Wastes 5-8 tokens per tag vs `<fn>` | Prototyping only, replace before ship |
+| Include all files in hotspot analysis | Simpler code | Noise reports users ignore | Never — exclusion is core logic, not optional |
+| Treat all commits equally in co-change | Simpler code | Spurious coupling from mass-edits | Never — weighting is core logic |
+| Bundle all 50+ Tree-Sitter grammars | Broader language support | Massive install size; ABI explosion | Never — bundle top 5, optional for rest |
+| Run context packing per-turn | Always fresh data | Latency and token waste on every prompt | Never — cache by git hash, run on demand |
 
 ---
 
 ## Sources
 
-- Direct inspection: `/Users/jonathanborduas/code/QGSD/hooks/nf-prompt.js` (priority chain, stdout exit pattern, additionalContext budget comment at line 864, consumePendingTask idempotency model)
-- Direct inspection: `/Users/jonathanborduas/code/QGSD/hooks/nf-session-start.js` (SessionStart injection pattern, single-write at end, _contextPieces accumulator)
-- Direct inspection: `/Users/jonathanborduas/code/QGSD/hooks/config-loader.js` (HOOK_PROFILE_MAP, DEFAULT_HOOK_PRIORITIES, shouldRunHook, matcher usage)
-- Direct inspection: `/Users/jonathanborduas/code/QGSD/bin/install.js` (PreToolUse registration pattern, idempotency guards, dist/ rebuild logic, matcher in SubagentStop/SubagentStart at lines 2434 and 2448)
-- Direct inspection: `/Users/jonathanborduas/code/QGSD/hooks/nf-mcp-dispatch-guard.js` (unscoped PreToolUse pattern, fail-open exit, providers.json-driven scope)
-- Direct inspection: `/Users/jonathanborduas/code/QGSD/hooks/nf-circuit-breaker.js` (READ_ONLY_REGEX anchored pattern example)
-- Project memory: MEMORY.md — install sync requirement, workflow sync requirement, dist/ as installer source
+- **Tree-Sitter NAPI migration:** GitHub issue #193 (tree-sitter/node-tree-sitter), verified from release notes v0.21.0 — breaking change from NAN to N-API, requires grammar regeneration. HIGH confidence.
+- **Tree-Sitter ABI versioning:** Tree-Sitter List of Parsers wiki — ABI column (currently 13-15), grammar.json column, external scanner column. HIGH confidence.
+- **Tree-Sitter prebuilt binaries:** Release notes v0.21.0 — "switch to prebuildify instead of prebuild-install (now binaries are stored on npm instead of GitHub Releases)". HIGH confidence.
+- **nForma spawnSync patterns:** Direct codebase inspection of `nf-circuit-breaker.js`, `escalation-classifier.cjs`, `design-impact.cjs`, `quorum-cache.cjs`, `security-sweep.cjs` — all use `spawnSync` for bounded git operations. HIGH confidence.
+- **nForma context budget:** `nf-prompt.js` line 862 comment on 800-char hook-level cap for context-stack injection. HIGH confidence.
+- **nForma caching patterns:** `quorum-cache.cjs` uses SHA-256 keyed cache with git HEAD invalidation. HIGH confidence.
+- **Git log performance:** Well-known limitation — `git log --numstat` on large repos produces megabytes of output. MEDIUM confidence (based on Git documentation and community knowledge, not nForma-specific benchmarking).
+- **Context packing token overhead:** LLM token engineering community knowledge — XML tags consume 1-3 tokens each; verbose attribute syntax wastes tokens. MEDIUM confidence (heuristic, not empirically measured for Claude's specific tokenizer).
+- **Hotspot false positive patterns:** Static analysis literature (Nagappan/Ball/Zeller "churn + complexity" studies) — generated files and test files are well-documented false-positive categories. HIGH confidence.
+- **Co-change spurious coupling:** Mining Software Repositories literature — mass-edit commits create spurious coupling; inverse file-count weighting is standard practice. HIGH confidence.
 
 ---
 
-*Pitfalls research for: adding behavioral enforcement hooks to an existing Claude Code plugin (nForma)*
-*Researched: 2026-03-19*
+*Pitfalls research for: Repowise Intelligence Integration (v0.42) — XML context packing, Tree-Sitter AST skeleton views, hotspot detection, co-change prediction added to nForma CLI*
+*Researched: 2026-04-11*

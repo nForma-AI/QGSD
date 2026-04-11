@@ -106,6 +106,21 @@ fi
 
 Store `$FORMAL_SPEC_CONTEXT` for use in steps 7, 8, 10.
 
+## 4.7. Repowise Context Packing
+
+Before spawning the researcher, pack Repowise intelligence context for the phase. This provides hotspot risk data, co-change coupling, and skeleton views to the researcher and planner.
+
+```bash
+REPOWISE_CONTEXT=""
+if command -v node >/dev/null 2>&1; then
+  REPOWISE_CONTEXT=$(node ~/.claude/nf-bin/context-packer.cjs --hotspot --cochange --project-root="$(pwd)" 2>/dev/null || node bin/repowise/context-packer.cjs --hotspot --cochange --project-root="$(pwd)" 2>/dev/null || echo "")
+fi
+```
+
+If the script returns XML or JSON, pass the context as additional context to the researcher and planner. Fail-open: if the script is not found, errors, or returns empty, skip silently and proceed.
+
+Store `$REPOWISE_CONTEXT` for use in steps 5, 8.
+
 ## 5. Handle Research
 
 **Skip if:** `--gaps` flag, `--skip-research` flag, or `research_enabled` is false (from init) without `--research` override.
