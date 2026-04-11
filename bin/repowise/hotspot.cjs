@@ -120,6 +120,38 @@ function computeChurnScores(commits, options) {
 }
 
 // ---------------------------------------------------------------------------
+// Reuse existing git-heatmap.json evidence (avoid re-parsing git history)
+// ---------------------------------------------------------------------------
+
+function loadHeatmapChurn(projectRoot) {
+  const heatmapPath = path.join(projectRoot, '.planning', 'formal', 'evidence', 'git-heatmap.json');
+  try {
+    if (!fs.existsSync(heatmapPath)) return null;
+    const data = JSON.parse(fs.readFileSync(heatmapPath, 'utf8'));
+    if (!data || !data.signals || !data.signals.churn_ranking) return null;
+
+    const churnMap = new Map();
+    const bugfixMap = new Map();
+
+    for (const entry of data.signals.churn_ranking) {
+      if (!isExcluded(entry.file)) {
+        churnMap.set(entry.file, entry.commits);
+      }
+    }
+
+    for (const entry of (data.signals.bugfix_hotspots || [])) {
+      if (!isExcluded(entry.file)) {
+        bugfixMap.set(entry.file, entry.fix_count);
+      }
+    }
+
+    return { churnMap, bugfixMap };
+  } catch (_) {
+    return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Heuristic complexity (HOT-03 partial — line count proxy)
 // ---------------------------------------------------------------------------
 
@@ -170,19 +202,108 @@ function normalizeMap(scoreMap) {
 }
 
 // ---------------------------------------------------------------------------
+// AST-based cyclomatic complexity (HOT-02)
+// ---------------------------------------------------------------------------
+
+async function computeAstComplexity(filePath, projectRoot) {
+  try {
+    const { extractSkeleton } = require('./skeleton.cjs');
+    const result = await extractSkeleton(filePath, projectRoot);
+    if (result.method === 'ast' && result.entries.length > 0) {
+      let totalDecisionPoints = 0;
+      for (const entry of result.entries) {
+        totalDecisionPoints += (entry.complexity || 1) - 1;
+      }
+      return totalDecisionPoints + result.entries.length;
+    }
+  } catch (_) {
+    // Fall through to heuristic
+  }
+  return estimateComplexity(filePath, projectRoot);
+}
+
+// ---------------------------------------------------------------------------
 // Main API: computeHotspots (HOT-01, HOT-03, HOT-04)
 // ---------------------------------------------------------------------------
 
 function computeHotspots(projectRoot, options) {
   const opts = options || {};
-  const commits = parseGitNumstat(projectRoot, opts);
-  const churnMap = computeChurnScores(commits, opts);
+
+  let churnMap;
+  const heatmapData = loadHeatmapChurn(projectRoot);
+  if (heatmapData && !opts._forceReparse) {
+    churnMap = heatmapData.churnMap;
+  } else {
+    const commits = parseGitNumstat(projectRoot, opts);
+    churnMap = computeChurnScores(commits, opts);
+  }
 
   const files = [];
   const complexityMap = new Map();
 
   for (const [filePath] of churnMap) {
     const complexity = estimateComplexity(filePath, projectRoot);
+    complexityMap.set(filePath, complexity);
+  }
+
+  const normalizedChurn = normalizeMap(churnMap);
+  const normalizedComplexity = normalizeMap(complexityMap);
+
+  let highRiskCount = 0;
+  let mediumRiskCount = 0;
+
+  for (const [filePath, rawChurn] of churnMap) {
+    const nChurn = normalizedChurn.get(filePath);
+    const nComplexity = normalizedComplexity.get(filePath);
+    const hotspotScore = nChurn * nComplexity;
+
+    let risk = 'low';
+    if (hotspotScore > 0.7) {
+      risk = 'high';
+      highRiskCount++;
+    } else if (hotspotScore > 0.4) {
+      risk = 'medium';
+      mediumRiskCount++;
+    }
+
+    files.push({
+      path: filePath,
+      churn: rawChurn,
+      complexity: complexityMap.get(filePath),
+      hotspot_score: Math.round(hotspotScore * 1000) / 1000,
+      risk,
+    });
+  }
+
+  files.sort((a, b) => b.hotspot_score - a.hotspot_score);
+
+  return {
+    files,
+    summary: {
+      total_files: files.length,
+      high_risk_count: highRiskCount,
+      medium_risk_count: mediumRiskCount,
+    },
+  };
+}
+
+async function computeHotspotsAst(projectRoot, options) {
+  const opts = options || {};
+
+  let churnMap;
+  const heatmapData = loadHeatmapChurn(projectRoot);
+  if (heatmapData && !opts._forceReparse) {
+    churnMap = heatmapData.churnMap;
+  } else {
+    const commits = parseGitNumstat(projectRoot, opts);
+    churnMap = computeChurnScores(commits, opts);
+  }
+
+  const files = [];
+  const complexityMap = new Map();
+
+  for (const [filePath] of churnMap) {
+    const complexity = await computeAstComplexity(filePath, projectRoot);
     complexityMap.set(filePath, complexity);
   }
 
@@ -249,6 +370,7 @@ function printHelp() {
 Options:
   --project-root=/path      Override project root directory
   --json                     Output structured JSON
+  --use-ast-complexity       Use AST-based cyclomatic complexity (requires web-tree-sitter)
   --exclude=pattern1,pattern2  Additional exclude patterns (regex)
   --mass-refactor-threshold=N  Commits with N+ files get inverse weighting (default: 50)
   --since=date               Only analyze commits since this date
@@ -275,6 +397,7 @@ async function main() {
   })();
 
   const jsonOutput = args.includes('--json');
+  const useAstComplexity = args.includes('--use-ast-complexity');
 
   const since = (() => {
     const a = args.find(a => a.startsWith('--since='));
@@ -294,11 +417,9 @@ async function main() {
   })();
 
   try {
-    const hotspots = computeHotspots(projectRoot, {
-      since,
-      massRefactorThreshold,
-      excludePatterns,
-    });
+    const hotspots = useAstComplexity
+      ? await computeHotspotsAst(projectRoot, { since, massRefactorThreshold, excludePatterns })
+      : computeHotspots(projectRoot, { since, massRefactorThreshold, excludePatterns });
 
     if (jsonOutput) {
       console.log(JSON.stringify(hotspots, null, 2));
@@ -323,12 +444,15 @@ async function main() {
 
 module.exports = {
   computeHotspots,
+  computeHotspotsAst,
   computeChurnScores,
   estimateComplexity,
+  computeAstComplexity,
   normalizeMap,
   isExcluded,
   parseGitNumstat,
   formatHotspotXml,
+  loadHeatmapChurn,
   DEFAULT_EXCLUDE_PATTERNS,
   DEFAULT_MASS_REFACTOR_THRESHOLD,
 };

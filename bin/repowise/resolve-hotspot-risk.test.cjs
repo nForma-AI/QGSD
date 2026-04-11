@@ -23,6 +23,12 @@ describe('resolveHotspotRisk', () => {
   });
 
   it('returns correct risk level for files in the repo', () => {
+    const result = resolveHotspotRisk(['package.json'], PROJECT_ROOT);
+    assert.ok(['routine', 'medium', 'high'].includes(result.risk_level));
+    assert.ok(typeof result.max_score === 'number');
+  });
+
+  it('returns correct risk level for files in the repo', () => {
     // Use a file we know exists and has churn
     const result = resolveHotspotRisk(['package.json'], PROJECT_ROOT);
     assert.ok(['routine', 'medium', 'high'].includes(result.risk_level));
@@ -30,7 +36,6 @@ describe('resolveHotspotRisk', () => {
   });
 
   it('returns high when a high-risk file is in the changed list', () => {
-    // First get the hotspots to find a high-risk file
     const { computeHotspots } = require('./hotspot.cjs');
     const hotspots = computeHotspots(PROJECT_ROOT);
     const highRisk = hotspots.files.find(f => f.risk === 'high');

@@ -12,6 +12,7 @@ const {
   computeChurnScores,
   estimateComplexity,
   computeHotspots,
+  computeAstComplexity,
   formatHotspotXml,
   DEFAULT_EXCLUDE_PATTERNS,
   DEFAULT_MASS_REFACTOR_THRESHOLD,
@@ -137,6 +138,20 @@ describe('estimateComplexity', () => {
   it('returns 0 for non-existent file', () => {
     const projectRoot = path.resolve(__dirname, '../..');
     const complexity = estimateComplexity('nonexistent/file.xyz', projectRoot);
+    assert.equal(complexity, 0);
+  });
+});
+
+describe('computeAstComplexity', () => {
+  it('falls back to estimateComplexity when skeleton.cjs is unavailable', async () => {
+    const projectRoot = path.resolve(__dirname, '../..');
+    const complexity = await computeAstComplexity('bin/repowise/escape-xml.cjs', projectRoot);
+    assert.ok(complexity >= 0, 'should return non-negative complexity');
+  });
+
+  it('returns 0 for non-existent file', async () => {
+    const projectRoot = path.resolve(__dirname, '../..');
+    const complexity = await computeAstComplexity('nonexistent/file.xyz', projectRoot);
     assert.equal(complexity, 0);
   });
 });
