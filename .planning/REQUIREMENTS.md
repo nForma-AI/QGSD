@@ -33,29 +33,29 @@
 ## Milestone v0.42 Requirements
 
 ### Context Packing
-- [ ] **PACK-01**: User can deliver file contents to LLMs in XML-style tagged format (`<file path="...">...</file>`) that preserves structure while reducing token overhead vs raw source inclusion
-- [ ] **PACK-02**: User can escape XML-special characters in packed content via an `escapeXml()` helper that handles `<`, `>`, `&`, `"`, `'` — preventing malformed XML output
-- [ ] **PACK-03**: User can invoke `context-packer.cjs` as a single entry point that orchestrates all Repowise intelligence modules (skeleton, hotspot, co-change) and produces a unified packed context output
-- [ ] **PACK-04**: User can compress skeleton detail level based on a token budget, so that the system adapts output to fit within context window constraints rather than producing uniformly detailed output
+- [x] **PACK-01**: User can deliver file contents to LLMs in XML-style tagged format (`<file path="...">...</file>`) that preserves structure while reducing token overhead vs raw source inclusion
+- [x] **PACK-02**: User can escape XML-special characters in packed content via an `escapeXml()` helper that handles `<`, `>`, `&`, `"`, `'` — preventing malformed XML output
+- [x] **PACK-03**: User can invoke `context-packer.cjs` as a single entry point that orchestrates all Repowise intelligence modules (skeleton, hotspot, co-change) and produces a unified packed context output
+- [x] **PACK-04**: User can compress skeleton detail level based on a token budget, so that the system adapts output to fit within context window constraints rather than producing uniformly detailed output
 
 ### Skeleton Views
-- [ ] **SKEL-01**: User can parse source files into ASTs via `web-tree-sitter` WASM with lazy initialization (Parser.init() on first use, not at CLI startup)
-- [ ] **SKEL-02**: User can extract a structural skeleton from parsed AST showing function/class/method names with line ranges (start-end), producing ~5-10% of original token count
-- [ ] **SKEL-03**: User can parse JavaScript, TypeScript, and Python files out of the box via bundled grammar packages; additional languages available via optional grammar installation
-- [ ] **SKEL-04**: User can see hotspot risk scores and coupling degree embedded in skeleton output, so skeleton entries for high-risk or highly-coupled code are annotated with behavioral intelligence
+- [x] **SKEL-01**: User can parse source files into ASTs via `web-tree-sitter` WASM with lazy initialization (Parser.init() on first use, not at CLI startup)
+- [x] **SKEL-02**: User can extract a structural skeleton from parsed AST showing function/class/method names with line ranges (start-end), producing ~5-10% of original token count
+- [x] **SKEL-03**: User can parse JavaScript, TypeScript, and Python files out of the box via bundled grammar packages; additional languages available via optional grammar installation
+- [x] **SKEL-04**: User can see hotspot risk scores and coupling degree embedded in skeleton output, so skeleton entries for high-risk or highly-coupled code are annotated with behavioral intelligence
 
 ### Hotspot Detection
-- [ ] **HOT-01**: User can compute per-file churn scores from git log with streaming parsing that handles repos with 10K+ commits without exceeding maxBuffer
-- [ ] **HOT-02**: User can compute per-file cyclomatic complexity by counting decision points in the tree-sitter AST, producing a language-agnostic complexity score
-- [ ] **HOT-03**: User can compute a hotspot risk score as the normalized intersection of churn and complexity, identifying files that are both frequently changed and structurally complex
-- [ ] **HOT-04**: User can exclude high-noise paths (generated files, vendored dirs, mass-refactor commits) and normalize by file size to reduce false positive hotspot signals
-- [ ] **HOT-05**: User can have high-risk hotspot files automatically escalate quorum fan-out in `nf-prompt.js`, so agents receive more review capacity on risky code changes
+- [x] **HOT-01**: User can compute per-file churn scores from git log with streaming parsing that handles repos with 10K+ commits without exceeding maxBuffer
+- [x] **HOT-02**: User can compute per-file cyclomatic complexity by counting decision points in the tree-sitter AST, producing a language-agnostic complexity score
+- [x] **HOT-03**: User can compute a hotspot risk score as the normalized intersection of churn and complexity, identifying files that are both frequently changed and structurally complex
+- [x] **HOT-04**: User can exclude high-noise paths (generated files, vendored dirs, mass-refactor commits) and normalize by file size to reduce false positive hotspot signals
+- [x] **HOT-05**: User can have high-risk hotspot files automatically escalate quorum fan-out in `nf-prompt.js`, so agents receive more review capacity on risky code changes
 
 ### Co-Change Prediction
-- [ ] **COCH-01**: User can mine file co-occurrence from git history, counting how often file pairs appear in the same commit
-- [ ] **COCH-02**: User can compute temporal coupling scores with configurable thresholds (min_shared_commits, min_coupling_degree) to identify implicitly related files
-- [ ] **COCH-03**: User can filter out mass-refactoring commits by inverse file-count weighting, so commits touching 50+ files contribute less coupling signal than focused changes
-- [ ] **COCH-04**: User can have co-change pairs injected into the debug context bundle, so `/nf:debug` surfaces implicit coupling when investigating bugs in related files
+- [x] **COCH-01**: User can mine file co-occurrence from git history, counting how often file pairs appear in the same commit
+- [x] **COCH-02**: User can compute temporal coupling scores with configurable thresholds (min_shared_commits, min_coupling_degree) to identify implicitly related files
+- [x] **COCH-03**: User can filter out mass-refactoring commits by inverse file-count weighting, so commits touching 50+ files contribute less coupling signal than focused changes
+- [x] **COCH-04**: User can have co-change pairs injected into the debug context bundle, so `/nf:debug` surfaces implicit coupling when investigating bugs in related files
 
 ## Future Requirements
 
@@ -98,23 +98,23 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PACK-01 | Phase 54 | Pending |
-| PACK-02 | Phase 54 | Pending |
-| PACK-03 | Phase 54 | Pending |
-| PACK-04 | Phase 58 | Pending |
-| SKEL-01 | Phase 57 | Pending |
-| SKEL-02 | Phase 57 | Pending |
-| SKEL-03 | Phase 57 | Pending |
-| SKEL-04 | Phase 57 | Pending |
-| HOT-01 | Phase 55 | Pending |
-| HOT-02 | Phase 57 | Pending |
-| HOT-03 | Phase 55 | Pending |
-| HOT-04 | Phase 55 | Pending |
-| HOT-05 | Phase 55 | Pending |
-| COCH-01 | Phase 56 | Pending |
-| COCH-02 | Phase 56 | Pending |
-| COCH-03 | Phase 56 | Pending |
-| COCH-04 | Phase 56 | Pending |
+| PACK-01 | Phase 54 | MET |
+| PACK-02 | Phase 54 | MET |
+| PACK-03 | Phase 54 | MET |
+| PACK-04 | Phase 58 | MET |
+| SKEL-01 | Phase 57 | MET |
+| SKEL-02 | Phase 57 | MET |
+| SKEL-03 | Phase 57 | MET |
+| SKEL-04 | Phase 57 | MET |
+| HOT-01 | Phase 55 | MET |
+| HOT-02 | Phase 57 | MET |
+| HOT-03 | Phase 55 | MET |
+| HOT-04 | Phase 55 | MET |
+| HOT-05 | Phase 55 | MET |
+| COCH-01 | Phase 56 | MET |
+| COCH-02 | Phase 56 | MET |
+| COCH-03 | Phase 56 | MET |
+| COCH-04 | Phase 56 | MET |
 
 **Coverage:**
 - v0.42 requirements: 16 total
