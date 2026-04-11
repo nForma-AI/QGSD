@@ -47,7 +47,7 @@ one sig NfBinHelper, InlineRequire, HardcodedPath extends PathResolutionStrategy
 
 sig ModuleImport {
   strategy: one PathResolutionStrategy,
-  module: one ScriptFile
+  importedFrom: one ScriptFile
 }
 
 -- @requirement DEBT-10
