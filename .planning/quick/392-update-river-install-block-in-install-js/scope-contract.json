@@ -1,0 +1,26 @@
+{
+  "feature/issue-58-integrate-coderlm-adapter": {
+    "task_id": 392,
+    "task_description": "Update River install block in install.js to use uv instead of pip3, and update River statusline check to use path existence check instead of spawning python3",
+    "approach": "The implementation should follow a two-file modification pattern: (1) In bin/install.js, replace the River installation block by changing the idempotency check from spawning python3 to checking filesystem existence of the target venv path, and updating the install command to use uv pip with explicit Python 3.13 targeting and a fixed venv directory at ~/.claude/nf-bin/river-venv. (2) In hooks/nf-statusline.js, replace the River import check in buildToolsLine by removing the spawnSync call and its surrounding inner try-catch, substituting a simple fs.existsSync check for the same venv path. Both changes maintain fail-open error handling and use consistent path construction via path.join(os.homedir(), '.claude', 'nf-bin', 'river-venv', 'river'). After editing hooks/nf-statusline.js, copy to hooks/dist/nf-statusline.js and run node bin/install.js --claude --global.",
+    "out_of_scope": [
+      "Modifying River Q-table logic or exploration thresholds in nf-statusline.js",
+      "Changing color schemes or indicator text styling",
+      "Adding installation steps for other dependencies",
+      "Updating package.json or package-lock.json",
+      "Modifying other hooks beyond nf-statusline.js",
+      "Adding uv version checks or pre-flight validation"
+    ],
+    "classification": {
+      "type": "refactor",
+      "confidence": 0.95,
+      "routed_through_debug": false
+    },
+    "risk_level": "high",
+    "risk_reason": "Modifies core installer (bin/install.js) and hook files (hooks/ and hooks/dist/) with behavioral change from subprocess-based checks to path existence checks. High-frequency statusline hook execution amplifies impact of any issues.",
+    "branches_affected": ["feature/issue-58-integrate-coderlm-adapter"],
+    "created_at": "2026-04-09T11:34:27.654Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

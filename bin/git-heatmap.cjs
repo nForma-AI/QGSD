@@ -417,8 +417,8 @@ function extractChurnRanking(root, since, maxCommits) {
 
 // ── Priority scoring ───────────────────────────────────────────────────────
 
-function computePriority(churn, fixes, adjustments) {
-  return Math.max(churn, 1) * (1 + fixes) * (1 + adjustments);
+function computePriority(churn, fixes, adjustments, calleeCount = 0) {
+  return Math.max(churn, 1) * (1 + fixes) * (1 + adjustments) * (1 + Math.log1p(calleeCount));
 }
 
 // ── Cross-reference: uncovered hot zones ───────────────────────────────────
@@ -458,10 +458,11 @@ function buildUncoveredHotZones(numericalAdj, bugfixHotspots, churnRanking, cove
 
     uncovered.push({
       file,
-      priority: computePriority(churn, fixes, adjustments),
+      priority: computePriority(churn, fixes, adjustments, 0),
       churn,
       fixes,
       adjustments,
+      callee_count: 0,
       signals,
     });
   }

@@ -4,16 +4,18 @@ description: Set the default model for a quorum agent — validates against the 
 argument-hint: "<agent> <model>"
 allowed-tools:
   - Bash
-  - mcp__codex-cli-1__identity
-  - mcp__gemini-cli-1__identity
+  - mcp__codex-1__identity
+  - mcp__gemini-1__identity
   - mcp__opencode-1__identity
+  - mcp__opencode-2__identity
   - mcp__copilot-1__identity
   - mcp__claude-1__identity
-  - mcp__claude-2__identity
-  - mcp__claude-3__identity
-  - mcp__claude-4__identity
-  - mcp__claude-5__identity
-  - mcp__claude-6__identity
+  - mcp__ccr-1__identity
+  - mcp__ccr-2__identity
+  - mcp__ccr-3__identity
+  - mcp__ccr-4__identity
+  - mcp__ccr-5__identity
+  - mcp__ccr-6__identity
 ---
 
 <objective>
@@ -30,27 +32,34 @@ If either token is missing, print usage and stop:
 ```
 Usage: /nf:mcp-set-model <agent> <model>
 
-Valid agents:
-  codex-cli-1, gemini-cli-1, opencode-1, copilot-1,
-  claude-1, claude-2, claude-3, claude-4, claude-5, claude-6
+Valid agents: read dynamically from ~/.claude.json (run without arguments to list)
 ```
 
 ## Step 2 — Validate agent name
 
-Check `$AGENT` against the known agent list:
-```
-codex-cli-1, gemini-cli-1, opencode-1, copilot-1,
-claude-1, claude-2, claude-3, claude-4, claude-5, claude-6
+Run this Bash command to get valid slots from `~/.claude.json`:
+
+```bash
+node << 'NF_EVAL'
+const fs=require('fs'),os=require('os'),path=require('path');
+const SKIP=['canopy','sentry'];
+try {
+  const cfg=JSON.parse(fs.readFileSync(path.join(os.homedir(),'.claude.json'),'utf8'));
+  const slots=Object.keys(cfg.mcpServers||{}).filter(s=>!SKIP.includes(s));
+  console.log(JSON.stringify(slots));
+} catch(e) {
+  console.log('[]');
+}
+NF_EVAL
 ```
 
-If not in the list, print an error and stop:
+Parse the output as `$VALID_SLOTS` (JSON array of strings).
+
+If `$AGENT` is not in `$VALID_SLOTS`, print an error and stop:
 ```
 Error: Unknown agent "$AGENT"
 
-Valid agents:
-  codex-cli-1   gemini-cli-1   opencode-1   copilot-1
-  claude-1      claude-2       claude-3     claude-4
-  claude-5      claude-6
+Valid agents: <$VALID_SLOTS joined with spaces>
 ```
 
 ## Step 3 — Fetch available_models from identity tool

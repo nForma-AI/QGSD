@@ -18,7 +18,8 @@ const {
   scanUnregisteredSpecs,
   mergeProjectSpecsIntoRegistry,
   runBugModeMatching,
-  loadModelRegistry
+  loadModelRegistry,
+  discoverViaCallGraph
 } = require('./formal-scope-scan.cjs');
 
 const SCOPE_SCAN = path.join(__dirname, 'formal-scope-scan.cjs');
@@ -349,5 +350,127 @@ test('E2E CLI: --bug-mode returns project spec matches', () => {
     }
   } finally {
     fs.writeFileSync(manifestPath, original);
+  }
+});
+
+// ── Layer 2.5: discoverViaCallGraph tests ────────────────────────────────────
+
+test('discoverViaCallGraph returns empty array when adapter is null', () => {
+  const result = discoverViaCallGraph(['bin/utils.cjs'], new Set(), null);
+  assert.deepStrictEqual(result, []);
+});
+
+test('discoverViaCallGraph returns empty array when files array is empty', () => {
+  const enabledAdapter = {
+    healthSync: () => ({ healthy: true }),
+    getCallersSync: () => ({ callers: [] })
+  };
+  const result = discoverViaCallGraph([], new Set(), enabledAdapter);
+  assert.deepStrictEqual(result, []);
+});
+
+test('discoverViaCallGraph returns empty array when files is null', () => {
+  const enabledAdapter = {
+    healthSync: () => ({ healthy: true }),
+    getCallersSync: () => ({ callers: [] })
+  };
+  const result = discoverViaCallGraph(null, new Set(), enabledAdapter);
+  assert.deepStrictEqual(result, []);
+});
+
+test('discoverViaCallGraph returns empty array when adapter is unhealthy', () => {
+  const disabledAdapter = {
+    healthSync: () => ({ healthy: false }),
+    getCallersSync: () => ({ error: 'disabled' })
+  };
+  const result = discoverViaCallGraph(['bin/utils.cjs'], new Set(), disabledAdapter);
+  assert.deepStrictEqual(result, []);
+});
+
+test('discoverViaCallGraph returns empty array when getCallersSync returns error', () => {
+  const errorAdapter = {
+    healthSync: () => ({ healthy: true }),
+    getCallersSync: () => ({ error: 'timeout' })
+  };
+  const result = discoverViaCallGraph(['bin/utils.cjs'], new Set(), errorAdapter);
+  assert.deepStrictEqual(result, []);
+});
+
+test('discoverViaCallGraph returns empty array when getCallersSync throws (fail-open)', () => {
+  const throwingAdapter = {
+    healthSync: () => ({ healthy: true }),
+    getCallersSync: () => { throw new Error('unexpected'); }
+  };
+  const result = discoverViaCallGraph(['bin/utils.cjs'], new Set(), throwingAdapter);
+  assert.deepStrictEqual(result, []);
+});
+
+test('discoverViaCallGraph skips already-matched modules (deduplication)', () => {
+  // Write a temp SPEC_DIR structure with a scope.json that would match
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'fss-test-'));
+  const modDir = path.join(tmpDir, 'solve-convergence');
+  fs.mkdirSync(modDir, { recursive: true });
+  fs.writeFileSync(path.join(modDir, 'scope.json'), JSON.stringify({
+    source_files: ['bin/nf-solve.cjs'],
+    concepts: []
+  }));
+
+  // Patch SPEC_DIR temporarily by writing a scope.json in the real SPEC_DIR instead
+  // Use a module that already exists: solve-convergence
+  const realSpecDir = path.join(process.cwd(), '.planning', 'formal', 'spec');
+  const realModDir = path.join(realSpecDir, 'solve-convergence');
+  const existingScopeJson = fs.existsSync(path.join(realModDir, 'scope.json'))
+    ? fs.readFileSync(path.join(realModDir, 'scope.json'), 'utf8')
+    : null;
+
+  // The matchedModules Set already contains 'solve-convergence' — it should be skipped
+  const matchedModules = new Set(['solve-convergence']);
+  const adapter = {
+    healthSync: () => ({ healthy: true }),
+    getCallersSync: () => ({ callers: ['bin/nf-solve.cjs'] })
+  };
+
+  const result = discoverViaCallGraph(['bin/utils.cjs'], matchedModules, adapter);
+  // solve-convergence was already in matchedModules — should not appear in result
+  const found = result.find(r => r.module === 'solve-convergence');
+  assert.ok(!found, 'already-matched module should not appear in result');
+
+  // cleanup
+  fs.rmSync(tmpDir, { recursive: true });
+});
+
+test('discoverViaCallGraph discovers module via caller file matching source_files glob', () => {
+  // Create a temp spec module with scope.json that matches a specific file
+  const realSpecDir = path.join(process.cwd(), '.planning', 'formal', 'spec');
+  if (!fs.existsSync(realSpecDir)) return; // skip if spec dir absent
+
+  const testModName = 'test-callgraph-' + Date.now();
+  const testModDir = path.join(realSpecDir, testModName);
+  fs.mkdirSync(testModDir, { recursive: true });
+
+  const scopeJson = {
+    source_files: ['bin/target-caller.cjs'],
+    concepts: ['test-only']
+  };
+  fs.writeFileSync(path.join(testModDir, 'scope.json'), JSON.stringify(scopeJson));
+  fs.writeFileSync(path.join(testModDir, 'invariants.md'), '# test\n');
+
+  try {
+    const matchedModules = new Set(); // empty — nothing matched yet
+    const adapter = {
+      healthSync: () => ({ healthy: true }),
+      // getCallersSync returns a caller that matches the scope.json source_files
+      getCallersSync: (symbol, file) => ({ callers: ['bin/target-caller.cjs'] })
+    };
+
+    const result = discoverViaCallGraph(['bin/changed-utility.cjs'], matchedModules, adapter);
+    const found = result.find(r => r.module === testModName);
+    assert.ok(found, 'should discover module via caller matching source_files glob');
+    assert.strictEqual(found.matched_by, 'call_graph');
+    assert.ok(found.discovered_via.includes('bin/changed-utility.cjs'), 'discovered_via should contain changed file');
+    assert.ok(found.discovered_via.includes('bin/target-caller.cjs'), 'discovered_via should contain caller file');
+    assert.ok(matchedModules.has(testModName), 'matchedModules set should be updated');
+  } finally {
+    fs.rmSync(testModDir, { recursive: true });
   }
 });

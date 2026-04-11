@@ -148,6 +148,204 @@ function computeWaves(residualVector, priorityWeights = {}) {
   return result;
 }
 
+/**
+ * Compute wave groupings from an arbitrary dependency graph.
+ *
+ * Algorithm:
+ * 1. Build adjacency list from edges (forward deps: node -> [nodes it depends on])
+ * 2. SCC detection via Tarjan's algorithm — collapse strongly connected components into single composite nodes
+ * 3. Build condensation DAG — edges between SCCs (no self-loops)
+ * 4. Topological sort of condensation DAG using longest-path wave assignment
+ * 5. Group by wave number, sort within wave by priority weight descending then alphabetical
+ * 6. Split by MAX_PER_WAVE
+ * 7. Sequential chain compaction (merge consecutive single-node waves)
+ * 8. Return Array<{wave: number, layers: string[], sequential?: boolean}>
+ *
+ * @param {Object} graph — { nodes: string[], edges: Array<{from: string, to: string}> }
+ * @param {Object} [priorityWeights={}] — { [node]: number } for intra-wave ordering
+ * @returns {Array<{wave: number, layers: string[], sequential?: boolean}>}
+ */
+function computeWavesFromGraph(graph, priorityWeights = {}) {
+  if (!graph || !graph.nodes || graph.nodes.length === 0) {
+    return [];
+  }
+
+  const nodes = new Set(graph.nodes);
+  const edges = graph.edges || [];
+
+  // Build adjacency list: node -> [nodes it depends on]
+  const adjList = new Map();
+  for (const node of nodes) {
+    adjList.set(node, []);
+  }
+  for (const edge of edges) {
+    if (nodes.has(edge.from) && nodes.has(edge.to)) {
+      if (!adjList.has(edge.from)) adjList.set(edge.from, []);
+      adjList.get(edge.from).push(edge.to);
+    }
+  }
+
+  // Tarjan's SCC algorithm
+  const sccs = tarjanSCC(adjList, nodes);
+
+  // Map nodes to their SCC ID
+  const nodeToScc = new Map();
+  for (let i = 0; i < sccs.length; i++) {
+    for (const node of sccs[i]) {
+      nodeToScc.set(node, i);
+    }
+  }
+
+  // Build condensation DAG
+  const sccAdj = new Map();
+  for (let i = 0; i < sccs.length; i++) {
+    sccAdj.set(i, new Set());
+  }
+  for (const edge of edges) {
+    if (nodes.has(edge.from) && nodes.has(edge.to)) {
+      const fromScc = nodeToScc.get(edge.from);
+      const toScc = nodeToScc.get(edge.to);
+      if (fromScc !== toScc) {
+        sccAdj.get(fromScc).add(toScc);
+      }
+    }
+  }
+
+  // Topological sort using longest-path wave assignment
+  const waveAssignment = new Map();
+
+  function getWave(sccId) {
+    if (waveAssignment.has(sccId)) return waveAssignment.get(sccId);
+    const deps = Array.from(sccAdj.get(sccId) || []);
+    if (deps.length === 0) {
+      waveAssignment.set(sccId, 0);
+      return 0;
+    }
+    const maxDepWave = Math.max(...deps.map(d => getWave(d)));
+    const w = maxDepWave + 1;
+    waveAssignment.set(sccId, w);
+    return w;
+  }
+
+  for (let i = 0; i < sccs.length; i++) {
+    getWave(i);
+  }
+
+  // Group SCCs by wave
+  const waveGroups = new Map();
+  for (let i = 0; i < sccs.length; i++) {
+    const w = waveAssignment.get(i);
+    if (!waveGroups.has(w)) waveGroups.set(w, []);
+    waveGroups.get(w).push(i);
+  }
+
+  // Build raw waves with SCC composite names
+  const sortedWaveNums = [...waveGroups.keys()].sort((a, b) => a - b);
+  const rawWaves = [];
+
+  for (const waveNum of sortedWaveNums) {
+    const sccIds = waveGroups.get(waveNum);
+    const sccLayers = sccIds.map(id => {
+      const members = sccs[id].sort();
+      return members.join('+');
+    });
+
+    // Sort within wave by priority (use max priority of members in composite)
+    const sccLayersWithPriority = sccLayers.map(layer => {
+      const members = layer.split('+');
+      const maxPriority = Math.max(...members.map(m => priorityWeights[m] || 0), 0);
+      return { layer, priority: maxPriority };
+    });
+
+    sccLayersWithPriority.sort((a, b) => {
+      return b.priority - a.priority || a.layer.localeCompare(b.layer);
+    });
+
+    const sorted = sccLayersWithPriority.map(x => x.layer);
+
+    for (let i = 0; i < sorted.length; i += MAX_PER_WAVE) {
+      const chunk = sorted.slice(i, i + MAX_PER_WAVE);
+      rawWaves.push({ layers: chunk });
+    }
+  }
+
+  // Compact sequential waves
+  const result = [];
+  let i = 0;
+  while (i < rawWaves.length) {
+    if (rawWaves[i].layers.length === 1) {
+      let runEnd = i;
+      while (runEnd + 1 < rawWaves.length && rawWaves[runEnd + 1].layers.length === 1) {
+        runEnd++;
+      }
+      if (runEnd > i) {
+        const merged = [];
+        for (let j = i; j <= runEnd; j++) {
+          merged.push(...rawWaves[j].layers);
+        }
+        result.push({ wave: result.length + 1, layers: merged, sequential: true });
+        i = runEnd + 1;
+        continue;
+      }
+    }
+    result.push({ wave: result.length + 1, layers: rawWaves[i].layers });
+    i++;
+  }
+
+  return result;
+}
+
+/**
+ * Tarjan's strongly connected components algorithm.
+ * @param {Map} adjList — adjacency list (node -> [dependent nodes])
+ * @param {Set} nodes — all nodes in graph
+ * @returns {Array<Array<string>>} — array of SCCs, each SCC is an array of node names
+ */
+function tarjanSCC(adjList, nodes) {
+  const index = new Map();
+  const lowlink = new Map();
+  const onStack = new Set();
+  const stack = [];
+  let nextIndex = 0;
+  const sccs = [];
+
+  function strongconnect(v) {
+    index.set(v, nextIndex);
+    lowlink.set(v, nextIndex);
+    nextIndex += 1;
+    stack.push(v);
+    onStack.add(v);
+
+    for (const w of (adjList.get(v) || [])) {
+      if (!index.has(w)) {
+        strongconnect(w);
+        lowlink.set(v, Math.min(lowlink.get(v), lowlink.get(w)));
+      } else if (onStack.has(w)) {
+        lowlink.set(v, Math.min(lowlink.get(v), index.get(w)));
+      }
+    }
+
+    if (lowlink.get(v) === index.get(v)) {
+      const scc = [];
+      while (true) {
+        const w = stack.pop();
+        onStack.delete(w);
+        scc.push(w);
+        if (w === v) break;
+      }
+      sccs.push(scc);
+    }
+  }
+
+  for (const v of nodes) {
+    if (!index.has(v)) {
+      strongconnect(v);
+    }
+  }
+
+  return sccs;
+}
+
 // CLI mode
 if (require.main === module) {
   console.log('=== Layer Dependency DAG ===\n');
@@ -170,4 +368,4 @@ if (require.main === module) {
   console.log(`\n  Total: ${waves.length} waves`);
 }
 
-module.exports = { computeWaves, getLayerDeps, LAYER_DEPS, MAX_PER_WAVE };
+module.exports = { computeWaves, computeWavesFromGraph, getLayerDeps, LAYER_DEPS, MAX_PER_WAVE };

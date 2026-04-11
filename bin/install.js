@@ -28,6 +28,17 @@ const CLI_INSTALL_HINTS = {
   ccr:      'npm install -g @musistudio/claude-code-router',
 };
 
+// Lazy require: coderlm-lifecycle.cjs is an optional sibling module. Deferring
+// the require() prevents install.js from failing at startup if the module is
+// absent (e.g., partial install or future removal of the feature).
+let _coderlmLifecycle = null;
+function getCoderlmLifecycle() {
+  if (!_coderlmLifecycle) {
+    try { _coderlmLifecycle = require('./coderlm-lifecycle.cjs'); } catch (e) { /* not available */ }
+  }
+  return _coderlmLifecycle;
+}
+
 // Get version from package.json
 const pkg = require('../package.json');
 
@@ -81,6 +92,7 @@ const hasEnableBreaker = args.includes('--enable-breaker');
 const hasMigrateSlots = args.includes('--migrate-slots');
 const hasFormal = args.includes('--formal');
 const hasUninstallFormal = args.includes('--uninstall-formal');
+const hasRescan = args.includes('--rescan');
 const hasAllProviders = args.includes('--all-providers');
 const hasVerbose = args.includes('--verbose') || args.includes('-v');
 
@@ -2561,6 +2573,89 @@ function install(isGlobal, runtime = 'claude') {
     }
   }
 
+  // Download coderlm binary to nf-bin/ if not already present (fail-open)
+  // Skipped when NF_INSTALL_SKIP_OPTIONAL=1 (set by install tests) — git clone can take 60s+
+  if (!process.env.NF_INSTALL_SKIP_OPTIONAL) {
+    const lifecycle = getCoderlmLifecycle();
+    if (lifecycle) {
+      // Idempotency check: if coderlm already installed, skip silently
+      try {
+        fs.accessSync(path.join(os.homedir(), '.claude', 'nf-bin', 'coderlm'), fs.constants.X_OK);
+        // Already installed — no-op
+      } catch (e) {
+        // NOTE: this outer try/catch is ONLY for fs.accessSync (detect missing binary).
+        // Only act on ENOENT (file truly absent) — other errors (EACCES, EISDIR, etc.)
+        // mean the binary path exists but is inaccessible; skip silently to preserve
+        // idempotency and avoid spurious installs.
+        // Do NOT wrap ensureBinary() in this catch — it handles its own errors internally.
+        if (e.code === 'ENOENT') {
+          console.log(`  ${cyan}↓${reset} Installing coderlm...`);
+          const result = lifecycle.ensureBinary();
+          if (result.ok && result.source !== 'cached') {
+            console.log(`  ${green}✓${reset} coderlm installed`);
+          } else if (!result.ok) {
+            const detail = typeof result.detail === 'string' ? result.detail : '';
+            console.log(`  ${yellow}⚠${reset} coderlm download skipped: ${result.error}${detail ? ' (' + detail.slice(0, 80) + ')' : ''}`);
+          }
+        }
+        // Other errors (EACCES, EISDIR, etc.) — assume binary exists, skip silently
+      }
+    }
+  }
+
+  // Optional heavy installs: River ML and @huggingface/transformers.
+  // Skipped when NF_INSTALL_SKIP_OPTIONAL=1 (set by install tests to avoid network timeouts).
+  if (!process.env.NF_INSTALL_SKIP_OPTIONAL) {
+    // Install River ML library into dedicated uv-managed venv (fail-open)
+    // Venv lives at ~/.claude/nf-python-env — avoids PEP 668 Homebrew conflicts
+    {
+      const { spawnSync: _spawnRiver } = require('child_process');
+      const nfPythonEnv = path.join(os.homedir(), '.claude', 'nf-python-env');
+      const nfPython = path.join(nfPythonEnv, 'bin', 'python');
+      try {
+        const riverCheck = _spawnRiver(nfPython, ['-c', 'import river'], { timeout: 3000 });
+        if (riverCheck.status !== 0) {
+          console.log(`  ${cyan}↓${reset} Installing River ML (uv)...`);
+          // Create venv if it doesn't exist yet
+          if (!fs.existsSync(nfPythonEnv)) {
+            _spawnRiver('uv', ['venv', nfPythonEnv], { timeout: 30000 });
+          }
+          const riverInstall = _spawnRiver('uv', ['pip', 'install', '--python', nfPythonEnv, 'river'], { timeout: 60000 });
+          if (riverInstall.status === 0) {
+            console.log(`  ${green}✓${reset} River ML installed`);
+          } else {
+            const errOut = riverInstall.stderr ? riverInstall.stderr.toString().slice(0, 120) : '';
+            console.log(`  ${yellow}⚠${reset} River ML install skipped: uv returned non-zero${errOut ? ' (' + errOut + ')' : ''}`);
+          }
+        }
+        // status === 0: River already importable — skip silently
+      } catch (e) {
+        // uv or nfPython not found or timed out — skip silently (fail-open)
+      }
+    }
+
+    // Install @huggingface/transformers to nf-bin if not already present (fail-open)
+    {
+      const { spawnSync: _spawnEmbed } = require('child_process');
+      try {
+        const transformersGlobalPath = path.join(os.homedir(), '.claude', 'nf-bin', 'node_modules', '@huggingface', 'transformers');
+        if (!fs.existsSync(transformersGlobalPath)) {
+          console.log(`  ${cyan}↓${reset} Installing @huggingface/transformers...`);
+          const embedInstall = _spawnEmbed('npm', ['install', '--prefix', path.join(os.homedir(), '.claude', 'nf-bin'), '@huggingface/transformers'], { timeout: 120000 });
+          if (embedInstall.status === 0) {
+            console.log(`  ${green}✓${reset} @huggingface/transformers installed`);
+          } else {
+            const errOut = embedInstall.stderr ? embedInstall.stderr.toString().slice(0, 120) : '';
+            console.log(`  ${yellow}⚠${reset} @huggingface/transformers install skipped: npm returned non-zero${errOut ? ' (' + errOut + ')' : ''}`);
+          }
+        }
+        // Already present — skip silently
+      } catch (e) {
+        // Unexpected error — skip silently (fail-open)
+      }
+    }
+  } // end NF_INSTALL_SKIP_OPTIONAL guard
+
   // Validate hook path references point to real targets
   const hooksDestValidation = path.join(targetDir, 'hooks');
   if (fs.existsSync(hooksDestValidation)) {
@@ -3335,15 +3430,26 @@ function promptRuntime(callback) {
 function promptProviders(callback) {
   const provs = require('./providers.json').providers;
   const classified = classifyProviders(provs);
-  const detected = detectExternalClis(classified.externalPrimary);
 
-  // CCR slots not included by default — users enable via /nf:mcp-setup
+  // Detect CCR binary separately — ccr-* slots live in externalPrimary (type: 'subprocess')
+  const ccrStatus = detectCcrCli();
+  const ccrSlots = classified.externalPrimary.filter(p => p.display_type === 'claude-code-router');
+  const ccrSlotNames = ccrSlots.map(p => p.name);
+
+  // Detect non-CCR external CLIs
+  const nonCcrExternal = classified.externalPrimary.filter(p => p.display_type !== 'claude-code-router');
+  const detected = detectExternalClis(nonCcrExternal);
+
+  // CCR slots: auto-include all when binary found
   const selected = [];
+  if (ccrStatus.found && ccrSlotNames.length > 0) {
+    for (const name of ccrSlotNames) selected.push(name);
+  }
 
   console.log(`\n  ${yellow}Quorum agent setup:${reset}`);
   console.log(`  Run /nf:mcp-setup after install to configure quorum slots (api-*, claude-*, ccr-*).\n`);
 
-  // Print detection results
+  // Print detection results for non-CCR CLIs
   for (const d of detected) {
     if (d.found) {
       console.log(`  ${green}\u2713${reset} ${d.name} \u2014 ${d.resolvedPath}`);
@@ -3352,13 +3458,13 @@ function promptProviders(callback) {
       console.log(`  ${yellow}\u2717${reset} ${d.name} \u2014 not found${hint ? ` (${hint})` : ''}`);
     }
   }
-  if (classified.ccr.length > 0) {
-    console.log('');
-    console.log(`  ${cyan}CCR slots:${reset}`);
-    for (const ccrSlot of classified.ccr) {
-      console.log(`  ${cyan}\u00BB${reset} ${ccrSlot.name} \u2014 CCR preset (${ccrSlot.model || 'unknown model'})`);
-    }
-    console.log(`  Install/enable ccr (${CLI_INSTALL_HINTS.ccr || 'npm i -g @musistudio/claude-code-router'}) before running these slots.\n`);
+
+  // Print CCR status
+  if (ccrStatus.found && ccrSlotNames.length > 0) {
+    console.log(`  ${green}\u2713${reset} ccr binary found \u2014 auto-including ${ccrSlotNames.length} CCR slots (${ccrSlotNames[0]}..${ccrSlotNames[ccrSlotNames.length - 1]})`);
+  } else if (ccrSlotNames.length > 0) {
+    const hint = CLI_INSTALL_HINTS.ccr || 'npm i -g @musistudio/claude-code-router';
+    console.log(`  ${yellow}\u2717${reset} ccr not found \u2014 CCR slots skipped. Install: ${hint}`);
   }
   console.log('');
 
@@ -3727,6 +3833,47 @@ if (hasFormal) {
 
 if (hasUninstallFormal) {
   uninstallFormalTools();
+  process.exit(0);
+}
+
+// RESCAN-01: --rescan re-detects installed CLIs and syncs missing MCP slots to ~/.claude.json
+if (hasRescan) {
+  console.log(`\n  ${cyan}Rescanning for CLI providers...${reset}\n`);
+  const provs = require('./providers.json').providers;
+  const classified = classifyProviders(provs);
+
+  // Detect CCR separately: if ccr binary found, include all ccr-* slots
+  const ccrStatus = detectCcrCli();
+  const ccrNames = ccrStatus.found ? classified.externalPrimary
+    .filter(p => p.display_type === 'claude-code-router')
+    .map(p => p.name) : [];
+
+  // Detect non-CCR external primaries
+  const nonCcrExternal = classified.externalPrimary.filter(p => p.display_type !== 'claude-code-router');
+  const detected = detectExternalClis(nonCcrExternal);
+  const foundNames = detected.filter(d => d.found).map(d => d.name);
+
+  selectedProviderSlots = [...foundNames, ...ccrNames];
+
+  if (selectedProviderSlots.length === 0) {
+    console.log(`  ${yellow}No external CLIs detected. Install CLIs first, then run --rescan.${reset}\n`);
+    process.exit(0);
+  }
+
+  // Print detection summary
+  for (const d of detected) {
+    if (d.found) {
+      console.log(`  ${green}\u2713${reset} ${d.name} \u2014 ${d.resolvedPath}`);
+    }
+  }
+  if (ccrStatus.found && ccrNames.length > 0) {
+    console.log(`  ${green}\u2713${reset} ccr binary found (${ccrStatus.resolvedPath}) \u2014 ${ccrNames.length} CCR slots`);
+  }
+  console.log('');
+
+  // Sync missing slots to ~/.claude.json
+  ensureMcpSlotsFromProviders();
+
   process.exit(0);
 }
 

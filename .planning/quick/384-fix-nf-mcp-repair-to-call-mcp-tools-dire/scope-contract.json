@@ -1,0 +1,24 @@
+{
+  "feature/issue-58-integrate-coderlm-adapter": {
+    "task_id": 384,
+    "task_description": "Fix nf:mcp-repair to call MCP tools directly instead of via sub-agents",
+    "approach": "Refactor nf:mcp-repair to call MCP tools directly in the main conversation context instead of delegating identity/health_check/deep_health_check calls to sub-agents via the Agent tool.",
+    "out_of_scope": [
+      "Refactoring the Agent tool itself or its MCP server access model",
+      "Fixing other tasks that may have similar sub-agent MCP access issues",
+      "Creating new MCP tools or extending MCP server functionality",
+      "Changing the overall architecture of how tasks are orchestrated"
+    ],
+    "classification": {
+      "type": "bug_fix",
+      "confidence": 0.95,
+      "routed_through_debug": false
+    },
+    "risk_level": "medium",
+    "risk_reason": "Single-file refactor of a command workflow file (commands/nf/mcp-repair.md) to replace Task() sub-agent calls with direct MCP tool calls; workflow is complex and refactoring will exceed ~20 lines of changes.",
+    "branches_affected": ["feature/issue-58-integrate-coderlm-adapter"],
+    "created_at": "2026-04-08T13:07:03.448Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

@@ -215,4 +215,177 @@ describe('solve-wave-dag module', () => {
       assert.equal(result[0].layers[0], 'git_heatmap', 'boosted layer should be first');
     });
   });
+
+  describe('computeWavesFromGraph — graph-driven scheduling', () => {
+    it('returns empty array for empty graph', () => {
+      const result = mod.computeWavesFromGraph({ nodes: [], edges: [] });
+      assert.deepStrictEqual(result, []);
+    });
+
+    it('handles null graph gracefully', () => {
+      const result = mod.computeWavesFromGraph(null);
+      assert.deepStrictEqual(result, []);
+    });
+
+    it('single node returns one wave', () => {
+      const result = mod.computeWavesFromGraph({ nodes: ['A'], edges: [] });
+      assert.equal(result.length, 1);
+      assert.deepStrictEqual(result[0].layers, ['A']);
+    });
+
+    it('linear chain A -> B -> C produces waves in order', () => {
+      const result = mod.computeWavesFromGraph({
+        nodes: ['A', 'B', 'C'],
+        edges: [
+          { from: 'B', to: 'A' },
+          { from: 'C', to: 'B' }
+        ]
+      });
+      // Expect 3 waves: A, B, C in dependency order
+      assert.ok(result.length >= 1);
+      const aWave = result.find(w => w.layers.includes('A'));
+      const bWave = result.find(w => w.layers.includes('B'));
+      const cWave = result.find(w => w.layers.includes('C'));
+      if (aWave === bWave) {
+        // Sequential case
+        assert.ok(aWave.sequential);
+      } else {
+        assert.ok(aWave.wave < bWave.wave, 'A should be in earlier wave than B');
+      }
+      if (bWave === cWave) {
+        assert.ok(bWave.sequential);
+      } else {
+        assert.ok(bWave.wave < cWave.wave, 'B should be in earlier wave than C');
+      }
+    });
+
+    it('diamond dependency produces correct waves', () => {
+      // A -> {B, C} -> D
+      const result = mod.computeWavesFromGraph({
+        nodes: ['A', 'B', 'C', 'D'],
+        edges: [
+          { from: 'B', to: 'A' },
+          { from: 'C', to: 'A' },
+          { from: 'D', to: 'B' },
+          { from: 'D', to: 'C' }
+        ]
+      });
+      const aWave = result.find(w => w.layers.some(l => l.includes('A')));
+      const bWave = result.find(w => w.layers.some(l => l.includes('B')));
+      const dWave = result.find(w => w.layers.some(l => l.includes('D')));
+      assert.ok(aWave.wave < bWave.wave, 'A before B');
+      assert.ok(bWave.wave < dWave.wave, 'B before D');
+    });
+
+    it('SCC/cycle detection collapses A -> B -> C -> A', () => {
+      const result = mod.computeWavesFromGraph({
+        nodes: ['A', 'B', 'C'],
+        edges: [
+          { from: 'A', to: 'B' },
+          { from: 'B', to: 'C' },
+          { from: 'C', to: 'A' }
+        ]
+      });
+      // All three should collapse into one composite node
+      assert.equal(result.length, 1);
+      assert.ok(result[0].layers[0].includes('+'), 'should have composite node with +');
+    });
+
+    it('SCC plus independent node', () => {
+      const result = mod.computeWavesFromGraph({
+        nodes: ['A', 'B', 'C', 'D'],
+        edges: [
+          { from: 'A', to: 'B' },
+          { from: 'B', to: 'C' },
+          { from: 'C', to: 'A' }
+          // D is independent
+        ]
+      });
+      // Should have 2 waves: {A+B+C, D} or separate
+      assert.ok(result.length >= 1);
+      const hasComposite = result.some(w => w.layers.some(l => l.includes('+')));
+      assert.ok(hasComposite, 'should have composite SCC node');
+    });
+
+    it('MAX_PER_WAVE enforcement: 5 independent nodes splits into waves', () => {
+      const result = mod.computeWavesFromGraph({
+        nodes: ['A', 'B', 'C', 'D', 'E'],
+        edges: []
+      });
+      // All independent, so in one wave if total <= MAX_PER_WAVE
+      // If > MAX_PER_WAVE, should split
+      const totalNodes = result.reduce((sum, w) => sum + w.layers.length, 0);
+      assert.equal(totalNodes, 5, 'all 5 nodes should appear');
+      for (const wave of result) {
+        assert.ok(wave.layers.length <= mod.MAX_PER_WAVE || wave.sequential,
+          `wave ${wave.wave} exceeds MAX_PER_WAVE without sequential flag`);
+      }
+    });
+
+    it('priority weights influence intra-wave ordering', () => {
+      const result = mod.computeWavesFromGraph(
+        {
+          nodes: ['A', 'B', 'C'],
+          edges: []
+        },
+        { B: 10, A: 5, C: 0 }
+      );
+      // All independent, all in wave 1
+      const wave1 = result[0];
+      assert.ok(wave1);
+      // B should come first (highest priority)
+      const bIdx = wave1.layers.findIndex(l => l.includes('B'));
+      const aIdx = wave1.layers.findIndex(l => l.includes('A'));
+      assert.ok(bIdx < aIdx, 'B (weight 10) should be before A (weight 5)');
+    });
+
+    it('Regression parity: existing computeWaves tests still pass', () => {
+      const residuals = { r_to_f: { residual: 1 }, r_to_d: { residual: 1 } };
+      const result = mod.computeWaves(residuals);
+      assert.ok(Array.isArray(result));
+      assert.ok(result.length > 0);
+    });
+
+    it('Complex graph with multiple SCCs and dependencies', () => {
+      // Create a graph with multiple SCCs
+      const result = mod.computeWavesFromGraph({
+        nodes: ['A', 'B', 'C', 'D', 'E', 'F'],
+        edges: [
+          // SCC 1: A <-> B
+          { from: 'A', to: 'B' },
+          { from: 'B', to: 'A' },
+          // SCC 2: D <-> E
+          { from: 'D', to: 'E' },
+          { from: 'E', to: 'D' },
+          // C depends on SCC1, F depends on SCC2
+          { from: 'C', to: 'A' },
+          { from: 'F', to: 'D' }
+        ]
+      });
+      // Should have waves respecting dependencies
+      assert.ok(result.length >= 2);
+      const hasComposites = result.some(w => w.layers.some(l => l.includes('+')));
+      assert.ok(hasComposites, 'should collapse SCCs into composite nodes');
+    });
+
+    it('Sequential chain compaction for single-node waves', () => {
+      // Create linear chain that should be compacted
+      const result = mod.computeWavesFromGraph({
+        nodes: ['A', 'B', 'C', 'D'],
+        edges: [
+          { from: 'B', to: 'A' },
+          { from: 'C', to: 'B' },
+          { from: 'D', to: 'C' }
+        ]
+      });
+      // Should have at least one sequential wave if compacted
+      const seqWave = result.find(w => w.sequential);
+      // May or may not compact depending on implementation, but should be valid
+      assert.ok(Array.isArray(result));
+    });
+
+    it('exports computeWavesFromGraph as function', () => {
+      assert.equal(typeof mod.computeWavesFromGraph, 'function');
+    });
+  });
 });

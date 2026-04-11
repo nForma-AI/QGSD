@@ -1,4 +1,3 @@
-%
 > cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
 
 
@@ -64,8 +63,8 @@
 
 
 
+
 ────────────────────────────────────────────────────────────────────────────────
-%
 > cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
 
 
@@ -131,8 +130,8 @@
 
 
 
+
 ────────────────────────────────────────────────────────────────────────────────
-%
 > cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
 
 
@@ -198,8 +197,8 @@
 
 
 
+
 ────────────────────────────────────────────────────────────────────────────────
-%
 > cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
 
 
@@ -265,8 +264,8 @@
 
 
 
+
 ────────────────────────────────────────────────────────────────────────────────
-%
 > cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
 
 
@@ -332,8 +331,8 @@
 
 
 
+
 ────────────────────────────────────────────────────────────────────────────────
-%
 > cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
 
 
@@ -399,8 +398,8 @@
 
 
 
+
 ────────────────────────────────────────────────────────────────────────────────
-%
 > cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
 
 
@@ -466,8 +465,8 @@
 
 
 
+
 ────────────────────────────────────────────────────────────────────────────────
-%
 > cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
 
 
@@ -533,8 +532,8 @@
 
 
 
+
 ────────────────────────────────────────────────────────────────────────────────
-%
 > cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
 
 
@@ -600,8 +599,8 @@
 
 
 
+
 ────────────────────────────────────────────────────────────────────────────────
-%
 > cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
 
 
@@ -667,8 +666,8 @@
 
 
 
+
 ────────────────────────────────────────────────────────────────────────────────
-%
 > cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
 
 
@@ -734,8 +733,8 @@
 
 
 
+
 ────────────────────────────────────────────────────────────────────────────────
-%
 > cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
 
 
@@ -801,8 +800,8 @@
 
 
 
+
 ────────────────────────────────────────────────────────────────────────────────
-%
 > cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
 
 
@@ -868,741 +867,1345 @@
 
 
 
+
 ────────────────────────────────────────────────────────────────────────────────
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ nForma AI v0.41.18                                                                                                                                                                       [Tab] cycle  [q] quit │
-│                                                                                           cwd: ~/code/QGSD [ctrl-t]                                                                                            │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-┌───────┐┌─ Reqs ─────────────────┐┌─ Reqs — Browse Reqs (31) ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│       ││  Browse Reqs           ││Requirements (31) (Quorum Governance)                                                                                                                                        │
-│ ▄█▄   ││  Coverage              ││──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── │
-│ █ █   ││  Traceability          ││─                                                                                                                                                                            │
-│ █▀█   ││  Aggregate             ││  ID            St   Category          Text                                                                                                                                  │
-│  F1   ││  Coverage Gaps         ││  ARCH-01       ✓    Quorum & Dispatc  All formal models declared in `.formal/model-registry.json` as single source of truth with provenance tracking                        │
-│ ───── ││  Gate Scoring          ││  ARCH-02       ✓    Quorum & Dispatc  `promote-model.cjs` provides atomic promotion from per-phase specs to canonical specs with duplicate detection                        │
-│       ││                        ││  ARCH-03       ✓    Quorum & Dispatc  `accept-debug-invariant.cjs` writes debug-discovered invariants directly to canonical specs with session provenance                   │
-│ █▀█   ││                        ││  ARCH-10       ✓    Quorum & Dispatc  QGSD, as a Claude Code plugin, MUST NOT bundle LLM SDKs; Haiku/Sonnet/Opus calls MUST use the Agent tool's model parameter            │
-│ ██▀   ││                        ││  CALIB-01      ✓    Quorum & Dispatc  `.formal/policy.yaml` is the single authoritative source for PRISM calibration parameters                                             │
-│ █ █   ││                        ││  CALIB-02      ✓    Quorum & Dispatc  `run-prism.cjs` reads `policy.yaml` and writes `writeCheckResult` with `observation_window` metadata                                  │
-│  F2   ││                        ││  CALIB-03      ✓    Quorum & Dispatc  `read-policy.cjs` exposes all policy fields with typed interface                                                                      │
-│ ───── ││                        ││  CALIB-04      ✓    Quorum & Dispatc  `policy.conservative_priors.tp_rate` and `policy.conservative_priors.unavail` from `.formal/policy.yaml` wire directly to `run-prism… │
-│       ││                        ││  DISP-01       ✓    Quorum & Dispatc  qgsd-prompt.js runs a fast health probe (<3s) per provider before building the dispatch list -- dead providers' slots excluded from … │
-│ ▄▀▀   ││                        ││  DISP-02       ✓    Quorum & Dispatc  qgsd-prompt.js reads scoreboard `availability` windows and excludes slots whose `available_at` is in the future from dispatch         │
-│ █     ││                        ││  DISP-03       ✓    Quorum & Dispatc  Dispatch list ordered by recent success rate (from scoreboard slot stats) rather than static FALLBACK-01 tier sequence -- most relia… │
-│ ▀▄▄   ││                        ││  DISP-04       ✓    Quorum & Dispatc  Prompt construction (Mode A/B, Round 1/2+, artifact injection, prior_positions, review_context, improvements request) happens         │
-│  F3   ││                        ││determ…                                                                                                                                                                      │
-│ ───── ││                        ││  DISP-05       ✓    Quorum & Dispatc  Output parsing (verdict, reasoning, citations, improvements extraction from raw CLI output) happens in JavaScript with structured YA… │
-│       ││                        ││  DISP-06       ✓    Quorum & Dispatc  Quorum dispatcher tiered ordering: available_slots are pre-sorted with CLI/CCR slots (subprocess and ccr types) before HTTP API       │
-│ ▄▀▄   ││                        ││slot…                                                                                                                                                                        │
-│ █▀▀   ││                        ││  DISP-07       ✓    Quorum & Dispatc  Quorum dispatcher Mode C delegates structured coding tasks to external agent CLI slots (codex, gemini, opencode, copilot) via coding… │
-│ ▀▄▄   ││                        ││  DISP-08       ✓    Quorum & Dispatc  /nf:quick --delegate {slot-name} flag enables full task delegation to named external agent CLI slots via Mode C dispatch, bypassing   │
-│  F4   ││                        ││…                                                                                                                                                                            │
-│ ───── ││                        ││  IMPR-02       ✓    Quorum & Dispatc  Quorum slot dispatch uses parallel sibling Task calls (not sequential MCP calls) per R3.2 requirement                                 │
-│       ││                        ││  IMPR-03       ✓    Quorum & Dispatc  Slot worker protocol handles missing and malformed responses gracefully (no unhandled exceptions, fail-open)                          │
-│ ▄▀▀   ││                        ││  META-01       ✓    Quorum & Dispatc  GSD planning commands within this repo (new-project, plan-phase, etc.) auto-resolve questions via quorum before escalating to user    │
-│  ▀▄   ││                        ││  META-02       ✓    Quorum & Dispatc  Only questions where quorum fails to reach consensus are presented to the user                                                        │
-│ ▄▄▀   ││                        ││  META-03       ✓    Quorum & Dispatc  Auto-resolved questions are presented as a list of assumptions before escalated questions                                             │
-│  F5   ││                        ││  QUORUM-01     ✓    Quorum & Dispatc  plan-milestone-gaps proposed gap closure phases are submitted to R3 quorum for approval before ROADMAP.md is updated (replaces        │
-│       ││                        ││AskUs…                                                                                                                                                                       │
-│       ││                        ││  QUORUM-02     ✓    Quorum & Dispatc  execute-phase gaps_found triggers quorum diagnosis and auto-resolution (replaces chain halt + manual suggestion)                      │
-│       ││                        ││  QUORUM-03     ✓    Quorum & Dispatc  discuss-phase remaining user_questions (surviving R4 pre-filter) are routed to quorum in auto mode (replaces AskUserQuestion for      │
-│       ││                        ││gra…                                                                                                                                                                         │
-│       ││                        ││  TRUNC-01      ✓    Quorum & Dispatc  Quorum slot subprocess output buffers (stdout/stderr) SHALL have explicit size caps, and when a cap is hit the truncation event MUST… │
-│       ││                        ││  TRUNC-02      ✓    Quorum & Dispatc  The verdict extraction pipeline (parseVerdict, parseReasoning, parseCitations) MUST operate on the FULL subprocess output buffer,     │
-│       ││                        ││no…                                                                                                                                                                          │
-│       ││                        ││  TRUNC-05      ✓    Quorum & Dispatc  The emitResultBlock raw field truncation (5KB cap) MUST append a machine-readable truncation suffix and MUST NOT destroy structured … │
-│       ││                        ││  UNIF-01       ✓    Quorum & Dispatc  All FV checkers append normalized JSON to `check-results.ndjson` — `{ tool, check_id, result, detail, ts }`                           │
-│       ││                        ││  UNIF-02       ✓    Quorum & Dispatc  `run-formal-verify.cjs` generates `check-results.ndjson` as canonical output artifact                                                 │
-│       ││                        ││  UNIF-03       ✓    Quorum & Dispatc  Triage bundle reads from `check-results.ndjson`, not tool stdout; CI enforcement steps run inside orchestrator before summary read    │
-│       ││                        ││(…                                                                                                                                                                           │
-│       ││                        ││  UNIF-04       ✓    Quorum & Dispatc  CI step exits non-zero when any `result=fail` entry exists in `check-results.ndjson`                                                  │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ Reqs 465  336✓  110…  (72%)   Formal 100%   [/] filter  [↑↓] scroll                                                                                                                                            │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ────────────────────────────────────────────────────────────────────────────────
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ nForma AI v0.41.18                                                                                                                                                                       [Tab] cycle  [q] quit │
-│                                                                                           cwd: ~/code/QGSD [ctrl-t]                                                                                            │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-┌───────┐┌─ Reqs ─────────────────┐┌─ Reqs — Browse Reqs (31) ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│       ││  Browse Reqs           ││Requirements (31) (Quorum Governance)                                                                                                                                        │
-│ ▄█▄   ││  Coverage              ││──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── │
-│ █ █   ││  Traceability          ││─                                                                                                                                                                            │
-│ █▀█   ││  Aggregate             ││  ID            St   Category          Text                                                                                                                                  │
-│  F1   ││  Coverage Gaps         ││  ARCH-01       ✓    Quorum & Dispatc  All formal models declared in `.formal/model-registry.json` as single source of truth with provenance tracking                        │
-│ ───── ││  Gate Scoring          ││  ARCH-02       ✓    Quorum & Dispatc  `promote-model.cjs` provides atomic promotion from per-phase specs to canonical specs with duplicate detection                        │
-│       ││                        ││  ARCH-03       ✓    Quorum & Dispatc  `accept-debug-invariant.cjs` writes debug-discovered invariants directly to canonical specs with session provenance                   │
-│ █▀█   ││                        ││  ARCH-10       ✓    Quorum & Dispatc  QGSD, as a Claude Code plugin, MUST NOT bundle LLM SDKs; Haiku/Sonnet/Opus calls MUST use the Agent tool's model parameter            │
-│ ██▀   ││                        ││  CALIB-01      ✓    Quorum & Dispatc  `.formal/policy.yaml` is the single authoritative source for PRISM calibration parameters                                             │
-│ █ █   ││                        ││  CALIB-02      ✓    Quorum & Dispatc  `run-prism.cjs` reads `policy.yaml` and writes `writeCheckResult` with `observation_window` metadata                                  │
-│  F2   ││                        ││  CALIB-03      ✓    Quorum & Dispatc  `read-policy.cjs` exposes all policy fields with typed interface                                                                      │
-│ ───── ││                        ││  CALIB-04      ✓    Quorum & Dispatc  `policy.conservative_priors.tp_rate` and `policy.conservative_priors.unavail` from `.formal/policy.yaml` wire directly to `run-prism… │
-│       ││                        ││  DISP-01       ✓    Quorum & Dispatc  qgsd-prompt.js runs a fast health probe (<3s) per provider before building the dispatch list -- dead providers' slots excluded from … │
-│ ▄▀▀   ││                        ││  DISP-02       ✓    Quorum & Dispatc  qgsd-prompt.js reads scoreboard `availability` windows and excludes slots whose `available_at` is in the future from dispatch         │
-│ █     ││                        ││  DISP-03       ✓    Quorum & Dispatc  Dispatch list ordered by recent success rate (from scoreboard slot stats) rather than static FALLBACK-01 tier sequence -- most relia… │
-│ ▀▄▄   ││                        ││  DISP-04       ✓    Quorum & Dispatc  Prompt construction (Mode A/B, Round 1/2+, artifact injection, prior_positions, review_context, improvements request) happens         │
-│  F3   ││                        ││determ…                                                                                                                                                                      │
-│ ───── ││                        ││  DISP-05       ✓    Quorum & Dispatc  Output parsing (verdict, reasoning, citations, improvements extraction from raw CLI output) happens in JavaScript with structured YA… │
-│       ││                        ││  DISP-06       ✓    Quorum & Dispatc  Quorum dispatcher tiered ordering: available_slots are pre-sorted with CLI/CCR slots (subprocess and ccr types) before HTTP API       │
-│ ▄▀▄   ││                        ││slot…                                                                                                                                                                        │
-│ █▀▀   ││                        ││  DISP-07       ✓    Quorum & Dispatc  Quorum dispatcher Mode C delegates structured coding tasks to external agent CLI slots (codex, gemini, opencode, copilot) via coding… │
-│ ▀▄▄   ││                        ││  DISP-08       ✓    Quorum & Dispatc  /nf:quick --delegate {slot-name} flag enables full task delegation to named external agent CLI slots via Mode C dispatch, bypassing   │
-│  F4   ││                        ││…                                                                                                                                                                            │
-│ ───── ││                        ││  IMPR-02       ✓    Quorum & Dispatc  Quorum slot dispatch uses parallel sibling Task calls (not sequential MCP calls) per R3.2 requirement                                 │
-│       ││                        ││  IMPR-03       ✓    Quorum & Dispatc  Slot worker protocol handles missing and malformed responses gracefully (no unhandled exceptions, fail-open)                          │
-│ ▄▀▀   ││                        ││  META-01       ✓    Quorum & Dispatc  GSD planning commands within this repo (new-project, plan-phase, etc.) auto-resolve questions via quorum before escalating to user    │
-│  ▀▄   ││                        ││  META-02       ✓    Quorum & Dispatc  Only questions where quorum fails to reach consensus are presented to the user                                                        │
-│ ▄▄▀   ││                        ││  META-03       ✓    Quorum & Dispatc  Auto-resolved questions are presented as a list of assumptions before escalated questions                                             │
-│  F5   ││                        ││  QUORUM-01     ✓    Quorum & Dispatc  plan-milestone-gaps proposed gap closure phases are submitted to R3 quorum for approval before ROADMAP.md is updated (replaces        │
-│       ││                        ││AskUs…                                                                                                                                                                       │
-│       ││                        ││  QUORUM-02     ✓    Quorum & Dispatc  execute-phase gaps_found triggers quorum diagnosis and auto-resolution (replaces chain halt + manual suggestion)                      │
-│       ││                        ││  QUORUM-03     ✓    Quorum & Dispatc  discuss-phase remaining user_questions (surviving R4 pre-filter) are routed to quorum in auto mode (replaces AskUserQuestion for      │
-│       ││                        ││gra…                                                                                                                                                                         │
-│       ││                        ││  TRUNC-01      ✓    Quorum & Dispatc  Quorum slot subprocess output buffers (stdout/stderr) SHALL have explicit size caps, and when a cap is hit the truncation event MUST… │
-│       ││                        ││  TRUNC-02      ✓    Quorum & Dispatc  The verdict extraction pipeline (parseVerdict, parseReasoning, parseCitations) MUST operate on the FULL subprocess output buffer,     │
-│       ││                        ││no…                                                                                                                                                                          │
-│       ││                        ││  TRUNC-05      ✓    Quorum & Dispatc  The emitResultBlock raw field truncation (5KB cap) MUST append a machine-readable truncation suffix and MUST NOT destroy structured … │
-│       ││                        ││  UNIF-01       ✓    Quorum & Dispatc  All FV checkers append normalized JSON to `check-results.ndjson` — `{ tool, check_id, result, detail, ts }`                           │
-│       ││                        ││  UNIF-02       ✓    Quorum & Dispatc  `run-formal-verify.cjs` generates `check-results.ndjson` as canonical output artifact                                                 │
-│       ││                        ││  UNIF-03       ✓    Quorum & Dispatc  Triage bundle reads from `check-results.ndjson`, not tool stdout; CI enforcement steps run inside orchestrator before summary read    │
-│       ││                        ││(…                                                                                                                                                                           │
-│       ││                        ││  UNIF-04       ✓    Quorum & Dispatc  CI step exits non-zero when any `result=fail` entry exists in `check-results.ndjson`                                                  │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ Reqs 465  336✓  110…  (72%)   Formal 100%   [/] filter  [↑↓] scroll                                                                                                                                            │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ────────────────────────────────────────────────────────────────────────────────
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ nForma AI v0.41.18                                                                                                                                                                       [Tab] cycle  [q] quit │
-│                                                                                           cwd: ~/code/QGSD [ctrl-t]                                                                                            │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-┌───────┐┌─ Reqs ─────────────────┐┌─ Reqs — Browse Reqs (31) ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│       ││  Browse Reqs           ││Requirements (31) (Quorum Governance)                                                                                                                                        │
-│ ▄█▄   ││  Coverage              ││──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── │
-│ █ █   ││  Traceability          ││─                                                                                                                                                                            │
-│ █▀█   ││  Aggregate             ││  ID            St   Category          Text                                                                                                                                  │
-│  F1   ││  Coverage Gaps         ││  ARCH-01       ✓    Quorum & Dispatc  All formal models declared in `.formal/model-registry.json` as single source of truth with provenance tracking                        │
-│ ───── ││  Gate Scoring          ││  ARCH-02       ✓    Quorum & Dispatc  `promote-model.cjs` provides atomic promotion from per-phase specs to canonical specs with duplicate detection                        │
-│       ││                        ││  ARCH-03       ✓    Quorum & Dispatc  `accept-debug-invariant.cjs` writes debug-discovered invariants directly to canonical specs with session provenance                   │
-│ █▀█   ││                        ││  ARCH-10       ✓    Quorum & Dispatc  QGSD, as a Claude Code plugin, MUST NOT bundle LLM SDKs; Haiku/Sonnet/Opus calls MUST use the Agent tool's model parameter            │
-│ ██▀   ││                        ││  CALIB-01      ✓    Quorum & Dispatc  `.formal/policy.yaml` is the single authoritative source for PRISM calibration parameters                                             │
-│ █ █   ││                        ││  CALIB-02      ✓    Quorum & Dispatc  `run-prism.cjs` reads `policy.yaml` and writes `writeCheckResult` with `observation_window` metadata                                  │
-│  F2   ││                        ││  CALIB-03      ✓    Quorum & Dispatc  `read-policy.cjs` exposes all policy fields with typed interface                                                                      │
-│ ───── ││                        ││  CALIB-04      ✓    Quorum & Dispatc  `policy.conservative_priors.tp_rate` and `policy.conservative_priors.unavail` from `.formal/policy.yaml` wire directly to `run-prism… │
-│       ││                        ││  DISP-01       ✓    Quorum & Dispatc  qgsd-prompt.js runs a fast health probe (<3s) per provider before building the dispatch list -- dead providers' slots excluded from … │
-│ ▄▀▀   ││                        ││  DISP-02       ✓    Quorum & Dispatc  qgsd-prompt.js reads scoreboard `availability` windows and excludes slots whose `available_at` is in the future from dispatch         │
-│ █     ││                        ││  DISP-03       ✓    Quorum & Dispatc  Dispatch list ordered by recent success rate (from scoreboard slot stats) rather than static FALLBACK-01 tier sequence -- most relia… │
-│ ▀▄▄   ││                        ││  DISP-04       ✓    Quorum & Dispatc  Prompt construction (Mode A/B, Round 1/2+, artifact injection, prior_positions, review_context, improvements request) happens         │
-│  F3   ││                        ││determ…                                                                                                                                                                      │
-│ ───── ││                        ││  DISP-05       ✓    Quorum & Dispatc  Output parsing (verdict, reasoning, citations, improvements extraction from raw CLI output) happens in JavaScript with structured YA… │
-│       ││                        ││  DISP-06       ✓    Quorum & Dispatc  Quorum dispatcher tiered ordering: available_slots are pre-sorted with CLI/CCR slots (subprocess and ccr types) before HTTP API       │
-│ ▄▀▄   ││                        ││slot…                                                                                                                                                                        │
-│ █▀▀   ││                        ││  DISP-07       ✓    Quorum & Dispatc  Quorum dispatcher Mode C delegates structured coding tasks to external agent CLI slots (codex, gemini, opencode, copilot) via coding… │
-│ ▀▄▄   ││                        ││  DISP-08       ✓    Quorum & Dispatc  /nf:quick --delegate {slot-name} flag enables full task delegation to named external agent CLI slots via Mode C dispatch, bypassing   │
-│  F4   ││                        ││…                                                                                                                                                                            │
-│ ───── ││                        ││  IMPR-02       ✓    Quorum & Dispatc  Quorum slot dispatch uses parallel sibling Task calls (not sequential MCP calls) per R3.2 requirement                                 │
-│       ││                        ││  IMPR-03       ✓    Quorum & Dispatc  Slot worker protocol handles missing and malformed responses gracefully (no unhandled exceptions, fail-open)                          │
-│ ▄▀▀   ││                        ││  META-01       ✓    Quorum & Dispatc  GSD planning commands within this repo (new-project, plan-phase, etc.) auto-resolve questions via quorum before escalating to user    │
-│  ▀▄   ││                        ││  META-02       ✓    Quorum & Dispatc  Only questions where quorum fails to reach consensus are presented to the user                                                        │
-│ ▄▄▀   ││                        ││  META-03       ✓    Quorum & Dispatc  Auto-resolved questions are presented as a list of assumptions before escalated questions                                             │
-│  F5   ││                        ││  QUORUM-01     ✓    Quorum & Dispatc  plan-milestone-gaps proposed gap closure phases are submitted to R3 quorum for approval before ROADMAP.md is updated (replaces        │
-│       ││                        ││AskUs…                                                                                                                                                                       │
-│       ││                        ││  QUORUM-02     ✓    Quorum & Dispatc  execute-phase gaps_found triggers quorum diagnosis and auto-resolution (replaces chain halt + manual suggestion)                      │
-│       ││                        ││  QUORUM-03     ✓    Quorum & Dispatc  discuss-phase remaining user_questions (surviving R4 pre-filter) are routed to quorum in auto mode (replaces AskUserQuestion for      │
-│       ││                        ││gra…                                                                                                                                                                         │
-│       ││                        ││  TRUNC-01      ✓    Quorum & Dispatc  Quorum slot subprocess output buffers (stdout/stderr) SHALL have explicit size caps, and when a cap is hit the truncation event MUST… │
-│       ││                        ││  TRUNC-02      ✓    Quorum & Dispatc  The verdict extraction pipeline (parseVerdict, parseReasoning, parseCitations) MUST operate on the FULL subprocess output buffer,     │
-│       ││                        ││no…                                                                                                                                                                          │
-│       ││                        ││  TRUNC-05      ✓    Quorum & Dispatc  The emitResultBlock raw field truncation (5KB cap) MUST append a machine-readable truncation suffix and MUST NOT destroy structured … │
-│       ││                        ││  UNIF-01       ✓    Quorum & Dispatc  All FV checkers append normalized JSON to `check-results.ndjson` — `{ tool, check_id, result, detail, ts }`                           │
-│       ││                        ││  UNIF-02       ✓    Quorum & Dispatc  `run-formal-verify.cjs` generates `check-results.ndjson` as canonical output artifact                                                 │
-│       ││                        ││  UNIF-03       ✓    Quorum & Dispatc  Triage bundle reads from `check-results.ndjson`, not tool stdout; CI enforcement steps run inside orchestrator before summary read    │
-│       ││                        ││(…                                                                                                                                                                           │
-│       ││                        ││  UNIF-04       ✓    Quorum & Dispatc  CI step exits non-zero when any `result=fail` entry exists in `check-results.ndjson`                                                  │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ Reqs 465  336✓  110…  (72%)   Formal 100%   [/] filter  [↑↓] scroll                                                                                                                                            │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ────────────────────────────────────────────────────────────────────────────────
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ nForma AI v0.41.18                                                                                                                                                                       [Tab] cycle  [q] quit │
-│                                                                                           cwd: ~/code/QGSD [ctrl-t]                                                                                            │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-┌───────┐┌─ Reqs ─────────────────┐┌─ Reqs — Browse Reqs (31) ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│       ││  Browse Reqs           ││Requirements (31) (Quorum Governance)                                                                                                                                        │
-│ ▄█▄   ││  Coverage              ││──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── │
-│ █ █   ││  Traceability          ││─                                                                                                                                                                            │
-│ █▀█   ││  Aggregate             ││  ID            St   Category          Text                                                                                                                                  │
-│  F1   ││  Coverage Gaps         ││  ARCH-01       ✓    Quorum & Dispatc  All formal models declared in `.formal/model-registry.json` as single source of truth with provenance tracking                        │
-│ ───── ││  Gate Scoring          ││  ARCH-02       ✓    Quorum & Dispatc  `promote-model.cjs` provides atomic promotion from per-phase specs to canonical specs with duplicate detection                        │
-│       ││                        ││  ARCH-03       ✓    Quorum & Dispatc  `accept-debug-invariant.cjs` writes debug-discovered invariants directly to canonical specs with session provenance                   │
-│ █▀█   ││                        ││  ARCH-10       ✓    Quorum & Dispatc  QGSD, as a Claude Code plugin, MUST NOT bundle LLM SDKs; Haiku/Sonnet/Opus calls MUST use the Agent tool's model parameter            │
-│ ██▀   ││                        ││  CALIB-01      ✓    Quorum & Dispatc  `.formal/policy.yaml` is the single authoritative source for PRISM calibration parameters                                             │
-│ █ █   ││                        ││  CALIB-02      ✓    Quorum & Dispatc  `run-prism.cjs` reads `policy.yaml` and writes `writeCheckResult` with `observation_window` metadata                                  │
-│  F2   ││                        ││  CALIB-03      ✓    Quorum & Dispatc  `read-policy.cjs` exposes all policy fields with typed interface                                                                      │
-│ ───── ││                        ││  CALIB-04      ✓    Quorum & Dispatc  `policy.conservative_priors.tp_rate` and `policy.conservative_priors.unavail` from `.formal/policy.yaml` wire directly to `run-prism… │
-│       ││                        ││  DISP-01       ✓    Quorum & Dispatc  qgsd-prompt.js runs a fast health probe (<3s) per provider before building the dispatch list -- dead providers' slots excluded from … │
-│ ▄▀▀   ││                        ││  DISP-02       ✓    Quorum & Dispatc  qgsd-prompt.js reads scoreboard `availability` windows and excludes slots whose `available_at` is in the future from dispatch         │
-│ █     ││                        ││  DISP-03       ✓    Quorum & Dispatc  Dispatch list ordered by recent success rate (from scoreboard slot stats) rather than static FALLBACK-01 tier sequence -- most relia… │
-│ ▀▄▄   ││                        ││  DISP-04       ✓    Quorum & Dispatc  Prompt construction (Mode A/B, Round 1/2+, artifact injection, prior_positions, review_context, improvements request) happens         │
-│  F3   ││                        ││determ…                                                                                                                                                                      │
-│ ───── ││                        ││  DISP-05       ✓    Quorum & Dispatc  Output parsing (verdict, reasoning, citations, improvements extraction from raw CLI output) happens in JavaScript with structured YA… │
-│       ││                        ││  DISP-06       ✓    Quorum & Dispatc  Quorum dispatcher tiered ordering: available_slots are pre-sorted with CLI/CCR slots (subprocess and ccr types) before HTTP API       │
-│ ▄▀▄   ││                        ││slot…                                                                                                                                                                        │
-│ █▀▀   ││                        ││  DISP-07       ✓    Quorum & Dispatc  Quorum dispatcher Mode C delegates structured coding tasks to external agent CLI slots (codex, gemini, opencode, copilot) via coding… │
-│ ▀▄▄   ││                        ││  DISP-08       ✓    Quorum & Dispatc  /nf:quick --delegate {slot-name} flag enables full task delegation to named external agent CLI slots via Mode C dispatch, bypassing   │
-│  F4   ││                        ││…                                                                                                                                                                            │
-│ ───── ││                        ││  IMPR-02       ✓    Quorum & Dispatc  Quorum slot dispatch uses parallel sibling Task calls (not sequential MCP calls) per R3.2 requirement                                 │
-│       ││                        ││  IMPR-03       ✓    Quorum & Dispatc  Slot worker protocol handles missing and malformed responses gracefully (no unhandled exceptions, fail-open)                          │
-│ ▄▀▀   ││                        ││  META-01       ✓    Quorum & Dispatc  GSD planning commands within this repo (new-project, plan-phase, etc.) auto-resolve questions via quorum before escalating to user    │
-│  ▀▄   ││                        ││  META-02       ✓    Quorum & Dispatc  Only questions where quorum fails to reach consensus are presented to the user                                                        │
-│ ▄▄▀   ││                        ││  META-03       ✓    Quorum & Dispatc  Auto-resolved questions are presented as a list of assumptions before escalated questions                                             │
-│  F5   ││                        ││  QUORUM-01     ✓    Quorum & Dispatc  plan-milestone-gaps proposed gap closure phases are submitted to R3 quorum for approval before ROADMAP.md is updated (replaces        │
-│       ││                        ││AskUs…                                                                                                                                                                       │
-│       ││                        ││  QUORUM-02     ✓    Quorum & Dispatc  execute-phase gaps_found triggers quorum diagnosis and auto-resolution (replaces chain halt + manual suggestion)                      │
-│       ││                        ││  QUORUM-03     ✓    Quorum & Dispatc  discuss-phase remaining user_questions (surviving R4 pre-filter) are routed to quorum in auto mode (replaces AskUserQuestion for      │
-│       ││                        ││gra…                                                                                                                                                                         │
-│       ││                        ││  TRUNC-01      ✓    Quorum & Dispatc  Quorum slot subprocess output buffers (stdout/stderr) SHALL have explicit size caps, and when a cap is hit the truncation event MUST… │
-│       ││                        ││  TRUNC-02      ✓    Quorum & Dispatc  The verdict extraction pipeline (parseVerdict, parseReasoning, parseCitations) MUST operate on the FULL subprocess output buffer,     │
-│       ││                        ││no…                                                                                                                                                                          │
-│       ││                        ││  TRUNC-05      ✓    Quorum & Dispatc  The emitResultBlock raw field truncation (5KB cap) MUST append a machine-readable truncation suffix and MUST NOT destroy structured … │
-│       ││                        ││  UNIF-01       ✓    Quorum & Dispatc  All FV checkers append normalized JSON to `check-results.ndjson` — `{ tool, check_id, result, detail, ts }`                           │
-│       ││                        ││  UNIF-02       ✓    Quorum & Dispatc  `run-formal-verify.cjs` generates `check-results.ndjson` as canonical output artifact                                                 │
-│       ││                        ││  UNIF-03       ✓    Quorum & Dispatc  Triage bundle reads from `check-results.ndjson`, not tool stdout; CI enforcement steps run inside orchestrator before summary read    │
-│       ││                        ││(…                                                                                                                                                                           │
-│       ││                        ││  UNIF-04       ✓    Quorum & Dispatc  CI step exits non-zero when any `result=fail` entry exists in `check-results.ndjson`                                                  │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ Reqs 465  336✓  110…  (72%)   Formal 100%   [/] filter  [↑↓] scroll                                                                                                                                            │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ────────────────────────────────────────────────────────────────────────────────
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ nForma AI v0.41.18                                                                                                                                                                       [Tab] cycle  [q] quit │
-│                                                                                           cwd: ~/code/QGSD [ctrl-t]                                                                                            │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-┌───────┐┌─ Reqs ─────────────────┐┌─ Reqs — Browse Reqs (31) ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│       ││  Browse Reqs           ││Requirements (31) (Quorum Governance)                                                                                                                                        │
-│ ▄█▄   ││  Coverage              ││──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── │
-│ █ █   ││  Traceability          ││─                                                                                                                                                                            │
-│ █▀█   ││  Aggregate             ││  ID            St   Category          Text                                                                                                                                  │
-│  F1   ││  Coverage Gaps         ││  ARCH-01       ✓    Quorum & Dispatc  All formal models declared in `.formal/model-registry.json` as single source of truth with provenance tracking                        │
-│ ───── ││  Gate Scoring          ││  ARCH-02       ✓    Quorum & Dispatc  `promote-model.cjs` provides atomic promotion from per-phase specs to canonical specs with duplicate detection                        │
-│       ││                        ││  ARCH-03       ✓    Quorum & Dispatc  `accept-debug-invariant.cjs` writes debug-discovered invariants directly to canonical specs with session provenance                   │
-│ █▀█   ││                        ││  ARCH-10       ✓    Quorum & Dispatc  QGSD, as a Claude Code plugin, MUST NOT bundle LLM SDKs; Haiku/Sonnet/Opus calls MUST use the Agent tool's model parameter            │
-│ ██▀   ││                        ││  CALIB-01      ✓    Quorum & Dispatc  `.formal/policy.yaml` is the single authoritative source for PRISM calibration parameters                                             │
-│ █ █   ││                        ││  CALIB-02      ✓    Quorum & Dispatc  `run-prism.cjs` reads `policy.yaml` and writes `writeCheckResult` with `observation_window` metadata                                  │
-│  F2   ││                        ││  CALIB-03      ✓    Quorum & Dispatc  `read-policy.cjs` exposes all policy fields with typed interface                                                                      │
-│ ───── ││                        ││  CALIB-04      ✓    Quorum & Dispatc  `policy.conservative_priors.tp_rate` and `policy.conservative_priors.unavail` from `.formal/policy.yaml` wire directly to `run-prism… │
-│       ││                        ││  DISP-01       ✓    Quorum & Dispatc  qgsd-prompt.js runs a fast health probe (<3s) per provider before building the dispatch list -- dead providers' slots excluded from … │
-│ ▄▀▀   ││                        ││  DISP-02       ✓    Quorum & Dispatc  qgsd-prompt.js reads scoreboard `availability` windows and excludes slots whose `available_at` is in the future from dispatch         │
-│ █     ││                        ││  DISP-03       ✓    Quorum & Dispatc  Dispatch list ordered by recent success rate (from scoreboard slot stats) rather than static FALLBACK-01 tier sequence -- most relia… │
-│ ▀▄▄   ││                        ││  DISP-04       ✓    Quorum & Dispatc  Prompt construction (Mode A/B, Round 1/2+, artifact injection, prior_positions, review_context, improvements request) happens         │
-│  F3   ││                        ││determ…                                                                                                                                                                      │
-│ ───── ││                        ││  DISP-05       ✓    Quorum & Dispatc  Output parsing (verdict, reasoning, citations, improvements extraction from raw CLI output) happens in JavaScript with structured YA… │
-│       ││                        ││  DISP-06       ✓    Quorum & Dispatc  Quorum dispatcher tiered ordering: available_slots are pre-sorted with CLI/CCR slots (subprocess and ccr types) before HTTP API       │
-│ ▄▀▄   ││                        ││slot…                                                                                                                                                                        │
-│ █▀▀   ││                        ││  DISP-07       ✓    Quorum & Dispatc  Quorum dispatcher Mode C delegates structured coding tasks to external agent CLI slots (codex, gemini, opencode, copilot) via coding… │
-│ ▀▄▄   ││                        ││  DISP-08       ✓    Quorum & Dispatc  /nf:quick --delegate {slot-name} flag enables full task delegation to named external agent CLI slots via Mode C dispatch, bypassing   │
-│  F4   ││                        ││…                                                                                                                                                                            │
-│ ───── ││                        ││  IMPR-02       ✓    Quorum & Dispatc  Quorum slot dispatch uses parallel sibling Task calls (not sequential MCP calls) per R3.2 requirement                                 │
-│       ││                        ││  IMPR-03       ✓    Quorum & Dispatc  Slot worker protocol handles missing and malformed responses gracefully (no unhandled exceptions, fail-open)                          │
-│ ▄▀▀   ││                        ││  META-01       ✓    Quorum & Dispatc  GSD planning commands within this repo (new-project, plan-phase, etc.) auto-resolve questions via quorum before escalating to user    │
-│  ▀▄   ││                        ││  META-02       ✓    Quorum & Dispatc  Only questions where quorum fails to reach consensus are presented to the user                                                        │
-│ ▄▄▀   ││                        ││  META-03       ✓    Quorum & Dispatc  Auto-resolved questions are presented as a list of assumptions before escalated questions                                             │
-│  F5   ││                        ││  QUORUM-01     ✓    Quorum & Dispatc  plan-milestone-gaps proposed gap closure phases are submitted to R3 quorum for approval before ROADMAP.md is updated (replaces        │
-│       ││                        ││AskUs…                                                                                                                                                                       │
-│       ││                        ││  QUORUM-02     ✓    Quorum & Dispatc  execute-phase gaps_found triggers quorum diagnosis and auto-resolution (replaces chain halt + manual suggestion)                      │
-│       ││                        ││  QUORUM-03     ✓    Quorum & Dispatc  discuss-phase remaining user_questions (surviving R4 pre-filter) are routed to quorum in auto mode (replaces AskUserQuestion for      │
-│       ││                        ││gra…                                                                                                                                                                         │
-│       ││                        ││  TRUNC-01      ✓    Quorum & Dispatc  Quorum slot subprocess output buffers (stdout/stderr) SHALL have explicit size caps, and when a cap is hit the truncation event MUST… │
-│       ││                        ││  TRUNC-02      ✓    Quorum & Dispatc  The verdict extraction pipeline (parseVerdict, parseReasoning, parseCitations) MUST operate on the FULL subprocess output buffer,     │
-│       ││                        ││no…                                                                                                                                                                          │
-│       ││                        ││  TRUNC-05      ✓    Quorum & Dispatc  The emitResultBlock raw field truncation (5KB cap) MUST append a machine-readable truncation suffix and MUST NOT destroy structured … │
-│       ││                        ││  UNIF-01       ✓    Quorum & Dispatc  All FV checkers append normalized JSON to `check-results.ndjson` — `{ tool, check_id, result, detail, ts }`                           │
-│       ││                        ││  UNIF-02       ✓    Quorum & Dispatc  `run-formal-verify.cjs` generates `check-results.ndjson` as canonical output artifact                                                 │
-│       ││                        ││  UNIF-03       ✓    Quorum & Dispatc  Triage bundle reads from `check-results.ndjson`, not tool stdout; CI enforcement steps run inside orchestrator before summary read    │
-│       ││                        ││(…                                                                                                                                                                           │
-│       ││                        ││  UNIF-04       ✓    Quorum & Dispatc  CI step exits non-zero when any `result=fail` entry exists in `check-results.ndjson`                                                  │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ Reqs 465  336✓  110…  (72%)   Formal 100%   [/] filter  [↑↓] scroll                                                                                                                                            │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ────────────────────────────────────────────────────────────────────────────────
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ nForma AI v0.41.18                                                                                                                                                                       [Tab] cycle  [q] quit │
-│                                                                                           cwd: ~/code/QGSD [ctrl-t]                                                                                            │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-┌───────┐┌─ Config ───────────────┐┌─ Config — Settings ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│       ││  Settings              ││Project Settings                                                                                                                                                             │
-│ ▄█▄   ││  Tune Timeouts         ││────────────────────────────────────────                                                                                                                                     │
-│ █ █   ││  Set Update Policy     ││                                                                                                                                                                             │
-│ █▀█   ││ ─────────────────      ││  Profile     balanced                                                                                                                                                       │
-│  F1   ││  Export Roster         ││  Quorum n    3                                                                                                                                                              │
-│ ───── ││  Import Roster         ││  Fail mode   open                                                                                                                                                           │
-│       ││ ─────────────────      ││                                                                                                                                                                             │
-│ █▀█   ││  Exit                  ││Model Tiers  (balanced profile)                                                                                                                                              │
-│ ██▀   ││                        ││────────────────────────────────────────                                                                                                                                     │
-│ █ █   ││                        ││                                                                                                                                                                             │
-│  F2   ││                        ││  Planner      opus                                                                                                                                                          │
-│ ───── ││                        ││  Executor     sonnet                                                                                                                                                        │
-│       ││                        ││  Researcher   sonnet                                                                                                                                                        │
-│ ▄▀▀   ││                        ││  Verifier     sonnet                                                                                                                                                        │
-│ █     ││                        ││  Mapper       haiku                                                                                                                                                         │
-│ ▀▄▄   ││                        ││                                                                                                                                                                             │
-│  F3   ││                        ││  * = override active                                                                                                                                                        │
-│ ───── ││                        ││                                                                                                                                                                             │
-│       ││                        ││Workflow                                                                                                                                                                     │
-│ ▄▀▄   ││                        ││────────────────────────────────────────                                                                                                                                     │
-│ █▀▀   ││                        ││                                                                                                                                                                             │
-│ ▀▄▄   ││                        ││  Research       enabled                                                                                                                                                     │
-│  F4   ││                        ││  Plan check     enabled                                                                                                                                                     │
-│ ───── ││                        ││  Verifier       enabled                                                                                                                                                     │
-│       ││                        ││  Auto-advance   enabled                                                                                                                                                     │
-│ ▄▀▀   ││                        ││                                                                                                                                                                             │
-│  ▀▄   ││                        ││                                                                                                                                                                             │
-│ ▄▄▀   ││                        ││                                                                                                                                                                             │
-│  F5   ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ Reqs 465  336✓  110…  (72%)   Formal 100%                                                                                                                                                                      │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ────────────────────────────────────────────────────────────────────────────────
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ nForma AI v0.41.18                                                                                                                                                                       [Tab] cycle  [q] quit │
-│                                                                                           cwd: ~/code/QGSD [ctrl-t]                                                                                            │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-┌───────┐┌─ Config ───────────────┐┌─ Config — Settings ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│       ││  Settings              ││Project Settings                                                                                                                                                             │
-│ ▄█▄   ││  Tune Timeouts         ││────────────────────────────────────────                                                                                                                                     │
-│ █ █   ││  Set Update Policy     ││                                                                                                                                                                             │
-│ █▀█   ││ ─────────────────      ││  Profile     balanced                                                                                                                                                       │
-│  F1   ││  Export Roster         ││  Quorum n    3                                                                                                                                                              │
-│ ───── ││  Import Roster         ││  Fail mode   open                                                                                                                                                           │
-│       ││ ─────────────────      ││                                                                                                                                                                             │
-│ █▀█   ││  Exit                  ││Model Tiers  (balanced profile)                                                                                                                                              │
-│ ██▀   ││                        ││────────────────────────────────────────                                                                                                                                     │
-│ █ █   ││                        ││                                                                                                                                                                             │
-│  F2   ││                        ││  Planner      opus                                                                                                                                                          │
-│ ───── ││                        ││  Executor     sonnet                                                                                                                                                        │
-│       ││                        ││  Researcher   sonnet                                                                                                                                                        │
-│ ▄▀▀   ││                        ││  Verifier     sonnet                                                                                                                                                        │
-│ █     ││                        ││  Mapper       haiku                                                                                                                                                         │
-│ ▀▄▄   ││                        ││                                                                                                                                                                             │
-│  F3   ││                        ││  * = override active                                                                                                                                                        │
-│ ───── ││                        ││                                                                                                                                                                             │
-│       ││                        ││Workflow                                                                                                                                                                     │
-│ ▄▀▄   ││                        ││────────────────────────────────────────                                                                                                                                     │
-│ █▀▀   ││                        ││                                                                                                                                                                             │
-│ ▀▄▄   ││                        ││  Research       enabled                                                                                                                                                     │
-│  F4   ││                        ││  Plan check     enabled                                                                                                                                                     │
-│ ───── ││                        ││  Verifier       enabled                                                                                                                                                     │
-│       ││                        ││  Auto-advance   enabled                                                                                                                                                     │
-│ ▄▀▀   ││                        ││                                                                                                                                                                             │
-│  ▀▄   ││                        ││                                                                                                                                                                             │
-│ ▄▄▀   ││                        ││                                                                                                                                                                             │
-│  F5   ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ Reqs 465  336✓  110…  (72%)   Formal 100%                                                                                                                                                                      │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ────────────────────────────────────────────────────────────────────────────────
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ nForma AI v0.41.18                                                                                                                                                                       [Tab] cycle  [q] quit │
-│                                                                                           cwd: ~/code/QGSD [ctrl-t]                                                                                            │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-┌───────┐┌─ Config ───────────────┐┌─ Config — Settings ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│       ││  Settings              ││Project Settings                                                                                                                                                             │
-│ ▄█▄   ││  Tune Timeouts         ││────────────────────────────────────────                                                                                                                                     │
-│ █ █   ││  Set Update Policy     ││                                                                                                                                                                             │
-│ █▀█   ││ ─────────────────      ││  Profile     balanced                                                                                                                                                       │
-│  F1   ││  Export Roster         ││  Quorum n    3                                                                                                                                                              │
-│ ───── ││  Import Roster         ││  Fail mode   open                                                                                                                                                           │
-│       ││ ─────────────────      ││                                                                                                                                                                             │
-│ █▀█   ││  Exit                  ││Model Tiers  (balanced profile)                                                                                                                                              │
-│ ██▀   ││                        ││────────────────────────────────────────                                                                                                                                     │
-│ █ █   ││                        ││                                                                                                                                                                             │
-│  F2   ││                        ││  Planner      opus                                                                                                                                                          │
-│ ───── ││                        ││  Executor     sonnet                                                                                                                                                        │
-│       ││                        ││  Researcher   sonnet                                                                                                                                                        │
-│ ▄▀▀   ││                        ││  Verifier     sonnet                                                                                                                                                        │
-│ █     ││                        ││  Mapper       haiku                                                                                                                                                         │
-│ ▀▄▄   ││                        ││                                                                                                                                                                             │
-│  F3   ││                        ││  * = override active                                                                                                                                                        │
-│ ───── ││                        ││                                                                                                                                                                             │
-│       ││                        ││Workflow                                                                                                                                                                     │
-│ ▄▀▄   ││                        ││────────────────────────────────────────                                                                                                                                     │
-│ █▀▀   ││                        ││                                                                                                                                                                             │
-│ ▀▄▄   ││                        ││  Research       enabled                                                                                                                                                     │
-│  F4   ││                        ││  Plan check     enabled                                                                                                                                                     │
-│ ───── ││                        ││  Verifier       enabled                                                                                                                                                     │
-│       ││                        ││  Auto-advance   enabled                                                                                                                                                     │
-│ ▄▀▀   ││                        ││                                                                                                                                                                             │
-│  ▀▄   ││                        ││                                                                                                                                                                             │
-│ ▄▄▀   ││                        ││                                                                                                                                                                             │
-│  F5   ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ Reqs 465  336✓  110…  (72%)   Formal 100%                                                                                                                                                                      │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ────────────────────────────────────────────────────────────────────────────────
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ nForma AI v0.41.18                                                                                                                                                                       [Tab] cycle  [q] quit │
-│                                                                                           cwd: ~/code/QGSD [ctrl-t]                                                                                            │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-┌───────┐┌─ Config ───────────────┐┌─ Config — Settings ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│       ││  Settings              ││Project Settings                                                                                                                                                             │
-│ ▄█▄   ││  Tune Timeouts         ││────────────────────────────────────────                                                                                                                                     │
-│ █ █   ││  Set Update Policy     ││                                                                                                                                                                             │
-│ █▀█   ││ ─────────────────      ││  Profile     balanced                                                                                                                                                       │
-│  F1   ││  Export Roster         ││  Quorum n    3                                                                                                                                                              │
-│ ───── ││  Import Roster         ││  Fail mode   open                                                                                                                                                           │
-│       ││ ─────────────────      ││                                                                                                                                                                             │
-│ █▀█   ││  Exit                  ││Model Tiers  (balanced profile)                                                                                                                                              │
-│ ██▀   ││                        ││────────────────────────────────────────                                                                                                                                     │
-│ █ █   ││                        ││                                                                                                                                                                             │
-│  F2   ││                        ││  Planner      opus                                                                                                                                                          │
-│ ───── ││                        ││  Executor     sonnet                                                                                                                                                        │
-│       ││                        ││  Researcher   sonnet                                                                                                                                                        │
-│ ▄▀▀   ││                        ││  Verifier     sonnet                                                                                                                                                        │
-│ █     ││                        ││  Mapper       haiku                                                                                                                                                         │
-│ ▀▄▄   ││                        ││                                                                                                                                                                             │
-│  F3   ││                        ││  * = override active                                                                                                                                                        │
-│ ───── ││                        ││                                                                                                                                                                             │
-│       ││                        ││Workflow                                                                                                                                                                     │
-│ ▄▀▄   ││                        ││────────────────────────────────────────                                                                                                                                     │
-│ █▀▀   ││                        ││                                                                                                                                                                             │
-│ ▀▄▄   ││                        ││  Research       enabled                                                                                                                                                     │
-│  F4   ││                        ││  Plan check     enabled                                                                                                                                                     │
-│ ───── ││                        ││  Verifier       enabled                                                                                                                                                     │
-│       ││                        ││  Auto-advance   enabled                                                                                                                                                     │
-│ ▄▀▀   ││                        ││                                                                                                                                                                             │
-│  ▀▄   ││                        ││                                                                                                                                                                             │
-│ ▄▄▀   ││                        ││                                                                                                                                                                             │
-│  F5   ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ Reqs 465  336✓  110…  (72%)   Formal 100%                                                                                                                                                                      │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ────────────────────────────────────────────────────────────────────────────────
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ nForma AI v0.41.18                                                                                                                                                                       [Tab] cycle  [q] quit │
-│                                                                                           cwd: ~/code/QGSD [ctrl-t]                                                                                            │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-┌───────┐┌─ Config ───────────────┐┌─ Config — Settings ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│       ││  Settings              ││Project Settings                                                                                                                                                             │
-│ ▄█▄   ││  Tune Timeouts         ││────────────────────────────────────────                                                                                                                                     │
-│ █ █   ││  Set Update Policy     ││                                                                                                                                                                             │
-│ █▀█   ││ ─────────────────      ││  Profile     balanced                                                                                                                                                       │
-│  F1   ││  Export Roster         ││  Quorum n    3                                                                                                                                                              │
-│ ───── ││  Import Roster         ││  Fail mode   open                                                                                                                                                           │
-│       ││ ─────────────────      ││                                                                                                                                                                             │
-│ █▀█   ││  Exit                  ││Model Tiers  (balanced profile)                                                                                                                                              │
-│ ██▀   ││                        ││────────────────────────────────────────                                                                                                                                     │
-│ █ █   ││                        ││                                                                                                                                                                             │
-│  F2   ││                        ││  Planner      opus                                                                                                                                                          │
-│ ───── ││                        ││  Executor     sonnet                                                                                                                                                        │
-│       ││                        ││  Researcher   sonnet                                                                                                                                                        │
-│ ▄▀▀   ││                        ││  Verifier     sonnet                                                                                                                                                        │
-│ █     ││                        ││  Mapper       haiku                                                                                                                                                         │
-│ ▀▄▄   ││                        ││                                                                                                                                                                             │
-│  F3   ││                        ││  * = override active                                                                                                                                                        │
-│ ───── ││                        ││                                                                                                                                                                             │
-│       ││                        ││Workflow                                                                                                                                                                     │
-│ ▄▀▄   ││                        ││────────────────────────────────────────                                                                                                                                     │
-│ █▀▀   ││                        ││                                                                                                                                                                             │
-│ ▀▄▄   ││                        ││  Research       enabled                                                                                                                                                     │
-│  F4   ││                        ││  Plan check     enabled                                                                                                                                                     │
-│ ───── ││                        ││  Verifier       enabled                                                                                                                                                     │
-│       ││                        ││  Auto-advance   enabled                                                                                                                                                     │
-│ ▄▀▀   ││                        ││                                                                                                                                                                             │
-│  ▀▄   ││                        ││                                                                                                                                                                             │
-│ ▄▄▀   ││                        ││                                                                                                                                                                             │
-│  F5   ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ Reqs 465  336✓  110…  (72%)   Formal 100%                                                                                                                                                                      │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ────────────────────────────────────────────────────────────────────────────────
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ nForma AI v0.41.18                                                                                                                                                                       [Tab] cycle  [q] quit │
-│                                                                                           cwd: ~/code/QGSD [ctrl-t]                                                                                            │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-┌───────┐┌─ Sessions ─────────────┐┌─ Sessions ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│       ││  New Session           ││Sessions                                                                                                                                                                     │
-│ ▄█▄   ││                        ││──────────────────────────────────────────────────                                                                                                                           │
-│ █ █   ││                        ││                                                                                                                                                                             │
-│ █▀█   ││                        ││No sessions yet.                                                                                                                                                             │
-│  F1   ││                        ││                                                                                                                                                                             │
-│ ───── ││                        ││Select "New Session" to start a Claude session with nForma context.                                                                                                          │
-│       ││                        ││Sessions persist across TUI restarts — resume where you left off.                                                                                                            │
-│ █▀█   ││                        ││                                                                                                                                                                             │
-│ ██▀   ││                        ││Tip: Select "New Session" from the menu, or press Enter on a previous session to resume.                                                                                     │
-│ █ █   ││                        ││                                                                                                                                                                             │
-│  F2   ││                        ││                                                                                                                                                                             │
-│ ───── ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│ ▄▀▀   ││                        ││                                                                                                                                                                             │
-│ █     ││                        ││                                                                                                                                                                             │
-│ ▀▄▄   ││                        ││                                                                                                                                                                             │
-│  F3   ││                        ││                                                                                                                                                                             │
-│ ───── ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│ ▄▀▄   ││                        ││                                                                                                                                                                             │
-│ █▀▀   ││                        ││                                                                                                                                                                             │
-│ ▀▄▄   ││                        ││                                                                                                                                                                             │
-│  F4   ││                        ││                                                                                                                                                                             │
-│ ───── ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│ ▄▀▀   ││                        ││                                                                                                                                                                             │
-│  ▀▄   ││                        ││                                                                                                                                                                             │
-│ ▄▄▀   ││                        ││                                                                                                                                                                             │
-│  F5   ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ Reqs 465  336✓  110…  (72%)   Formal 100%   [C-\] disconnect                                                                                                                                                   │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ────────────────────────────────────────────────────────────────────────────────

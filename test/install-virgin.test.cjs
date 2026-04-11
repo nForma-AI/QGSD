@@ -78,6 +78,8 @@ function runInstall(tmpDir, runtime) {
       OPENCODE_CONFIG_DIR: undefined,
       OPENCODE_CONFIG: undefined,
       XDG_CONFIG_HOME: undefined,
+      // Skip heavy network installs (River ML, @huggingface/transformers) to avoid CI timeouts
+      NF_INSTALL_SKIP_OPTIONAL: '1',
     },
   });
 }

@@ -336,6 +336,54 @@ function writeProvidersJson(data) {
   fs.renameSync(PROVIDERS_JSON_TMP, PROVIDERS_JSON_PATH);
 }
 
+/**
+ * detectInstalledProviders(providers) — filter providers to those whose CLI binary is present.
+ *
+ * Rules:
+ * - HTTP-only slots (no `cli` field OR type === 'http') are always included.
+ * - For subprocess/ccr slots, use the already-resolved `resolvedCli` field if present,
+ *   otherwise fall back to `cli`. This function MUST be called after the resolveCli() loop
+ *   in unified-mcp-server.mjs so that resolvedCli is populated before probing.
+ *   If resolvedCli is absent (e.g. called out-of-order or in isolation), the raw `cli`
+ *   field is used as a best-effort fallback. Test with fs.accessSync(path, fs.constants.X_OK).
+ * - De-duplicate probes: slots sharing the same binary path (e.g. ccr-1..ccr-6 all use
+ *   /opt/homebrew/bin/ccr) check the filesystem only once per unique path.
+ * - Fail-open: any unexpected error returns the full providers list unchanged.
+ *
+ * @param {Array} providers - array of provider objects from providers.json
+ * @returns {Array} filtered array containing only providers with installed CLIs
+ */
+function detectInstalledProviders(providers) {
+  if (!Array.isArray(providers)) return providers || [];
+  try {
+    const checked = new Map(); // binaryPath -> boolean (installed)
+    return providers.filter(p => {
+      // HTTP-only slots have no CLI to probe — always include
+      if (!p.cli || p.type === 'http') return true;
+      // Use resolvedCli (set by resolveCli() loop) if available; fall back to raw cli field
+      const binaryPath = p.resolvedCli || p.cli;
+      if (checked.has(binaryPath)) return checked.get(binaryPath);
+      let installed = false;
+      try {
+        fs.accessSync(binaryPath, fs.constants.X_OK);
+        installed = true;
+      } catch (_) {
+        // binary not found or not executable — slot excluded
+      }
+      checked.set(binaryPath, installed);
+      if (!installed) {
+        // stderr: per-slot exclusion diagnostic (type included to disambiguate shared-name slots)
+        process.stderr.write(`[manage-agents-core] detectInstalledProviders: ${p.name} (type=${p.type || 'subprocess'}) excluded — CLI not found: ${binaryPath}\n`);
+      }
+      return installed;
+    });
+  } catch (err) {
+    // Fail-open: unexpected error — return full list unchanged
+    process.stderr.write(`[manage-agents-core] detectInstalledProviders: unexpected error, using full list: ${err.message}\n`);
+    return providers;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // nForma JSON helpers
 // ---------------------------------------------------------------------------
@@ -883,4 +931,5 @@ module.exports._pure = {
   shortProvider,
   fetchProviderModels,
   probeProviderUrl,
+  detectInstalledProviders,
 };
