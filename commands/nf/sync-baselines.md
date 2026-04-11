@@ -97,13 +97,13 @@ fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n');
 If `added.length > 0`:
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "req(baseline): sync N baseline requirements" --files .planning/formal/requirements.json
+node ~/.claude/nf/bin/nf-tools.cjs commit "req(baseline): sync N baseline requirements" --files .planning/formal/requirements.json
 ```
 
 Also commit config if intent was stored:
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "chore(baseline): store detected project intent" --files .planning/config.json
+node ~/.claude/nf/bin/nf-tools.cjs commit "chore(baseline): store detected project intent" --files .planning/config.json
 ```
 
 Where N is the count of added requirements.

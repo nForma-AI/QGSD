@@ -1,0 +1,24 @@
+{
+  "feature/issue-58-integrate-coderlm-adapter": {
+    "task_id": 394,
+    "task_description": "Fix hardcoded slot names in mcp-restart.md and mcp-set-model.md: replace hardcoded allowed-tools (mcp__claude-1..6__identity) and hardcoded slot lists (codex-cli-1, gemini-cli-1, opencode-1, copilot-1, claude-1..6) with dynamic reads from ~/.claude.json mcpServers, and add ccr-1..6 and opencode-2 to allowed-tools",
+    "approach": "Replace hardcoded agent lists in mcp-restart.md and mcp-set-model.md with dynamic reads from ~/.claude.json mcpServers, dynamically generate allowed-tools from mcpServers, and add ccr-1..6 and opencode-2 to the allowed-tools list.",
+    "out_of_scope": [
+      "Fix hardcoded agent lists in other MCP commands (e.g., mcp-status.md, mcp-repair.md)",
+      "Modify the node scripts that read ~/.claude.json (they already work correctly)",
+      "Change the command output format or user-facing messages beyond agent list display",
+      "Add new validation rules or error handling beyond current scope"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.85,
+      "routed_through_debug": false
+    },
+    "risk_level": "medium",
+    "risk_reason": "Task involves modifying two workflow command files with hardcoded values that affect CLI behavior and tool integration, requiring dynamic configuration reading from user files.",
+    "branches_affected": ["feature/issue-58-integrate-coderlm-adapter"],
+    "created_at": "2026-04-09T13:14:44.723Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

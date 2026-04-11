@@ -1000,7 +1000,7 @@ function stripQuotes(s) {
 /**
  * parseImprovements — scans rawOutput for "Improvements:" section, parses list entries.
  *
- * Migrated from bin/gsd-quorum-slot-worker-improvements.test.cjs (canonical location).
+ * Migrated from bin/nf-quorum-slot-worker-improvements.test.cjs (canonical location).
  * Never throws — improvements are additive, not required.
  *
  * @param {string} rawOutput

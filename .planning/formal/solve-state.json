@@ -1,15 +1,15 @@
 {
-  "last_run": "2026-04-10T16:02:12.786Z",
+  "last_run": "2026-04-10T22:02:00.814Z",
   "converged": false,
   "iteration_count": 1,
-  "final_residual_total": 46,
+  "final_residual_total": 51,
   "reverse_discovery_total": 2,
-  "heatmap_total": 366,
+  "heatmap_total": 385,
   "known_issues": [
     {
       "layer": "d_to_c",
-      "residual": 46,
-      "net_residual": 23
+      "residual": 51,
+      "net_residual": 26
     },
     {
       "layer": "d_to_r",
@@ -18,7 +18,7 @@
     },
     {
       "layer": "git_heatmap",
-      "residual": 366
+      "residual": 385
     },
     {
       "layer": "git_history",
@@ -30,11 +30,11 @@
     },
     {
       "layer": "config_health",
-      "residual": 19
+      "residual": 20
     },
     {
       "layer": "security",
-      "residual": 21
+      "residual": 19
     },
     {
       "layer": "asset_stale",
@@ -46,11 +46,11 @@
     }
   ],
   "r_to_f_progress": {
-    "total": 465,
+    "total": 466,
     "covered": 0,
     "percentage": "0.0"
   },
-  "focus": null,
+  "focus": "convergence test",
   "capped_layers": [],
   "baseline_drift": {
     "detected": false,

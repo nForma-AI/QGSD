@@ -106,22 +106,22 @@ test('readPendingTasks: returns empty array when .claude dir does not exist', ()
 
 test('readPendingTasks: returns generic pending-task.txt', () => {
   const tmpDir = makeTmpDir();
-  writeClaudeFile(tmpDir, 'pending-task.txt', '/qgsd:execute-phase v0.19-05');
+  writeClaudeFile(tmpDir, 'pending-task.txt', '/qnf:execute-phase v0.19-05');
 
   const results = readPendingTasks(tmpDir);
   assert.equal(results.length, 1);
   assert.equal(results[0].filename, 'pending-task.txt');
-  assert.equal(results[0].content, '/qgsd:execute-phase v0.19-05');
+  assert.equal(results[0].content, '/qnf:execute-phase v0.19-05');
 });
 
 test('readPendingTasks: returns session-scoped pending-task-SESSION.txt', () => {
   const tmpDir = makeTmpDir();
-  writeClaudeFile(tmpDir, 'pending-task-abc123.txt', '/qgsd:quick --full fix tests');
+  writeClaudeFile(tmpDir, 'pending-task-abc123.txt', '/qnf:quick --full fix tests');
 
   const results = readPendingTasks(tmpDir);
   assert.equal(results.length, 1);
   assert.equal(results[0].filename, 'pending-task-abc123.txt');
-  assert.equal(results[0].content, '/qgsd:quick --full fix tests');
+  assert.equal(results[0].content, '/qnf:quick --full fix tests');
 });
 
 test('readPendingTasks: excludes .claimed files', () => {
@@ -181,14 +181,14 @@ test('subprocess: exits 0 and emits additionalContext when STATE.md has Current 
 test('subprocess: includes pending task when pending-task.txt exists', () => {
   const tmpDir = makeTmpDir();
   writeStateFile(tmpDir, '## Current Position\n\nPhase: v0.19-05\n\n## Other\nstuff');
-  writeClaudeFile(tmpDir, 'pending-task.txt', '/qgsd:execute-phase v0.19-05');
+  writeClaudeFile(tmpDir, 'pending-task.txt', '/qnf:execute-phase v0.19-05');
 
   const { exitCode, parsed } = runHook({ cwd: tmpDir });
 
   assert.equal(exitCode, 0);
   const ctx = parsed.hookSpecificOutput.additionalContext;
   assert.ok(ctx.includes('Pending Task'), 'should include Pending Task section');
-  assert.ok(ctx.includes('/qgsd:execute-phase v0.19-05'), 'should include task content');
+  assert.ok(ctx.includes('/qnf:execute-phase v0.19-05'), 'should include task content');
 });
 
 test('subprocess: emits minimal fallback when STATE.md is absent', () => {

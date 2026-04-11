@@ -1,6 +1,6 @@
 ---
 name: nf:quick
-description: Execute a quick task with GSD guarantees (atomic commits, state tracking) but skip optional agents
+description: Execute a quick task with NF guarantees (atomic commits, state tracking) but skip optional agents
 argument-hint: "[--full] [--delegate {slot}] [--force-quorum]"
 allowed-tools:
   - Read
@@ -13,7 +13,7 @@ allowed-tools:
   - AskUserQuestion
 ---
 <objective>
-Execute small, ad-hoc tasks with GSD guarantees (atomic commits, STATE.md tracking).
+Execute small, ad-hoc tasks with NF guarantees (atomic commits, STATE.md tracking).
 
 Quick mode is the same system with a shorter path:
 - Spawns nf-planner (quick mode) + nf-executor(s)
@@ -54,7 +54,7 @@ Preserve all workflow gates (validation, task description, planning, execution, 
 
 ## Verification Gap Auto-Proceed Override
 
-**Scope:** Applies only during Step 6.5 of the GSD quick workflow (post-execution verification, `$FULL_MODE` only). The `passed` and `human_needed` branches from the upstream workflow are unchanged.
+**Scope:** Applies only during Step 6.5 of the NF quick workflow (post-execution verification, `$FULL_MODE` only). The `passed` and `human_needed` branches from the upstream workflow are unchanged.
 
 ### Rule: gaps_found — auto-fix loop (replaces pause-and-ask)
 
@@ -88,7 +88,7 @@ Fix gaps identified in verification.
 <constraints>
 - Address only the gaps listed in VERIFICATION.md
 - Do not re-implement tasks already marked as passing
-- Commit fixes atomically using gsd-tools.cjs commit
+- Commit fixes atomically using nf-tools.cjs commit
 - Return the fix commit hash in your response (format: 'Fix Commit: {hash}')
 </constraints>
 ",

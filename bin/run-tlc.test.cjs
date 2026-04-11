@@ -11,6 +11,7 @@ const { spawnSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+const { resolveTlaJar } = require('./resolve-formal-tools.cjs');
 
 const RUN_TLC = path.join(__dirname, 'run-tlc.cjs');
 
@@ -31,8 +32,7 @@ test('exits non-zero and prints download URL when tla2tools.jar is not found', (
     null;
   // If no Java available, skip this test — it cannot reach JAR check without Java.
   if (!javaHome) { return; }  // test is skipped, not failed
-  const jarPath = path.join(__dirname, '..', '.planning', 'formal', 'tla', 'tla2tools.jar');
-  if (fs.existsSync(jarPath)) { return; }  // skip — can't test absent-JAR path when JAR is present
+  if (resolveTlaJar(path.join(__dirname, '..'))) { return; }  // skip — can't test absent-JAR path when any supported install is present
   const result = spawnSync(process.execPath, [RUN_TLC], {
     encoding: 'utf8',
     env: { ...process.env, JAVA_HOME: javaHome },

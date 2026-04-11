@@ -12,6 +12,7 @@ const path = require('path');
 const fs   = require('fs');
 
 const RUN_ALLOY = path.join(__dirname, 'run-alloy.cjs');
+const { resolveAlloyJar } = require('./resolve-formal-tools.cjs');
 
 test('exits non-zero and prints JAVA_HOME error when JAVA_HOME points to nonexistent path', () => {
   const result = spawnSync(process.execPath, [RUN_ALLOY], {
@@ -31,8 +32,7 @@ test('exits non-zero and prints Alloy JAR download URL when JAR not found', () =
   // If no Java available, skip this test — it cannot reach JAR check without Java.
   if (!javaHome) { return; }  // test is skipped, not failed
 
-  const jarPath = path.join(__dirname, '..', '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar');
-  if (fs.existsSync(jarPath)) { return; }  // skip — can't test absent-JAR path when JAR is present
+  if (resolveAlloyJar(path.join(__dirname, '..'))) { return; }  // skip if any supported Alloy JAR resolution path exists
 
   const result = spawnSync(process.execPath, [RUN_ALLOY], {
     encoding: 'utf8',

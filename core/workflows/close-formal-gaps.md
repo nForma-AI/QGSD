@@ -85,6 +85,19 @@ If `--bug-context` is provided:
 
 If `--verbose` is provided, set `$VERBOSE=true`.
 
+**Seed files parsing (CREM-01):**
+
+If `--seed-files` is provided (comma-separated file paths):
+- Parse the value: `SEED_FILES=$(echo "$RAW_SEED_FILES" | tr ',' '\n' | xargs -I{} echo "{}")`
+- For each path that exists, read its content (up to 200 lines via `head -200 {file}`)
+- Store as `$SEED_CONTEXT` — a multi-file block in the format:
+  ```
+  // Seed file: {relative_path}
+  {file_content}
+  ```
+- Log: `Seed files loaded: {N} files ({list of paths})`
+- If no files exist or flag is absent, set `$SEED_CONTEXT=""` (fail-open: missing seed files do not block generation)
+
 When `$BUG_CONTEXT` is non-empty, the workflow enters **bug-context mode**: Steps 5 and 6 are modified to bias spec generation and use the refinement verification loop respectively.
 </step>
 
@@ -230,6 +243,27 @@ After the bug is fixed, the model should PASS (no violations).
 ```
 
 This biases the generated spec toward capturing the failure mode rather than just verifying requirements. When `$BUG_CONTEXT` is empty, this block is omitted and Step 5 behaves identically to before.
+
+### Seed Files Injection (CREM-01)
+
+If `$SEED_CONTEXT` is non-empty (i.e., `--seed-files` was provided in Step 1 with at least one existing file), append the following block to the spec generation prompt for ALL formalisms (TLA+, Alloy, PRISM, Petri), AFTER the requirement text and module context but BEFORE the formalism-specific instructions:
+
+```
+<seed_context>
+The following source files are the implementation of the requirement(s) being modeled.
+Use actual function signatures, state variable names, and call patterns from this code
+as the basis for the formal model — do NOT invent generic names.
+
+{$SEED_CONTEXT}
+</seed_context>
+
+Use the seed code to:
+- Name TLA+ VARIABLES and CONSTANTS after the actual variables and parameters in the code
+- Model only the state transitions that exist in the code (not hypothetical ones)
+- Reference real callers in liveness properties where applicable
+```
+
+When `$SEED_CONTEXT` is empty, this block is omitted and Step 5 behaves identically to before.
 </step>
 
 <step name="run_checker">

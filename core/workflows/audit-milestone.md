@@ -19,21 +19,21 @@ If `$AUTO_MODE`:
   Set `current_iteration` from `--iteration N` argument (default 0)
 
 ```bash
-INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init milestone-op)
+INIT=$(node ~/.claude/nf/bin/nf-tools.cjs init milestone-op)
 ```
 
 Extract from init JSON: `milestone_version`, `milestone_name`, `phase_count`, `completed_phases`, `commit_docs`.
 
 Resolve integration checker model:
 ```bash
-CHECKER_MODEL=$(node ~/.claude/nf/bin/gsd-tools.cjs resolve-model nf-integration-checker --raw)
+CHECKER_MODEL=$(node ~/.claude/nf/bin/nf-tools.cjs resolve-model nf-integration-checker --raw)
 ```
 
 ## 1. Determine Milestone Scope
 
 ```bash
 # Get phases in milestone (sorted numerically, handles decimals)
-node ~/.claude/nf/bin/gsd-tools.cjs phases list
+node ~/.claude/nf/bin/nf-tools.cjs phases list
 ```
 
 - Parse version from arguments or detect current from ROADMAP.md
@@ -47,7 +47,7 @@ For each phase directory, read the VERIFICATION.md:
 
 ```bash
 # For each phase, use find-phase to resolve the directory (handles archived phases)
-PHASE_INFO=$(node ~/.claude/nf/bin/gsd-tools.cjs find-phase 01 --raw)
+PHASE_INFO=$(node ~/.claude/nf/bin/nf-tools.cjs find-phase 01 --raw)
 # Extract directory from JSON, then read VERIFICATION.md from that directory
 # Repeat for each phase number from ROADMAP.md
 ```
@@ -69,7 +69,7 @@ For any phase with no directory at all, determine whether a plan already exists:
 # Check quick tasks for a plan referencing this phase
 ls .planning/quick/*/
 # Check if phase plan exists but was never executed
-node ~/.claude/nf/bin/gsd-tools.cjs find-phase {N} --raw
+node ~/.claude/nf/bin/nf-tools.cjs find-phase {N} --raw
 ```
 
 Classify each missing phase as:
@@ -130,7 +130,7 @@ For each phase's VERIFICATION.md, extract the expanded requirements table:
 For each phase's SUMMARY.md, extract `requirements-completed` from YAML frontmatter:
 ```bash
 for summary in .planning/phases/*-*/*-SUMMARY.md; do
-  node ~/.claude/nf/bin/gsd-tools.cjs summary-extract "$summary" --fields requirements_completed | jq -r '.requirements_completed'
+  node ~/.claude/nf/bin/nf-tools.cjs summary-extract "$summary" --fields requirements_completed | jq -r '.requirements_completed'
 done
 ```
 
@@ -203,7 +203,7 @@ Plus full markdown report with tables for requirements, phases, integration, tec
 After writing the MILESTONE-AUDIT.md artifact, update STATE.md with the audit result:
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs state record-session \
+node ~/.claude/nf/bin/nf-tools.cjs state record-session \
   --stopped-at "Milestone ${MILESTONE_VERSION} audit: ${AUDIT_STATUS} (${REQUIREMENTS_SATISFIED}/${REQUIREMENTS_TOTAL} requirements)" \
   --resume-file "None"
 ```

@@ -41,7 +41,7 @@ PublishStable ==
 \* After stable publish, align @next to at least @latest
 AlignNext ==
     /\ publishState = "publishing_stable"
-    /\ nextVer' = latestVer'
+    /\ nextVer' = latestVer
     /\ publishState' = "aligning_next"
     /\ UNCHANGED latestVer
 

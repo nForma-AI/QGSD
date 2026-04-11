@@ -41,6 +41,22 @@ function makeTempDir(suffix) {
   return dir;
 }
 
+// Helper: create a temp HOME dir with a fake nf-python-env that passes `import river`.
+// Returns { tempHome, cleanup } — call cleanup() in finally block.
+// River indicator tests MUST use this to work in CI (runner has no ~/.claude/nf-python-env).
+function makeRiverHome(suffix) {
+  const tempHome = makeTempDir(suffix + '-home');
+  const binDir = path.join(tempHome, '.claude', 'nf-python-env', 'bin');
+  fs.mkdirSync(binDir, { recursive: true });
+  fs.writeFileSync(path.join(binDir, 'python'), '#!/bin/sh\nexit 0\n', 'utf8');
+  fs.chmodSync(path.join(binDir, 'python'), 0o755);
+  return {
+    tempHome,
+    env: { HOME: tempHome },
+    cleanup: () => fs.rmSync(tempHome, { recursive: true, force: true }),
+  };
+}
+
 // --- Test Cases ---
 
 // TC1: Minimal payload — stdout contains model name and directory basename
@@ -248,6 +264,7 @@ test('TC14: 200K session with 15K tokens shows green (below 20K threshold)', () 
 // TC15: River exploring — arm with visits below minExplore
 test('TC15: River exploring when arm visits below minExplore', () => {
   const tempDir = makeTempDir('tc15');
+  const river = makeRiverHome('tc15');
   const stateFile = path.join(tempDir, '.nf-river-state.json');
   fs.writeFileSync(stateFile, JSON.stringify({
     qTable: {
@@ -262,18 +279,20 @@ test('TC15: River exploring when arm visits below minExplore', () => {
     const { stdout, exitCode } = runHook({
       model: { display_name: 'M' },
       workspace: { current_dir: tempDir },
-    });
+    }, river.env);
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
-    assert.ok(stdout.includes('River: exploring'), 'stdout must include "River: exploring"');
+    assert.ok(stdout.includes('● River'), 'stdout must include "● River"');
     assert.ok(stdout.includes('\x1b[36m'), 'stdout must include cyan ANSI code');
   } finally {
     fs.rmSync(tempDir, { recursive: true, force: true });
+    river.cleanup();
   }
 });
 
 // TC16: River active — all arms above minExplore
 test('TC16: River active when all arms above minExplore', () => {
   const tempDir = makeTempDir('tc16');
+  const river = makeRiverHome('tc16');
   const stateFile = path.join(tempDir, '.nf-river-state.json');
   fs.writeFileSync(stateFile, JSON.stringify({
     qTable: {
@@ -288,17 +307,18 @@ test('TC16: River active when all arms above minExplore', () => {
     const { stdout, exitCode } = runHook({
       model: { display_name: 'M' },
       workspace: { current_dir: tempDir },
-    });
+    }, river.env);
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
-    assert.ok(stdout.includes('River: active'), 'stdout must include "River: active"');
+    assert.ok(stdout.includes('● River'), 'stdout must include "● River"');
     assert.ok(stdout.includes('\x1b[32m'), 'stdout must include green ANSI code');
   } finally {
     fs.rmSync(tempDir, { recursive: true, force: true });
+    river.cleanup();
   }
 });
 
-// TC17: No state file — no River indicator
-test('TC17: No state file means no River indicator', () => {
+// TC17: No state file — idle River indicator (tools line shows dim · River)
+test('TC17: No state file shows idle River (no active indicator form)', () => {
   const tempDir = makeTempDir('tc17');
 
   try {
@@ -307,26 +327,36 @@ test('TC17: No state file means no River indicator', () => {
       workspace: { current_dir: tempDir },
     });
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    // stdout must NOT include 'River:' shadow form — tools line shows dim · River not ● River
     assert.ok(!stdout.includes('River:'), 'stdout must NOT include "River:"');
   } finally {
     fs.rmSync(tempDir, { recursive: true, force: true });
   }
 });
 
-// TC18: Malformed state file — no River indicator (fail-silent)
-test('TC18: Malformed state file produces no River indicator', () => {
-  const tempDir = makeTempDir('tc18');
+// TC18: Malformed state file — idle River indicator (fail-open fallback)
+test('TC18: Malformed state file shows idle River (fail-open fallback)', () => {
+  const tempHome = makeTempDir('tc18-home');
+  const tempDir = makeTempDir('tc18-dir');
+  // Create nf-python-env so River indicator is shown
+  const nfPython = path.join(tempHome, '.claude', 'nf-python-env', 'bin');
+  fs.mkdirSync(nfPython, { recursive: true });
+  fs.writeFileSync(path.join(nfPython, 'python'), '#!/bin/sh\nexit 0\n', 'utf8');
+  fs.chmodSync(path.join(nfPython, 'python'), 0o755);
+  // Write malformed state file
   const stateFile = path.join(tempDir, '.nf-river-state.json');
   fs.writeFileSync(stateFile, 'not valid json', 'utf8');
 
   try {
-    const { stdout, exitCode } = runHook({
-      model: { display_name: 'M' },
-      workspace: { current_dir: tempDir },
-    });
+    const { stdout, exitCode } = runHook(
+      { model: { display_name: 'M' }, workspace: { current_dir: tempDir } },
+      { HOME: tempHome }
+    );
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
     assert.ok(!stdout.includes('River:'), 'stdout must NOT include "River:"');
+    assert.ok(stdout.includes('River'), 'stdout must include River as fail-open fallback');
   } finally {
+    fs.rmSync(tempHome, { recursive: true, force: true });
     fs.rmSync(tempDir, { recursive: true, force: true });
   }
 });
@@ -334,6 +364,7 @@ test('TC18: Malformed state file produces no River indicator', () => {
 // TC19: Mixed task types — one exploring, one active
 test('TC19: Mixed task types shows exploring when any arm below minExplore', () => {
   const tempDir = makeTempDir('tc19');
+  const river = makeRiverHome('tc19');
   const stateFile = path.join(tempDir, '.nf-river-state.json');
   fs.writeFileSync(stateFile, JSON.stringify({
     qTable: {
@@ -351,11 +382,12 @@ test('TC19: Mixed task types shows exploring when any arm below minExplore', () 
     const { stdout, exitCode } = runHook({
       model: { display_name: 'M' },
       workspace: { current_dir: tempDir },
-    });
+    }, river.env);
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
-    assert.ok(stdout.includes('River: exploring'), 'stdout must include "River: exploring"');
+    assert.ok(stdout.includes('● River'), 'stdout must include "● River"');
   } finally {
     fs.rmSync(tempDir, { recursive: true, force: true });
+    river.cleanup();
   }
 });
 
@@ -382,6 +414,7 @@ test('TC20: Empty qTable produces no River indicator', () => {
 // TC21: Shadow recommendation displayed when lastShadow present
 test('TC21: Shadow recommendation displayed when lastShadow present', () => {
   const tempDir = makeTempDir('tc21');
+  const river = makeRiverHome('tc21');
   const stateFile = path.join(tempDir, '.nf-river-state.json');
   fs.writeFileSync(stateFile, JSON.stringify({
     qTable: {
@@ -401,18 +434,20 @@ test('TC21: Shadow recommendation displayed when lastShadow present', () => {
     const { stdout, exitCode } = runHook({
       model: { display_name: 'M' },
       workspace: { current_dir: tempDir },
-    });
+    }, river.env);
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
-    assert.ok(stdout.includes('River: gemini-1 (shadow)'), 'stdout must include "River: gemini-1 (shadow)"');
+    assert.ok(stdout.includes('● River: gemini-1'), 'stdout must include "● River: gemini-1"');
     assert.ok(stdout.includes('\x1b[33m'), 'stdout must include yellow ANSI code');
   } finally {
     fs.rmSync(tempDir, { recursive: true, force: true });
+    river.cleanup();
   }
 });
 
 // TC22: No shadow — falls back to River: active
 test('TC22: No shadow falls back to River: active', () => {
   const tempDir = makeTempDir('tc22');
+  const river = makeRiverHome('tc22');
   const stateFile = path.join(tempDir, '.nf-river-state.json');
   fs.writeFileSync(stateFile, JSON.stringify({
     qTable: {
@@ -427,18 +462,20 @@ test('TC22: No shadow falls back to River: active', () => {
     const { stdout, exitCode } = runHook({
       model: { display_name: 'M' },
       workspace: { current_dir: tempDir },
-    });
+    }, river.env);
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
-    assert.ok(stdout.includes('River: active'), 'stdout must include "River: active" (not shadow)');
+    assert.ok(stdout.includes('● River'), 'stdout must include "● River" (not shadow)');
     assert.ok(!stdout.includes('shadow'), 'stdout must NOT include "shadow"');
   } finally {
     fs.rmSync(tempDir, { recursive: true, force: true });
+    river.cleanup();
   }
 });
 
 // TC23: Shadow with empty recommendation falls back to normal indicator
 test('TC23: Shadow with null recommendation falls back to normal indicator', () => {
   const tempDir = makeTempDir('tc23');
+  const river = makeRiverHome('tc23');
   const stateFile = path.join(tempDir, '.nf-river-state.json');
   fs.writeFileSync(stateFile, JSON.stringify({
     qTable: {
@@ -454,12 +491,100 @@ test('TC23: Shadow with null recommendation falls back to normal indicator', () 
     const { stdout, exitCode } = runHook({
       model: { display_name: 'M' },
       workspace: { current_dir: tempDir },
-    });
+    }, river.env);
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
-    assert.ok(stdout.includes('River: active') || stdout.includes('River: exploring'),
-      'stdout must include "River: active" or "River: exploring" (not shadow)');
+    assert.ok(stdout.includes('● River'),
+      'stdout must include "● River" (not shadow)');
     assert.ok(!stdout.includes('shadow'), 'stdout must NOT include "shadow"');
   } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+    river.cleanup();
+  }
+});
+
+// --- Tools Status Second Line Tests ---
+
+// TC24: coderlm binary absent → dim · coderlm (not installed, always shown)
+test('TC24: coderlm binary absent shows dim not-installed indicator', () => {
+  const tempHome = makeTempDir('tc24');
+  const tempDir = makeTempDir('tc24-dir');
+  // Do NOT create ~/.claude/nf-bin/coderlm — binary absent
+  try {
+    const { stdout, exitCode } = runHook(
+      { model: { display_name: 'M' }, workspace: { current_dir: tempDir } },
+      { HOME: tempHome }
+    );
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.ok(stdout.includes('coderlm'), 'stdout must include coderlm (always shown)');
+    assert.ok(stdout.includes('\x1b[2m· coderlm\x1b[0m'), 'stdout must show dim · coderlm when not installed');
+  } finally {
+    fs.rmSync(tempHome, { recursive: true, force: true });
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// TC25: coderlm binary present but no PID file → ○ coderlm (idle)
+test('TC25: coderlm binary present but no PID → hollow idle indicator', () => {
+  const tempHome = makeTempDir('tc25');
+  const tempDir = makeTempDir('tc25-dir');
+  const binDir = path.join(tempHome, '.claude', 'nf-bin');
+  fs.mkdirSync(binDir, { recursive: true });
+  fs.writeFileSync(path.join(binDir, 'coderlm'), '#!/bin/sh\n', 'utf8');
+  // No .pid file → not alive
+  try {
+    const { stdout, exitCode } = runHook(
+      { model: { display_name: 'M' }, workspace: { current_dir: tempDir } },
+      { HOME: tempHome }
+    );
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.ok(stdout.includes('coderlm'), 'stdout must include coderlm when binary present');
+    assert.ok(stdout.includes('○ coderlm'), 'stdout must show hollow ○ coderlm when idle');
+  } finally {
+    fs.rmSync(tempHome, { recursive: true, force: true });
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// TC27: coderlm binary present AND PID alive → bright green ● coderlm
+test('TC27: coderlm binary present with alive PID shows green active indicator', () => {
+  const tempHome = makeTempDir('tc27');
+  const tempDir = makeTempDir('tc27-dir');
+  const binDir = path.join(tempHome, '.claude', 'nf-bin');
+  fs.mkdirSync(binDir, { recursive: true });
+  fs.writeFileSync(path.join(binDir, 'coderlm'), '#!/bin/sh\n', 'utf8');
+  // Use current process PID — guaranteed alive
+  fs.writeFileSync(path.join(binDir, 'coderlm.pid'), String(process.pid), 'utf8');
+  try {
+    const { stdout, exitCode } = runHook(
+      { model: { display_name: 'M' }, workspace: { current_dir: tempDir } },
+      { HOME: tempHome }
+    );
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.ok(stdout.includes('\x1b[32m● coderlm\x1b[0m'), 'stdout must include green active coderlm indicator');
+  } finally {
+    fs.rmSync(tempHome, { recursive: true, force: true });
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// TC26: embed package present, no cache → ○ embed (idle)
+test('TC26: embed package present shows hollow idle indicator', () => {
+  const tempHome = makeTempDir('tc26-home');
+  const tempDir = makeTempDir('tc26-dir');
+  // Install transformers stub in the correct nf-bin location
+  const pkgDir = path.join(tempHome, '.claude', 'nf-bin', 'node_modules', '@huggingface', 'transformers');
+  fs.mkdirSync(pkgDir, { recursive: true });
+  // No embedding-cache.json → idle (not active)
+  try {
+    const { stdout, exitCode } = runHook(
+      { model: { display_name: 'M' }, workspace: { current_dir: tempDir } },
+      { HOME: tempHome }
+    );
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.ok(stdout.includes('embed'), 'stdout must include embed when package present');
+    assert.ok(stdout.includes('○ embed'), 'stdout must show hollow ○ embed when idle');
+  } finally {
+    fs.rmSync(tempHome, { recursive: true, force: true });
     fs.rmSync(tempDir, { recursive: true, force: true });
   }
 });

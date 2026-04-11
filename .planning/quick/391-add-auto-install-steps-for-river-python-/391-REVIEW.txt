@@ -1,0 +1,58 @@
+VOTE: BLOCK
+
+CRITICAL ISSUES (Plan will fail at runtime):
+
+1. MISSING IMPORT: spawnSync not available in install.js top scope
+   - Plan says "spawnSync is already required at the top of install.js"
+   - FALSE: Only imported locally inside functions (lines 3655+)
+   - River block calls spawnSync('python3', ...) without requiring it first
+   - Will throw: ReferenceError: spawnSync is not defined
+
+2. MISSING IMPORT: spawnSync not in nf-statusline.js
+   - Plan says "Check if it already is; if not, add"
+   - nf-statusline.js has NO child_process require at all
+   - River availability check uses spawnSync without importing it
+   - Will throw: ReferenceError: spawnSync is not defined
+
+3. AMBIGUOUS INSTRUCTION: Task 2 doesn't specify WHERE to add require
+   - Says "add: const { spawnSync } = require('child_process')"
+   - Doesn't specify line number or location relative to other requires
+   - Should be explicit: "after line 8, alongside existing const requires"
+
+4. WEAK VERIFICATION: No validation that code executes
+   - Verification steps only grep for strings, don't verify syntax
+   - Missing: "node -c bin/install.js" to check syntax
+   - Missing: actual test run to verify spawnSync is available
+
+ISSUES (Plan has logical flaws or ambiguities):
+
+5. Approximate line numbers used
+   - "lines ~2575-2602" and "line ~2604"
+   - Plan should use grep to find "Validate hook path references" comment
+   - Reduces brittleness to file changes
+
+STRENGTHS:
+
+✓ Core logic is sound: River and embed install blocks are well-structured
+✓ Idempotency correct: Both blocks check before installing
+✓ Fail-open pattern correct: Both wrapped in try/catch
+✓ Timeout values reasonable: 3s (import check), 60s (pip3), 120s (npm)
+✓ Path changes correct: embed global path fix is right
+✓ Message formatting consistent with existing patterns
+✓ Task separation is atomic and clear
+
+RECOMMENDATION:
+
+Do NOT execute this plan as written. Require these fixes BEFORE execution:
+
+MUST FIX:
+1. Add "const { spawnSync } = require('child_process');" to install.js line 8 (after crypto require)
+2. Add "const { spawnSync } = require('child_process');" to nf-statusline.js line 9 (after os require)
+3. Update Task 1 Action to note: "spawnSync is available via require() at top of install.js"
+4. Update Task 1 Verify to add: "node -c bin/install.js" (syntax check)
+5. Update Task 2 Action to specify explicit line: "after line 8 in nf-statusline.js"
+6. Update Task 2 Action to use grep: "grep -n 'Validate hook path' bin/install.js" instead of "line ~2604"
+
+These are simple fixes. Once addressed, the plan becomes solid and safe.
+
+ESTIMATED FIX TIME: 5 minutes

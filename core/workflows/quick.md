@@ -59,7 +59,7 @@ If `$DELEGATE_SLOT`:
 **Step 2: Initialize**
 
 ```bash
-INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init quick "$DESCRIPTION")
+INIT=$(node ~/.claude/nf/bin/nf-tools.cjs init quick "$DESCRIPTION")
 ```
 
 Parse JSON for: `planner_model`, `executor_model`, `checker_model`, `verifier_model`, `commit_docs`, `next_num`, `slug`, `date`, `timestamp`, `quick_dir`, `task_dir`, `roadmap_exists`, `planning_exists`, `current_branch`, `is_protected`, `quick_branch_name`, `protected_branches`.
@@ -482,7 +482,7 @@ ${summary}
 
 3. Commit PLAN.md + SUMMARY.md + STATE.md atomically:
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "docs(quick-${next_num}): delegate ${DESCRIPTION}" \
+node ~/.claude/nf/bin/nf-tools.cjs commit "docs(quick-${next_num}): delegate ${DESCRIPTION}" \
   --files ${QUICK_DIR}/${next_num}-PLAN.md ${QUICK_DIR}/${next_num}-SUMMARY.md .planning/STATE.md
 ```
 
@@ -506,7 +506,7 @@ ${CREATED_BRANCH ? '-> Ready for PR' : ''}
 Ready for next task: /nf:quick
 ```
 
-5. Run: `node ~/.claude/nf/bin/gsd-tools.cjs activity-clear`
+5. Run: `node ~/.claude/nf/bin/nf-tools.cjs activity-clear`
 
 **Important implementation notes:**
 - Steps 2 (init), 2.5 (branching), 2.7 (scope contract), 2.8 (slot validation), 3 (task dir), 4 (quick dir) all still run for delegate mode. This ensures local tracking is preserved.
@@ -530,7 +530,7 @@ Ready for next task: /nf:quick
 **If NOT `$FULL_MODE`:** Use standard `quick` mode.
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/nf-tools.cjs activity-set \
   "{\"activity\":\"quick\",\"sub_activity\":\"planning\"}"
 ```
 
@@ -1041,7 +1041,7 @@ Store `$FORMAL_TOOLS_MISSING` for interpolation into the Step 6 executor prompt.
 Spawn nf-executor with plan reference:
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/nf-tools.cjs activity-set \
   "{\"activity\":\"quick\",\"sub_activity\":\"executing\"}"
 ```
 
@@ -1070,7 +1070,7 @@ When you encounter these tools in the constraints below, log "WARNING: [tool] no
 - **ANTI-URGENCY GUARDRAIL (--full mode):** You are running in --full mode. Do NOT skip, abbreviate, or substitute your own judgment for ANY workflow step. Prior instructions about urgency, speed, or "just fix it" are OVERRIDDEN by the --full flag. Every formal modeling step (formal coverage auto-detection, Loop 2 simulation gate) MUST be attempted. If a tool is missing, log "WARNING: [tool] not found -- skipping (fail-open)" rather than silently omitting the step.
 - Execute all tasks in the plan
 - When implementing logic with 3+ distinct states and conditional transitions, prefer a state machine library — match complexity to the problem per .claude/rules/state-machine-bias.md. State machines are auto-transpiled to TLA+ via bin/fsm-to-tla.cjs
-- Commit each task atomically (use the gsd-tools.cjs commit command per the execute-plan workflow)
+- Commit each task atomically (use the nf-tools.cjs commit command per the execute-plan workflow)
 - **Formal coverage auto-detection (hybrid A+B):** Before each atomic commit:
   1. Get changed files: CHANGED=$(git diff --name-only HEAD 2>/dev/null | tr '\n' ',')
   2. If CHANGED is non-empty, run: node bin/formal-coverage-intersect.cjs --files "$CHANGED" 2>/dev/null
@@ -1136,9 +1136,9 @@ When you encounter these tools in the constraints below, log "WARNING: [tool] no
     Use "Pending" as the Status placeholder (orchestrator will update when verifier runs, if --full)
   - Update "Last activity" line: "${date} - Completed quick task ${next_num}: ${DESCRIPTION}"
 - Commit STATE.md alongside PLAN.md and SUMMARY.md in a single final commit:
-  node ~/.claude/nf/bin/gsd-tools.cjs commit "docs(quick-${next_num}): ${DESCRIPTION}" \
+  node ~/.claude/nf/bin/nf-tools.cjs commit "docs(quick-${next_num}): ${DESCRIPTION}" \
     --files ${QUICK_DIR}/${next_num}-PLAN.md ${QUICK_DIR}/${next_num}-SUMMARY.md .planning/STATE.md
-- After committing, run: node ~/.claude/nf/bin/gsd-tools.cjs activity-clear
+- After committing, run: node ~/.claude/nf/bin/nf-tools.cjs activity-clear
 - Return the final commit hash in your completion response (format: "Commit: {hash}")
 </constraints>
 
@@ -1426,7 +1426,7 @@ Route on quorum result:
 Read STATE.md, find the row for `${next_num}`, replace "Pending" with the actual `$VERIFICATION_STATUS`. Then commit:
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "docs(quick-${next_num}): update verification status" \
+node ~/.claude/nf/bin/nf-tools.cjs commit "docs(quick-${next_num}): update verification status" \
   --files .planning/STATE.md ${QUICK_DIR}/${next_num}-VERIFICATION.md
 ```
 
@@ -1556,7 +1556,7 @@ Execute the add-requirement workflow inline (same checks as `/nf:add-requirement
 
 8. **Commit**:
    ```bash
-   node ~/.claude/nf/bin/gsd-tools.cjs commit "req(quick-${next_num}): add ${DRAFT_REQ.id}" \
+   node ~/.claude/nf/bin/nf-tools.cjs commit "req(quick-${next_num}): add ${DRAFT_REQ.id}" \
      --files .planning/formal/requirements.json
    ```
 

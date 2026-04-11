@@ -1,0 +1,24 @@
+{
+  "feature/issue-58-integrate-coderlm-adapter": {
+    "task_id": 386,
+    "task_description": "Add coderlm status indicator to nf-statusline.js: read coderlm.pid and render ● coderlm (green if running, PID alive) or nothing (not installed/stopped) after the River indicator. Write coderlm.state.json on start/stop in coderlm-lifecycle.cjs as a secondary signal. Fail-open: any read error renders nothing.",
+    "approach": "Add a coderlm status indicator (● coderlm) to nf-statusline.js that reads coderlm.pid file to determine if the coderlm server is running (green if alive, nothing if stopped/not installed), render it after the River indicator, and write coderlm.state.json in coderlm-lifecycle.cjs on start/stop as a secondary state signal.",
+    "out_of_scope": [
+      "Changing the coderlm binary download, spawn, or health check logic in coderlm-lifecycle.cjs",
+      "Adding user configuration options for the coderlm indicator display",
+      "Implementing process monitoring beyond simple PID file existence and signal 0 checks",
+      "Integrating coderlm status into other hooks or workflow files outside nf-statusline.js"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.95,
+      "routed_through_debug": false
+    },
+    "risk_level": "high",
+    "risk_reason": "Hook file modification (nf-statusline.js) is explicitly disqualified from low-risk classification per guardrails; requires dual-copy sync to hooks/dist/ and installer invocation.",
+    "branches_affected": ["feature/issue-58-integrate-coderlm-adapter"],
+    "created_at": "2026-04-08T17:58:49.279Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

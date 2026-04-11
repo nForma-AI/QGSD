@@ -34,7 +34,7 @@ function rimraf(dir) {
 // ─────────────────────────────────────────────
 (function testPatchesDirName() {
   assert.strictEqual(PATCHES_DIR_NAME, 'nf-local-patches',
-    'PATCHES_DIR_NAME must be nf-local-patches, not gsd-local-patches');
+    'PATCHES_DIR_NAME must be nf-local-patches, not nf-local-patches');
   origLog('  PASS: test 1 - PATCHES_DIR_NAME is nf-local-patches');
 })();
 

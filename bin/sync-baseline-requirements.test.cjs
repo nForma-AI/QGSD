@@ -153,7 +153,11 @@ describe('syncBaselineRequirements', () => {
     assert.equal(result.skipped.length, 1, 'Should skip the one matching text');
     assert.equal(result.skipped[0].existingId, 'EXISTING-99');
     assert.equal(result.added.length, realBaseline.total - 1);
+    assert.equal(result.updated.length, 1, 'Should retag the matching existing requirement');
     assert.equal(result.total_after, realBaseline.total); // 1 existing + (total-1) added
+
+    const written = readResult(tmpDir);
+    assert.equal(written.requirements[0].provenance.source_file, 'nf-baseline');
   });
 
   it('4. Next-available ID assignment respects existing IDs', () => {
@@ -213,7 +217,10 @@ describe('syncBaselineRequirements', () => {
 
   it('7. Envelope metadata updated on add', () => {
     if (!realBaseline) return;
-    tmpDir = createTempProject([]);
+    tmpDir = createTempProject([], {
+      source: '.planning/REQUIREMENTS.md',
+      last_sync: '2026-03-31T09:45:23.686Z',
+    });
     syncBaselineRequirements('cli', tmpDir);
 
     const written = readResult(tmpDir);
@@ -225,6 +232,9 @@ describe('syncBaselineRequirements', () => {
     assert.equal(written.frozen_at, '2026-03-01T00:00:00.000Z');
     // schema_version should be preserved
     assert.equal(written.schema_version, '1');
+    // unrelated envelope metadata should be preserved
+    assert.equal(written.source, '.planning/REQUIREMENTS.md');
+    assert.equal(written.last_sync, '2026-03-31T09:45:23.686Z');
   });
 
   it('8. File not written when nothing to add', () => {
@@ -243,6 +253,7 @@ describe('syncBaselineRequirements', () => {
     // Second sync - should not write
     const result = syncBaselineRequirements('cli', tmpDir);
     assert.equal(result.added.length, 0);
+    assert.equal(result.updated.length, 0);
 
     const afterSecond = readResult(tmpDir);
     assert.equal(afterSecond.content_hash, firstHash, 'Hash should be unchanged');
@@ -256,6 +267,7 @@ describe('syncBaselineRequirements', () => {
 
     assert.ok(Array.isArray(result.added), 'added should be array');
     assert.ok(Array.isArray(result.skipped), 'skipped should be array');
+    assert.ok(Array.isArray(result.updated), 'updated should be array');
     assert.equal(typeof result.total_before, 'number');
     assert.equal(typeof result.total_after, 'number');
     assert.equal(result.total_after, result.total_before + result.added.length);
@@ -368,9 +380,44 @@ describe('syncBaselineRequirements', () => {
 
     assert.ok(Array.isArray(result.added), 'added should be array');
     assert.ok(Array.isArray(result.skipped), 'skipped should be array');
+    assert.ok(Array.isArray(result.updated), 'updated should be array');
     assert.equal(typeof result.total_before, 'number');
     assert.equal(typeof result.total_after, 'number');
     assert.equal(result.total_after, result.total_before + result.added.length);
+  });
+
+  it('19. Existing baseline text without nf-baseline provenance is rewritten in place', () => {
+    if (!realBaseline) return;
+    const firstBaselineText = realBaseline.categories[0].requirements[0].text;
+    tmpDir = createTempProject([
+      {
+        id: 'SEC-88',
+        text: firstBaselineText,
+        category: 'Security',
+        phase: 'unknown',
+        status: 'Complete',
+        provenance: {
+          source_file: '.planning/milestones/v0.33-REQUIREMENTS.md',
+          milestone: 'v0.33',
+        },
+      },
+    ]);
+
+    const before = readResult(tmpDir);
+    const beforeTimestamp = before.aggregated_at;
+
+    const result = syncBaselineRequirements('cli', tmpDir);
+    assert.equal(result.added.length, realBaseline.total - 1);
+    assert.equal(result.updated.length, 1);
+    assert.equal(result.updated[0].id, 'SEC-88');
+
+    const after = readResult(tmpDir);
+    const rewritten = after.requirements.find(r => r.id === 'SEC-88');
+    assert.equal(rewritten.provenance.source_file, 'nf-baseline');
+    assert.equal(rewritten.provenance.milestone, 'v0.33');
+    assert.equal(rewritten.phase, 'unknown');
+    assert.equal(rewritten.status, 'Complete');
+    assert.notEqual(after.aggregated_at, beforeTimestamp, 'Timestamp should change when provenance is repaired');
   });
 });
 
@@ -381,7 +428,7 @@ describe('CLI auto-detect default', () => {
     if (tmpDir) cleanupTmpDir(tmpDir);
   });
 
-  it('19. CLI with no flags auto-detects and exits 0', () => {
+  it('20. CLI with no flags auto-detects and exits 0', () => {
     tmpDir = createTempProject([]);
     // Write a package.json with bin field so detect-project-intent finds CLI profile
     fs.writeFileSync(
@@ -402,7 +449,7 @@ describe('CLI auto-detect default', () => {
     assert.equal(result.detection.suggested.base_profile, 'cli', 'should detect CLI profile');
   });
 
-  it('20. CLI --profile override bypasses auto-detect', () => {
+  it('21. CLI --profile override bypasses auto-detect', () => {
     tmpDir = createTempProject([]);
 
     const scriptPath = path.join(__dirname, 'sync-baseline-requirements.cjs');
@@ -417,7 +464,7 @@ describe('CLI auto-detect default', () => {
     assert.ok(!result.detection, 'detection metadata should NOT be included with explicit profile');
   });
 
-  it('21. CLI --detect flag accepted silently for backwards compat', () => {
+  it('22. CLI --detect flag accepted silently for backwards compat', () => {
     tmpDir = createTempProject([]);
     // Write a package.json with bin field
     fs.writeFileSync(

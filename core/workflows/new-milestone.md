@@ -71,13 +71,13 @@ Keep Accumulated Context section from previous milestone.
 Delete MILESTONE-CONTEXT.md if exists (consumed).
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "docs: start milestone v[X.Y] [Name]" --files .planning/PROJECT.md .planning/STATE.md
+node ~/.claude/nf/bin/nf-tools.cjs commit "docs: start milestone v[X.Y] [Name]" --files .planning/PROJECT.md .planning/STATE.md
 ```
 
 ## 7. Load Context and Resolve Models
 
 ```bash
-INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init new-milestone)
+INIT=$(node ~/.claude/nf/bin/nf-tools.cjs init new-milestone)
 ```
 
 Extract from init JSON: `researcher_model`, `synthesizer_model`, `roadmapper_model`, `commit_docs`, `research_enabled`, `current_milestone`, `project_exists`, `roadmap_exists`.
@@ -92,10 +92,10 @@ AskUserQuestion: "Research the domain ecosystem for new features before defining
 
 ```bash
 # If "Research first": persist true
-node ~/.claude/nf/bin/gsd-tools.cjs config-set workflow.research true
+node ~/.claude/nf/bin/nf-tools.cjs config-set workflow.research true
 
 # If "Skip research": persist false
-node ~/.claude/nf/bin/gsd-tools.cjs config-set workflow.research false
+node ~/.claude/nf/bin/nf-tools.cjs config-set workflow.research false
 ```
 
 **If "Research first":**
@@ -110,7 +110,7 @@ node ~/.claude/nf/bin/gsd-tools.cjs config-set workflow.research false
 ```
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/nf-tools.cjs activity-set \
   "{\"activity\":\"new_milestone\",\"sub_activity\":\"researching\"}"
 ```
 
@@ -370,7 +370,7 @@ If "adjust": Return to scoping.
 
 **Commit requirements:**
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "docs: define milestone v[X.Y] requirements" --files .planning/REQUIREMENTS.md
+node ~/.claude/nf/bin/nf-tools.cjs commit "docs: define milestone v[X.Y] requirements" --files .planning/REQUIREMENTS.md
 ```
 
 ## 9.5. Formal Scope Scan (Pre-Roadmapper)
@@ -445,7 +445,7 @@ fi
 **Starting phase number:** Read MILESTONES.md for last phase number. Continue from there (v1.0 ended at phase 5 → v1.1 starts at phase 6).
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/nf-tools.cjs activity-set \
   "{\"activity\":\"new_milestone\",\"sub_activity\":\"creating_roadmap\"}"
 ```
 
@@ -517,7 +517,7 @@ Success criteria:
 
 **Commit roadmap** (after approval):
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "docs: create milestone v[X.Y] roadmap ([N] phases)" --files .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md
+node ~/.claude/nf/bin/nf-tools.cjs commit "docs: create milestone v[X.Y] roadmap ([N] phases)" --files .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md
 ```
 
 ## 11. Done
@@ -550,14 +550,14 @@ Also: `/nf:plan-phase [N]` — skip discussion, plan directly
 ```
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs activity-clear
+node ~/.claude/nf/bin/nf-tools.cjs activity-clear
 ```
 
 **Auto-advance check:**
 
 ```bash
-AUTO_CFG=$(node ~/.claude/nf/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
-FIRST_PHASE=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap list-phases 2>/dev/null | jq -r '.[0].phase_number // empty')
+AUTO_CFG=$(node ~/.claude/nf/bin/nf-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
+FIRST_PHASE=$(node ~/.claude/nf/bin/nf-tools.cjs roadmap list-phases 2>/dev/null | jq -r '.[0].phase_number // empty')
 # Fallback: extract first phase number from ROADMAP.md if tool unavailable
 if [ -z "$FIRST_PHASE" ]; then
   FIRST_PHASE=$(grep -m1 "^### Phase [0-9]" .planning/ROADMAP.md | grep -o '[0-9]*' | head -1)
@@ -576,7 +576,7 @@ Roadmap complete. Spawning plan-phase...
 ```
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/nf-tools.cjs activity-set \
   "{\"activity\":\"new_milestone\",\"sub_activity\":\"plan_phase_${FIRST_PHASE}\"}"
 ```
 
@@ -608,7 +608,7 @@ Task(
   ```
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs activity-clear
+node ~/.claude/nf/bin/nf-tools.cjs activity-clear
 ```
 
 **If `AUTO_CFG` is false OR `FIRST_PHASE` is empty:**

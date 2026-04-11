@@ -5,11 +5,11 @@
  * Guards against non-portable paths in nForma skill files.
  *
  * Rules:
- * 1. GSD interference: no /get-shit-done/ directory segments (use ~/.claude/nf/)
+ * 1. NF interference: no /get-shit-done/ directory segments (use ~/.claude/nf/)
  * 2. Portable require: no require('./bin/...') — use $HOME/.claude/nf-bin/ with CWD fallback
  * 3. Portable dispatch: no bare "commands/nf/" in Agent prompts — use $HOME/.claude/commands/nf/
  *
- * These patterns break when nForma is used in repos other than the QGSD source repo,
+ * These patterns break when nForma is used in repos other than the NF source repo,
  * because ./bin/ and commands/nf/ only exist locally in the source checkout.
  */
 
@@ -22,7 +22,7 @@ const SCAN_DIRS = ['commands/nf'];
 // --- Rule definitions ---
 const RULES = [
   {
-    id: 'gsd-interference',
+    id: 'nf-interference',
     re: /\/get-shit-done\//g,
     message: 'Must not reference /get-shit-done/ paths — use ~/.claude/nf/',
   },

@@ -168,7 +168,7 @@ const DEFAULT_CONFIG = {
   // NOTE: loadConfig() uses shallow spread { ...DEFAULT_CONFIG, ...global, ...project } —
   // if project config sets quorum_active, it entirely replaces the global value.
   quorum_active: [],
-  // model_tier_planner: model tier for planner agents (gsd-planner, gsd-roadmapper).
+  // model_tier_planner: model tier for planner agents (nf-planner, nf-roadmapper).
   // model_tier_worker: model tier for worker agents (researcher, checker, executor, etc.).
   // Valid values: 'haiku' | 'sonnet' | 'opus'. Flat keys required — nested objects lost in shallow merge.
   model_tier_planner: 'opus',

@@ -125,9 +125,9 @@ try {
 // Load quorum_active from ~/.claude/nf.json (project config takes precedence)
 let quorumActive = [];
 try {
-  const globalQgsd = path.join(os.homedir(), '.claude', 'nf.json');
-  const projQgsd   = path.join(process.cwd(), '.claude', 'nf.json');
-  for (const cfgPath of [globalQgsd, projQgsd]) {
+  const globalQnf = path.join(os.homedir(), '.claude', 'nf.json');
+  const projQnf   = path.join(process.cwd(), '.claude', 'nf.json');
+  for (const cfgPath of [globalQnf, projQnf]) {
     try {
       const cfgRaw = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
       if (Array.isArray(cfgRaw.quorum_active)) quorumActive = cfgRaw.quorum_active;

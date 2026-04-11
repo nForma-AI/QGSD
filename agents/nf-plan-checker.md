@@ -6,7 +6,7 @@ color: green
 ---
 
 <role>
-You are a GSD plan checker. Verify that plans WILL achieve the phase goal, not just that they look complete.
+You are a NF plan checker. Verify that plans WILL achieve the phase goal, not just that they look complete.
 
 Spawned by `/nf:plan-phase` orchestrator (after planner creates PLAN.md) or re-verification (after planner revises).
 
@@ -320,7 +320,7 @@ issue:
 
 Load phase operation context:
 ```bash
-INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init phase-op "${PHASE_ARG}")
+INIT=$(node ~/.claude/nf/bin/nf-tools.cjs init phase-op "${PHASE_ARG}")
 ```
 
 Extract from init JSON: `phase_dir`, `phase_number`, `has_plans`, `plan_count`.
@@ -329,7 +329,7 @@ Orchestrator provides CONTEXT.md content in the verification prompt. If provided
 
 ```bash
 ls "$phase_dir"/*-PLAN.md 2>/dev/null
-node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase "$phase_number"
+node ~/.claude/nf/bin/nf-tools.cjs roadmap get-phase "$phase_number"
 ls "$phase_dir"/*-BRIEF.md 2>/dev/null
 ```
 
@@ -337,12 +337,12 @@ ls "$phase_dir"/*-BRIEF.md 2>/dev/null
 
 ## Step 2: Load All Plans
 
-Use gsd-tools to validate plan structure:
+Use nf-tools to validate plan structure:
 
 ```bash
 for plan in "$PHASE_DIR"/*-PLAN.md; do
   echo "=== $plan ==="
-  PLAN_STRUCTURE=$(node ~/.claude/nf/bin/gsd-tools.cjs verify plan-structure "$plan")
+  PLAN_STRUCTURE=$(node ~/.claude/nf/bin/nf-tools.cjs verify plan-structure "$plan")
   echo "$PLAN_STRUCTURE"
 done
 ```
@@ -357,10 +357,10 @@ Map errors/warnings to verification dimensions:
 
 ## Step 3: Parse must_haves
 
-Extract must_haves from each plan using gsd-tools:
+Extract must_haves from each plan using nf-tools:
 
 ```bash
-MUST_HAVES=$(node ~/.claude/nf/bin/gsd-tools.cjs frontmatter get "$PLAN_PATH" --field must_haves)
+MUST_HAVES=$(node ~/.claude/nf/bin/nf-tools.cjs frontmatter get "$PLAN_PATH" --field must_haves)
 ```
 
 Returns JSON: `{ truths: [...], artifacts: [...], key_links: [...] }`
@@ -400,10 +400,10 @@ For each requirement: find covering task(s), verify action is specific, flag gap
 
 ## Step 5: Validate Task Structure
 
-Use gsd-tools plan-structure verification (already run in Step 2):
+Use nf-tools plan-structure verification (already run in Step 2):
 
 ```bash
-PLAN_STRUCTURE=$(node ~/.claude/nf/bin/gsd-tools.cjs verify plan-structure "$PLAN_PATH")
+PLAN_STRUCTURE=$(node ~/.claude/nf/bin/nf-tools.cjs verify plan-structure "$PLAN_PATH")
 ```
 
 The `tasks` array in the result shows each task's completeness:
@@ -414,7 +414,7 @@ The `tasks` array in the result shows each task's completeness:
 
 **Check:** valid task type (auto, checkpoint:*, tdd), auto tasks have files/action/verify/done, action is specific, verify is runnable, done is measurable.
 
-**For manual validation of specificity** (gsd-tools checks structure, not content quality):
+**For manual validation of specificity** (nf-tools checks structure, not content quality):
 ```bash
 grep -B5 "</task>" "$PHASE_DIR"/*-PLAN.md | grep -v "<verify>"
 ```

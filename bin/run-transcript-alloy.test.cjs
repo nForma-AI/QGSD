@@ -10,6 +10,7 @@ const assert   = require('node:assert');
 const { spawnSync } = require('child_process');
 const path = require('path');
 const fs   = require('fs');
+const { resolveAlloyJar } = require('./resolve-formal-tools.cjs');
 
 const RUN_TRANSCRIPT_ALLOY = path.join(__dirname, 'run-transcript-alloy.cjs');
 
@@ -30,8 +31,7 @@ test('exits non-zero and prints Alloy JAR download URL when JAR not found', () =
     null;
   if (!javaHome) { return; }  // skip if no Java — cannot reach JAR check without Java
 
-  const jarPath = path.join(__dirname, '..', '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar');
-  if (fs.existsSync(jarPath)) { return; }  // skip — can't test absent-JAR path when JAR is present
+  if (resolveAlloyJar(path.join(__dirname, '..'))) { return; }  // skip — can't test absent-JAR path when any supported install is present
 
   const result = spawnSync(process.execPath, [RUN_TRANSCRIPT_ALLOY], {
     encoding: 'utf8',

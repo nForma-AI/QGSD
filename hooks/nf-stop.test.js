@@ -106,7 +106,7 @@ function bashCommitBlock(commitCmd) {
 
 // Test 1: stop_hook_active: true → exit 0, no stdout (infinite loop guard)
 test('TC1: stop_hook_active true exits immediately with no output', () => {
-  const tmpFile = writeTempTranscript([userLine('/gsd:plan-phase 1')]);
+  const tmpFile = writeTempTranscript([userLine('/nf:plan-phase 1')]);
   try {
     const { stdout, exitCode } = runHook({
       stop_hook_active: true,
@@ -123,7 +123,7 @@ test('TC1: stop_hook_active true exits immediately with no output', () => {
 
 // Test 2: hook_event_name SubagentStop → exit 0, no stdout (subagent exclusion)
 test('TC2: SubagentStop exits immediately with no output', () => {
-  const tmpFile = writeTempTranscript([userLine('/gsd:plan-phase 1')]);
+  const tmpFile = writeTempTranscript([userLine('/nf:plan-phase 1')]);
   try {
     const { stdout, exitCode } = runHook({
       stop_hook_active: false,
@@ -170,10 +170,10 @@ test('TC4: no planning command in current turn passes (no block)', () => {
   }
 });
 
-// Test 5: /gsd:plan-phase in current turn + all 3 quorum tool_use blocks → exit 0, no stdout
+// Test 5: /nf:plan-phase in current turn + all 3 quorum tool_use blocks → exit 0, no stdout
 test('TC5: planning command with all three quorum tool calls passes', () => {
   const tmpFile = writeTempTranscript([
-    userLine('/gsd:plan-phase 1'),
+    userLine('/nf:plan-phase 1'),
     assistantLine([
       toolUseBlock('mcp__codex-cli__review'),
       toolUseBlock('mcp__gemini-cli__gemini'),
@@ -195,10 +195,10 @@ test('TC5: planning command with all three quorum tool calls passes', () => {
   }
 });
 
-// Test 5b: /qgsd:plan-phase — quorum present → pass (mirrors TC5 with /qgsd: prefix)
-test('TC5b: /qgsd:plan-phase — quorum present → pass', () => {
+// Test 5b: /qnf:plan-phase — quorum present → pass (mirrors TC5 with /qnf: prefix)
+test('TC5b: /qnf:plan-phase — quorum present → pass', () => {
   const tmpFile = writeTempTranscript([
-    userLine('/qgsd:plan-phase 1'),
+    userLine('/qnf:plan-phase 1'),
     assistantLine([
       toolUseBlock('mcp__codex-cli__review'),
       toolUseBlock('mcp__gemini-cli__gemini'),
@@ -214,13 +214,13 @@ test('TC5b: /qgsd:plan-phase — quorum present → pass', () => {
       last_assistant_message: 'Here is the plan.',
     });
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
-    assert.strictEqual(stdout, '', 'stdout must be empty — /qgsd: prefix recognized and quorum complete');
+    assert.strictEqual(stdout, '', 'stdout must be empty — /qnf: prefix recognized and quorum complete');
   } finally {
     fs.unlinkSync(tmpFile);
   }
 });
 
-// Test 6: /gsd:plan-phase in current turn + only codex tool_use → block with decision:block
+// Test 6: /nf:plan-phase in current turn + only codex tool_use → block with decision:block
 // TC6 updated (step 1a): includes a PLAN.md artifact commit so GUARD 5 classifies this as a
 // decision turn, preserving the invariant: quorum-command + decision-turn + partial quorum = block.
 // TC6 uses runHookWithEnv to isolate from ~/.claude/nf.json (which may override DEFAULT_CONFIG
@@ -243,12 +243,12 @@ test('TC6: planning command with only codex tool call triggers block', () => {
   }), 'utf8');
 
   const tmpFile = writeTempTranscript([
-    userLine('/gsd:plan-phase 1'),
+    userLine('/nf:plan-phase 1'),
     assistantLine([
       toolUseBlock('mcp__codex-cli__review'),
     ]),
     assistantLine([
-      bashCommitBlock('node /path/gsd-tools.cjs commit "feat: plan" --files 04-01-PLAN.md'),
+      bashCommitBlock('node /path/nf-tools.cjs commit "feat: plan" --files 04-01-PLAN.md'),
     ], 'assistant-commit'),
     assistantLine([{ type: 'text', text: 'Here is the plan.' }], 'assistant-2'),
   ]);
@@ -280,11 +280,11 @@ test('TC6: planning command with only codex tool call triggers block', () => {
   }
 });
 
-// Test 7: /gsd:plan-phase in OLD turn (before current turn boundary) → exit 0, no stdout (scope filter)
+// Test 7: /nf:plan-phase in OLD turn (before current turn boundary) → exit 0, no stdout (scope filter)
 test('TC7: planning command only in old turn (before boundary) is not in scope', () => {
   const tmpFile = writeTempTranscript([
     // Old turn: planning command + assistant response (but no quorum)
-    userLine('/gsd:plan-phase 1', 'old-user'),
+    userLine('/nf:plan-phase 1', 'old-user'),
     assistantLine([{ type: 'text', text: 'Old response, no quorum done.' }], 'old-assistant'),
     // New turn: unrelated user message (this becomes the current turn boundary)
     userLine('Thanks, looks good.', 'new-user'),
@@ -308,7 +308,7 @@ test('TC7: planning command only in old turn (before boundary) is not in scope',
 test('TC8: malformed JSONL lines are skipped gracefully', () => {
   const tmpFile = writeTempTranscript([
     'this is not valid json',
-    userLine('/gsd:plan-phase 1'),
+    userLine('/nf:plan-phase 1'),
     '{broken json: [',
     assistantLine([
       toolUseBlock('mcp__codex-cli__review'),
@@ -348,9 +348,9 @@ test('TC9: missing config file falls back to DEFAULT_CONFIG', () => {
   const nonExistentClaudeJson = path.join(os.tmpdir(), `nf-claude-tc9-nonexistent-${Date.now()}.json`);
 
   const tmpFile = writeTempTranscript([
-    userLine('/gsd:research-phase 1'),
+    userLine('/nf:research-phase 1'),
     assistantLine([
-      bashCommitBlock('node /path/gsd-tools.cjs commit "docs: research" --files 04-RESEARCH.md'),
+      bashCommitBlock('node /path/nf-tools.cjs commit "docs: research" --files 04-RESEARCH.md'),
     ], 'assistant-commit'),
     assistantLine([{ type: 'text', text: 'No quorum calls here.' }]),
   ]);
@@ -406,7 +406,7 @@ test('TC10: quorum calls interleaved with tool_result user messages are in scope
   // getCurrentTurnLines() must find the human message as the boundary, not a tool_result.
   const tmpFile = writeTempTranscript([
     // Human turn starts here
-    userLine('/gsd:plan-phase 1', 'human-msg'),
+    userLine('/nf:plan-phase 1', 'human-msg'),
     // First batch of tool calls (non-quorum — e.g., Task/Bash)
     assistantLine([toolUseBlock('Bash')], 'assistant-1'),
     toolResultLine('toolu_Bash', 'bash output', 'tr-1'),
@@ -459,7 +459,7 @@ test('TC11: model prefix not in mcpServers → unavailable → fail-open pass', 
 
   // Transcript: quorum command issued, but no quorum tool_use calls at all
   const tmpFile = writeTempTranscript([
-    userLine('/gsd:plan-phase 1', 'human-msg'),
+    userLine('/nf:plan-phase 1', 'human-msg'),
     assistantLine([{ type: 'text', text: 'Here is the plan.' }], 'assistant-1'),
   ]);
 
@@ -508,9 +508,9 @@ test('TC12: partial availability — unavailable model skipped, available-but-mi
 
   // Transcript: quorum command issued, PLAN.md artifact commit, no quorum calls
   const tmpFile = writeTempTranscript([
-    userLine('/gsd:plan-phase 1', 'human-msg'),
+    userLine('/nf:plan-phase 1', 'human-msg'),
     assistantLine([
-      bashCommitBlock('node /path/gsd-tools.cjs commit "feat: plan" --files 04-01-PLAN.md'),
+      bashCommitBlock('node /path/nf-tools.cjs commit "feat: plan" --files 04-01-PLAN.md'),
     ], 'assistant-commit'),
     assistantLine([{ type: 'text', text: 'Here is the plan.' }], 'assistant-1'),
   ]);
@@ -559,7 +559,7 @@ test('TC13: MCP-06 regression — renamed prefix detected and matched correctly'
   fs.writeFileSync(claudeJsonTmp, JSON.stringify({ mcpServers: { 'my-custom-codex': {} } }), 'utf8');
 
   const tmpFile = writeTempTranscript([
-    userLine('/gsd:plan-phase 1', 'human-msg'),
+    userLine('/nf:plan-phase 1', 'human-msg'),
     assistantLine([toolUseBlock('mcp__my-custom-codex__review')], 'assistant-1'),
     assistantLine([{ type: 'text', text: 'Plan with custom codex.' }], 'assistant-2'),
   ]);
@@ -625,9 +625,9 @@ test('TC-COPILOT: deriveMissingToolName returns "ask" for copilot — block reas
 
   // Transcript: plan-phase command + PLAN.md artifact commit + no copilot tool call
   const tmpFile = writeTempTranscript([
-    userLine('/gsd:plan-phase 1', 'human-msg'),
+    userLine('/nf:plan-phase 1', 'human-msg'),
     assistantLine([
-      bashCommitBlock('node /path/gsd-tools.cjs commit "feat: plan" --files 04-01-PLAN.md'),
+      bashCommitBlock('node /path/nf-tools.cjs commit "feat: plan" --files 04-01-PLAN.md'),
     ], 'assistant-commit'),
     assistantLine([{ type: 'text', text: 'Here is the plan.' }], 'assistant-1'),
   ]);
@@ -667,12 +667,12 @@ test('TC-COPILOT: deriveMissingToolName returns "ask" for copilot — block reas
 // TC16: map-codebase turn (codebase/*.md commit, no artifact pattern match) → PASS
 // TC17: new-project routing turn (no artifact commit, no marker) → PASS
 // TC18: discuss-phase final turn with CONTEXT.md artifact committed → QUORUM REQUIRED
-// TC19: verify-work turn with <!-- GSD_DECISION --> marker in last text block → QUORUM REQUIRED
+// TC19: verify-work turn with <!-- NF_DECISION --> marker in last text block → QUORUM REQUIRED
 
 // TC14: intermediate plan-phase turn — assistant spawns an agent, no artifact commit, no marker
 test('TC14: intermediate plan-phase turn (no artifact commit, no marker) passes without quorum block', () => {
   const tmpFile = writeTempTranscript([
-    userLine('/gsd:plan-phase 1'),
+    userLine('/nf:plan-phase 1'),
     assistantLine([{ type: 'text', text: 'Spawning researcher agent...' }]),
   ]);
   try {
@@ -692,9 +692,9 @@ test('TC14: intermediate plan-phase turn (no artifact commit, no marker) passes 
 // TC15: final plan-phase turn — PLAN.md artifact committed + no quorum calls → QUORUM REQUIRED
 test('TC15: final plan-phase turn with PLAN.md artifact committed blocks when quorum missing', () => {
   const tmpFile = writeTempTranscript([
-    userLine('/gsd:plan-phase 1'),
+    userLine('/nf:plan-phase 1'),
     assistantLine([
-      bashCommitBlock('node /path/gsd-tools.cjs commit "feat: plan" --files 04-01-PLAN.md'),
+      bashCommitBlock('node /path/nf-tools.cjs commit "feat: plan" --files 04-01-PLAN.md'),
     ], 'assistant-commit'),
     assistantLine([{ type: 'text', text: 'Here is the plan.' }], 'assistant-2'),
   ]);
@@ -719,9 +719,9 @@ test('TC15: final plan-phase turn with PLAN.md artifact committed blocks when qu
 // Guards against Pitfall 2 from RESEARCH.md: bare STACK.md must NOT trigger artifact detection.
 test('TC16: map-codebase turn with codebase/*.md commit passes without quorum block', () => {
   const tmpFile = writeTempTranscript([
-    userLine('/gsd:plan-phase 1'),
+    userLine('/nf:plan-phase 1'),
     assistantLine([
-      bashCommitBlock('node /path/gsd-tools.cjs commit "docs: codebase" --files .planning/codebase/STACK.md'),
+      bashCommitBlock('node /path/nf-tools.cjs commit "docs: codebase" --files .planning/codebase/STACK.md'),
     ], 'assistant-commit'),
     assistantLine([{ type: 'text', text: 'Codebase mapped.' }], 'assistant-2'),
   ]);
@@ -742,7 +742,7 @@ test('TC16: map-codebase turn with codebase/*.md commit passes without quorum bl
 // TC17: new-project routing turn — assistant asks a question, no artifact commit, no marker → PASS
 test('TC17: new-project routing turn (questioning step) passes without quorum block', () => {
   const tmpFile = writeTempTranscript([
-    userLine('/gsd:new-project'),
+    userLine('/nf:new-project'),
     assistantLine([{ type: 'text', text: 'What do you want to build?' }]),
   ]);
   try {
@@ -762,9 +762,9 @@ test('TC17: new-project routing turn (questioning step) passes without quorum bl
 // TC18: discuss-phase final turn — CONTEXT.md artifact committed + no quorum calls → QUORUM REQUIRED
 test('TC18: discuss-phase final turn with CONTEXT.md artifact committed blocks when quorum missing', () => {
   const tmpFile = writeTempTranscript([
-    userLine('/gsd:discuss-phase 4'),
+    userLine('/nf:discuss-phase 4'),
     assistantLine([
-      bashCommitBlock('node /path/gsd-tools.cjs commit "docs: context" --files 04-CONTEXT.md'),
+      bashCommitBlock('node /path/nf-tools.cjs commit "docs: context" --files 04-CONTEXT.md'),
     ], 'assistant-commit'),
     assistantLine([{ type: 'text', text: 'Here are the filtered questions.' }], 'assistant-2'),
   ]);
@@ -785,18 +785,18 @@ test('TC18: discuss-phase final turn with CONTEXT.md artifact committed blocks w
   }
 });
 
-// TC19: verify-work turn with <!-- GSD_DECISION --> in last assistant text block → QUORUM REQUIRED
+// TC19: verify-work turn with <!-- NF_DECISION --> in last assistant text block → QUORUM REQUIRED
 test('TC19: verify-work turn with decision marker in last assistant text block blocks when quorum missing', () => {
   const tmpFile = writeTempTranscript([
-    userLine('/gsd:verify-work'),
-    assistantLine([{ type: 'text', text: 'Verification complete.\n\n<!-- GSD_DECISION -->' }]),
+    userLine('/nf:verify-work'),
+    assistantLine([{ type: 'text', text: 'Verification complete.\n\n<!-- NF_DECISION -->' }]),
   ]);
   try {
     const { stdout, exitCode } = runHook({
       stop_hook_active: false,
       hook_event_name: 'Stop',
       transcript_path: tmpFile,
-      last_assistant_message: 'Verification complete.\n\n<!-- GSD_DECISION -->',
+      last_assistant_message: 'Verification complete.\n\n<!-- NF_DECISION -->',
     });
     assert.strictEqual(exitCode, 0, 'exit code must be 0 even when blocking');
     assert.ok(stdout.length > 0, 'stdout must contain block decision JSON');
@@ -811,17 +811,17 @@ test('TC19: verify-work turn with decision marker in last assistant text block b
 // ── TC20/TC20b/TC20c: @file-expansion false-positive regression ───────────────────────────────
 //
 // When Claude Code expands a workflow file (e.g. quick.md) via @-reference, the expanded content
-// is appended to the user message body. Workflow files often mention other /qgsd: commands by name
-// (e.g. "If you meant /qgsd:new-project, run that instead."). The old JSON.stringify full-body
+// is appended to the user message body. Workflow files often mention other /qnf: commands by name
+// (e.g. "If you meant /qnf:new-project, run that instead."). The old JSON.stringify full-body
 // scan would match these mentions and trigger a false-positive GUARD 4 hit.
 //
 // Fix: hasQuorumCommand reads the <command-name> XML tag first. This tag is injected by Claude
 // Code only for real slash command invocations — never in @file-expanded content. When the tag
 // is present, only the tag value is tested; the body is never scanned.
 //
-// TC20  — false-positive regression: /qgsd:quick tag, body mentions /qgsd:new-project → pass
-// TC20b — positive control: /qgsd:new-project real tag, questioning turn → pass (GUARD 5)
-// TC20c — end-to-end: /qgsd:new-project real tag + decision turn + no quorum → block
+// TC20  — false-positive regression: /qnf:quick tag, body mentions /qnf:new-project → pass
+// TC20b — positive control: /qnf:new-project real tag, questioning turn → pass (GUARD 5)
+// TC20c — end-to-end: /qnf:new-project real tag + decision turn + no quorum → block
 
 // Helper: build a user JSONL line whose message.content begins with the <command-name> XML tag
 // (simulating Claude Code's injection for real slash command invocations) followed by the body.
@@ -836,16 +836,16 @@ function userLineWithTag(commandTag, bodyText, uuid) {
 }
 
 // TC20 — The false-positive regression:
-// User invokes /qgsd:quick (tag = "/qgsd:quick"); body contains "new-project" text from
-// expanded quick.md workflow. With the fix, the tag is read first ("/qgsd:quick" is not in
+// User invokes /qnf:quick (tag = "/qnf:quick"); body contains "new-project" text from
+// expanded quick.md workflow. With the fix, the tag is read first ("/qnf:quick" is not in
 // quorum_commands) → GUARD 4 returns false → exit 0. Body is never scanned.
-test('TC20: @file-expanded body containing /qgsd:new-project text does not false-positive when real command is /qgsd:quick', () => {
+test('TC20: @file-expanded body containing /qnf:new-project text does not false-positive when real command is /qnf:quick', () => {
   const expandedBody =
     'Execute the quick task.\n\n' +
-    'If you meant /qgsd:new-project, run that instead. ' +
-    'See /qgsd:new-project documentation for details.';
+    'If you meant /qnf:new-project, run that instead. ' +
+    'See /qnf:new-project documentation for details.';
   const tmpFile = writeTempTranscript([
-    userLineWithTag('/qgsd:quick', expandedBody, 'user-quick'),
+    userLineWithTag('/qnf:quick', expandedBody, 'user-quick'),
     assistantLine([{ type: 'text', text: 'Running quick task.' }], 'assistant-1'),
   ]);
   try {
@@ -855,7 +855,7 @@ test('TC20: @file-expanded body containing /qgsd:new-project text does not false
       transcript_path: tmpFile,
       last_assistant_message: 'Running quick task.',
     });
-    assert.strictEqual(exitCode, 0, 'exit code must be 0 — /qgsd:quick is not a quorum command');
+    assert.strictEqual(exitCode, 0, 'exit code must be 0 — /qnf:quick is not a quorum command');
     assert.strictEqual(stdout, '', 'stdout must be empty — new-project in body must not trigger GUARD 4');
   } finally {
     fs.unlinkSync(tmpFile);
@@ -864,10 +864,10 @@ test('TC20: @file-expanded body containing /qgsd:new-project text does not false
 
 // TC20b — Positive control: new-project IS the real command (tag present), but no artifact commit
 // and no decision marker — GUARD 5 passes (routing/questioning turn).
-// Verifies the XML tag strategy correctly identifies real /qgsd:new-project invocations.
-test('TC20b: real /qgsd:new-project tag on a questioning turn passes (GUARD 5 — not a decision turn)', () => {
+// Verifies the XML tag strategy correctly identifies real /qnf:new-project invocations.
+test('TC20b: real /qnf:new-project tag on a questioning turn passes (GUARD 5 — not a decision turn)', () => {
   const tmpFile = writeTempTranscript([
-    userLineWithTag('/qgsd:new-project', 'I want to start a new project.', 'user-np'),
+    userLineWithTag('/qnf:new-project', 'I want to start a new project.', 'user-np'),
     assistantLine([{ type: 'text', text: 'What do you want to build?' }], 'assistant-1'),
   ]);
   try {
@@ -885,12 +885,12 @@ test('TC20b: real /qgsd:new-project tag on a questioning turn passes (GUARD 5 �
 });
 
 // TC20c — End-to-end: new-project IS real (tag) + ROADMAP.md artifact commit (decision turn) + no quorum → block
-// Verifies real /qgsd:new-project invocations still trigger quorum enforcement on decision turns.
-test('TC20c: real /qgsd:new-project tag on a decision turn blocks when quorum missing', () => {
+// Verifies real /qnf:new-project invocations still trigger quorum enforcement on decision turns.
+test('TC20c: real /qnf:new-project tag on a decision turn blocks when quorum missing', () => {
   const tmpFile = writeTempTranscript([
-    userLineWithTag('/qgsd:new-project', 'Build a task management app.', 'user-np2'),
+    userLineWithTag('/qnf:new-project', 'Build a task management app.', 'user-np2'),
     assistantLine([
-      bashCommitBlock('node /path/gsd-tools.cjs commit "docs: roadmap" --files ROADMAP.md'),
+      bashCommitBlock('node /path/nf-tools.cjs commit "docs: roadmap" --files ROADMAP.md'),
     ], 'assistant-commit'),
     assistantLine([{ type: 'text', text: 'Here is the roadmap.' }], 'assistant-2'),
   ]);
@@ -990,9 +990,9 @@ test('TC-CEIL-1: ceiling passes with exactly 5 successful calls out of 11-agent 
   // Sorted order (sub-first): slot-sub-1, slot-sub-2, slot-sub-3, slot-sub-4, slot-api-1
   const first5 = ['slot-sub-1', 'slot-sub-2', 'slot-sub-3', 'slot-sub-4', 'slot-api-1'];
   const transcriptLines = [
-    userLine('/qgsd:plan-phase 1', 'human-ceil1'),
+    userLine('/qnf:plan-phase 1', 'human-ceil1'),
     assistantLine([
-      bashCommitBlock('node /path/gsd-tools.cjs commit "docs: plan" --files 04-01-PLAN.md'),
+      bashCommitBlock('node /path/nf-tools.cjs commit "docs: plan" --files 04-01-PLAN.md'),
     ], 'assistant-commit'),
   ];
   for (const slot of first5) {
@@ -1057,9 +1057,9 @@ test('TC-CEIL-2: ceiling blocks when only 4 of 5 required agents have been calle
   // Only 4 of the first 5 sorted agents called (skip slot-api-1 — the 5th)
   const only4 = ['slot-sub-1', 'slot-sub-2', 'slot-sub-3', 'slot-sub-4'];
   const transcriptLines = [
-    userLine('/qgsd:plan-phase 1', 'human-ceil2'),
+    userLine('/qnf:plan-phase 1', 'human-ceil2'),
     assistantLine([
-      bashCommitBlock('node /path/gsd-tools.cjs commit "docs: plan" --files 04-01-PLAN.md'),
+      bashCommitBlock('node /path/nf-tools.cjs commit "docs: plan" --files 04-01-PLAN.md'),
     ], 'assistant-commit'),
   ];
   for (const slot of only4) {
@@ -1132,9 +1132,9 @@ test('TC-CEIL-3: error response does not count toward ceiling — still blocks w
   // toolUseBlock(name) uses id: `toolu_${name}` pattern
   const firstFive = ['slot-api-1', 'slot-api-2', 'slot-api-3', 'slot-api-4', 'slot-api-5'];
   const transcriptLines = [
-    userLine('/qgsd:plan-phase 1', 'human-ceil3'),
+    userLine('/qnf:plan-phase 1', 'human-ceil3'),
     assistantLine([
-      bashCommitBlock('node /path/gsd-tools.cjs commit "docs: plan" --files 04-01-PLAN.md'),
+      bashCommitBlock('node /path/nf-tools.cjs commit "docs: plan" --files 04-01-PLAN.md'),
     ], 'assistant-commit'),
   ];
   for (const slot of firstFive) {
@@ -1210,8 +1210,8 @@ test('TC-DEFAULT-CEIL-PASS: default ceiling=2 passes with 2 successful calls', (
 
   // 2 successful calls (sub-1 and sub-2, sorted sub-first by default preferSub=true)
   const transcriptLines = [
-    userLine('/qgsd:quick add something', 'human-dceil-pass'),
-    assistantLine([bashCommitBlock('node /path/gsd-tools.cjs commit "docs: plan" --files quick-115-PLAN.md')], 'assistant-commit'),
+    userLine('/qnf:quick add something', 'human-dceil-pass'),
+    assistantLine([bashCommitBlock('node /path/nf-tools.cjs commit "docs: plan" --files quick-115-PLAN.md')], 'assistant-commit'),
     assistantLine([toolUseBlock('mcp__slot-sub-1__review')], 'assistant-sub1'),
     toolResultSuccessLine('toolu_mcp__slot-sub-1__review', 'sub-1 OK'),
     assistantLine([toolUseBlock('mcp__slot-sub-2__review')], 'assistant-sub2'),
@@ -1255,8 +1255,8 @@ test('TC-DEFAULT-CEIL-BLOCK: default ceiling=2 blocks with only 1 successful cal
 
   // Only 1 successful call (sub-1) — needs 2 → block
   const transcriptLines = [
-    userLine('/qgsd:quick add something', 'human-dceil-block'),
-    assistantLine([bashCommitBlock('node /path/gsd-tools.cjs commit "docs: plan" --files quick-115-PLAN.md')], 'assistant-commit'),
+    userLine('/qnf:quick add something', 'human-dceil-block'),
+    assistantLine([bashCommitBlock('node /path/nf-tools.cjs commit "docs: plan" --files quick-115-PLAN.md')], 'assistant-commit'),
     assistantLine([toolUseBlock('mcp__slot-sub-1__review')], 'assistant-sub1'),
     toolResultSuccessLine('toolu_mcp__slot-sub-1__review', 'sub-1 OK'),
     assistantLine([{ type: 'text', text: 'Done.' }], 'assistant-final'),
@@ -1305,8 +1305,8 @@ test('TC-SOLO-STOP: --n 1 solo mode bypasses quorum enforcement (GUARD 6)', () =
 
   // No external slot calls — but prompt has --n 1 → solo bypass
   const transcriptLines = [
-    userLine('/qgsd:quick add something --n 1', 'human-solo'),
-    assistantLine([bashCommitBlock('node /path/gsd-tools.cjs commit "docs: plan" --files quick-115-PLAN.md')], 'assistant-commit'),
+    userLine('/qnf:quick add something --n 1', 'human-solo'),
+    assistantLine([bashCommitBlock('node /path/nf-tools.cjs commit "docs: plan" --files quick-115-PLAN.md')], 'assistant-commit'),
     assistantLine([{ type: 'text', text: 'Done solo.' }], 'assistant-final'),
   ];
   const tmpFile = writeTempTranscript(transcriptLines);
@@ -1353,8 +1353,8 @@ test('TC-N-OVERRIDE-PASS: --n 3 overrides maxSize=5 config, 2 calls satisfy N-1=
 
   // --n 3 → need N-1=2 external calls. Only 2 sub slots called (satisfies override).
   const transcriptLines = [
-    userLine('/qgsd:quick add something --n 3', 'human-nov-pass'),
-    assistantLine([bashCommitBlock('node /path/gsd-tools.cjs commit "docs: plan" --files quick-115-PLAN.md')], 'assistant-commit'),
+    userLine('/qnf:quick add something --n 3', 'human-nov-pass'),
+    assistantLine([bashCommitBlock('node /path/nf-tools.cjs commit "docs: plan" --files quick-115-PLAN.md')], 'assistant-commit'),
     assistantLine([toolUseBlock('mcp__slot-sub-1__review')], 'assistant-sub1'),
     toolResultSuccessLine('toolu_mcp__slot-sub-1__review', 'sub-1 OK'),
     assistantLine([toolUseBlock('mcp__slot-sub-2__review')], 'assistant-sub2'),
@@ -1398,8 +1398,8 @@ test('TC-N-OVERRIDE-BLOCK: --n 3 requires 2 calls; 1 call blocks despite config 
 
   // --n 3 → need N-1=2 external calls. Only 1 call made → block.
   const transcriptLines = [
-    userLine('/qgsd:quick add something --n 3', 'human-nov-block'),
-    assistantLine([bashCommitBlock('node /path/gsd-tools.cjs commit "docs: plan" --files quick-115-PLAN.md')], 'assistant-commit'),
+    userLine('/qnf:quick add something --n 3', 'human-nov-block'),
+    assistantLine([bashCommitBlock('node /path/nf-tools.cjs commit "docs: plan" --files quick-115-PLAN.md')], 'assistant-commit'),
     assistantLine([toolUseBlock('mcp__slot-sub-1__review')], 'assistant-sub1'),
     toolResultSuccessLine('toolu_mcp__slot-sub-1__review', 'sub-1 OK'),
     assistantLine([{ type: 'text', text: 'Done n3 one call.' }], 'assistant-final'),
@@ -1439,7 +1439,7 @@ test('TC-PROFILE-MINIMAL-EXIT: hook_profile=minimal exits 0 with no output', () 
     const transcriptLines = [
       userLine('/nf:plan-phase 03'),
       assistantLine([
-        bashCommitBlock('node gsd-tools.cjs commit -m "docs: plan" --files .planning/phases/03-PLAN.md'),
+        bashCommitBlock('node nf-tools.cjs commit -m "docs: plan" --files .planning/phases/03-PLAN.md'),
       ]),
     ];
     const tmpFile = writeTempTranscript(transcriptLines);
@@ -1475,8 +1475,8 @@ test('TC-PROFILE-STANDARD-RUNS: hook_profile=standard does NOT exit early', () =
     const transcriptLines = [
       userLine('/nf:plan-phase 03'),
       assistantLine([
-        bashCommitBlock('node gsd-tools.cjs commit -m "docs: plan" --files .planning/phases/03-PLAN.md'),
-        { type: 'text', text: '<!-- GSD_DECISION -->' },
+        bashCommitBlock('node nf-tools.cjs commit -m "docs: plan" --files .planning/phases/03-PLAN.md'),
+        { type: 'text', text: '<!-- NF_DECISION -->' },
       ]),
     ];
     const tmpFile = writeTempTranscript(transcriptLines);
@@ -1516,8 +1516,8 @@ test('TC-STRICT-NON-QUORUM-ENFORCED: strict mode enforces quorum on non-quorum c
     const transcriptLines = [
       userLine('/nf:execute-phase 03'),
       assistantLine([
-        bashCommitBlock('node gsd-tools.cjs commit -m "docs: exec" --files .planning/phases/03-PLAN.md'),
-        { type: 'text', text: '<!-- GSD_DECISION -->' },
+        bashCommitBlock('node nf-tools.cjs commit -m "docs: exec" --files .planning/phases/03-PLAN.md'),
+        { type: 'text', text: '<!-- NF_DECISION -->' },
       ]),
     ];
     const tmpFile = writeTempTranscript(transcriptLines);
@@ -1556,8 +1556,8 @@ test('TC-STANDARD-NON-QUORUM-NOT-ENFORCED: standard mode does NOT enforce /nf:ex
     const transcriptLines = [
       userLine('/nf:execute-phase 03'),
       assistantLine([
-        bashCommitBlock('node gsd-tools.cjs commit -m "docs: exec" --files .planning/phases/03-PLAN.md'),
-        { type: 'text', text: '<!-- GSD_DECISION -->' },
+        bashCommitBlock('node nf-tools.cjs commit -m "docs: exec" --files .planning/phases/03-PLAN.md'),
+        { type: 'text', text: '<!-- NF_DECISION -->' },
       ]),
     ];
     const tmpFile = writeTempTranscript(transcriptLines);

@@ -4,7 +4,7 @@
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { computeAffectedLayers } = require('./solve-incremental-filter.cjs');
+const { computeAffectedLayers, expandWithCallGraph } = require('./solve-incremental-filter.cjs');
 
 test('empty file list returns all layers (safe fallback)', () => {
   const result = computeAffectedLayers([]);
@@ -74,4 +74,95 @@ test('ALWAYS_SWEEP layers are never skipped', () => {
   const result = computeAffectedLayers(['.planning/formal/alloy/test.als']);
   assert.ok(result.affected_layers.includes('r_to_f'));
   assert.ok(result.affected_layers.includes('r_to_d'));
+});
+
+// ── expandWithCallGraph tests (CDIAG-03) ─────────────────────────────────────
+
+test('expandWithCallGraph: null adapter leaves affectedSet unchanged', () => {
+  const affected = new Set(['r_to_f']);
+  expandWithCallGraph(['bin/utils.cjs'], affected, null);
+  assert.equal(affected.size, 1); // unchanged
+  assert.ok(affected.has('r_to_f'));
+});
+
+test('expandWithCallGraph: unhealthy adapter leaves affectedSet unchanged', () => {
+  const unhealthyAdapter = {
+    healthSync: () => ({ healthy: false }),
+    getCallersSync: () => ({ error: 'down' })
+  };
+  const affected = new Set(['r_to_f']);
+  expandWithCallGraph(['bin/utils.cjs'], affected, unhealthyAdapter);
+  assert.equal(affected.size, 1); // unchanged
+});
+
+test('expandWithCallGraph: getCallersSync error skips gracefully (no crash)', () => {
+  const errorAdapter = {
+    healthSync: () => ({ healthy: true }),
+    getCallersSync: () => ({ error: 'timeout' })
+  };
+  const affected = new Set();
+  expandWithCallGraph(['bin/utils.cjs'], affected, errorAdapter);
+  assert.equal(affected.size, 0); // no expansion, no crash
+});
+
+test('expandWithCallGraph: getCallersSync throws — caught, no crash (fail-open)', () => {
+  const throwAdapter = {
+    healthSync: () => ({ healthy: true }),
+    getCallersSync: () => { throw new Error('boom'); }
+  };
+  const affected = new Set();
+  assert.doesNotThrow(() => expandWithCallGraph(['bin/utils.cjs'], affected, throwAdapter));
+  assert.equal(affected.size, 0);
+});
+
+test('expandWithCallGraph: empty files list skips gracefully', () => {
+  const adapter = {
+    healthSync: () => ({ healthy: true }),
+    getCallersSync: () => ({ callers: ['bin/nf-solve.cjs'] })
+  };
+  const affected = new Set(['r_to_f']);
+  expandWithCallGraph([], affected, adapter);
+  assert.equal(affected.size, 1); // unchanged
+});
+
+test('expandWithCallGraph: caller matches DOMAIN_MAP pattern — layer added to affectedSet', () => {
+  // bin/nf-solve.cjs matches pattern /^bin\/(?!.*test).*\.cjs$/ -> ['c_to_f', 'c_to_r', 't_to_c']
+  const stubAdapter = {
+    healthSync: () => ({ healthy: true }),
+    getCallersSync: (symbol, file) => ({ callers: ['bin/nf-solve.cjs'] })
+  };
+  const affected = new Set(['r_to_f']); // start with one layer
+  expandWithCallGraph(['bin/utils.cjs'], affected, stubAdapter);
+  assert.ok(affected.has('c_to_f'), 'should add c_to_f because bin/nf-solve.cjs matches bin/*.cjs pattern');
+  assert.ok(affected.has('c_to_r'), 'should add c_to_r because bin/nf-solve.cjs matches bin/*.cjs pattern');
+  assert.ok(affected.has('r_to_f'), 'original layer must be preserved');
+});
+
+test('expandWithCallGraph: monotone safety — never removes existing layers', () => {
+  const fullAdapter = {
+    healthSync: () => ({ healthy: true }),
+    getCallersSync: () => ({ callers: [] }) // returns empty callers
+  };
+  const affected = new Set(['r_to_f', 'c_to_r', 'f_to_t']);
+  const sizeBefore = affected.size;
+  expandWithCallGraph(['bin/any-file.cjs'], affected, fullAdapter);
+  assert.ok(affected.size >= sizeBefore, 'affectedSet must never shrink');
+  assert.ok(affected.has('r_to_f'), 'r_to_f must be preserved');
+  assert.ok(affected.has('c_to_r'), 'c_to_r must be preserved');
+  assert.ok(affected.has('f_to_t'), 'f_to_t must be preserved');
+});
+
+test('computeAffectedLayers: backward compatible with 1-arg signature (no adapter)', () => {
+  // Old callers that pass only filesTouched still work
+  const result = computeAffectedLayers(['bin/nf-solve.cjs']);
+  assert.ok(Array.isArray(result.affected_layers));
+  assert.ok(Array.isArray(result.skip_layers));
+  assert.equal(result.files_analyzed, 1);
+});
+
+test('computeAffectedLayers: null adapter passed explicitly behaves same as no adapter', () => {
+  const r1 = computeAffectedLayers(['bin/nf-solve.cjs']);
+  const r2 = computeAffectedLayers(['bin/nf-solve.cjs'], null);
+  assert.deepEqual(r1.affected_layers.sort(), r2.affected_layers.sort());
+  assert.deepEqual(r1.skip_layers.sort(), r2.skip_layers.sort());
 });

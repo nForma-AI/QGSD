@@ -1,0 +1,25 @@
+{
+  "feature/issue-58-integrate-coderlm-adapter": {
+    "task_id": 387,
+    "task_description": "Improve River ML statusline indicator to use compact dot-style visual matching coderlm indicator pattern",
+    "approach": "Replace verbose River ML status text in nf-statusline.js with compact dot indicators (green for active, cyan for exploring, yellow for shadow recommendations) and sync to hooks/dist/nf-statusline.js.",
+    "out_of_scope": [
+      "Modifying River ML algorithm logic or exploration thresholds",
+      "Changing the coderlm indicator implementation",
+      "Adding new River ML configuration options",
+      "Updating unrelated statusline indicators",
+      "Creating new test files for River ML indicators"
+    ],
+    "classification": {
+      "type": "refactor",
+      "confidence": 0.95,
+      "routed_through_debug": false
+    },
+    "risk_level": "high",
+    "risk_reason": "Hook files in hooks/dist/ must be synced as part of this change, which is a guardrail trigger for medium/high risk; additionally, installer-adjacent changes combined with multiple file modifications across the statusline system elevate this to high risk.",
+    "branches_affected": ["feature/issue-58-integrate-coderlm-adapter"],
+    "created_at": "2026-04-08T18:57:01.654Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

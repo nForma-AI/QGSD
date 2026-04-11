@@ -1,0 +1,26 @@
+{
+  "feature/issue-58-integrate-coderlm-adapter": {
+    "task_id": 389,
+    "task_description": "Make install.js automatically download and install the coderlm binary to ~/.claude/nf-bin/coderlm when it is missing",
+    "approach": "Integrate coderlm-lifecycle.ensureBinary() into the install() function's bin installation step to automatically download the coderlm binary from GitHub Releases to ~/.claude/nf-bin/coderlm when missing, ensuring users get coderlm without any manual steps.",
+    "out_of_scope": [
+      "Modifying the coderlm binary's GitHub release process or asset naming conventions",
+      "Updating platform support beyond current coderlm-lifecycle.cjs detection",
+      "Adding command-line flags to skip or customize coderlm binary installation",
+      "Implementing automatic updates or version pinning for the coderlm binary",
+      "Adding user prompts or interactive options for coderlm installation",
+      "Integrating coderlm download into postinstall.js"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.95,
+      "routed_through_debug": false
+    },
+    "risk_level": "high",
+    "risk_reason": "Task requires changes to bin/install.js (installer file), which is a GUARDRAIL trigger for high risk.",
+    "branches_affected": ["feature/issue-58-integrate-coderlm-adapter"],
+    "created_at": "2026-04-09T06:57:12.647Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

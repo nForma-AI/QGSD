@@ -42,7 +42,7 @@ function parseHookOutput(stdout) {
 // FAN-PROMPT-TC1: routine risk_level in context → --n 2 emitted in additionalContext
 test('FAN-PROMPT-TC1: routine risk_level in context → --n 2 emitted', () => {
   const { stdout } = runHook({
-    prompt: '/qgsd:plan-phase',
+    prompt: '/qnf:plan-phase',
     cwd: process.cwd(),
     context_yaml: 'risk_level: routine\n',
   });
@@ -56,7 +56,7 @@ test('FAN-PROMPT-TC1: routine risk_level in context → --n 2 emitted', () => {
 // FAN-PROMPT-TC2: medium risk_level in context → --n 3 emitted
 test('FAN-PROMPT-TC2: medium risk_level in context → --n 3 emitted', () => {
   const { stdout } = runHook({
-    prompt: '/qgsd:plan-phase',
+    prompt: '/qnf:plan-phase',
     cwd: process.cwd(),
     context_yaml: 'risk_level: medium\n',
   });
@@ -70,7 +70,7 @@ test('FAN-PROMPT-TC2: medium risk_level in context → --n 3 emitted', () => {
 // FAN-PROMPT-TC3: --n 5 user override takes precedence over routine risk_level → --n 5 emitted
 test('FAN-PROMPT-TC3: --n 5 user override takes precedence over routine risk_level', () => {
   const { stdout } = runHook({
-    prompt: '/qgsd:plan-phase --n 5',
+    prompt: '/qnf:plan-phase --n 5',
     cwd: process.cwd(),
     context_yaml: 'risk_level: routine\n',
   });
@@ -85,7 +85,7 @@ test('FAN-PROMPT-TC3: --n 5 user override takes precedence over routine risk_lev
 // FAN-PROMPT-TC4: missing risk_level → --n defaults to maxSize (fail-open)
 test('FAN-PROMPT-TC4: missing risk_level → --n defaults to maxSize (fail-open)', () => {
   const { stdout } = runHook({
-    prompt: '/qgsd:plan-phase',
+    prompt: '/qnf:plan-phase',
     cwd: process.cwd(),
     context_yaml: '',
   });

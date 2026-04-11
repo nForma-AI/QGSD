@@ -359,13 +359,13 @@ describe('formatAgeFromMtime', () => {
 // ── Category 15: Health diagnostics ──
 
 describe('Category 15 — Health diagnostics', () => {
-  it('skips when core/bin/gsd-tools.cjs absent (non-QGSD repo)', () => {
+  it('skips when core/bin/nf-tools.cjs absent (non-QNF repo)', () => {
     const tmpDir = makeTmpDir();
     try {
-      // No core/bin/gsd-tools.cjs — should silently skip
+      // No core/bin/nf-tools.cjs — should silently skip
       const result = handleInternal({}, { projectRoot: tmpDir });
       const healthIssues = result.issues.filter(i => i.id.startsWith('internal-health-'));
-      assert.equal(healthIssues.length, 0, 'no health issues when gsd-tools absent');
+      assert.equal(healthIssues.length, 0, 'no health issues when nf-tools absent');
       assert.equal(result.status, 'ok');
     } finally {
       rmrf(tmpDir);
@@ -383,8 +383,8 @@ process.stdout.write(JSON.stringify({
   info: [{ code: 'I001', message: 'Plan has no SUMMARY', fix: 'May be in progress', repairable: false }],
   repairable_count: 1
 }));`;
-      createFile(tmpDir, 'core/bin/gsd-tools.cjs', mockScript);
-      fs.chmodSync(path.join(tmpDir, 'core/bin/gsd-tools.cjs'), 0o755);
+      createFile(tmpDir, 'core/bin/nf-tools.cjs', mockScript);
+      fs.chmodSync(path.join(tmpDir, 'core/bin/nf-tools.cjs'), 0o755);
 
       const result = handleInternal({}, { projectRoot: tmpDir });
       const healthIssues = result.issues.filter(i => i.id.startsWith('internal-health-'));
@@ -412,13 +412,13 @@ process.stdout.write(JSON.stringify({
     }
   });
 
-  it('fail-open when gsd-tools.cjs returns non-JSON', () => {
+  it('fail-open when nf-tools.cjs returns non-JSON', () => {
     const tmpDir = makeTmpDir();
     try {
       const mockScript = `#!/usr/bin/env node
 process.stdout.write('not json');`;
-      createFile(tmpDir, 'core/bin/gsd-tools.cjs', mockScript);
-      fs.chmodSync(path.join(tmpDir, 'core/bin/gsd-tools.cjs'), 0o755);
+      createFile(tmpDir, 'core/bin/nf-tools.cjs', mockScript);
+      fs.chmodSync(path.join(tmpDir, 'core/bin/nf-tools.cjs'), 0o755);
 
       const result = handleInternal({}, { projectRoot: tmpDir });
       assert.equal(result.status, 'ok');
@@ -429,13 +429,13 @@ process.stdout.write('not json');`;
     }
   });
 
-  it('fail-open when gsd-tools.cjs exits non-zero', () => {
+  it('fail-open when nf-tools.cjs exits non-zero', () => {
     const tmpDir = makeTmpDir();
     try {
       const mockScript = `#!/usr/bin/env node
 process.exit(1);`;
-      createFile(tmpDir, 'core/bin/gsd-tools.cjs', mockScript);
-      fs.chmodSync(path.join(tmpDir, 'core/bin/gsd-tools.cjs'), 0o755);
+      createFile(tmpDir, 'core/bin/nf-tools.cjs', mockScript);
+      fs.chmodSync(path.join(tmpDir, 'core/bin/nf-tools.cjs'), 0o755);
 
       const result = handleInternal({}, { projectRoot: tmpDir });
       assert.equal(result.status, 'ok');

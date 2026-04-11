@@ -17,7 +17,7 @@ describe('parseMarkdownTable', () => {
     const input = `
 | # | Source | Name | Type | Coverage | Proposed Metric | Metric Type |
 |---|--------|------|------|----------|-----------------|-------------|
-| 1 | tla | TypeOK | invariant | uncovered | \`qgsd_typeok\` | counter |
+| 1 | tla | TypeOK | invariant | uncovered | \`nf_typeok\` | counter |
 | 2 | alloy | MaxPool | constant | covered | \`pool_max\` | gauge |
 | 3 | tla | Safety | assert | partial | \`safety_check\` | counter |
 `;
@@ -36,7 +36,7 @@ describe('parseMarkdownTable', () => {
     const input = `
 | # | Source | Name | Type | Coverage | Proposed Metric | Metric Type |
 |---|--------|------|------|----------|-----------------|-------------|
-| 1 | tla | TypeOK | invariant | uncovered | \`qgsd_typeok\` | counter |
+| 1 | tla | TypeOK | invariant | uncovered | \`nf_typeok\` | counter |
 | bad line with only two | columns |
 | 2 | tla | Safety | assert | partial | \`safety_check\` | counter |
 `;
@@ -48,10 +48,10 @@ describe('parseMarkdownTable', () => {
     const input = `
 | # | Source | Name | Type | Coverage | Proposed Metric | Metric Type |
 |---|--------|------|------|----------|-----------------|-------------|
-| 1 | tla | TypeOK | invariant | uncovered | \`qgsd_typeok__tla\` | counter |
+| 1 | tla | TypeOK | invariant | uncovered | \`nf_typeok__tla\` | counter |
 `;
     const result = parseMarkdownTable(input);
-    assert.equal(result[0].proposed_metric, 'qgsd_typeok__tla', 'Should strip backticks');
+    assert.equal(result[0].proposed_metric, 'nf_typeok__tla', 'Should strip backticks');
     assert.ok(!result[0].proposed_metric.includes('`'), 'Should not contain backticks');
   });
 
@@ -59,7 +59,7 @@ describe('parseMarkdownTable', () => {
     const input = `
 | # | Source | Name | Type | Coverage | Proposed Metric | Metric Type |
 |---|--------|------|------|----------|-----------------|-------------|
-| 1 | tla | TypeOK | invariant | uncovered | \`qgsd_typeok\` | counter |
+| 1 | tla | TypeOK | invariant | uncovered | \`nf_typeok\` | counter |
 | 2 | alloy | Safety | assert | covered | \`safety\` | gauge |
 `;
     const result = parseMarkdownTable(input);
@@ -72,7 +72,7 @@ describe('parseMarkdownTable', () => {
     const input = `
 | # | Source | Name | Type | Coverage | Proposed Metric | Metric Type |
 |---|--------|------|------|----------|-----------------|-------------|
-| 1 | tla | TypeOK | invariant | uncovered | \`qgsd_typeok\` | counter |
+| 1 | tla | TypeOK | invariant | uncovered | \`nf_typeok\` | counter |
 `;
     const result = parseMarkdownTable(input);
     assert.deepEqual(result[0].linked_l2_states, []);

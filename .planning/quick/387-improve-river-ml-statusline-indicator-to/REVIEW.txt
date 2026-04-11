@@ -1,0 +1,289 @@
+================================================================================
+PLAN REVIEW: 387-improve-river-ml-statusline-indicator
+================================================================================
+
+OVERALL VERDICT: INCOMPLETE (Critical test file gap)
+
+The implementation details are CORRECT and well-specified, but the plan is 
+INCOMPLETE because it omits a critical file that must be updated: 
+hooks/nf-statusline.test.js. This omission will cause CI test failures.
+
+================================================================================
+DETAILED FINDINGS
+================================================================================
+
+PART 1: WHAT THE PLAN GETS RIGHT
+─────────────────────────────────
+
+✓ Correctly identifies the three River indicator states and colors
+  - Active: green dot (● River)
+  - Exploring: cyan dot (● River)  
+  - Shadow: yellow dot with recommendation (● River: <recommendation>)
+
+✓ ANSI escape codes are correct in must_haves.truths
+  - Green: '\x1b[32m● River\x1b[0m'
+  - Cyan: '\x1b[36m● River\x1b[0m'
+  - Yellow: '\x1b[33m● River: ${recommendation}\x1b[0m'
+
+✓ Correctly matches coderlm indicator pattern (● format)
+
+✓ Line ranges accurate
+  - Lines ~186-194 in hooks/nf-statusline.js contain the exact targets
+  - Three strings to replace: active, exploring, shadow
+
+✓ Proper removal of old format
+  - No "River: active" text remains
+  - No "River: exploring" text remains
+  - No "(shadow)" suffix in shadow state (keeps recommendation)
+
+✓ Dist sync and installer steps are correct
+  - cp hooks/nf-statusline.js hooks/dist/nf-statusline.js
+  - node bin/install.js --claude --global
+
+✓ Task structure is atomic and safe
+  - Tasks are independent operations
+  - Rollback is straightforward
+
+================================================================================
+
+PART 2: CRITICAL OMISSION - TEST FILE
+──────────────────────────────────────
+
+PROBLEM: hooks/nf-statusline.test.js is NOT listed in files_modified
+
+Current files_modified:
+  - hooks/nf-statusline.js         [WILL BE CHANGED]
+  - hooks/dist/nf-statusline.js    [WILL BE CHANGED]
+  - (MISSING) hooks/nf-statusline.test.js
+
+CONSEQUENCE IF NOT ADDRESSED:
+
+After executing Tasks 1-2:
+1. The implementation code will be CORRECT
+2. The test file will still contain OLD TEXT ASSERTIONS
+3. Running `npm test` will FAIL with multiple assertion errors:
+   - "River: active" NOT found where test expects it
+   - "River: exploring" NOT found where test expects it  
+   - "River: gemini-1 (shadow)" NOT found where test expects it
+4. CI gates will block the PR from merging
+5. The plan's success_criteria are not verifiable
+
+TEST FILE IMPACT ANALYSIS:
+
+The test file has 12+ assertions checking for old format:
+  Line ~108 (TC12): expects 'River: exploring'          → WILL FAIL
+  Line ~119 (TC13): expects 'River: active'             → WILL FAIL
+  Line ~130 (TC14): expects 'River: exploring'          → WILL FAIL
+  Line ~141 (TC15): expects 'River: gemini-1 (shadow)'  → WILL FAIL
+  Line ~152 (TC22): expects 'River: active'             → WILL FAIL
+  Line ~165 (comment): mentions 'River: active'         → WILL BE OUTDATED
+  Line ~184 (OR logic): expects old format              → WILL FAIL
+
+All these must be updated to expect the NEW format:
+  '● River' (for active/exploring states)
+  '● River: <recommendation>' (for shadow state)
+
+================================================================================
+
+PART 3: SECONDARY GAPS
+──────────────────────
+
+1. SUCCESS CRITERIA IS INCOMPLETE
+   Current success_criteria checks only code changes, not tests:
+   - ✓ Green dot string assignment
+   - ✓ Cyan dot string assignment
+   - ✓ Yellow dot with recommendation
+   - ✓ Dist sync
+   - ✓ Installer exits 0
+   - ✗ MISSING: Test suite passes
+
+2. VERIFICATION BLOCK DOESN'T COVER TESTS
+   Current verification block checks 5 things:
+   - grep/diff for source files
+   - grep for new dot pattern
+   - installer execution
+   - ✗ MISSING: npm test pass verification
+
+3. ARTIFACTS INCOMPLETE
+   must_haves.artifacts section only mentions .js implementation files:
+   - ✓ hooks/nf-statusline.js
+   - ✓ hooks/dist/nf-statusline.js
+   - ✗ MISSING: hooks/nf-statusline.test.js artifact
+
+================================================================================
+
+PART 4: RECOMMENDED IMPROVEMENTS
+─────────────────────────────────
+
+To make this plan COMPLETE and execution-safe:
+
+CHANGE 1: Add test file to files_modified header
+────────────────────────────────────────────────
+files_modified:
+  - hooks/nf-statusline.js
+  - hooks/dist/nf-statusline.js
+  + - hooks/nf-statusline.test.js
+
+
+CHANGE 2: Add test file artifact to must_haves
+───────────────────────────────────────────────
+artifacts:
+  - path: "hooks/nf-statusline.test.js"
+    provides: "Updated test assertions matching new dot-format indicators"
+    contains: "● River"
+
+
+CHANGE 3: Insert Task 3 before <verification> block
+─────────────────────────────────────────────────────
+<task type="auto">
+  <name>Task 3: Update River indicator test assertions</name>
+  <files>hooks/nf-statusline.test.js</files>
+  <action>
+Update all River indicator assertions to match new dot-format indicators.
+
+Patterns to replace (with exact line numbers from current file):
+1. Line ~108 (TC12 test):
+   assert.ok(stdout.includes('River: exploring'), ...)
+   →
+   assert.ok(stdout.includes('● River'), ...)
+
+2. Line ~119 (TC13 test):
+   assert.ok(stdout.includes('River: active'), ...)
+   →
+   assert.ok(stdout.includes('● River'), ...)
+
+3. Line ~130 (TC14 test):
+   assert.ok(stdout.includes('River: exploring'), ...)
+   →
+   assert.ok(stdout.includes('● River'), ...)
+
+4. Line ~141 (TC15 test - shadow):
+   assert.ok(stdout.includes('River: gemini-1 (shadow)'), ...)
+   →
+   assert.ok(stdout.includes('● River: gemini-1'), ...)
+
+5. Line ~152 (TC22 test):
+   assert.ok(stdout.includes('River: active'), ...)
+   →
+   assert.ok(stdout.includes('● River'), ...)
+
+6. Line ~184 (OR condition):
+   assert.ok(stdout.includes('River: active') || stdout.includes('River: exploring'), ...)
+   →
+   assert.ok(stdout.includes('● River'), ...)
+
+7. Update comment at line ~165:
+   // TC22: No shadow — falls back to River: active
+   →
+   // TC22: No shadow — falls back to ● River (green dot)
+  </action>
+  <verify>
+# Verify no old text patterns remain in assertions
+grep "River: active\|River: exploring\|River:.*(\s*shadow\s*)" hooks/nf-statusline.test.js
+# Expected: no output
+
+# Verify new format is present
+grep "● River" hooks/nf-statusline.test.js | wc -l
+# Expected: at least 8 matches
+
+# Syntax check
+node -c hooks/nf-statusline.test.js
+# Expected: exit code 0
+  </verify>
+  <done>
+Test assertions updated to expect "● River" dot-format indicators. Old text patterns removed. File syntax valid.
+  </done>
+</task>
+
+
+CHANGE 4: Expand verification block
+────────────────────────────────────
+After all three tasks complete, verify:
+1. diff hooks/nf-statusline.js hooks/dist/nf-statusline.js → exit 0
+2. grep '● River' hooks/nf-statusline.js → 3 matches
+3. grep 'River: active' hooks/nf-statusline.js → no matches
+4. grep 'River: exploring' hooks/nf-statusline.js → no matches
+5. grep '(shadow)' hooks/nf-statusline.js → no matches
+6. grep 'River: active\|River: exploring\|(shadow)' hooks/nf-statusline.test.js → no matches
+7. npm test -- hooks/nf-statusline.test.js → exit 0, all pass
+8. node bin/install.js --claude --global → exit 0
+
+
+CHANGE 5: Expand success_criteria
+──────────────────────────────────
+- Green dot: ' \x1b[32m● River\x1b[0m' when allAbove is true
+- Cyan dot: ' \x1b[36m● River\x1b[0m' when allAbove is false
+- Yellow dot: ' \x1b[33m● River: ${recommendation}\x1b[0m' from lastShadow
+- hooks/dist/nf-statusline.js in sync with source
+- Installer exits 0
++ - All River indicator tests pass (no assertion failures)
++ - Test file contains no old text format assertions
++ - npm test suite exits 0
+
+================================================================================
+
+PART 5: IMPACT SUMMARY
+──────────────────────
+
+If plan is executed WITHOUT improvements:
+  ✓ Code will be correct (● River dot indicators implemented)
+  ✗ Tests will fail (old text assertions still present)
+  ✗ CI gates will block (npm test fails)
+  ✗ PR cannot merge
+  ✗ Plan incomplete
+
+If plan is executed WITH improvements:
+  ✓ Code is correct
+  ✓ Tests are updated and pass
+  ✓ CI gates pass
+  ✓ PR can merge
+  ✓ Plan complete
+
+The fix is straightforward: 8 search-and-replace operations in one test file
+plus one verification command. This should be added as Task 3.
+
+================================================================================
+
+SEVERITY ASSESSMENT
+───────────────────
+
+CRITICAL (blocks execution):
+  - Test file not listed in files_modified
+  - No task to update test assertions
+  - Tests will fail after executing this plan
+
+HIGH (blocks success criteria):
+  - success_criteria doesn't require tests to pass
+  - verification block doesn't include test run
+
+MEDIUM (quality):
+  - Missing test artifacts in must_haves
+  - No syntax validation step for test file
+
+================================================================================
+
+ANSWER TO YOUR SPECIFIC QUESTIONS
+──────────────────────────────────
+
+Q: Does this plan correctly and completely implement the River ML statusline 
+   indicator refactor from verbose text to compact dot-style format, matching 
+   the coderlm indicator pattern?
+
+A: PARTIALLY. The implementation details are CORRECT (ANSI codes, dot format, 
+   color scheme all match coderlm pattern). However, the plan is INCOMPLETE 
+   because it omits the test file that must be updated.
+
+Q: Are the three indicator states (active/exploring/shadow) all addressed?
+
+A: YES, in the code. All three states are correctly targeted in the 
+   implementation tasks with accurate ANSI escape codes. BUT the test file 
+   assertions for these three states are not updated.
+
+Q: Is the dist sync + installer step correct?
+
+A: YES. The cp command and installer invocation are correct.
+
+OVERALL: The implementation logic is sound, but the plan is INCOMPLETE because
+it will result in CI test failures due to the omitted test file updates.
+
+================================================================================
