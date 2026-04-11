@@ -993,6 +993,27 @@ process.stdin.on('end', () => {
       }
     } catch (_) { /* fail-open */ }
 
+    // ── CO-CHANGE DEBUG INJECTION (COCH-04) ──
+    // When debugging, inject co-change partners for files mentioned in the prompt.
+    // Fail-open: co-change errors never block dispatch.
+    try {
+      if (DEBUG_FIX_REGEX.test(prompt)) {
+        const cochangeModule = require(resolveBin('repowise/inject-cochange-debug.cjs'));
+        // Extract file paths mentioned in the prompt
+        const filePathMatch = prompt.match(/(?:^|\s)([\w/.-]+\.\w{1,4})(?:\s|$)/g);
+        if (filePathMatch) {
+          const mentionedFiles = filePathMatch.map(m => m.trim()).filter(Boolean);
+          for (const f of mentionedFiles.slice(0, 3)) {
+            const injection = cochangeModule.injectCoChangeDebug(f, cwd);
+            if (injection) {
+              instructions += '\n\n' + injection;
+              break; // only inject once
+            }
+          }
+        }
+      }
+    } catch (_) { /* fail-open: co-change debug injection is non-fatal */ }
+
     // ── EDIT CONSTRAINT INJECTION (CONST-01, CONST-02) ──
     // On edit/content prompts (that are NOT debug/fix AND NOT new-feature requests),
     // inject edit-in-place preference. Fail-open on regex errors.
