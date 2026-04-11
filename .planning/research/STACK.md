@@ -1,378 +1,263 @@
-# Stack Research
+# Technology Stack: v0.42 Repowise Intelligence Integration
 
-**Domain:** nForma behavioral enforcement hooks (session state, approach declaration, root cause detection, scope guard)
-**Researched:** 2026-03-19
-**Confidence:** HIGH — all findings derived directly from codebase; no third-party library additions required
+**Project:** nForma
+**Milestone:** v0.42 — Repowise Intelligence Integration
+**Researched:** 2026-04-11
+**Overall confidence:** HIGH
 
----
+## Recommended Stack
 
-## Feature 1: SESSION STATE INJECTION in nf-prompt.js
-
-### How it works today
-
-`nf-prompt.js` receives a JSON payload on stdin with these fields (confirmed from code):
-
-```
-input.cwd         — working directory (string)
-input.session_id  — session identifier (string | null)
-input.prompt      — raw user prompt (string)
-input.context     — YAML context string (string, may be empty)
-```
-
-Output always via:
-```js
-process.stdout.write(JSON.stringify({
-  hookSpecificOutput: {
-    hookEventName: 'UserPromptSubmit',
-    additionalContext: '...',
-  }
-}));
-```
-
-### Reading STATE.md from a hook
-
-Pattern already established in `findResolutionWorkflow()` and circuit-breaker state reading:
-
-```js
-const statePath = path.join(cwd, '.planning', 'STATE.md');
-if (fs.existsSync(statePath)) {
-  const stateContent = fs.readFileSync(statePath, 'utf8');
-  // extract relevant sections
-}
-```
-
-No new dependencies. `fs` is already required at the top of `nf-prompt.js`. `cwd` is already in scope at the point where injection decisions are made.
-
-### Detecting "first message of session"
-
-There is no existing "first message of session" detector in the hook. The `input.session_id` is available but Claude Code does not distinguish message-index within a session at the hook API level.
-
-**Recommended approach:** use a session-scoped sentinel file, the same way `consumePendingTask()` already uses `pending-task-<sessionId>.txt`. Pattern:
-
-```js
-function isFirstMessageOfSession(cwd, sessionId) {
-  if (!sessionId) return false;
-  const sentinelDir = path.join(cwd, '.claude');
-  const sentinelPath = path.join(sentinelDir, `nf-session-seen-${sessionId}.flag`);
-  if (fs.existsSync(sentinelPath)) return false;
-  try {
-    fs.mkdirSync(sentinelDir, { recursive: true });
-    fs.writeFileSync(sentinelPath, new Date().toISOString(), 'utf8');
-    return true;
-  } catch {
-    return false; // fail-open
-  }
-}
-```
-
-Sentinel files are in `.claude/` (already gitignored by the project). They self-expire when Claude Code garbage-collects session state.
-
-### Placement in nf-prompt.js priority chain
-
-Current priority chain:
-1. Circuit breaker active -> inject resolution workflow (early exit)
-2. Pending task -> inject queued command (early exit)
-3. Planning command -> inject quorum instructions
-
-Session state injection belongs at **priority 0** (before circuit breaker), because it enriches context for ALL messages, not just planning commands. Alternatively it can be appended to the quorum instructions block (priority 3) — lower implementation risk, no need to restructure early-exit logic.
-
-**Recommended:** append to the `instructions` string at the end of priority-3 (after quorum dispatch is built), gated on `isFirstMessageOfSession()`. Keeps the early-exit structure intact and avoids injecting STATE.md content on circuit-breaker recovery messages where it would clutter the recovery prompt.
-
-### STATE.md parsing
-
-STATE.md is human-readable markdown. A lightweight extract is better than injecting the full file (which grows with the Quick Tasks Completed table). Extract only the sections relevant for session orientation:
-
-```js
-// Extract "Current Position" and "Accumulated Context > Decisions" sections
-function extractStateContext(stateContent) {
-  const lines = stateContent.split('\n');
-  const sections = [];
-  let inSection = false;
-  for (const line of lines) {
-    if (/^## Current Position/.test(line) || /^### Decisions/.test(line)) {
-      inSection = true;
-    }
-    if (inSection) {
-      sections.push(line);
-      if (sections.length > 20) break; // cap at 20 lines
-    }
-    if (inSection && sections.length > 1 && /^## /.test(line) && !line.includes('Current Position')) break;
-  }
-  return sections.join('\n').trim();
-}
-```
-
-Cap injection at ~500 chars to avoid crowding quorum instructions (existing hook-level cap is 800 chars for context-stack, noted in nf-prompt.js line 862).
-
----
-
-## Feature 2: APPROACH DECLARATION GATE in quick.md
-
-### How workflow gates work
-
-`quick.md` is a markdown workflow file with `<process>` sections containing numbered steps. Gates are already implemented as inline conditional blocks, e.g.:
-
-- Step 4.5 (formal scope scan): `Skip this step entirely if NOT $FULL_MODE.`
-- Step 5.5 (plan-checker loop): `Skip this step entirely if NOT $FULL_MODE.`
-
-Gates in quick.md are **not enforced by hooks** — they are enforced by the Claude Code orchestrator reading the workflow instructions. The hook for enforcement of behavioral properties is `nf-stop.js` (Stop hook).
-
-### Approach declaration gate options
-
-**Option A: Workflow-only gate (instructions-level)**
-
-Add a Step 3.5 after "Create task directory" that requires the executor to declare an approach before spawning the planner:
-
-```markdown
-**Step 3.5: Approach declaration (required)**
-
-Before spawning the planner, declare your implementation approach:
-
-APPROACH: [one sentence describing how you will solve the task]
-RISKS: [any risks or ambiguities]
-
-This declaration is injected into the planner prompt as <approach_declaration>.
-```
-
-This is zero-code — no hook changes needed. The Stop hook can optionally verify it.
-
-**Option B: Hook-enforced gate via nf-stop.js**
-
-`nf-stop.js` already reads the transcript for `<!-- GSD_DECISION -->`. The same pattern can check for an `APPROACH:` declaration token before allowing the response. This is HIGH friction and not recommended for quick tasks.
-
-**Recommendation: Option A.** Add Step 3.5 to `quick.md` as a structured declaration block. The planner receives it as `<approach_declaration>` context. No hook changes needed for MVP. The gate prevents unconscious scope creep by forcing a one-sentence approach commitment before planning begins.
-
-### Install sync requirement
-
-`core/workflows/quick.md` is the durable source. The installer copies it to `~/.claude/nf/workflows/quick.md`. Any edit to `core/workflows/quick.md` must also update the installed copy or be synced on next `node bin/install.js --claude --global`.
-
----
-
-## Feature 3: ROOT CAUSE PATTERN DETECTION in nf-prompt.js
-
-### Detection mechanism
-
-Root cause phrases are injected into prompts by users trying to fix bugs. Detection pattern (same style as the quorum command allowlist check at line 878):
-
-```js
-const ROOT_CAUSE_SIGNAL_REGEX = /\b(root cause|because of|caused by|the bug is|the issue is|fix the underlying)\b/i;
-const isRootCauseTask = ROOT_CAUSE_SIGNAL_REGEX.test(prompt);
-```
-
-### What to inject when detected
-
-When `isRootCauseTask` is true, append to `instructions` (same tail-append pattern used for THINKING BUDGET at line 851):
-
-```js
-if (isRootCauseTask) {
-  instructions += '\n\nROOT CAUSE ENFORCEMENT: This task contains a root cause signal. ' +
-    'Before implementing any fix, you MUST:\n' +
-    '1. State the root cause in one sentence (not the symptom)\n' +
-    '2. Show the minimal reproduction path\n' +
-    '3. Confirm the fix addresses the root cause, not a workaround\n' +
-    'Do NOT patch symptoms. The Stop hook will verify <!-- GSD_DECISION --> includes root cause reasoning.';
-}
-```
-
-### Placement
-
-Append after the THINKING BUDGET directive (line ~856) and before the context stack injection (line ~865). This ensures root cause enforcement appears in the instructions block delivered to Claude regardless of whether quorum is active.
-
-**Critical constraint:** this runs after the `cmdPattern.test(prompt)` check at line 882 — meaning it only fires for `/nf:` commands. Root cause detection on arbitrary prompts would require moving the logic before the command pattern check. For v0.40, restricting to `/nf:` commands is safer and correct.
-
----
-
-## Feature 4: NEW PreToolUse:Edit/Write SCOPE GUARD HOOK (nf-scope-guard.js)
-
-### Hook registration pattern (from install.js lines 2323-2366)
-
-Every PreToolUse hook follows this exact pattern in install.js:
-
-```js
-// Step 1: Add to DEFAULT_HOOK_PRIORITIES in hooks/config-loader.js
-'nf-scope-guard': 50,
-
-// Step 2: In the install block (~line 2323 in bin/install.js):
-const hasScopeGuardHook = settings.hooks.PreToolUse.some(entry =>
-  entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-scope-guard'))
-);
-if (!hasScopeGuardHook) {
-  settings.hooks.PreToolUse.push({
-    hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-scope-guard.js'), timeout: 10 }]
-  });
-  console.log(`  ${green}+${reset} Configured nForma scope guard hook (PreToolUse)`);
-}
-
-// Step 3: In the uninstall block (~line 1396 in bin/install.js):
-if (settings.hooks && settings.hooks.PreToolUse) {
-  const before = settings.hooks.PreToolUse.length;
-  settings.hooks.PreToolUse = settings.hooks.PreToolUse.filter(entry =>
-    !(entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-scope-guard')))
-  );
-  if (settings.hooks.PreToolUse.length < before) {
-    settingsModified = true;
-    console.log(`  ${green}+${reset} Removed nForma scope guard hook`);
-  }
-  if (settings.hooks.PreToolUse.length === 0) delete settings.hooks.PreToolUse;
-}
-```
-
-### Tool name filtering for Edit/Write
-
-The hook input payload for PreToolUse includes:
-- `input.tool_name` or `input.toolName` — the tool being called (string)
-- `input.tool_input` — the arguments to the tool (object)
-
-For Edit: `input.tool_input.path` — the file path being edited
-For Write: `input.tool_input.file_path` — the file path being written
-
-Tool name values (from circuit-breaker line 633 and destructive-git-guard line 89 patterns):
-- `'Bash'` for Bash tool
-- `'Edit'` for Edit tool
-- `'Write'` for Write tool
-- `'MultiEdit'` for MultiEdit tool (check both casings)
-
-Filter pattern (from destructive-git-guard lines 88-92):
-
-```js
-const toolName = input.tool_name || input.toolName || '';
-const EDIT_WRITE_TOOLS = new Set(['edit', 'write', 'multiedit']);
-if (!EDIT_WRITE_TOOLS.has(toolName.toLowerCase())) {
-  process.exit(0);
-}
-
-// Extract target file path
-const filePath = (input.tool_input && (input.tool_input.path || input.tool_input.file_path)) || '';
-```
-
-### Hook output: warn vs. block
-
-**Warn (recommended for v0.40 — same as destructive-git-guard):**
-```js
-process.stdout.write(JSON.stringify({
-  hookSpecificOutput: {
-    hookEventName: 'PreToolUse',
-    additionalContext: `[nf-scope-guard] WARNING: ${filePath} may be outside declared task scope.`,
-  },
-}));
-```
-
-**Block (confirmed working from nf-circuit-breaker.js line 766-773):**
-```js
-process.stdout.write(JSON.stringify({
-  hookSpecificOutput: {
-    hookEventName: 'PreToolUse',
-    permissionDecision: 'deny',
-    permissionDecisionReason: `Scope guard: ${filePath} is outside the declared task scope.`,
-  },
-}));
-```
-
-### Scope source: current-activity.json + task plan
-
-`current-activity.json` is written by `gsd-tools.cjs activity-set` and exists at `.planning/current-activity.json` during active task execution. Format:
-
-```json
-{ "activity": "quick", "sub_activity": "executing" }
-```
-
-The task plan path can be derived from the plan naming convention: `.planning/quick/<num>-<slug>/<num>-PLAN.md`. Plans use YAML frontmatter with a `files:` field listing declared files. The scope guard reads that field and warns when the target file is not in the list.
-
-Fail-open: if `current-activity.json` is absent or the plan cannot be parsed, allow the tool call (no false positives when hook runs outside nForma context).
-
-### Hook file lifecycle
-
-```
-hooks/nf-scope-guard.js         ← development source (write here)
-hooks/dist/nf-scope-guard.js    ← compiled copy (sync manually: cp hooks/nf-scope-guard.js hooks/dist/)
-~/.claude/hooks/nf-scope-guard.js  ← installed copy (synced by: node bin/install.js --claude --global)
-```
-
-The installer reads from `hooks/dist/` only. Development source in `hooks/` is the durable repo copy.
-
----
-
-## Core Technologies (no new additions)
+### Core Framework (existing — no changes)
 
 | Technology | Version | Purpose | Why |
 |------------|---------|---------|-----|
-| Node.js (CommonJS) | existing (18+) | Hook runtime | All hooks are `.js` CJS modules; no transpilation needed |
-| `fs` (stdlib) | built-in | STATE.md reads, sentinel files, activity JSON | Already required in every hook |
-| `path` (stdlib) | built-in | Path construction for `.claude/`, `.planning/` | Already required in every hook |
+| Node.js (CommonJS) | >=18.0.0 | CLI runtime | Already the project runtime; all hooks and bin scripts are `.cjs`/`.js` CommonJS |
+| `child_process` (stdlib) | built-in | Git operations, CLI spawning | nForma uses raw `spawnSync`/`execSync`/`execFileSync` throughout (185+ call sites in bin/ alone). No reason to introduce `simple-git` — the raw approach works and avoids a runtime dependency. |
+| `fs`/`path`/`crypto` (stdlib) | built-in | File I/O, path resolution, hashing | Already required in every module |
+| esbuild | ^0.27.3 | Hook bundling | Already in devDependencies for `build:hooks` |
 
-No npm packages are needed for any of the four features. All patterns use stdlib only.
+### Tree-Sitter (NEW — optionalDependency)
 
----
+| Technology | Version | Purpose | Why |
+|------------|---------|---------|-----|
+| `web-tree-sitter` | ^0.26.8 | WASM-based Tree-sitter bindings | **WASM over native** because nForma installs via `npm install` and must work on any system without C++ build tools. Native `tree-sitter` requires node-gyp compilation which fails on systems without Xcode/Visual Studio. WASM "just works" — zero compilation, zero native dependencies. Performance is "considerably slower" than native per docs, but we're parsing single files for skeleton views, not incremental-editing IDE-scale files. The ~50ms parse time for a typical source file is negligible. |
+| `tree-sitter-javascript` | ^0.25.0 | JS/JSX grammar | JavaScript is nForma's own language and the most common target language |
+| `tree-sitter-python` | ^0.25.0 | Python grammar | Second most common target language in agent tooling projects |
+| `tree-sitter-typescript` | ^0.23.2 | TypeScript grammar | nForma uses TypeScript internally (XState machines); common in target projects |
+| `tree-sitter-bash` | ^0.25.1 | Bash grammar | nForma generates/inspects shell scripts; hooks contain bash patterns |
 
-## Supporting Libraries (existing, no changes needed)
+**Why `web-tree-sitter` (WASM) instead of `tree-sitter` (native):**
+1. Native requires node-gyp + C++ compiler — fails on systems without build tools (common for npm-only users)
+2. nForma is distributed as an npm package — installation must be `npm install && done`
+3. WASM has no native dependency — loads from a `.wasm` file
+4. The performance difference (~5-10x slower) is irrelevant for our use case (parse single file, extract skeleton, discard tree)
+5. Already precedented: nForma uses `@huggingface/transformers` as `optionalDependency` — same pattern applies
 
-| Library | Location | Purpose | When to Use |
-|---------|----------|---------|-------------|
-| `config-loader` | `./config-loader` | `loadConfig`, `shouldRunHook`, `validateHookInput` | Every hook; provides profile guard + input validation |
-| `nf-resolve-bin` | `./nf-resolve-bin` | Resolve bin/ paths across dev vs. installed | Only if reading planning-paths.cjs or other bin scripts |
-| `conformance-schema.cjs` | `./conformance-schema.cjs` | `schema_version` constant | Only if hook writes conformance events |
-
----
-
-## Installation (no new packages)
-
-```bash
-# After writing hooks/nf-scope-guard.js:
-cp hooks/nf-scope-guard.js hooks/dist/nf-scope-guard.js
-
-# Sync quick.md workflow to installed location:
-cp core/workflows/quick.md ~/.claude/nf/workflows/quick.md
-
-# Register new hook in settings.json:
-node bin/install.js --claude --global
+**Lazy initialization pattern:**
+```js
+// Only load when skeleton view is requested, NOT at CLI startup
+let _parser = null;
+async function getParser(grammarPath) {
+  if (!_parser) {
+    const { Parser } = require('web-tree-sitter');
+    await Parser.init();
+    _parser = new Parser();
+  }
+  const lang = await Parser.Language.load(grammarPath);
+  _parser.setLanguage(lang);
+  return _parser;
+}
 ```
 
----
+**Grammar `.wasm` file resolution:**
+Tree-sitter grammar packages ship `.wasm` files in their npm package (since v0.21+). Locate via:
+```js
+const grammarPath = require.resolve('tree-sitter-javascript/tree-sitter-javascript.wasm');
+```
+If the `.wasm` file is not found (grammar not installed), degrade gracefully — return a line-count + file-header based skeleton instead of an AST skeleton.
+
+### XML Context Packing (NO new dependency)
+
+| Technology | Version | Purpose | Why |
+|------------|---------|---------|-----|
+| String templates (stdlib) | built-in | Generate XML-tagged context for LLMs | "XML-style context packing" means *producing* `<file path="...">content</file>` strings for LLM consumption, not *parsing* external XML. No `fast-xml-parser` or XML library needed — just template literals. This is the same pattern Claude Code itself uses for XML-tagged context injection. |
+
+**Implementation pattern:**
+```js
+function packContext(files, options = {}) {
+  const parts = files.map(f =>
+    `<file path="${escapeXml(f.path)}" lang="${f.lang}">\n${f.content}\n</file>`
+  );
+  return `<context version="1" cwd="${escapeXml(options.cwd || '')}">\n${parts.join('\n')}\n</context>`;
+}
+
+function escapeXml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
+```
+
+**Token reduction strategies (no library needed):**
+- Omit blank lines and comment blocks via regex stripping before packing
+- Truncate files beyond a configurable line limit (default: 200 lines)
+- Collapse repeated blank lines to single blank line
+- Include only file headers (first N lines) for reference files vs. full content for target files
+
+### Hotspot Detection: Churn + Complexity (NO new dependency)
+
+| Technology | Version | Purpose | Why |
+|------------|---------|---------|-----|
+| `child_process.spawnSync` (stdlib) | built-in | Git churn extraction | nForma already uses raw `spawnSync('git', [...args])` throughout. No `simple-git` needed. |
+| Tree-sitter AST traversal | (web-tree-sitter) | Cyclomatic complexity from AST | Compute complexity from the same AST used for skeleton views. Count decision points: `if`, `else`, `for`, `while`, `switch_case`, `catch`, `&&`, `\|\|`, ternary. This gives language-agnostic cyclomatic complexity without needing `escomplex` (JavaScript-only, unmaintained since 2015, 271 stars but archived). |
+
+**Why NOT escomplex:**
+1. JavaScript-only — can't analyze Python, TypeScript, Bash, etc. (nForma works on polyglot repos)
+2. Last release v1.3.0 was October 2015 — 11 years unmaintained
+3. Depends on `acorn` for JS parsing — but we already have tree-sitter for AST
+4. Tree-sitter gives us AST for every language with a grammar — one complexity algorithm, all languages
+
+**Git churn extraction (existing pattern):**
+```js
+// Uses spawnSync — same pattern as 185+ existing call sites
+const result = spawnSync('git', [
+  'log', '--numstat', '--format=COMMIT%n%H',
+  `--since=${sinceDate}`, '--', ...paths
+], { cwd, encoding: 'utf-8', maxBuffer: 50 * 1024 * 1024 });
+```
+
+**Complexity from tree-sitter AST:**
+```js
+// Decision point node types by language family
+const DECISION_NODES = new Set([
+  'if_statement', 'else_clause', 'for_statement', 'for_in_statement',
+  'while_statement', 'do_statement', 'switch_case', 'catch_clause',
+  'conditional_expression', // ternary
+  'try_statement', // +1 for each catch
+]);
+
+function cyclomaticFromAST(rootNode) {
+  let complexity = 1; // base
+  traverse(rootNode, node => {
+    if (DECISION_NODES.has(node.type)) complexity++;
+    // Logical operators: && and || each add 1
+    if (node.type === '&&' || node.type === '||') complexity++;
+  });
+  return complexity;
+}
+```
+
+### Co-Change Prediction: Git History Mining (NO new dependency)
+
+| Technology | Version | Purpose | Why |
+|------------|---------|---------|-----|
+| `child_process.spawnSync` (stdlib) | built-in | Git history extraction | Same raw git pattern used everywhere in nForma |
+| Custom co-occurrence miner | new code | Association rule mining | Implement directly. The full Apriori algorithm (seratch/apriori.js, 34 stars, unmaintained since 2020) is overkill — we don't need frequent itemset generation for market basket analysis. We need: for each commit, extract the set of changed files; count co-occurrence pairs; compute support and confidence. This is a simplified version of association rule mining that's ~100 lines of code and doesn't warrant a dependency. |
+
+**Why NOT `apriori` npm package:**
+1. Last updated August 2020 — 6 years unmaintained
+2. 34 GitHub stars, 15 forks — low community adoption
+3. Depends on bower (deprecated package manager) and Grunt (legacy build tool)
+4. The algorithm we need is simpler than full Apriori — we don't need k-itemset generation, just pair-level co-occurrence
+5. A direct implementation avoids the dependency and can be tuned for our specific use case (e.g., file-path-aware distance metrics, time-window decay)
+
+**Git history extraction pattern:**
+```js
+// Extract commit→files mapping for co-change analysis
+const result = spawnSync('git', [
+  'log', '--name-only', '--format=COMMIT%n%H',
+  `--since=${sinceDate}`, '--no-merge'
+], { cwd, encoding: 'utf-8', maxBuffer: 100 * 1024 * 1024 });
+// Parse into: Map<commitHash, Set<filePath>>
+// Then compute co-occurrence: Map<filePair, { count, support, confidence }>
+```
+
+## Supporting Libraries (optionalDependency — existing pattern)
+
+| Library | Version | Purpose | When to Use |
+|---------|---------|---------|-------------|
+| `@huggingface/transformers` | ^3.0.0 | Haiku-based task classification | Already in `optionalDependencies`. Same lazy-load pattern can be used for tree-sitter. |
 
 ## Alternatives Considered
 
-| Recommended | Alternative | Why Not |
-|-------------|-------------|---------|
-| Sentinel file for first-message detection | Track in `.planning/session-registry.json` | Overkill; sentinel file is atomic, zero-parse, and self-cleaning |
-| Append STATE.md summary to quorum instructions block | Inject before priority-1 (circuit breaker) | Restructures the early-exit chain; higher risk of injecting stale context on circuit-breaker recovery |
-| Workflow-only approach declaration gate | Stop hook `APPROACH:` token check | Stop hook adds friction for ALL quick tasks; opt-in declaration is sufficient for v0.40 |
-| Warn-only scope guard | Hard-block scope guard | Hard block on Edit/Write would halt legitimate lateral edits (e.g., updating CLAUDE.md, STATE.md alongside implementation); warn-only is safer for initial rollout |
-| Append root cause enforcement inside quorum instructions | Separate early-exit path | Early exit would skip quorum injection; appending is consistent with THINKING BUDGET pattern |
+| Category | Recommended | Alternative | Why Not |
+|----------|-------------|-------------|---------|
+| Tree-sitter binding | `web-tree-sitter` (WASM) | `tree-sitter` (native) | Native requires node-gyp + C++ compiler. Fails on systems without build tools. nForma must install via `npm install` without compilation steps. |
+| Tree-sitter binding | `web-tree-sitter` (WASM) | Shell out to `tree-sitter-cli` | Extra system dependency (requires tree-sitter-cli installed globally). Can't embed in nForma package. No AST manipulation in-process. |
+| Git operations | Raw `child_process.spawnSync` | `simple-git` (npm) | nForma already uses raw spawnSync at 185+ call sites. Adding simple-git creates inconsistency and a runtime dependency for functionality we already have. Raw git is also faster (no parsing overhead). |
+| Complexity analysis | Tree-sitter AST traversal | `escomplex` | JS-only, unmaintained since 2015, depends on acorn parser. Tree-sitter gives us multi-language complexity from the same AST. |
+| Complexity analysis | Tree-sitter AST traversal | `plato` / `complexity-report` | Built on escomplex, same JS-only limitation. Both archived. |
+| Co-change mining | Custom co-occurrence counter | `apriori` npm package | Unmaintained since 2020, depends on bower/grunt, overkill for our needs (we need pair-level co-occurrence, not full k-itemset generation). ~100 lines of custom code vs. a dependency that does more than we need. |
+| XML generation | String templates | `fast-xml-parser` XMLBuilder | XMLBuilder is for building XML documents from JS objects. Our use case is wrapping file content in XML tags for LLM context — string templates are simpler, zero-dependency, and more flexible (we control the exact format). |
+| XML generation | String templates | `xml2js` builder | Same issue as fast-xml-parser — overkill for tag-wrapping, adds a dependency. |
+| XML generation | String templates | `xmlbuilder` | Yet another XML builder. Our context format is simple and stable — template literals are sufficient. |
 
-## What NOT to Use
+## What NOT to Add
 
 | Avoid | Why | Use Instead |
 |-------|-----|-------------|
-| `process.env.SESSION_ID` for session detection | Only set when `SESSION_ID` env var is explicitly passed; not reliable in all Claude Code contexts | `input.session_id` from the hook payload |
-| `systemMessage` output field | Only shows as UI warning, does not go into Claude's context (nf-prompt.js line 17 comment) | `additionalContext` in `hookSpecificOutput` |
-| Writing hook state to `.planning/` | `.planning/` is a planning artifact store; transient hook state belongs in `.claude/` | `.claude/` sentinel files |
-| Direct injection of full STATE.md | The Quick Tasks Completed table grows unboundedly; full injection wastes context budget | Extract only "Current Position" and "Decisions" sections, capped at ~500 chars |
+| `simple-git` | Adds a runtime dependency for functionality already achieved via `child_process.spawnSync`. nForma's pattern is raw git commands — adding a wrapper library creates inconsistency and bloat. | Raw `spawnSync('git', [...args])` — same as 185+ existing call sites |
+| `escomplex` | JavaScript-only, unmaintained since 2015. Can't compute complexity for Python, TypeScript, Bash, etc. | Tree-sitter AST decision-point counting (language-agnostic) |
+| `apriori` npm package | Unmaintained since 2020, depends on bower (deprecated) and grunt (legacy), does more than we need. | Custom co-occurrence counter (~100 lines) |
+| `fast-xml-parser` / `xmlbuilder` / `xml2js` | We're *generating* XML-tagged strings, not parsing XML documents. Template literals are sufficient and dependency-free. | String template literals with `escapeXml()` helper |
+| `tree-sitter` (native bindings) | Requires C++ compilation (node-gyp). Breaks `npm install` on systems without build tools. nForma users should never need to compile C++ code. | `web-tree-sitter` (WASM) — zero compilation |
+| `acorn` / `espree` / other JS parsers | We need multi-language parsing, not just JavaScript. Tree-sitter with grammars handles JS, Python, TypeScript, Bash, and 50+ other languages. | `web-tree-sitter` + per-language grammar packages |
 
----
+## Installation
 
-## Version Compatibility
+```bash
+# Core — always installed (no new runtime deps needed)
+npm install  # existing deps only
 
-| API Field | Hook Event | Notes |
-|-----------|-----------|-------|
-| `input.session_id` | UserPromptSubmit | Present in payload; confirmed used in `consumePendingTask()` at line 84 of nf-prompt.js |
-| `hookSpecificOutput.additionalContext` | UserPromptSubmit, PreToolUse | Both events support this field; confirmed in both nf-prompt.js and nf-destructive-git-guard.js |
-| `hookSpecificOutput.permissionDecision: 'deny'` | PreToolUse only | Confirmed in nf-circuit-breaker.js line 769 |
-| `input.tool_name` / `input.toolName` | PreToolUse | Both variants checked for backward compat; confirmed in nf-circuit-breaker.js line 633 |
-| `input.tool_input.path` | PreToolUse (Edit tool) | Edit tool uses `path` field |
-| `input.tool_input.file_path` | PreToolUse (Write tool) | Write tool uses `file_path` field |
+# Tree-sitter support — optional, lazy-loaded
+npm install web-tree-sitter@^0.26.8 tree-sitter-javascript@^0.25.0 tree-sitter-python@^0.25.0 tree-sitter-typescript@^0.23.2 tree-sitter-bash@^0.25.1
+```
 
----
+**optionalDependency pattern (matching existing `@huggingface/transformers`):**
+
+```json
+{
+  "optionalDependencies": {
+    "@huggingface/transformers": "^3.0.0",
+    "web-tree-sitter": "^0.26.8",
+    "tree-sitter-javascript": "^0.25.0",
+    "tree-sitter-python": "^0.25.0",
+    "tree-sitter-typescript": "^0.23.2",
+    "tree-sitter-bash": "^0.25.1"
+  }
+}
+```
+
+**Graceful degradation:** If `web-tree-sitter` is not installed:
+- Skeleton views fall back to line-count + file-header based summaries (no AST)
+- Complexity scoring falls back to line-count heuristic (lines / 10 as rough proxy)
+- Churn analysis and co-change prediction still work (they use only `git log`)
+- Context packing still works (it's just string templates)
+
+## Grammar Package Compatibility
+
+Tree-sitter grammar npm packages must be compatible with `web-tree-sitter` version. The `.wasm` files are shipped in the grammar package since tree-sitter grammar ABI v14+.
+
+**Key grammars for nForma:**
+
+| Package | npm Name | Language | Why Needed |
+|---------|----------|----------|------------|
+| tree-sitter-javascript | `tree-sitter-javascript` | JS/JSX | nForma's own codebase + most common target |
+| tree-sitter-python | `tree-sitter-python` | Python | Common in ML/data projects |
+| tree-sitter-typescript | `tree-sitter-typescript` | TypeScript/TSX | nForma's XState machines; common in modern web |
+| tree-sitter-bash | `tree-sitter-bash` | Bash | nForma hooks contain shell scripts; CI/config files |
+
+**Extended grammars** (add on demand, not in default package):
+- `tree-sitter-c` — C source analysis
+- `tree-sitter-cpp` — C++ source analysis
+- `tree-sitter-java` — Java source analysis
+- `tree-sitter-go` — Go source analysis
+- `tree-sitter-rust` — Rust source analysis
+- `tree-sitter-ruby` — Ruby source analysis
+
+The architecture should support a grammar registry: user can add `.wasm` grammar files, and nForma discovers them at runtime. This makes the system extensible without adding every grammar as a dependency.
+
+## Version Compatibility Notes
+
+| Technology | Constraint | Notes |
+|------------|-----------|-------|
+| `web-tree-sitter` | ^0.26.8 | Verified on npm: `npm view web-tree-sitter version` returns 0.26.8 (April 2026). |
+| Grammar packages | ABI 14+ | Required for `.wasm` file inclusion. All grammars listed above have ABI >= 14. Verified versions: tree-sitter-javascript@0.25.0, tree-sitter-python@0.25.0, tree-sitter-typescript@0.23.2, tree-sitter-bash@0.25.1 |
+| Node.js | >=18.0.0 | Already constrained by nForma's `engines` field. WASM support is native in Node.js 18+. |
 
 ## Sources
 
-- `/Users/jonathanborduas/code/QGSD/hooks/nf-prompt.js` — direct read (HIGH confidence): hook input schema, output mechanism, priority chain, `additionalContext`, `session_id` usage, `instructions` append pattern
-- `/Users/jonathanborduas/code/QGSD/hooks/nf-circuit-breaker.js` — direct read (HIGH confidence): PreToolUse input schema, `tool_name`/`toolName` fields, `permissionDecision: 'deny'` output pattern
-- `/Users/jonathanborduas/code/QGSD/hooks/nf-destructive-git-guard.js` — direct read (HIGH confidence): Edit/Write tool_name filtering, warn-only output pattern, `additionalContext` in PreToolUse
-- `/Users/jonathanborduas/code/QGSD/hooks/nf-mcp-dispatch-guard.js` — direct read (HIGH confidence): PreToolUse tool name filtering, fail-open pattern
-- `/Users/jonathanborduas/code/QGSD/bin/install.js` (lines 2298-2410) — direct read (HIGH confidence): hook registration/uninstall pattern, `DEFAULT_HOOK_PRIORITIES`, `buildHookCommand`
-- `/Users/jonathanborduas/code/QGSD/core/workflows/quick.md` — direct read (HIGH confidence): workflow gate pattern, approach declaration insertion point, install sync requirement
-- `/Users/jonathanborduas/code/QGSD/.planning/STATE.md` — direct read (HIGH confidence): STATE.md format, section structure for extraction
+- **web-tree-sitter** — Official Tree-sitter WASM bindings documentation: https://tree-sitter.github.io/node-tree-sitter (HIGH confidence — official docs)
+- **web-tree-sitter** — GitHub repository with README, installation, API: https://github.com/tree-sitter/node-tree-sitter (HIGH confidence — source repo)
+- **web-tree-sitter** — WASM binding README (setup, Node.js usage, `.wasm` generation): https://github.com/tree-sitter/tree-sitter/tree/master/lib/binding_web (HIGH confidence — official repo)
+- **tree-sitter grammar list** — Official wiki with ABI versions: https://github.com/tree-sitter/tree-sitter/wiki/List-of-parsers (HIGH confidence — official community wiki)
+- **simple-git** — Full API documentation: https://github.com/steveukx/git-js (MEDIUM confidence — verified source, but NOT recommended for use)
+- **escomplex** — JavaScript complexity analysis library: https://github.com/escomplex/escomplex (MEDIUM confidence — verified source, but NOT recommended; unmaintained since 2015)
+- **apriori.js** — Apriori algorithm in JS: https://github.com/seratch/apriori.js (LOW confidence — verified but unmaintained since 2020; NOT recommended)
+- **fast-xml-parser** — XML parser/builder: https://github.com/NaturalIntelligence/fast-xml-parser (MEDIUM confidence — verified source, but NOT recommended for our use case)
+- **nForma codebase** — Direct grep of `child_process` usage across bin/, hooks/, core/ (HIGH confidence — primary source)
+- **nForma package.json** — Existing dependency tree, optionalDependency pattern (HIGH confidence — primary source)
 
 ---
-*Stack research for: nForma behavioral enforcement hooks (session state injection, approach declaration gate, root cause enforcement, scope guard)*
-*Researched: 2026-03-19*
+
+*Stack research for: nForma v0.42 Repowise Intelligence Integration (XML context packing, Tree-sitter skeleton views, hotspot detection, co-change prediction)*
+*Researched: 2026-04-11*
