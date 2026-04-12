@@ -654,19 +654,21 @@ Archive: `.planning/milestones/v0.15-MILESTONE-AUDIT.md`
 ---
 
 
-## v0.42 Deep coderlm Solve Integration (Shipped: 2026-04-10)
+## v0.42 Repowise Intelligence Integration (Shipped: 2026-04-12)
 
-**Phases completed:** Phases 54–57 (4 phases, 9 plans)
-**Requirements:** 11/11 satisfied | Audit: PASSED
+**Phases completed:** Phases 54–58 (5 phases, 8 plans)
+**Requirements:** 16/16 satisfied | Audit: PASSED
 
 **Key accomplishments:**
-- LRU cache module (`bin/coderlm-cache.cjs`) with 100-entry capacity, 5-min TTL, hit/miss stats — wired into all 6 adapter query methods and reset at convergence loop start (CADP-01)
-- Symbol-level edge discovery via `getImplementationSync` + `LAYER_SYMBOL_MAP` with `path.resolve()` comparison, replacing file-name string matching in `queryEdgesSync()` (CDIAG-01); coderlm server re-indexed after autoClose() modifies files (CDIAG-04)
-- R→F remediation dispatch passes `--seed-files` from `getImplementationSync`/`getCallersSync` so generated formal specs reference real function signatures and caller relationships (CREM-01); F→T stub generation enriched with `findTests`/`peek` assertion patterns (CREM-02)
-- Git heatmap hot-zone ranking incorporates `Math.log1p(calleeCount)` alongside git churn score — widely-called files surface for formal coverage even with moderate churn (CREM-03)
-- Reverse discovery candidates enriched with `caller_count` and `dead_code_flag`; solve report annotates 0-caller modules as "(0 callers — likely dead code)" (CREM-04)
-- `formal-scope-scan.cjs` Layer 2.5 walks `getCallers()` backward from changed files to discover formal modules file-name matching would miss (CDIAG-02); `solve-incremental-filter.cjs` `expandWithCallGraph()` prevents incorrect layer skips via transitive dependency expansion (CDIAG-03)
-- All 8 integration points fail-open: when coderlm is unavailable, every layer returns pre-integration result with zero errors
+- XML context packing with `escapeXml()` + `packFile()` — structured `<file>` delivery format reducing token overhead while preserving code structure (PACK-01, PACK-02)
+- `context-packer.cjs` single entry point orchestrating skeleton, hotspot, and co-change modules into unified `<repowise>` XML/JSON output (PACK-03)
+- Git-log streaming churn scoring with heuristic complexity and noise filtering for hotspot risk identification (HOT-01, HOT-03, HOT-04)
+- `nf-prompt.js` HOT-05 quorum fan-out escalation — high-risk hotspot files automatically trigger full external review capacity (HOT-05)
+- File co-occurrence mining with temporal coupling, mass-refactor inverse weighting, and configurable thresholds (COCH-01, COCH-02, COCH-03)
+- Debug context injection — co-change partners auto-surface when running `/nf:debug` on coupled files (COCH-04)
+- `web-tree-sitter` WASM AST skeleton extraction (lazy init) for JS/TS/Python with enrichment from hotspot risk and coupling scores (SKEL-01–04, HOT-02)
+- Budget-aware compression adapting skeleton detail to token constraints with risk-weighted priority allocation (PACK-04)
+- All 5 E2E flows verified, 18 cross-phase connections wired, 1339 tests passing
 
 ---
 
