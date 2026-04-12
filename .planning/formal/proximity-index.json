@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-12T17:52:36.101Z",
+  "generated": "2026-04-12T18:34:42.224Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -131,7 +131,7 @@
       "mtime": "2026-04-12T10:09:14.461Z"
     },
     "code-source-annotations": {
-      "mtime": "2026-04-12T15:54:16.619Z"
+      "mtime": "2026-04-12T18:32:47.176Z"
     }
   },
   "nodes": {

@@ -15,6 +15,7 @@ const { spawnSync } = require('child_process');
 const { createLRUCache } = require('./coderlm-cache.cjs');
 
 const DEFAULT_HOST = 'http://localhost:8787';
+const API_PREFIX = '/api/v1';
 const DEFAULT_TIMEOUT_QUERY = 5000;
 const DEFAULT_TIMEOUT_HEALTH = 2000;
 
@@ -48,7 +49,7 @@ function parseUrl(urlString) {
  * @param {number} timeout - Request timeout in ms
  * @returns {Promise<{status: number, body: string, error?: string}>}
  */
-function httpGet(url, timeout) {
+function httpGet(url, timeout, headers) {
   return new Promise((resolve) => {
     const parsed = parseUrl(url);
     const client = parsed.protocol === 'https:' ? https : http;
@@ -58,6 +59,7 @@ function httpGet(url, timeout) {
       path: parsed.path,
       method: 'GET',
       timeout: timeout,
+      headers: headers || {},
     };
 
     let timedOut = false;
@@ -90,6 +92,47 @@ function httpGet(url, timeout) {
   });
 }
 
+function httpPost(url, body, timeout) {
+  return new Promise((resolve) => {
+    const parsed = parseUrl(url);
+    const client = parsed.protocol === 'https:' ? https : http;
+    const bodyStr = JSON.stringify(body);
+    const options = {
+      hostname: parsed.hostname,
+      port: parsed.port,
+      path: parsed.path,
+      method: 'POST',
+      timeout: timeout,
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(bodyStr),
+      },
+    };
+    let timedOut = false;
+    const req = client.request(options, (res) => {
+      let data = '';
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => {
+        if (!timedOut) {
+          resolve({ status: res.statusCode, body: data });
+        }
+      });
+    });
+    req.on('timeout', () => {
+      timedOut = true;
+      req.destroy();
+      resolve({ error: 'timeout' });
+    });
+    req.on('error', (e) => {
+      if (!timedOut) {
+        resolve({ error: e.code || e.message });
+      }
+    });
+    req.write(bodyStr);
+    req.end();
+  });
+}
+
 /**
  * Create an adapter instance with configurable options.
  * @param {Object} opts - Configuration options
@@ -112,6 +155,58 @@ function createAdapter(opts = {}) {
   const _cache = createLRUCache(100, 5 * 60 * 1000);
   // CADP-03: Per-session metrics (accumulated across all query calls on this adapter)
   const _metrics = { queryCount: 0, totalLatencyMs: 0 };
+  // coderlm session: created once per adapter, reused for all queries
+  let _sessionId = null;
+
+  async function ensureSession() {
+    if (_sessionId) return _sessionId;
+    try {
+      const cwd = process.cwd();
+      const result = await httpPost(host + API_PREFIX + '/sessions', { cwd }, timeout);
+      if (result.status === 200 || result.status === 201) {
+        const parsed = JSON.parse(result.body);
+        _sessionId = parsed.session_id;
+        return _sessionId;
+      }
+    } catch (_) { /* fail-open */ }
+    return null;
+  }
+
+  function ensureSessionSync() {
+    if (_sessionId) return _sessionId;
+    try {
+      const parsed = parseUrl(host);
+      const port = parsed.port || (parsed.protocol === 'https:' ? 443 : 80);
+      const cwd = process.cwd();
+      const script = `
+const http = require('http');
+const req = http.request(
+  { hostname: ${JSON.stringify(parsed.hostname)}, port: ${port}, path: '${API_PREFIX}/sessions', method: 'POST',
+    headers: { 'Content-Type': 'application/json' } },
+  res => {
+    let d = '';
+    res.on('data', c => { d += c; });
+    res.on('end', () => { process.stdout.write(d); });
+  }
+);
+req.on('error', () => { process.stdout.write('{}'); });
+req.write(JSON.stringify({ cwd: ${JSON.stringify(cwd)} }));
+req.end();
+`;
+      const r = spawnSync('node', ['-e', script], { encoding: 'utf8', timeout: 5000 });
+      if (r.status === 0 && r.stdout) {
+        const parsed = JSON.parse(r.stdout.trim());
+        if (parsed.session_id) {
+          _sessionId = parsed.session_id;
+        }
+      }
+    } catch (_) { /* fail-open */ }
+    return _sessionId;
+  }
+
+  function sessionHeaders() {
+    return _sessionId ? { 'X-Session-Id': _sessionId } : {};
+  }
 
   const adapter = {
     /**
@@ -124,7 +219,7 @@ function createAdapter(opts = {}) {
       }
       try {
         const start = Date.now();
-        const result = await httpGet(host + '/health', healthTimeout);
+        const result = await httpGet(host + API_PREFIX + '/health', healthTimeout);
         const latencyMs = Date.now() - start;
         if (result.error) {
           return { healthy: false, latencyMs, error: result.error };
@@ -166,7 +261,7 @@ async function check() {
     const options = {
       hostname: hostname,
       port: port,
-      path: '/health',
+      path: API_PREFIX + '/health',
       method: 'GET',
       timeout: timeout
     };
@@ -219,11 +314,12 @@ check().then(r => console.log(JSON.stringify(r)));
       }
       const cacheKey = JSON.stringify({ method: 'getCallers', symbol, file });
       const cached = _cache.get(cacheKey);
-      if (cached !== undefined) return cached; // cache hit (counted by _cache stats)
+      if (cached !== undefined) return cached;
       const start = Date.now();
       try {
-        const url = host + '/callers?symbol=' + encodeURIComponent(symbol) + '&file=' + encodeURIComponent(file);
-        const result = await httpGet(url, timeout);
+        await ensureSession();
+        const url = host + API_PREFIX + '/symbols/callers?symbol=' + encodeURIComponent(symbol) + '&file=' + encodeURIComponent(file);
+        const result = await httpGet(url, timeout, sessionHeaders());
         _metrics.queryCount++;
         _metrics.totalLatencyMs += Date.now() - start;
         if (result.error) {
@@ -264,17 +360,20 @@ check().then(r => console.log(JSON.stringify(r)));
       }
       const cacheKey = JSON.stringify({ method: 'getCallersSync', symbol, file });
       const cached = _cache.get(cacheKey);
-      if (cached !== undefined) return cached; // cache hit
+      if (cached !== undefined) return cached;
       const start = Date.now();
       try {
+        ensureSessionSync();
         const parsed = parseUrl(host);
         const port = parsed.port || (parsed.protocol === 'https:' ? 443 : 80);
+        const sessionId = _sessionId || '';
         const script = `
 const http = require('http');
 const https = require('https');
 const protocol = ${JSON.stringify(parsed.protocol)};
 const hostname = ${JSON.stringify(parsed.hostname)};
 const port = ${port};
+const sessionId = ${JSON.stringify(sessionId)};
 const symbol = ${JSON.stringify(symbol)};
 const file = ${JSON.stringify(file)};
 const timeout = ${timeout};
@@ -282,13 +381,14 @@ const client = protocol === 'https:' ? https : http;
 async function getCallers() {
   return new Promise(resolve => {
     let timedOut = false;
-    const path = '/callers?symbol=' + encodeURIComponent(symbol) + '&file=' + encodeURIComponent(file);
+    const path = ${JSON.stringify(API_PREFIX)} + '/symbols/callers?symbol=' + encodeURIComponent(symbol) + '&file=' + encodeURIComponent(file);
     const options = {
       hostname: hostname,
       port: port,
       path: path,
       method: 'GET',
-      timeout: timeout
+      timeout: timeout,
+      headers: sessionId ? { 'X-Session-Id': sessionId } : {}
     };
     const req = client.request(options, res => {
       let data = '';
@@ -361,30 +461,34 @@ getCallers().then(r => console.log(JSON.stringify(r)));
       }
       const cacheKey = JSON.stringify({ method: 'getImplementationSync', symbol });
       const cached = _cache.get(cacheKey);
-      if (cached !== undefined) return cached; // cache hit
+      if (cached !== undefined) return cached;
       const start = Date.now();
       try {
+        ensureSessionSync();
         const parsed = parseUrl(host);
         const port = parsed.port || (parsed.protocol === 'https:' ? 443 : 80);
+        const sessionId = _sessionId || '';
         const script = `
 const http = require('http');
 const https = require('https');
 const protocol = ${JSON.stringify(parsed.protocol)};
 const hostname = ${JSON.stringify(parsed.hostname)};
 const port = ${port};
+const sessionId = ${JSON.stringify(sessionId)};
 const symbol = ${JSON.stringify(symbol)};
 const timeout = ${timeout};
 const client = protocol === 'https:' ? https : http;
 async function getImplementation() {
   return new Promise(resolve => {
     let timedOut = false;
-    const path = '/implementation?symbol=' + encodeURIComponent(symbol);
+    const path = ${JSON.stringify(API_PREFIX)} + '/symbols/implementation?symbol=' + encodeURIComponent(symbol);
     const options = {
       hostname: hostname,
       port: port,
       path: path,
       method: 'GET',
-      timeout: timeout
+      timeout: timeout,
+      headers: sessionId ? { 'X-Session-Id': sessionId } : {}
     };
     const req = client.request(options, res => {
       let data = '';
@@ -451,11 +555,12 @@ getImplementation().then(r => console.log(JSON.stringify(r)));
       }
       const cacheKey = JSON.stringify({ method: 'getImplementation', symbol });
       const cached = _cache.get(cacheKey);
-      if (cached !== undefined) return cached; // cache hit
+      if (cached !== undefined) return cached;
       const start = Date.now();
       try {
-        const url = host + '/implementation?symbol=' + encodeURIComponent(symbol);
-        const result = await httpGet(url, timeout);
+        await ensureSession();
+        const url = host + API_PREFIX + '/symbols/implementation?symbol=' + encodeURIComponent(symbol);
+        const result = await httpGet(url, timeout, sessionHeaders());
         _metrics.queryCount++;
         _metrics.totalLatencyMs += Date.now() - start;
         if (result.error) {
@@ -491,11 +596,12 @@ getImplementation().then(r => console.log(JSON.stringify(r)));
       }
       const cacheKey = JSON.stringify({ method: 'findTests', file });
       const cached = _cache.get(cacheKey);
-      if (cached !== undefined) return cached; // cache hit
+      if (cached !== undefined) return cached;
       const start = Date.now();
       try {
-        const url = host + '/tests?file=' + encodeURIComponent(file);
-        const result = await httpGet(url, timeout);
+        await ensureSession();
+        const url = host + API_PREFIX + '/symbols/tests?file=' + encodeURIComponent(file);
+        const result = await httpGet(url, timeout, sessionHeaders());
         _metrics.queryCount++;
         _metrics.totalLatencyMs += Date.now() - start;
         if (result.error) {
@@ -533,13 +639,14 @@ getImplementation().then(r => console.log(JSON.stringify(r)));
       }
       const cacheKey = JSON.stringify({ method: 'peek', file, startLine, endLine });
       const cached = _cache.get(cacheKey);
-      if (cached !== undefined) return cached; // cache hit
+      if (cached !== undefined) return cached;
       const start = Date.now();
       try {
-        const url = host + '/peek?file=' + encodeURIComponent(file) +
+        await ensureSession();
+        const url = host + API_PREFIX + '/peek?file=' + encodeURIComponent(file) +
                     '&start=' + encodeURIComponent(startLine) +
                     '&end=' + encodeURIComponent(endLine);
-        const result = await httpGet(url, timeout);
+        const result = await httpGet(url, timeout, sessionHeaders());
         _metrics.queryCount++;
         _metrics.totalLatencyMs += Date.now() - start;
         if (result.error) {
@@ -604,7 +711,7 @@ async function healthCheck(host, timeout) {
   const url = host || DEFAULT_HOST;
   const t = timeout || DEFAULT_TIMEOUT_HEALTH;
   const start = Date.now();
-  const result = await httpGet(url + '/health', t);
+  const result = await httpGet(url + API_PREFIX + '/health', t);
   const latencyMs = Date.now() - start;
   if (result.error) {
     return { healthy: false, latencyMs, error: result.error };

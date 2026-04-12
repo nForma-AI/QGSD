@@ -28,7 +28,7 @@ const STATE_PATH = path.join(BINARY_DIR, 'coderlm.state.json');
 const DEFAULT_PORT = 8787;
 const IDLE_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
 const GITHUB_REPO = 'JaredStewart/coderlm';
-const HEALTH_URL = 'http://localhost:8787/health';
+const HEALTH_URL = 'http://localhost:8787/api/v1/health';
 const STARTUP_WAIT_MS = 3000; // max wait for server to become healthy after spawn
 
 // ── Internal test helper ─────────────────────────────────────────────────────
@@ -219,7 +219,7 @@ function ensureRunning(opts) {
   try {
     opts = opts || {};
     const port = opts.port || DEFAULT_PORT;
-    const healthUrl = 'http://localhost:' + port + '/health';
+    const healthUrl = 'http://localhost:' + port + '/api/v1/health';
 
     // Step 1: Check if process is already running via PID file
     let existingPid = null;
@@ -268,9 +268,11 @@ function ensureRunning(opts) {
     const indexPath = opts.indexPath || process.cwd();
 
     // Step 4: Spawn server (detached)
+    // CLI: coderlm serve --port <PORT> <PATH>
     const child = spawn(_binaryPath, [
+      'serve',
       '--port', String(port),
-      '--index-path', indexPath,
+      indexPath,
     ], {
       detached: true,
       stdio: ['ignore', 'ignore', 'ignore'],
@@ -521,32 +523,9 @@ function checkIdleStop() {
  */
 function reindex(opts) {
   try {
-    opts = opts || {};
-    const port = opts.port || DEFAULT_PORT;
-    const script = `
-const http = require('http');
-const req = http.request(
-  { hostname: 'localhost', port: ${JSON.stringify(port)}, path: '/reindex', method: 'POST' },
-  (res) => {
-    let body = '';
-    res.on('data', d => { body += d; });
-    res.on('end', () => {
-      try { process.stdout.write(JSON.stringify({ status: res.statusCode, body })); }
-      catch (e) { process.stdout.write(JSON.stringify({ status: res.statusCode, body: '' })); }
-    });
-  }
-);
-req.on('error', (e) => { process.stdout.write(JSON.stringify({ error: e.message })); });
-req.end();
-`;
-    const r = spawnSync('node', ['-e', script], { encoding: 'utf8', timeout: 5000 });
-    if (!r.stdout) return { error: 'no response' };
-    const result = JSON.parse(r.stdout);
-    if (result.error) return { error: result.error };
-    if (result.status >= 200 && result.status < 300) return { ok: true };
-    return { error: 'reindex failed: status ' + result.status };
+    return { ok: true, note: 'coderlm uses filesystem watchers — reindex not needed' };
   } catch (e) {
-    return { error: e.message }; // fail-open
+    return { error: e.message };
   }
 }
 
