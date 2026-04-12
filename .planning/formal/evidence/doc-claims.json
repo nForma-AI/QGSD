@@ -1,13 +1,13 @@
 {
-  "generated": "2026-04-12T21:07:48.587Z",
+  "generated": "2026-04-12T21:22:58.402Z",
   "total_claims_checked": 188,
   "doc_files_scanned": 8,
-  "raw_broken_count": 49,
-  "weighted_residual": 95,
+  "raw_broken_count": 47,
+  "weighted_residual": 93,
   "suppressed_fp_count": 7,
   "category_breakdown": {
     "user": 46,
-    "developer": 3
+    "developer": 1
   },
   "broken_claims": [
     {
@@ -45,24 +45,6 @@
       "reason": "not in any dependency manifest",
       "category": "user",
       "weight": 2
-    },
-    {
-      "doc_file": "docs/dev/requirements-coverage.md",
-      "line": 852,
-      "type": "file_path",
-      "value": "bin/nf-tools.cjs",
-      "reason": "file not found",
-      "category": "developer",
-      "weight": 1
-    },
-    {
-      "doc_file": "docs/dev/requirements-coverage.md",
-      "line": 1464,
-      "type": "file_path",
-      "value": "bin/nf-install.js",
-      "reason": "file not found",
-      "category": "developer",
-      "weight": 1
     },
     {
       "doc_file": "docs/dev/requirements-coverage.md",

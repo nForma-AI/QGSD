@@ -847,9 +847,9 @@
 
 **Status:** Pending
 
-### REN-03: All hardcoded `get-shit-done/` path strings removed from `bin/nf-tools.cjs`, wo
+### REN-03: All hardcoded `get-shit-done/` path strings removed from `bin/nForma.cjs`, wo
 
-**Requirement:** All hardcoded `get-shit-done/` path strings removed from `bin/nf-tools.cjs`, workflow files, agent files, and template files
+**Requirement:** All hardcoded `get-shit-done/` path strings removed from `bin/nForma.cjs`, workflow files, agent files, and template files
 
 **Formal models:** .planning/formal/alloy/codebase-arch-constraints.als
 
@@ -1263,9 +1263,9 @@
 
 **Status:** Complete
 
-### ACT-03: `nf-tools.cjs activity-set <json>` CLI command writes the current-activity.json
+### ACT-03: `nForma.cjs activity-set <json>` CLI command writes the current-activity.json
 
-**Requirement:** `nf-tools.cjs activity-set <json>` CLI command writes the current-activity.json file with atomic replace; `activity-clear` removes it
+**Requirement:** `nForma.cjs activity-set <json>` CLI command writes the current-activity.json file with atomic replace; `activity-clear` removes it
 
 **Formal models:** .planning/formal/tla/NFActivityTracking.tla
 
@@ -1461,7 +1461,7 @@
 
 ### SYNC-04: No NF code modifies any NF source files — all additions are in separate files
 
-**Requirement:** No NF code modifies any NF source files — all additions are in separate files (`hooks/nf-stop.js`, `hooks/nf-prompt.js`, `bin/nf-install.js`)
+**Requirement:** No NF code modifies any NF source files — all additions are in separate files (`hooks/nf-stop.js`, `hooks/nf-prompt.js`, `bin/install.js`)
 
 **Formal models:** .planning/formal/alloy/nf-sync-invariants.als
 
