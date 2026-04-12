@@ -1523,6 +1523,7 @@ test('TC-MISSING-4: integration - solve in empty dir returns -1 residuals for mi
       encoding: 'utf8',
       cwd: tmpDir,
       timeout: 60000,
+      maxBuffer: 10 * 1024 * 1024,
     });
 
     const stdout = result.stdout || '';

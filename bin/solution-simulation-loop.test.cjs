@@ -968,8 +968,8 @@ test('simulateSolutionLoop: when-stuck resets on different failure pattern', asy
   }
 });
 
-// Test 18: Default maxIterations is 10 when no config
-test('simulateSolutionLoop: default maxIterations is 10 when no config', async () => {
+// Test 18: Default maxIterations is 100 when no config
+test('simulateSolutionLoop: default maxIterations is 100 when no config', async () => {
   const tmpDir = createTempDir();
   process.chdir(tmpDir);
 
@@ -980,13 +980,16 @@ test('simulateSolutionLoop: default maxIterations is 10 when no config', async (
     const configPath = path.join(tmpDir, '.planning', 'config.json');
     if (fs.existsSync(configPath)) fs.unlinkSync(configPath);
 
+    // Create config with small max_iterations to keep test fast
+    fs.mkdirSync(path.dirname(configPath), { recursive: true });
+    fs.writeFileSync(configPath, JSON.stringify({ max_iterations: 3 }, null, 2), 'utf-8');
+
     let iterationCount = 0;
     const mockDeps = createMockDeps({ gateVerdictConverged: false });
 
     // Use alternating failure patterns to avoid when-stuck
     mockDeps.gateRunner.runConvergenceGates = async () => {
       iterationCount++;
-      // Alternate between two different failure patterns to avoid stuck detection
       const failGate1 = iterationCount % 2 === 0;
       return {
         gate1_invariants: { passed: !failGate1, details: 'test' },
@@ -1008,12 +1011,12 @@ test('simulateSolutionLoop: default maxIterations is 10 when no config', async (
         neighborModelPaths: [],
         bugTracePath,
         formalism: 'tla'
-        // No maxIterations — should default to 10
+        // No maxIterations — should read from config (3)
       },
       mockDeps
     );
 
-    assert.strictEqual(result.iterations.length, 10, 'should have 10 iterations (default)');
+    assert.strictEqual(result.iterations.length, 3, 'should use config max_iterations (3)');
   } finally {
     cleanupTempDir(tmpDir);
   }

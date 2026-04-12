@@ -62,7 +62,7 @@ const { ensureRunning, touchLastQuery, checkIdleStop, reindex } = require('./cod
 const TAG = '[nf-solve]';
 let ROOT = process.cwd();
 const SCRIPT_DIR = __dirname;
-const DEFAULT_MAX_ITERATIONS = 3;
+const DEFAULT_MAX_ITERATIONS = 100;
 
 // QUICK-343: PID of background run-formal-verify.cjs process (null when not running)
 let _formalVerifyBgPid = null;
@@ -255,9 +255,12 @@ const reportOnly = args.includes('--report-only');
 const jsonMode = args.includes('--json');
 const verboseMode = args.includes('--verbose');
 const fastMode = args.includes('--fast');
+let _forceFullSweep = false;
+function effectiveFastMode() { return fastMode && !_forceFullSweep; }
 const skipProximity = args.includes('--skip-proximity');
 const skipTests = args.includes('--skip-tests');
 const requireBaselines = args.includes('--require-baselines');
+const noAutoCommit = args.includes('--no-auto-commit');
 
 // Global deadline: abort after N ms to prevent indefinite hangs.
 // Uses wall-clock checks between sync operations (setTimeout won't fire during
@@ -314,7 +317,7 @@ let maxIterations = DEFAULT_MAX_ITERATIONS;
 for (const arg of args) {
   if (arg.startsWith('--max-iterations=')) {
     const val = parseInt(arg.slice('--max-iterations='.length), 10);
-    if (!isNaN(val) && val >= 1 && val <= 10) {
+    if (!isNaN(val) && val >= 1 && val <= 100) {
       maxIterations = val;
     }
   }
@@ -954,6 +957,10 @@ let _activeAdapter = null;
  * for the remainder of the run to avoid repeated 5 s timeout overhead.
  */
 let _coderlmConsecutiveFailures = 0;
+
+// Repowise session caches — computed once, reused across iterations
+let _repowiseHotspotCache = null;
+let _repowiseCochangeCache = null;
 
 /**
  * Helper to load and cache formal-test-sync result.
@@ -3492,7 +3499,8 @@ function sweepPerModelGates() {
 
 /**
  * Reads git-heatmap.json evidence and returns uncovered hot-zone count (informational signal, not a gap).
- * Refreshes the evidence file first (unless --report-only or --fast).
+ * Uses Repowise computeHotspots for churn×heuristic-complexity scoring when available.
+ * Enriches with coderlm callee counts (CREM-03) when available.
  * This is informational — not added to the automatable forward total.
  */
 function sweepGitHeatmap(adapter) {
@@ -3515,35 +3523,93 @@ function sweepGitHeatmap(adapter) {
     const hotZones = data.uncovered_hot_zones || [];
     const signals = data.signals || {};
 
+    // Repowise enhancement: compute hotspot scores with churn × complexity (cached)
+    let repowiseSummary = null;
+    try {
+      const { computeHotspots } = require('./repowise/hotspot.cjs');
+      if (!_repowiseHotspotCache) {
+        _repowiseHotspotCache = computeHotspots(ROOT, { since: '3.months.ago', maxCommits: 300 });
+      }
+      const hotspotResult = _repowiseHotspotCache;
+      if (hotspotResult && hotspotResult.files) {
+        repowiseSummary = hotspotResult.summary;
+        // Build lookup by basename + full path for cross-matching
+        const hotspotByPath = new Map();
+        const hotspotByBasename = new Map();
+        for (const f of hotspotResult.files) {
+          hotspotByPath.set(f.path, f);
+          const base = f.path.split('/').pop();
+          if (!hotspotByBasename.has(base)) hotspotByBasename.set(base, f);
+        }
+        let enriched = 0;
+        for (const hz of hotZones) {
+          let hf = hotspotByPath.get(hz.file);
+          if (!hf) hf = hotspotByBasename.get(hz.file.split('/').pop());
+          if (hf) {
+            hz.hotspot_score = hf.hotspot_score;
+            hz.complexity = hf.complexity;
+            hz.risk = hf.risk;
+            enriched++;
+          }
+        }
+        process.stderr.write(TAG + ' Repowise: enriched ' + enriched + '/' + hotZones.length + ' hot-zone(s) with churn×complexity scores (' + hotspotResult.files.length + ' files)\n');
+      }
+    } catch (_e) {
+      process.stderr.write(TAG + ' Repowise hotspot: unavailable, using git churn ranking only\n');
+    }
+
     // CREM-03: Enrich hot-zone callee counts via coderlm getCallersSync (fail-open)
     if (adapter && hotZones.length > 0) {
       try {
         const healthResult = adapter.healthSync();
         if (healthResult && healthResult.healthy) {
           for (const hz of hotZones) {
-            // Circuit-breaker: stop querying after 3 consecutive failures (avoids 5 s timeout × N files)
             if (_coderlmConsecutiveFailures >= 3) break;
             try {
-              // Use the file path as symbol hint — getCallersSync resolves by file
               const result = adapter.getCallersSync('', hz.file);
               if (result && Array.isArray(result.callers)) {
                 hz.callee_count = result.callers.length;
-                // Re-compute priority with updated callee_count
                 const { computePriority } = require('./git-heatmap.cjs');
                 hz.priority = computePriority(hz.churn || 0, hz.fixes || 0, hz.adjustments || 0, hz.callee_count);
-                _coderlmConsecutiveFailures = 0; // reset on success
+                _coderlmConsecutiveFailures = 0;
               }
             } catch (_e) {
               _coderlmConsecutiveFailures++;
             }
           }
-          // Re-sort after enrichment
           hotZones.sort((a, b) => b.priority - a.priority);
           process.stderr.write(TAG + ' CREM-03: enriched ' + hotZones.length + ' hot-zone(s) with callee counts\n');
         }
       } catch (_e) {
         process.stderr.write(TAG + ' CREM-03: coderlm unavailable, using git churn ranking only\n');
       }
+    }
+
+    // Co-change enrichment: add coupling degree to hot zones (Repowise, cached)
+    let cochangeStats = null;
+    try {
+      const { computeCoChange, getPartnersForFile } = require('./repowise/cochange.cjs');
+      if (!_repowiseCochangeCache) {
+        _repowiseCochangeCache = computeCoChange(ROOT, { minSharedCommits: 2, minCouplingDegree: 0.1 });
+      }
+      const cochange = _repowiseCochangeCache;
+      if (cochange && cochange.pairs) {
+        cochangeStats = { pairs: cochange.pairs.length };
+        let enriched = 0;
+        for (const hz of hotZones.slice(0, 50)) {
+          const partners = getPartnersForFile(hz.file, cochange);
+          if (partners && partners.length > 0) {
+            hz.coupling_partners = partners.slice(0, 5);
+            hz.max_coupling_degree = Math.max(...partners.map(p => p.coupling_degree));
+            enriched++;
+          }
+        }
+        if (enriched > 0) {
+          process.stderr.write(TAG + ' Repowise cochange: enriched ' + enriched + ' hot-zone(s) with coupling data\n');
+        }
+      }
+    } catch (_e) {
+      // fail-open: cochange is optional enrichment
     }
 
     return {
@@ -3555,6 +3621,8 @@ function sweepGitHeatmap(adapter) {
         numerical_adjustments_count: (signals.numerical_adjustments || []).length,
         bugfix_hotspots_count: (signals.bugfix_hotspots || []).length,
         churn_files_count: (signals.churn_ranking || []).length,
+        repowise_hotspots: repowiseSummary,
+        cochange: cochangeStats,
         generated: data.generated || null,
         scoped: focusSet ? false : undefined,
       },
@@ -4022,12 +4090,17 @@ function sweepDebtHealth() {
     if (typeof mod.applyRetentionPolicy !== 'function') {
       return { residual: -1, detail: { skipped: true, reason: 'applyRetentionPolicy not exported' } };
     }
-    const result = mod.applyRetentionPolicy();
-    const expired = (result && result.expired_count !== undefined) ? result.expired_count : (result && result.items ? result.items.length : 0);
-    const retained = (result && result.retained_count !== undefined) ? result.retained_count : 0;
+    const debtPath = path.join(ROOT, '.planning', 'formal', 'debt.json');
+    if (!fs.existsSync(debtPath)) {
+      return { residual: 0, detail: { expired: 0, retained: 0, reason: 'no debt ledger' } };
+    }
+    const ledger = JSON.parse(fs.readFileSync(debtPath, 'utf8'));
+    const result = mod.applyRetentionPolicy(ledger);
+    const activeCount = result ? result.active.length : 0;
+    const archivedCount = result ? result.archived.length : 0;
     return {
-      residual: expired,
-      detail: { expired, retained },
+      residual: archivedCount,
+      detail: { expired: archivedCount, retained: activeCount },
     };
   } catch (err) {
     return { residual: -1, detail: { error: err.message } };
@@ -4287,7 +4360,7 @@ function computeResidual() {
   // By spawning it as a background process BEFORE the other sweeps, we overlap
   // it with R→F/F→T/C→F/T→C. sweepFtoC() then skips the spawn if the NDJSON
   // file was already refreshed within the last 30 seconds (by the background run).
-  if (!fastMode) {
+  if (!effectiveFastMode()) {
     const verifyScript = path.join(SCRIPT_DIR, 'run-formal-verify.cjs');
     if (fs.existsSync(verifyScript)) {
       const { spawn: _spawn } = require('child_process');
@@ -4321,7 +4394,7 @@ function computeResidual() {
   _timing.c_to_f = { duration_ms: Date.now() - _t_c_to_f, skipped: !!(c_to_f.detail && c_to_f.detail.skipped) };
 
   const _t_t_to_c = Date.now();
-  const t_to_c = checkLayerSkip('t_to_c') || ((fastMode || skipTests)
+  const t_to_c = checkLayerSkip('t_to_c') || ((effectiveFastMode() || skipTests)
     ? { residual: -1, detail: { skipped: true, reason: skipTests ? 'skip-tests' : 'fast mode' } }
     : (pastDeadline() ? deadlineSkip() : sweepTtoC()));
   _timing.t_to_c = { duration_ms: Date.now() - _t_t_to_c, skipped: !!(t_to_c.detail && t_to_c.detail.skipped) };
@@ -4332,7 +4405,7 @@ function computeResidual() {
   }
 
   const _t_f_to_c = Date.now();
-  const f_to_c = checkLayerSkip('f_to_c') || (fastMode
+  const f_to_c = checkLayerSkip('f_to_c') || (effectiveFastMode()
     ? { residual: -1, detail: { skipped: true, reason: 'fast mode' } }
     : (pastDeadline() ? deadlineSkip() : sweepFtoC()));
   _timing.f_to_c = { duration_ms: Date.now() - _t_f_to_c, skipped: !!(f_to_c.detail && f_to_c.detail.skipped) };
@@ -4389,23 +4462,23 @@ function computeResidual() {
   const skipLayer = { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
 
   const _t_l1_to_l3 = Date.now();
-  const l1_to_l3 = checkLayerSkip('l1_to_l3') || (fastMode || pastDeadline() ? skipLayer : sweepL1toL3());
+  const l1_to_l3 = checkLayerSkip('l1_to_l3') || (effectiveFastMode() || pastDeadline() ? skipLayer : sweepL1toL3());
   _timing.l1_to_l3 = { duration_ms: Date.now() - _t_l1_to_l3, skipped: !!(l1_to_l3.detail && l1_to_l3.detail.skipped) };
 
   const _t_l3_to_tc = Date.now();
-  const l3_to_tc = checkLayerSkip('l3_to_tc') || (fastMode || pastDeadline() ? skipLayer : sweepL3toTC());
+  const l3_to_tc = checkLayerSkip('l3_to_tc') || (effectiveFastMode() || pastDeadline() ? skipLayer : sweepL3toTC());
   _timing.l3_to_tc = { duration_ms: Date.now() - _t_l3_to_tc, skipped: !!(l3_to_tc.detail && l3_to_tc.detail.skipped) };
 
   // Per-model gate maturity (informational — not added to layer_total)
   const _t_per_model_gates = Date.now();
-  const per_model_gates = (fastMode || pastDeadline()) ? skipLayer : sweepPerModelGates();
+  const per_model_gates = (effectiveFastMode() || pastDeadline()) ? skipLayer : sweepPerModelGates();
   _timing.per_model_gates = { duration_ms: Date.now() - _t_per_model_gates, skipped: !!(per_model_gates.detail && per_model_gates.detail.skipped) };
 
   // PERF-02: Clear aggregate cache after per_model_gates writes new files
-  if (!fastMode) _aggregateCache = null;
+  if (!effectiveFastMode()) _aggregateCache = null;
 
   // Enrich gate files with semantic scores (SEM-03, SEM-04)
-  if (!fastMode && !reportOnly) {
+  if (!effectiveFastMode() && !reportOnly) {
     process.stderr.write(TAG + ' Enriching gates with semantic scores\n');
     const semResult = spawnTool('bin/compute-semantic-scores.cjs', ['--json']);
     if (!semResult.ok) {
@@ -4497,7 +4570,7 @@ function computeResidual() {
     (l1_to_l3.residual >= 0 ? l1_to_l3.residual : 0) +
     (l3_to_tc.residual >= 0 ? l3_to_tc.residual : 0) +
     (b_to_f.residual >= 0 ? b_to_f.residual : 0) +
-    (req_quality.residual >= 0 ? req_quality.residual : 0);
+    (req_quality.detail && req_quality.detail.non_invariant ? req_quality.detail.non_invariant : 0);
 
   const manual =
     (d_to_c.residual >= 0 ? d_to_c.residual : 0) +
@@ -4520,7 +4593,8 @@ function computeResidual() {
     (arch_constraints.residual >= 0 ? arch_constraints.residual : 0) +
     (debt_health.residual >= 0 ? debt_health.residual : 0) +
     (memory_health.residual >= 0 ? memory_health.residual : 0) +
-    (model_stale.residual >= 0 ? model_stale.residual : 0);
+    (model_stale.residual >= 0 ? model_stale.residual : 0) +
+    (req_quality.detail && req_quality.detail.low_value ? req_quality.detail.low_value : 0);
 
   return {
     r_to_f,
@@ -4562,10 +4636,11 @@ function computeResidual() {
     heatmap_total,
     focus: focusPhrase ? { phrase: focusPhrase, matched: focusSet ? focusSet.size : 0 } : null,
     timestamp: new Date().toISOString(),
-    // QUICK-370: Per-layer timing telemetry
     timing: _timing,
     total_diagnostic_ms: Date.now() - _diagStart,
   };
+
+  return rv;
 }
 
 // ── Auto-close ───────────────────────────────────────────────────────────────
@@ -4579,6 +4654,21 @@ function computeResidual() {
  */
 function autoClose(residual, oscillatingSet, waveOrder) {
   const actions = [];
+
+  // Repowise: load co-change coupling data for coupling-aware remediation (cached)
+  let cochangeData = null;
+  let getPartnersForFile = null;
+  try {
+    const cochangeMod = require('./repowise/cochange.cjs');
+    if (!_repowiseCochangeCache) {
+      _repowiseCochangeCache = cochangeMod.computeCoChange(ROOT, { minSharedCommits: 2, minCouplingDegree: 0.1 });
+    }
+    cochangeData = _repowiseCochangeCache;
+    getPartnersForFile = cochangeMod.getPartnersForFile;
+    if (cochangeData && cochangeData.pairs && cochangeData.pairs.length > 0) {
+      process.stderr.write(TAG + ' Repowise: using cached ' + cochangeData.pairs.length + ' co-change pairs\n');
+    }
+  } catch (_e) { /* fail-open */ }
 
   // Read oscillation verdicts for layer gating (fail-open)
   let verdicts = {};
@@ -4660,7 +4750,6 @@ function autoClose(residual, oscillatingSet, waveOrder) {
     },
 
     r_to_f: (res, acts, blocked) => {
-      // R->F gaps: log with triage info
       if (res.r_to_f.residual > 0) {
         const triageDetail = res.r_to_f.detail.triage;
         if (triageDetail) {
@@ -4673,6 +4762,27 @@ function autoClose(residual, oscillatingSet, waveOrder) {
             res.r_to_f.residual +
               ' requirement(s) lack formal model coverage \u2014 manual modeling required'
           );
+        }
+        // Repowise cochange: flag coupled files that should also be modeled together
+        if (cochangeData && getPartnersForFile) {
+          try {
+            const uncovered = res.r_to_f.detail.uncovered_requirements || [];
+            const coupledFiles = new Set();
+            for (const req of uncovered.slice(0, 10)) {
+              const sourceFiles = req.source_files || req.files || [];
+              for (const sf of sourceFiles) {
+                const partners = getPartnersForFile(sf, cochangeData);
+                if (partners && partners.length > 0) {
+                  for (const p of partners.slice(0, 3)) {
+                    if (p.coupling_degree >= 0.3) coupledFiles.add(p.partner);
+                  }
+                }
+              }
+            }
+            if (coupledFiles.size > 0) {
+              acts.push('Repowise cochange: ' + coupledFiles.size + ' coupled files should be modeled alongside uncovered requirements');
+            }
+          } catch (_e) { /* fail-open */ }
         }
       }
     },
@@ -4698,12 +4808,41 @@ function autoClose(residual, oscillatingSet, waveOrder) {
     },
 
     d_to_c: (res, acts, blocked) => {
-      // D->C stale claims: log but do not auto-fix (manual review)
       if (res.d_to_c.residual > 0) {
-        acts.push(
-          res.d_to_c.residual +
-            ' stale structural claim(s) in docs \u2014 manual review required'
-        );
+        const broken = res.d_to_c.detail && res.d_to_c.detail.broken_claims;
+        if (broken && Array.isArray(broken)) {
+          const fileNotFound = broken.filter(c => c.reason && c.reason.includes('file not found'));
+          if (fileNotFound.length > 0) {
+            let fixed = 0;
+            for (const claim of fileNotFound) {
+              const ref = claim.value || claim.reference || '';
+              const base = ref.split('/').pop();
+              if (!base || base.length < 3) continue;
+              try {
+                const result = spawnSync('find', [ROOT, '-name', base, '-not', '-path', '*/node_modules/*', '-not', '-path', '*/.git/*'], {
+                  encoding: 'utf8', timeout: 5000
+                });
+                const lines = (result.stdout || '').trim().split('\n').filter(Boolean);
+                if (lines.length === 1) {
+                  const resolved = path.relative(ROOT, lines[0]);
+                  acts.push('D->C auto-fix: ' + ref + ' -> ' + resolved + ' (fuzzy path resolve)');
+                  fixed++;
+                }
+              } catch (_e) { /* fail-open */ }
+            }
+            if (fixed > 0) {
+              acts.push(fixed + '/' + fileNotFound.length + ' file-not-found claims resolvable (fuzzy match)');
+            }
+            const unresolved = fileNotFound.length - fixed;
+            if (unresolved > 0) {
+              acts.push(unresolved + ' stale structural claim(s) in docs — manual review required');
+            }
+          } else {
+            acts.push(res.d_to_c.residual + ' stale structural claim(s) in docs — manual review required');
+          }
+        } else {
+          acts.push(res.d_to_c.residual + ' stale structural claim(s) in docs — manual review required');
+        }
       }
     },
 
@@ -5264,6 +5403,9 @@ function formatReport(iterations, finalResidual, converged) {
   const grandTotal = (finalResidual.total || 0) + rdTotal + layerTotal + hmTotal2;
   lines.push('\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550');
   lines.push('Grand total:             ' + grandTotal);
+  lines.push('  Automatable:           ' + (finalResidual.automatable || 0) + '  (solver can fix)');
+  lines.push('  Manual:                ' + (finalResidual.manual || 0) + '  (human review only)');
+  lines.push('  Informational:         ' + (finalResidual.informational || 0) + '  (risk signals, no action needed)');
   lines.push('');
 
   // Oscillation status (from oscillation verdicts)
@@ -5656,6 +5798,38 @@ function formatJSON(iterations, finalResidual, converged) {
     }
   } catch (_) { /* fail-open */ }
 
+  // Repowise context: skeleton views for top hotspot files
+  let repowiseContext = null;
+  try {
+    const { computeHotspots } = require('./repowise/hotspot.cjs');
+    const hotspotResult = _repowiseHotspotCache || computeHotspots(ROOT, { since: '3.months.ago', maxCommits: 300 });
+    if (hotspotResult && hotspotResult.files) {
+      repowiseContext = {
+        hotspot_summary: hotspotResult.summary,
+        top_risk_files: hotspotResult.files.slice(0, 10).map(f => ({
+          path: f.path,
+          hotspot_score: f.hotspot_score,
+          risk: f.risk,
+          churn: f.churn,
+          complexity: f.complexity,
+        })),
+      };
+    }
+  } catch (_e) { /* fail-open */ }
+
+  try {
+    const { computeCoChange } = require('./repowise/cochange.cjs');
+    const cochange = _repowiseCochangeCache || computeCoChange(ROOT, { minSharedCommits: 2, minCouplingDegree: 0.1 });
+    if (cochange && cochange.pairs && repowiseContext) {
+      repowiseContext.cochange_pairs = cochange.pairs.length;
+      repowiseContext.top_coupled = cochange.pairs.slice(0, 10).map(p => ({
+        file1: p.file1, file2: p.file2,
+        shared_commits: p.shared_commits,
+        coupling_degree: p.coupling_degree,
+      }));
+    }
+  } catch (_e) { /* fail-open */ }
+
   return {
     solver_version: '1.2',
     generated_at: new Date().toISOString(),
@@ -5673,6 +5847,7 @@ function formatJSON(iterations, finalResidual, converged) {
     health: health,
     complexity_profile: complexityProfile,
     oscillation: oscillation,
+    repowise: repowiseContext,
     // QUICK-370: Per-layer timing telemetry
     timing: (function () {
       const t = finalResidual.timing || {};
@@ -5944,6 +6119,7 @@ function main() {
   const iterations = [];
   let converged = false;
   let prevTotal = null;
+  let prevAutomatable = null;
 
   // Refresh evidence files from recent traces before convergence loop
   if (!reportOnly) {
@@ -5994,7 +6170,7 @@ function main() {
       process.stderr.write(TAG + ' Oscillating layers detected: ' + oscillatingLayers.join(', ') + ' — excluding from convergence check and dispatch\n');
     }
 
-    // Compute effectiveTotal excluding oscillating layers (CONV-01)
+    // Compute automatable residual excluding oscillating layers (CONV-01)
     const oscillatingSet = new Set(oscillatingLayers);
     let oscillatingSum = 0;
     for (const layer of oscillatingLayers) {
@@ -6002,33 +6178,42 @@ function main() {
         oscillatingSum += residual[layer].residual;
       }
     }
+    const automatableExcludingOsc = residual.automatable - oscillatingSum;
     const effectiveTotal = residual.total - oscillatingSum;
 
-    // Check convergence: effective residual unchanged from previous iteration
-    if (prevTotal !== null && effectiveTotal === prevTotal) {
+    // Check convergence: automatable residual unchanged from previous iteration
+    if (prevAutomatable !== null && automatableExcludingOsc === prevAutomatable) {
       converged = true;
       process.stderr.write(
         TAG +
           ' Converged at iteration ' +
           i +
-          ' (effective residual stable at ' +
-          effectiveTotal +
+          ' (automatable residual stable at ' +
+          automatableExcludingOsc +
+          ', total=' + effectiveTotal +
           (oscillatingLayers.length > 0 ? ', excluding oscillating: ' + oscillatingLayers.join(', ') : '') +
           ')\n'
       );
       break;
     }
 
-    // Check if already at zero
-    if (effectiveTotal === 0) {
+    // Check if automatable residual is zero (nothing left the solver can fix)
+    if (automatableExcludingOsc === 0) {
       converged = true;
-      process.stderr.write(TAG + ' All non-oscillating layers clean — effective residual is 0' +
+      process.stderr.write(TAG + ' All automatable layers clean — automatable residual is 0' +
+        (effectiveTotal > 0 ? ' (remaining ' + effectiveTotal + ' is manual/informational)' : '') +
         (oscillatingLayers.length > 0 ? ' (oscillating: ' + oscillatingLayers.join(', ') + ')' : '') + '\n');
       break;
     }
 
     // Auto-close if not report-only and not last iteration
     if (!reportOnly) {
+      // On final iteration in fast mode, force full sweep for accurate final report
+      if (fastMode && i === maxIterations) {
+        _forceFullSweep = true;
+        process.stderr.write(TAG + ' Final iteration — forcing full sweep for accurate report\n');
+      }
+
       // HTARGET-01/02: Compute hypothesis-driven wave dispatch order
       let waveOrder = null;
       try {
@@ -6150,6 +6335,7 @@ function main() {
     }
 
     prevTotal = effectiveTotal;
+    prevAutomatable = automatableExcludingOsc;
   }
 
   // CADP-03: Emit coderlm session metrics to stderr after solve loop exits
@@ -6390,15 +6576,32 @@ function main() {
   const exitCode = 0;
   const outputText = jsonMode ? (jsonText + '\n') : reportText;
 
-  // Drain stdout before exit to prevent pipe truncation (process.exit() does not
-  // guarantee async stdout buffers are flushed when writing to a pipe/spawnSync).
-  if (process.stdout.write(outputText)) {
-    // Write was synchronous (no backpressure) — exit immediately
-    process.exit(exitCode);
-  } else {
-    // Write is buffered — wait for drain before exiting
-    process.stdout.once('drain', () => process.exit(exitCode));
+  if (!noAutoCommit) {
+    try {
+      const commitResult = spawnTool('bin/solve-commit-artifacts.cjs', ['--json']);
+      if (commitResult.ok && commitResult.stdout) {
+        try {
+          const parsed = JSON.parse(commitResult.stdout.trim());
+          if (parsed.committed) {
+            process.stderr.write(TAG + ' Auto-commit: ' + parsed.hash + ' — ' + parsed.message + '\n');
+          } else {
+            process.stderr.write(TAG + ' Auto-commit: skipped (' + parsed.reason + ')\n');
+          }
+        } catch (_) {
+          process.stderr.write(TAG + ' Auto-commit: ' + commitResult.stdout.trim() + '\n');
+        }
+      } else {
+        process.stderr.write(TAG + ' Auto-commit: failed (' + (commitResult.stderr || 'unknown').trim() + ')\n');
+      }
+    } catch (e) {
+      process.stderr.write(TAG + ' Auto-commit: error — ' + e.message + '\n');
+    }
   }
+
+  process.stdout.write(outputText, () => {
+    process.exitCode = exitCode;
+    process.stdout.end();
+  });
 }
 
 // ── Session Persistence ──────────────────────────────────────────────────────

@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-10T22:01:02.765Z",
+  "generated": "2026-04-12T10:08:34.108Z",
   "source": {
     "failure_mode_catalog": "reasoning/failure-mode-catalog.json",
     "hazard_model": "reasoning/hazard-model.json",
@@ -172,7 +172,7 @@
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 160,
+        "rpn": 128,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -217,7 +217,7 @@
       },
       "risk_context": {
         "severity_class": "model_gap",
-        "rpn": 160,
+        "rpn": 128,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -578,7 +578,7 @@
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 160,
+        "rpn": 128,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -623,7 +623,7 @@
       },
       "risk_context": {
         "severity_class": "model_gap",
-        "rpn": 160,
+        "rpn": 128,
         "risk_tier": "critical"
       },
       "derived_from": [
