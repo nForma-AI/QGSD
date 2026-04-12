@@ -1,133 +1,137 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-10T22:01:54.940Z",
+  "generated": "2026-04-12T14:52:58.807Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
-      "mtime": "2026-04-10T21:12:40.704Z",
+      "mtime": "2026-03-06T19:30:36.834Z",
       "hash": "496b4503"
     },
     "scope.json:agent-loop": {
-      "mtime": "2026-04-10T21:12:40.705Z",
+      "mtime": "2026-03-06T19:30:38.200Z",
       "hash": "cec2299d"
     },
     "scope.json:breaker": {
-      "mtime": "2026-04-10T21:12:40.705Z",
+      "mtime": "2026-03-06T19:30:39.575Z",
       "hash": "8af7675c"
     },
     "scope.json:convergence": {
-      "mtime": "2026-04-10T21:12:40.705Z",
+      "mtime": "2026-03-06T19:30:41.234Z",
       "hash": "4af11fdd"
     },
     "scope.json:deliberation": {
-      "mtime": "2026-04-10T21:12:40.705Z",
+      "mtime": "2026-03-06T19:30:42.694Z",
       "hash": "8ad85f0e"
     },
     "scope.json:deliberation-revision": {
-      "mtime": "2026-04-10T21:12:40.705Z",
+      "mtime": "2026-03-06T19:30:44.004Z",
       "hash": "b5e414df"
     },
+    "scope.json:disttagalignment": {
+      "mtime": "2026-04-11T18:53:42.021Z",
+      "hash": "ff7b987b"
+    },
     "scope.json:formal-proximity-index": {
-      "mtime": "2026-04-10T21:12:40.705Z",
+      "mtime": "2026-03-17T16:36:24.865Z",
       "hash": "1d85bde2"
     },
     "scope.json:installer": {
-      "mtime": "2026-04-10T21:12:40.705Z",
+      "mtime": "2026-03-06T19:30:45.357Z",
       "hash": "7b254fd9"
     },
     "scope.json:mcp-calls": {
-      "mtime": "2026-04-10T21:12:40.706Z",
+      "mtime": "2026-03-06T19:30:47.553Z",
       "hash": "c4479faa"
     },
     "scope.json:oscillation": {
-      "mtime": "2026-04-10T21:12:40.706Z",
+      "mtime": "2026-03-06T19:30:48.445Z",
       "hash": "6318c2f9"
     },
     "scope.json:planningstate": {
-      "mtime": "2026-04-10T21:12:40.706Z",
+      "mtime": "2026-03-17T16:36:24.865Z",
       "hash": "7c1fdd87"
     },
     "scope.json:prefilter": {
-      "mtime": "2026-04-10T21:12:40.706Z",
+      "mtime": "2026-03-06T19:30:49.807Z",
       "hash": "8db746e5"
     },
     "scope.json:quorum": {
-      "mtime": "2026-04-10T21:12:40.706Z",
+      "mtime": "2026-03-06T19:30:51.579Z",
       "hash": "4ca140a7"
     },
     "scope.json:recruiting": {
-      "mtime": "2026-04-10T21:12:40.706Z",
+      "mtime": "2026-03-06T19:30:52.390Z",
       "hash": "1111802b"
     },
     "scope.json:safety": {
-      "mtime": "2026-04-10T21:12:40.707Z",
+      "mtime": "2026-03-06T19:30:53.763Z",
       "hash": "a9b92676"
     },
     "scope.json:sessionpersistence": {
-      "mtime": "2026-04-10T21:12:40.707Z",
+      "mtime": "2026-03-17T16:36:24.866Z",
       "hash": "716f9017"
     },
     "scope.json:solve-convergence": {
-      "mtime": "2026-04-10T21:12:40.707Z",
+      "mtime": "2026-03-17T16:36:24.866Z",
       "hash": "56697a1b"
     },
     "scope.json:stop-hook": {
-      "mtime": "2026-04-10T21:12:40.707Z",
+      "mtime": "2026-03-06T19:30:55.566Z",
       "hash": "c0796108"
     },
     "scope.json:tui-nav": {
-      "mtime": "2026-04-10T21:12:40.707Z",
+      "mtime": "2026-03-06T19:30:56.442Z",
       "hash": "52b50d64"
     },
     "constants-mapping.json": {
-      "mtime": "2026-04-10T21:12:40.635Z",
+      "mtime": "2026-03-05T12:11:46.863Z",
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-04-10T22:01:54.359Z",
-      "hash": "a61ee212"
+      "mtime": "2026-04-12T13:16:34.529Z",
+      "hash": "ba2f6775"
     },
     "invariant-catalog.json": {
-      "mtime": "2026-04-10T21:12:40.699Z",
+      "mtime": "2026-03-06T14:00:17.868Z",
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-04-10T22:01:51.161Z",
-      "hash": "1e578e5e"
+      "mtime": "2026-04-12T13:14:23.883Z",
+      "hash": "5451df06"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-04-10T22:01:42.279Z",
-      "hash": "8eacb684"
+      "mtime": "2026-04-12T13:15:09.267Z",
+      "hash": "276e9e4b"
     },
     "instrumentation-map.json": {
-      "mtime": "2026-04-10T22:00:49.827Z",
-      "hash": "6d04ae77"
+      "mtime": "2026-04-12T13:14:04.068Z",
+      "hash": "3ba669ca"
     },
     "event-vocabulary.json": {
-      "mtime": "2026-04-10T21:12:40.647Z",
+      "mtime": "2026-03-08T20:28:45.150Z",
       "hash": "fa1b7cf9"
     },
     "observed-fsm.json": {
-      "mtime": "2026-04-10T22:00:43.489Z",
+      "mtime": "2026-04-11T18:53:42.019Z",
       "hash": "72435984"
     },
     "risk-heatmap.json": {
-      "mtime": "2026-04-10T21:12:40.698Z",
+      "mtime": "2026-03-09T13:52:46.371Z",
       "hash": "2df5c0d7"
     },
     "git-heatmap.json": {
-      "mtime": "2026-04-10T22:01:21.191Z",
-      "hash": "943ca2bd"
+      "mtime": "2026-04-12T13:19:13.821Z",
+      "hash": "f5e526a2"
     },
     "debt.json": {
-      "mtime": "2026-04-10T21:12:40.635Z",
+      "mtime": "2026-03-04T13:33:16.983Z",
       "hash": "4f085cf2"
     },
     "source-annotations": {
-      "mtime": "2026-04-10T22:01:54.359Z"
+      "mtime": "2026-04-12T13:14:59.120Z"
     },
     "code-source-annotations": {
-      "mtime": "2026-04-10T22:01:25.743Z"
+      "mtime": "2026-04-12T13:14:03.309Z"
     }
   },
   "nodes": {
@@ -869,6 +873,11 @@
           "source": "scope.json"
         }
       ]
+    },
+    "formal_module::disttagalignment": {
+      "type": "formal_module",
+      "id": "disttagalignment",
+      "edges": []
     },
     "formal_module::formal-proximity-index": {
       "type": "formal_module",
@@ -8228,19 +8237,9 @@
           "source": "model-registry"
         },
         {
-          "to": "requirement::SYNC-01",
-          "rel": "models",
-          "source": "source-annotation"
-        },
-        {
           "to": "requirement::SYNC-02",
           "rel": "models",
           "source": "model-registry"
-        },
-        {
-          "to": "requirement::SYNC-02",
-          "rel": "models",
-          "source": "source-annotation"
         },
         {
           "to": "requirement::SYNC-03",
@@ -8248,19 +8247,9 @@
           "source": "model-registry"
         },
         {
-          "to": "requirement::SYNC-03",
-          "rel": "models",
-          "source": "source-annotation"
-        },
-        {
           "to": "requirement::SYNC-04",
           "rel": "models",
           "source": "model-registry"
-        },
-        {
-          "to": "requirement::SYNC-04",
-          "rel": "models",
-          "source": "source-annotation"
         }
       ],
       "source_layer": "L3",
@@ -8276,27 +8265,12 @@
           "source": "model-registry"
         },
         {
-          "to": "invariant::Bool",
+          "to": "invariant::(model-level)",
           "rel": "verified_by",
           "source": "traceability-matrix"
         },
         {
-          "to": "invariant::GSDPackage",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::QGSDWrapsGSD",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "test_file::.planning/formal/generated-stubs/SYNC-01.stub.test.js",
-          "rel": "tested_by",
-          "source": "unit-test-coverage"
-        },
-        {
-          "to": "formal_model::.planning/formal/alloy/gsd-sync-invariants.als",
+          "to": "formal_model::.planning/formal/alloy/nf-sync-invariants.als",
           "rel": "modeled_by",
           "source": "source-annotation"
         }
@@ -8312,32 +8286,12 @@
           "source": "model-registry"
         },
         {
-          "to": "invariant::Bool",
+          "to": "invariant::(model-level)",
           "rel": "verified_by",
           "source": "traceability-matrix"
         },
         {
-          "to": "invariant::QuorumCommandsList",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::CommandsTracked",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::AllGSDCommandsInQuorum",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "test_file::.planning/formal/generated-stubs/SYNC-02.stub.test.js",
-          "rel": "tested_by",
-          "source": "unit-test-coverage"
-        },
-        {
-          "to": "formal_model::.planning/formal/alloy/gsd-sync-invariants.als",
+          "to": "formal_model::.planning/formal/alloy/nf-sync-invariants.als",
           "rel": "modeled_by",
           "source": "source-annotation"
         }
@@ -8353,22 +8307,12 @@
           "source": "model-registry"
         },
         {
-          "to": "invariant::Bool",
+          "to": "invariant::(model-level)",
           "rel": "verified_by",
           "source": "traceability-matrix"
         },
         {
-          "to": "invariant::Changelog",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "test_file::.planning/formal/generated-stubs/SYNC-03.stub.test.js",
-          "rel": "tested_by",
-          "source": "unit-test-coverage"
-        },
-        {
-          "to": "formal_model::.planning/formal/alloy/gsd-sync-invariants.als",
+          "to": "formal_model::.planning/formal/alloy/nf-sync-invariants.als",
           "rel": "modeled_by",
           "source": "source-annotation"
         }
@@ -8384,32 +8328,12 @@
           "source": "model-registry"
         },
         {
-          "to": "invariant::Bool",
+          "to": "invariant::(model-level)",
           "rel": "verified_by",
           "source": "traceability-matrix"
         },
         {
-          "to": "invariant::NoGSDModification",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::QGSDAdditionsSeparate",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::GSDFilesUntouched",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "test_file::.planning/formal/generated-stubs/SYNC-04.stub.test.js",
-          "rel": "tested_by",
-          "source": "unit-test-coverage"
-        },
-        {
-          "to": "formal_model::.planning/formal/alloy/gsd-sync-invariants.als",
+          "to": "formal_model::.planning/formal/alloy/nf-sync-invariants.als",
           "rel": "modeled_by",
           "source": "source-annotation"
         }
@@ -13592,7 +13516,9 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/alloy/readme-structure.als": {
       "type": "formal_model",
@@ -21063,7 +20989,9 @@
     "formal_model::.planning/formal/prism/quorum.pm": {
       "type": "formal_model",
       "id": ".planning/formal/prism/quorum.pm",
-      "edges": []
+      "edges": [],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/tla/NFAccountManager.tla": {
       "type": "formal_model",
@@ -22518,7 +22446,9 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/tla/NFQuorum_xstate.tla": {
       "type": "formal_model",
@@ -22529,7 +22459,9 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/tla/NFReasoning.tla": {
       "type": "formal_model",
@@ -32817,6 +32749,11 @@
           "source": "traceability-matrix"
         },
         {
+          "to": "invariant::StdinPipeEnsuresSafeContent",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
           "to": "invariant::StdinPipeEliminatesEscaping",
           "rel": "verified_by",
           "source": "traceability-matrix"
@@ -33417,6 +33354,11 @@
           "to": "test_file::.planning/formal/generated-stubs/DIST-01.stub.test.js",
           "rel": "tested_by",
           "source": "unit-test-coverage"
+        },
+        {
+          "to": "formal_model::.planning/formal/tla/DistTagAlignment.tla",
+          "rel": "modeled_by",
+          "source": "source-annotation"
         },
         {
           "to": "formal_model::.planning/formal/tla/NFDistTag.tla",
@@ -36571,26 +36513,6 @@
         },
         {
           "to": "requirement::EVID-04",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::SYNC-01",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::SYNC-02",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::SYNC-03",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::SYNC-04",
           "rel": "verifies",
           "source": "traceability-matrix"
         },
@@ -41505,105 +41427,6 @@
         }
       ]
     },
-    "invariant::GSDPackage": {
-      "type": "invariant",
-      "id": "GSDPackage",
-      "edges": [
-        {
-          "to": "requirement::SYNC-01",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::QGSDWrapsGSD": {
-      "type": "invariant",
-      "id": "QGSDWrapsGSD",
-      "edges": [
-        {
-          "to": "requirement::SYNC-01",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::QuorumCommandsList": {
-      "type": "invariant",
-      "id": "QuorumCommandsList",
-      "edges": [
-        {
-          "to": "requirement::SYNC-02",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::CommandsTracked": {
-      "type": "invariant",
-      "id": "CommandsTracked",
-      "edges": [
-        {
-          "to": "requirement::SYNC-02",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::AllGSDCommandsInQuorum": {
-      "type": "invariant",
-      "id": "AllGSDCommandsInQuorum",
-      "edges": [
-        {
-          "to": "requirement::SYNC-02",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::Changelog": {
-      "type": "invariant",
-      "id": "Changelog",
-      "edges": [
-        {
-          "to": "requirement::SYNC-03",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::NoGSDModification": {
-      "type": "invariant",
-      "id": "NoGSDModification",
-      "edges": [
-        {
-          "to": "requirement::SYNC-04",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::QGSDAdditionsSeparate": {
-      "type": "invariant",
-      "id": "QGSDAdditionsSeparate",
-      "edges": [
-        {
-          "to": "requirement::SYNC-04",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::GSDFilesUntouched": {
-      "type": "invariant",
-      "id": "GSDFilesUntouched",
-      "edges": [
-        {
-          "to": "requirement::SYNC-04",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
     "invariant::HeadlessMandatoryForJava": {
       "type": "invariant",
       "id": "HeadlessMandatoryForJava",
@@ -44229,6 +44052,26 @@
       "type": "invariant",
       "id": "(model-level)",
       "edges": [
+        {
+          "to": "requirement::SYNC-01",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::SYNC-02",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::SYNC-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::SYNC-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
         {
           "to": "requirement::CRED-01",
           "rel": "verifies",
@@ -51685,6 +51528,17 @@
         }
       ]
     },
+    "invariant::StdinPipeEnsuresSafeContent": {
+      "type": "invariant",
+      "id": "StdinPipeEnsuresSafeContent",
+      "edges": [
+        {
+          "to": "requirement::DEBT-12",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
     "invariant::StdinPipeEliminatesEscaping": {
       "type": "invariant",
       "id": "StdinPipeEliminatesEscaping",
@@ -56801,50 +56655,6 @@
         }
       ]
     },
-    "test_file::.planning/formal/generated-stubs/SYNC-01.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/SYNC-01.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::SYNC-01",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/SYNC-02.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/SYNC-02.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::SYNC-02",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/SYNC-03.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/SYNC-03.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::SYNC-03",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/SYNC-04.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/SYNC-04.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::SYNC-04",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
     "test_file::.planning/formal/generated-stubs/TEST-01.stub.test.js": {
       "type": "test_file",
       "id": ".planning/formal/generated-stubs/TEST-01.stub.test.js",
@@ -58343,6 +58153,43 @@
       "risk_score": 32,
       "risk_tier": "low"
     },
+    "formal_model::.planning/formal/alloy/nf-sync-invariants.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/nf-sync-invariants.als",
+      "edges": [
+        {
+          "to": "requirement::SYNC-01",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::SYNC-02",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::SYNC-03",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::SYNC-04",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/tla/DistTagAlignment.tla": {
+      "type": "formal_model",
+      "id": ".planning/formal/tla/DistTagAlignment.tla",
+      "edges": [
+        {
+          "to": "requirement::DIST-01",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
     "formal_model::.planning/formal/tla/NFMCPEnv.tla": {
       "type": "formal_model",
       "id": ".planning/formal/tla/NFMCPEnv.tla",
@@ -58360,6 +58207,28 @@
         {
           "to": "requirement::MCPENV-03",
           "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/tla/NFWaveDAG.tla": {
+      "type": "formal_model",
+      "id": ".planning/formal/tla/NFWaveDAG.tla",
+      "edges": [
+        {
+          "to": "requirement::INTG-07",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::INTG-07": {
+      "type": "requirement",
+      "id": "INTG-07",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/NFWaveDAG.tla",
+          "rel": "modeled_by",
           "source": "source-annotation"
         }
       ]
