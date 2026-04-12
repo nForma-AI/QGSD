@@ -261,7 +261,7 @@ async function check() {
     const options = {
       hostname: hostname,
       port: port,
-      path: API_PREFIX + '/health',
+      path: ${JSON.stringify(API_PREFIX + '/health')},
       method: 'GET',
       timeout: timeout
     };
