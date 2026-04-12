@@ -113,7 +113,7 @@ function failureSignature(verdict) {
  *   - reproducingModelPath: string (path to bug-reproducing model)
  *   - neighborModelPaths: array (paths to neighbor models for regression testing)
  *   - bugTracePath: string (path to ITF bug trace)
- *   - maxIterations: number (default from config.json or 10)
+ *   - maxIterations: number (default from config.json or 100)
  *   - formalism: 'tla'|'alloy' (model formalism)
  *   - onTweakFix: async (fixIdea, iterationContext) => revisedFixIdea|null (optional)
  *
@@ -162,19 +162,19 @@ async function simulateSolutionLoop(input, deps) {
   // Step 1: Initialize
   const sessionId = crypto.randomBytes(8).toString('hex');
 
-  // Read maxIterations from config, fall back to input or default 10
+  // Read maxIterations from config, fall back to input or default 100
   let maxIterations = inputMaxIterations;
   if (!maxIterations) {
     try {
       const configPath = path.join(process.cwd(), '.planning', 'config.json');
       if (fs.existsSync(configPath)) {
         const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-        maxIterations = config.max_iterations || 10;
+        maxIterations = config.max_iterations || 100;
       } else {
-        maxIterations = 10;
+        maxIterations = 100;
       }
     } catch (e) {
-      maxIterations = 10;
+      maxIterations = 100;
     }
   }
 

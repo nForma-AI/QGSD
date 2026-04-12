@@ -21,9 +21,8 @@ describe('injectCoChangeDebug', () => {
   });
 
   it('returns formatted string when partners exist', () => {
-    // Use a file we know has co-change pairs
     const { computeCoChange } = require('./cochange.cjs');
-    const cochange = computeCoChange(PROJECT_ROOT, { minSharedCommits: 2, minCouplingDegree: 0.1 });
+    const cochange = computeCoChange(PROJECT_ROOT);
     if (cochange.pairs.length > 0) {
       const file = cochange.pairs[0].file1;
       const result = injectCoChangeDebug(file, PROJECT_ROOT);
@@ -35,7 +34,7 @@ describe('injectCoChangeDebug', () => {
 
   it('output mentions partner files', () => {
     const { computeCoChange } = require('./cochange.cjs');
-    const cochange = computeCoChange(PROJECT_ROOT, { minSharedCommits: 2, minCouplingDegree: 0.1 });
+    const cochange = computeCoChange(PROJECT_ROOT);
     if (cochange.pairs.length > 0) {
       const { file1, file2 } = cochange.pairs[0];
       const result = injectCoChangeDebug(file1, PROJECT_ROOT);

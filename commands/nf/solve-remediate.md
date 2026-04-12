@@ -67,8 +67,8 @@ At the end of execution, emit a compact JSON result:
     "skipped": [ /* layers with 0 residual */ ],
     "failed": [ /* dispatches that errored */ ],
     "capped_layers": [
-      {"layer": "l1_to_l3", "dispatched": 3, "max": 3},
-      {"layer": "l3_to_tc", "dispatched": 2, "max": 3}
+      {"layer": "l1_to_l3", "dispatched": 100, "max": 100},
+      {"layer": "l3_to_tc", "dispatched": 100, "max": 100}
     ],
     "wave_timing": [
       { "wave": 1, "layers": ["r_to_f", "r_to_d", "t_to_c"], "start_ms": 0, "duration_ms": 12000 },
@@ -277,9 +277,9 @@ Read `b_to_f.detail` from the residual vector. Extract:
 - Dispatch `not_covered` before `covered_not_reproduced`
 - Within each bucket: sort by `bug_id` ascending (deterministic tiebreaker — repeated failure count sorting deferred to future phase)
 
-**Phase 1 — Route `not_covered` gaps (max 3/cycle):**
+**Phase 1 — Route `not_covered` gaps (max 100/cycle):**
 
-Track a counter for B->F not_covered dispatches. For each not_covered entry (up to 3):
+Track a counter for B->F not_covered dispatches. For each not_covered entry (up to 100):
 
 1. Extract requirement IDs linked to the failing test from the traceability matrix (stored in `b_to_f.detail.classification[].test` → look up in traceability matrix)
 2. If requirement IDs found, dispatch:
@@ -289,11 +289,11 @@ Track a counter for B->F not_covered dispatches. For each not_covered entry (up 
    If no requirement IDs are linked (unmapped test), dispatch with `--target={test_file_path}` to generate a model based on the test's code coverage area.
 3. Log: `"B->F: dispatching close-formal-gaps for not_covered bug {bug_id} ({N} linked requirements)"`
 
-If the counter reaches 3, log `"B->F: max not_covered dispatches (3) reached this cycle — {N} remaining not_covered gaps deferred"`, append `{ "layer": "b_to_f", "dispatched": 3, "max": 3, "bucket": "not_covered" }` to the `capped_layers` array, and skip remaining not_covered entries.
+If the counter reaches 100, log `"B->F: max not_covered dispatches (100) reached this cycle — {N} remaining not_covered gaps deferred"`, append `{ "layer": "b_to_f", "dispatched": 100, "max": 100, "bucket": "not_covered" }` to the `capped_layers` array, and skip remaining not_covered entries.
 
-**Phase 2 — Route `covered_not_reproduced` blind spots (max 2/cycle):**
+**Phase 2 — Route `covered_not_reproduced` blind spots (max 100/cycle):**
 
-Track a counter for B->F blind spot dispatches. For each covered_not_reproduced entry (up to 2):
+Track a counter for B->F blind spot dispatches. For each covered_not_reproduced entry (up to 100):
 
 1. Extract the model paths from the classification detail (`b_to_f.detail.classification[].models`)
 2. Extract the test file path as the failure context description
@@ -309,7 +309,7 @@ Track a counter for B->F blind spot dispatches. For each covered_not_reproduced 
 
 4. Log: `"B->F: dispatching /nf:debug (autoresearch-refine, in-memory rollback) for blind spot {bug_id} ({N} models to refine)"`
 
-If the counter reaches 2, log `"B->F: max blind spot dispatches (2) reached this cycle — {N} remaining blind spots deferred"`, append `{ "layer": "b_to_f", "dispatched": 2, "max": 2, "bucket": "blind_spots" }` to the `capped_layers` array, and skip remaining blind spot entries.
+If the counter reaches 100, log `"B->F: max blind spot dispatches (100) reached this cycle — {N} remaining blind spots deferred"`, append `{ "layer": "b_to_f", "dispatched": 100, "max": 100, "bucket": "blind_spots" }` to the `capped_layers` array, and skip remaining blind spot entries.
 
 **Post-dispatch summary:**
 Log: `"B->F: {not_covered_dispatched}/{not_covered_total} not_covered, {blind_spot_dispatched}/{blind_spot_total} blind spots dispatched"`
@@ -705,7 +705,7 @@ If hazard-model.cjs is not found or fails, skip silently and continue to gate re
 
 Gate A measures grounding alignment between L1 evidence and L3 reasoning models (L2 collapsed — STRUCT-01). The diagnostic engine already computed the residual via gate-a-grounding.cjs.
 
-**Max dispatches: 3 per solve cycle.** Track a counter for Gate A dispatches. If the counter reaches 3, log `"Gate A: max remediation dispatches (3) reached this cycle — skipping further auto-fixes"`, append `{ "layer": "l1_to_l3", "dispatched": 3, "max": 3 }` to the `capped_layers` array, and skip to Step 3l.
+**Max dispatches: 100 per solve cycle.** Track a counter for Gate A dispatches. If the counter reaches 100, log `"Gate A: max remediation dispatches (100) reached this cycle — skipping further auto-fixes"`, append `{ "layer": "l1_to_l3", "dispatched": 100, "max": 100 }` to the `capped_layers` array, and skip to Step 3l.
 
 Extract detail from `residual_vector.l1_to_l3.detail`:
 - `unexplained_breakdown.instrumentation_bug` — actions not in event-vocabulary.json
@@ -728,7 +728,7 @@ Log: `"Gate A: grounding_score={score}, {inst_bug} instrumentation bugs, {model_
 
 Gate B verifies every model has requirement backing (purpose check — L2 collapsed, STRUCT-01). Models without requirements lack purpose backing and inflate the residual.
 
-**Max dispatches: 3 per solve cycle.** Track a counter for Gate B dispatches. If the counter reaches 3, log `"Gate B: max remediation dispatches (3) reached this cycle — skipping further auto-fixes"`, append `{ "layer": "l1_to_l3", "dispatched": 3, "max": 3 }` to the `capped_layers` array, and skip to Step 3m.
+**Max dispatches: 100 per solve cycle.** Track a counter for Gate B dispatches. If the counter reaches 100, log `"Gate B: max remediation dispatches (100) reached this cycle — skipping further auto-fixes"`, append `{ "layer": "l1_to_l3", "dispatched": 100, "max": 100 }` to the `capped_layers` array, and skip to Step 3m.
 
 Gate B score is derived from the aggregate gate computation. If `gate_b_score < 1.0`, models without requirements need requirements added:
 
@@ -746,7 +746,7 @@ Gate C verifies every L3 failure mode maps to at least one test recipe. Unvalida
 
 **Preflight check:** If `preflight_data.l3_to_tc_unvalidated` is present and is a number >= 0, skip the test-recipe-gen.cjs and gate-c-validation.cjs runs below. Use the preflight value directly as `unvalidated_count`. Log `"Gate C: using preflight data (unvalidated={N}) — skipping gate script re-runs"`. Still dispatch /nf:quick if unvalidated > 0.
 
-**Max dispatches: 3 per solve cycle.** Track a counter for Gate C dispatches. If the counter reaches 3, log `"Gate C: max remediation dispatches (3) reached this cycle — skipping further auto-fixes"`, append `{ "layer": "l3_to_tc", "dispatched": 3, "max": 3 }` to the `capped_layers` array, and skip.
+**Max dispatches: 100 per solve cycle.** Track a counter for Gate C dispatches. If the counter reaches 100, log `"Gate C: max remediation dispatches (100) reached this cycle — skipping further auto-fixes"`, append `{ "layer": "l3_to_tc", "dispatched": 100, "max": 100 }` to the `capped_layers` array, and skip.
 
 Extract detail from `residual_vector.l3_to_tc.detail`:
 - `unvalidated_count` — failure modes with no test recipe (mapped from gate-c-validation.cjs `unvalidated_entries`)
@@ -791,7 +791,7 @@ For each violated measurement:
 3. If `actual_source` is "telemetry" and assumption relates to timeouts/latencies: dispatch `/nf:quick` to update the relevant formal spec bound
 4. Otherwise: log as informational -- `"H->M: {assumption_name} violated but no auto-fix strategy -- manual review required"`
 
-**Max dispatches: 3 per solve cycle.** Track a counter for H->M dispatches. If the counter reaches 3, log `"H->M: max remediation dispatches (3) reached this cycle"`, append `{ "layer": "h_to_m", "dispatched": 3, "max": 3 }` to the `capped_layers` array, and skip further auto-fixes.
+**Max dispatches: 100 per solve cycle.** Track a counter for H->M dispatches. If the counter reaches 100, log `"H->M: max remediation dispatches (100) reached this cycle"`, append `{ "layer": "h_to_m", "dispatched": 100, "max": 100 }` to the `capped_layers` array, and skip further auto-fixes.
 
 All `/nf:quick` dispatches use default mode (no `--full` flag).
 
@@ -799,7 +799,7 @@ Log: `"H->M: {violated} violated assumptions, {dispatched} auto-fix dispatches, 
 
 ## Collation: capped_layers
 
-Before emitting the output JSON, collate all `capped_layers` entries accumulated during Gate A (3k), Gate B (3l), Gate C (3m), and H->M (3n) into the `remediation_report.capped_layers` array. If no gate hit its cap, emit an empty array. Initialize `capped_layers = []` at the start of remediation dispatch, and each gate section appends to it when the max-3 cap is reached.
+Before emitting the output JSON, collate all `capped_layers` entries accumulated during Gate A (3k), Gate B (3l), Gate C (3m), and H->M (3n) into the `remediation_report.capped_layers` array. If no gate hit its cap, emit an empty array. Initialize `capped_layers = []` at the start of remediation dispatch, and each gate section appends to it when the max-100 cap is reached.
 
 ## Files Touched Collection (QUICK-344)
 
@@ -856,6 +856,6 @@ Each wave records: the wave number, layer keys dispatched, start offset from rem
    - **quick** for constant mismatches (C->F), syntax/scope errors, conformance divergences (F->C)
    - **direct executor dispatch** for R->D documentation generation
 
-9. **Layer alignment remediation** — Gate A/B/C failures and H->M violations are remediated via `/nf:quick` dispatch (default mode, no `--full` flag) after the hazard model is refreshed (Step 3j). The full dependency chain is: hazard-model refresh (3j) -> Gate A (3k, L1->L3) -> Gate B (3l, purpose) -> test-recipe-gen (in 3m) -> Gate C (3m, L3->TC). H->M (3n) runs independently (no dependencies). This ordering ensures: (a) L3 artifacts are fresh before gates evaluate them, (b) Gate A (L1->L3) fixes propagate before Gate B (purpose) checks requirement backing, (c) test recipes are regenerated before Gate C (L3->TC) evaluates coverage. Each gate and H->M remediation is capped at 3 dispatches per solve cycle to prevent runaway loops if residuals never converge.
+9. **Layer alignment remediation** — Gate A/B/C failures and H->M violations are remediated via `/nf:quick` dispatch (default mode, no `--full` flag) after the hazard model is refreshed (Step 3j). The full dependency chain is: hazard-model refresh (3j) -> Gate A (3k, L1->L3) -> Gate B (3l, purpose) -> test-recipe-gen (in 3m) -> Gate C (3m, L3->TC). H->M (3n) runs independently (no dependencies). This ordering ensures: (a) L3 artifacts are fresh before gates evaluate them, (b) Gate A (L1->L3) fixes propagate before Gate B (purpose) checks requirement backing, (c) test recipes are regenerated before Gate C (L3->TC) evaluates coverage. Each gate and H->M remediation is capped at 100 dispatches per solve cycle to prevent runaway loops if residuals never converge.
 
 </process>

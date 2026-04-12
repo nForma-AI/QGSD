@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-10T22:01:42.277Z",
+  "generated_at": "2026-04-12T10:08:57.145Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -3501,42 +3501,6 @@
         {
           "test_file": ".planning/formal/generated-stubs/STRUCT-04.stub.test.js",
           "test_name": "STRUCT-04 — Bool: structural verification"
-        }
-      ]
-    },
-    "SYNC-01": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SYNC-01.stub.test.js",
-          "test_name": "SYNC-01: package.json defines npm package identity"
-        }
-      ]
-    },
-    "SYNC-02": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SYNC-02.stub.test.js",
-          "test_name": "SYNC-02: templates/nf.json has quorum_commands array"
-        }
-      ]
-    },
-    "SYNC-03": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SYNC-03.stub.test.js",
-          "test_name": "SYNC-03: CHANGELOG.md contains GSD compatibility declaration"
-        }
-      ]
-    },
-    "SYNC-04": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SYNC-04.stub.test.js",
-          "test_name": "SYNC-04: run-account-pool-alloy.cjs exists as a separate file"
         }
       ]
     },

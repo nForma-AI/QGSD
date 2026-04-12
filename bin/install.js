@@ -2502,6 +2502,19 @@ function install(isGlobal, runtime = 'claude') {
       log(`  ${green}✓${reset} Installed FSM-to-TLA+ adapters`);
     }
 
+    // Copy bin/repowise/ to nf-bin/repowise/ (Repowise Intelligence modules)
+    const repowiseSrc = path.join(binSrc, 'repowise');
+    if (fs.existsSync(repowiseSrc)) {
+      const repowiseDest = path.join(binDest, 'repowise');
+      fs.mkdirSync(repowiseDest, { recursive: true });
+      for (const entry of fs.readdirSync(repowiseSrc)) {
+        if (entry.endsWith('.cjs') && !entry.endsWith('.test.cjs')) {
+          fs.copyFileSync(path.join(repowiseSrc, entry), path.join(repowiseDest, entry));
+        }
+      }
+      log(`  ${green}✓${reset} Installed Repowise Intelligence modules`);
+    }
+
     // Copy dist/machines/ to nf-bin/dist/machines/ (XState bundle for gate scripts)
     const machinesSrc = path.join(src, 'dist', 'machines');
     if (fs.existsSync(machinesSrc)) {

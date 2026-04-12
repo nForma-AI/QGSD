@@ -1,24 +1,38 @@
 {
-  "last_run": "2026-04-10T22:02:00.814Z",
+  "last_run": "2026-04-12T19:01:36.755Z",
   "converged": false,
   "iteration_count": 1,
-  "final_residual_total": 51,
-  "reverse_discovery_total": 2,
-  "heatmap_total": 385,
+  "final_residual_total": 81,
+  "reverse_discovery_total": 5,
+  "heatmap_total": 7962,
   "known_issues": [
     {
+      "layer": "r_to_f",
+      "residual": 12
+    },
+    {
       "layer": "d_to_c",
-      "residual": 51,
-      "net_residual": 26
+      "residual": 69,
+      "net_residual": 36
+    },
+    {
+      "layer": "c_to_r",
+      "residual": 1,
+      "net_residual": 1
+    },
+    {
+      "layer": "t_to_r",
+      "residual": 1,
+      "net_residual": 1
     },
     {
       "layer": "d_to_r",
-      "residual": 2,
-      "net_residual": 2
+      "residual": 3,
+      "net_residual": 3
     },
     {
       "layer": "git_heatmap",
-      "residual": 385
+      "residual": 7962
     },
     {
       "layer": "git_history",
@@ -34,7 +48,7 @@
     },
     {
       "layer": "security",
-      "residual": 19
+      "residual": 17
     },
     {
       "layer": "asset_stale",
@@ -50,7 +64,7 @@
     "covered": 0,
     "percentage": "0.0"
   },
-  "focus": "convergence test",
+  "focus": null,
   "capped_layers": [],
   "baseline_drift": {
     "detected": false,

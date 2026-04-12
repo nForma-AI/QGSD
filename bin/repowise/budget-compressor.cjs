@@ -8,7 +8,6 @@
 
 const path = require('path');
 const { escapeXml } = require('./escape-xml.cjs');
-const { detectLang } = require('./pack-file.cjs');
 
 // ---------------------------------------------------------------------------
 // Token estimation (rough: 1 token ≈ 4 chars for code)
