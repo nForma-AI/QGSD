@@ -6138,6 +6138,20 @@ function main() {
   _solveAdapter.resetCache(); // CADP-01: cleared at loop start
   _activeAdapter = _solveAdapter; // CREM-03: Make adapter available to sweepGitHeatmap()
 
+  // Start coderlm server early so it's available for all modes (including --report-only)
+  if (!skipProximity) {
+    try {
+      const lifecycle = ensureRunning({ port: 8787, indexPath: ROOT });
+      if (lifecycle.ok) {
+        process.stderr.write(TAG + ' coderlm server started (pid=' + lifecycle.pid + ', source=' + lifecycle.source + ')\n');
+      } else {
+        process.stderr.write(TAG + ' coderlm server: ' + (lifecycle.error || 'unavailable') + ' — fail-open mode\n');
+      }
+    } catch (e) {
+      process.stderr.write(TAG + ' coderlm server start failed: ' + e.message + ' — fail-open mode\n');
+    }
+  }
+
   // Pre-flight: log coderlm availability before the first sweep so diagnostics arrive early.
   // Non-blocking — failure routes to fail-open mode throughout the loop.
   try {
