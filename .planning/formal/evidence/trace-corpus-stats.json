@@ -1,26 +1,47 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-12T20:49:15.743Z",
+  "generated": "2026-04-12T20:54:18.090Z",
   "session_gap_ms": 300000,
-  "total_events": 2,
+  "total_events": 70,
   "date_range": {
     "earliest": "2026-04-12T20:49:00.745Z",
-    "latest": "2026-04-12T20:49:13.472Z"
+    "latest": "2026-04-12T20:50:04.928Z"
   },
   "sessions": [
     {
       "id": "session-001",
       "start": "2026-04-12T20:49:00.745Z",
-      "end": "2026-04-12T20:49:13.472Z",
-      "event_count": 2,
+      "end": "2026-04-12T20:50:04.928Z",
+      "event_count": 70,
       "actions": {
-        "security_sweep": 2
+        "security_sweep": 4,
+        "circuit_break": 10,
+        "quorum_start": 52,
+        "quorum_block": 4
       }
     }
   ],
   "action_index": {
     "security_sweep": {
-      "total": 2,
+      "total": 4,
+      "sessions": [
+        "session-001"
+      ]
+    },
+    "circuit_break": {
+      "total": 10,
+      "sessions": [
+        "session-001"
+      ]
+    },
+    "quorum_start": {
+      "total": 52,
+      "sessions": [
+        "session-001"
+      ]
+    },
+    "quorum_block": {
+      "total": 4,
       "sessions": [
         "session-001"
       ]
@@ -28,9 +49,9 @@
   },
   "transition_index": [],
   "vocabulary_validation": {
-    "known": 1,
+    "known": 4,
     "unknown": 0,
     "unknown_actions": []
   },
-  "summary": "2 events across 1 sessions (2026-04-12T20:49:00.745Z to 2026-04-12T20:49:13.472Z). 1 known actions, 0 unknown. 0 distinct transitions."
+  "summary": "70 events across 1 sessions (2026-04-12T20:49:00.745Z to 2026-04-12T20:50:04.928Z). 4 known actions, 0 unknown. 0 distinct transitions."
 }
