@@ -1,6 +1,12 @@
 {
   "pairs": [
     {
+      "file1": "core/workflows/plan-phase.md",
+      "file2": "core/workflows/quick.md",
+      "shared_commits": 7.709,
+      "coupling_degree": 1
+    },
+    {
       "file1": "agents/nf-debugger.md",
       "file2": "agents/nf-executor.md",
       "shared_commits": 3.213,
@@ -226,12 +232,6 @@
       "file1": "core/workflows/plan-milestone-gaps.md",
       "file2": "core/workflows/quick.md",
       "shared_commits": 4.224,
-      "coupling_degree": 1
-    },
-    {
-      "file1": "core/workflows/plan-phase.md",
-      "file2": "core/workflows/quick.md",
-      "shared_commits": 6.709,
       "coupling_degree": 1
     },
     {
@@ -10723,16 +10723,16 @@
       "coupling_degree": 0.968
     },
     {
+      "file1": "docs/assets/terminal.svg",
+      "file2": "package.json",
+      "shared_commits": 35.625,
+      "coupling_degree": 0.947
+    },
+    {
       "file1": "test/golden/tui-agents.txt",
       "file2": "test/golden/tui-config.txt",
       "shared_commits": 17.625,
       "coupling_degree": 0.946
-    },
-    {
-      "file1": "docs/assets/terminal.svg",
-      "file2": "package.json",
-      "shared_commits": 34.625,
-      "coupling_degree": 0.945
     },
     {
       "file1": "test/golden/tui-agents.txt",
@@ -11779,12 +11779,6 @@
       "coupling_degree": 0.783
     },
     {
-      "file1": "core/workflows/execute-phase.md",
-      "file2": "core/workflows/plan-phase.md",
-      "shared_commits": 5.224,
-      "coupling_degree": 0.779
-    },
-    {
       "file1": "commands/gsd/add-phase.md",
       "file2": "commands/gsd/insert-phase.md",
       "shared_commits": 7,
@@ -12463,6 +12457,12 @@
       "coupling_degree": 0.714
     },
     {
+      "file1": "CHANGELOG.md",
+      "file2": "docs/assets/terminal.svg",
+      "shared_commits": 26.625,
+      "coupling_degree": 0.708
+    },
+    {
       "file1": "get-shit-done/workflows/add-todo.md",
       "file2": "get-shit-done/workflows/complete-milestone.md",
       "shared_commits": 9.613,
@@ -12728,9 +12728,9 @@
     },
     {
       "file1": "CHANGELOG.md",
-      "file2": "docs/assets/terminal.svg",
-      "shared_commits": 25.625,
-      "coupling_degree": 0.7
+      "file2": "package.json",
+      "shared_commits": 45.016,
+      "coupling_degree": 0.701
     },
     {
       "file1": "commands/gsd/complete-milestone.md",
@@ -12749,12 +12749,6 @@
       "file2": "hooks/config-loader.test.js",
       "shared_commits": 9.193,
       "coupling_degree": 0.697
-    },
-    {
-      "file1": "CHANGELOG.md",
-      "file2": "package.json",
-      "shared_commits": 44.016,
-      "coupling_degree": 0.696
     },
     {
       "file1": "get-shit-done/workflows/progress.md",
@@ -12952,6 +12946,12 @@
       "file1": "agents/nf-executor.md",
       "file2": "agents/nf-planner.md",
       "shared_commits": 4.213,
+      "coupling_degree": 0.678
+    },
+    {
+      "file1": "core/workflows/execute-phase.md",
+      "file2": "core/workflows/plan-phase.md",
+      "shared_commits": 5.224,
       "coupling_degree": 0.678
     },
     {
@@ -17881,12 +17881,6 @@
       "coupling_degree": 0.48
     },
     {
-      "file1": "bin/run-formal-check.cjs",
-      "file2": "core/workflows/plan-phase.md",
-      "shared_commits": 3.193,
-      "coupling_degree": 0.476
-    },
-    {
       "file1": "get-shit-done/templates/debug-subagent-prompt.md",
       "file2": "get-shit-done/workflows/plan-phase.md",
       "shared_commits": 7.252,
@@ -18203,12 +18197,6 @@
       "file2": "get-shit-done/workflows/plan-phase.md",
       "shared_commits": 5,
       "coupling_degree": 0.455
-    },
-    {
-      "file1": "bin/nf-solve.cjs",
-      "file2": "core/workflows/plan-phase.md",
-      "shared_commits": 3.031,
-      "coupling_degree": 0.452
     },
     {
       "file1": "commands/gsd/new-project.md",
@@ -19243,6 +19231,12 @@
       "coupling_degree": 0.415
     },
     {
+      "file1": "bin/run-formal-check.cjs",
+      "file2": "core/workflows/plan-phase.md",
+      "shared_commits": 3.193,
+      "coupling_degree": 0.414
+    },
+    {
       "file1": "get-shit-done/workflows/audit-milestone.md",
       "file2": "get-shit-done/workflows/resume-project.md",
       "shared_commits": 9.613,
@@ -20033,6 +20027,12 @@
       "file2": "get-shit-done/references/continuation-format.md",
       "shared_commits": 3,
       "coupling_degree": 0.394
+    },
+    {
+      "file1": "bin/nf-solve.cjs",
+      "file2": "core/workflows/plan-phase.md",
+      "shared_commits": 3.031,
+      "coupling_degree": 0.393
     },
     {
       "file1": "get-shit-done/templates/context.md",

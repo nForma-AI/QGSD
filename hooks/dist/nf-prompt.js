@@ -553,13 +553,33 @@ process.stdin.on('end', () => {
       const riskLevelMatch = contextYaml.match(/^risk_level:\s*(\S+)/m);
       const riskLevelFromContext = riskLevelMatch ? riskLevelMatch[1].trim() : null;
 
+      // HOT-05: Hotspot risk escalation — if changed files include high-risk hotspots,
+      // escalate quorum fan-out automatically. Fail-open: hotspot errors never block dispatch.
+      let hotspotRiskLevel = null;
+      try {
+        const hotspotRiskModule = require(resolveBin('repowise/resolve-hotspot-risk.cjs'));
+        const diffResult = spawnSync('git', ['diff', '--name-only', 'HEAD~1..HEAD'], {
+          cwd, encoding: 'utf8', timeout: 5000,
+        });
+        if (diffResult.status === 0 && diffResult.stdout.trim()) {
+          const changedFiles = diffResult.stdout.trim().split('\n').filter(Boolean);
+          const hotspotResult = hotspotRiskModule.resolveHotspotRisk(changedFiles, cwd);
+          if (hotspotResult.risk_level === 'high') {
+            hotspotRiskLevel = 'high';
+          } else if (hotspotResult.risk_level === 'medium' && riskLevelFromContext !== 'high') {
+            hotspotRiskLevel = 'medium';
+          }
+        }
+      } catch (_) { /* fail-open: hotspot errors never block dispatch */ }
+
       // Compute fan-out count. Priority chain:
-      // 1. risk_level from context YAML → adaptive fan-out count
+      // 1. risk_level from context YAML or HOT-05 hotspot escalation → adaptive fan-out count
       // 2. config.quorum.maxSize (default ceiling)
       // 3. --n N user flag: treated as a MAXIMUM cap, not a mandatory value.
       //    min(risk-driven count, N) — so --n 3 with risk_level=low (→2) uses 2, not 3.
       // 4. available pool size (hard cap, applied via slice)
-      const riskDrivenCount = mapRiskLevelToCount(riskLevelFromContext, maxSize);
+      const effectiveRiskLevel = hotspotRiskLevel || riskLevelFromContext;
+      const riskDrivenCount = mapRiskLevelToCount(effectiveRiskLevel, maxSize);
       const fanOutCount = quorumSizeOverride !== null
         ? Math.min(riskDrivenCount, quorumSizeOverride)
         : riskDrivenCount;
@@ -814,14 +834,15 @@ process.stdin.on('end', () => {
       // When user passed --n N explicitly: show OVERRIDE note.
       // Build the quorum size note emitted into Claude's context.
       // --n N is a maximum cap; the actual fanOutCount may be lower due to risk_level.
+      const riskSource = hotspotRiskLevel ? `hotspot:${hotspotRiskLevel}` : (riskLevelFromContext || 'default');
       let minNote;
       if (quorumSizeOverride !== null) {
         const capNote = fanOutCount < quorumSizeOverride
-          ? `--n ${quorumSizeOverride} (max) → ${fanOutCount} via risk_level=${riskLevelFromContext}`
+          ? `--n ${quorumSizeOverride} (max) → ${fanOutCount} via risk_level=${riskSource}`
           : `--n ${quorumSizeOverride}`;
         minNote = ` (${capNote}: Claude + ${externalSlotCap} external slot${externalSlotCap !== 1 ? 's' : ''})`;
-      } else if (riskLevelFromContext && fanOutCount < maxSize) {
-        minNote = ` (--n ${fanOutCount} — envelope risk_level: ${riskLevelFromContext} → ${externalSlotCap} external slot${externalSlotCap !== 1 ? 's' : ''})`;
+      } else if (effectiveRiskLevel && fanOutCount < maxSize) {
+        minNote = ` (--n ${fanOutCount} — risk_level: ${riskSource} → ${externalSlotCap} external slot${externalSlotCap !== 1 ? 's' : ''})`;
       } else {
         minNote = ` (--n ${fanOutCount})`;
       }
@@ -972,6 +993,27 @@ process.stdin.on('end', () => {
       }
     } catch (_) { /* fail-open */ }
 
+    // ── CO-CHANGE DEBUG INJECTION (COCH-04) ──
+    // When debugging, inject co-change partners for files mentioned in the prompt.
+    // Fail-open: co-change errors never block dispatch.
+    try {
+      if (DEBUG_FIX_REGEX.test(prompt)) {
+        const cochangeModule = require(resolveBin('repowise/inject-cochange-debug.cjs'));
+        // Extract file paths mentioned in the prompt
+        const filePathMatch = prompt.match(/(?:^|\s)([\w/.-]+\.\w{1,4})(?:\s|$)/g);
+        if (filePathMatch) {
+          const mentionedFiles = filePathMatch.map(m => m.trim()).filter(Boolean);
+          for (const f of mentionedFiles.slice(0, 3)) {
+            const injection = cochangeModule.injectCoChangeDebug(f, cwd);
+            if (injection) {
+              instructions += '\n\n' + injection;
+              break; // only inject once
+            }
+          }
+        }
+      }
+    } catch (_) { /* fail-open: co-change debug injection is non-fatal */ }
+
     // ── EDIT CONSTRAINT INJECTION (CONST-01, CONST-02) ──
     // On edit/content prompts (that are NOT debug/fix AND NOT new-feature requests),
     // inject edit-in-place preference. Fail-open on regex errors.
@@ -984,11 +1026,11 @@ process.stdin.on('end', () => {
       }
     } catch (_) { /* fail-open */ }
 
-    // Anchored allowlist — requires /nf:, /gsd:, or /qgsd: prefix and word boundary after command name.
-    // Strict mode: match ANY /nf: or /gsd: or /qgsd: command, not just quorum_commands list.
+    // Anchored allowlist — requires /nf: or /qnf: prefix and word boundary after command name.
+    // Strict mode: match ANY /nf: or /qnf: command, not just quorum_commands list.
     const cmdPattern = profile === 'strict'
-      ? /^\s*\/(nf|q?gsd):[\w][\w-]*(\s|$)/
-      : new RegExp('^\\s*\\/(nf|q?gsd):(' + commands.join('|') + ')(\\s|$)');
+      ? /^\s*\/(q?nf):[\w][\w-]*(\s|$)/
+      : new RegExp('^\\s*\\/(q?nf):(' + commands.join('|') + ')(\\s|$)');
     if (!cmdPattern.test(prompt)) {
       process.exit(0); // Silent pass — UPS-05
     }
@@ -996,7 +1038,7 @@ process.stdin.on('end', () => {
     // EXEC-01: Detect review/verification commands for review_mode injection.
     // These commands should trigger review-only dispatch (--review-only flag)
     // so review slots are restricted to read-only tools.
-    const reviewCmdPattern = /^\s*\/(nf|q?gsd):(verify-work|check)\b/;
+    const reviewCmdPattern = /^\s*\/(q?nf):(verify-work|check)\b/;
     const isReviewTask = reviewCmdPattern.test(prompt);
 
     // ── CACHE MISS: Embed cache key marker and write pending entry ──────────

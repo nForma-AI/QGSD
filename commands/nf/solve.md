@@ -17,7 +17,7 @@ Thin orchestrator for the nForma consistency solver. Dispatches to three sub-ski
 AUTONOMY REQUIREMENT: Phases 1-5 run FULLY AUTONOMOUSLY. Do NOT ask the user
 any questions. Do NOT stop for human input. If a sub-skill fails, log the
 failure and continue. The only valid reason to stop is:
-all iterations exhausted, or total residual is zero.
+all iterations exhausted, or automatable residual is zero.
 
 POST-PROCESS HANDOFF: Phase 6 (Auto-Resolve) is a post-process handoff that
 runs AFTER all autonomous phases complete. It invokes /nf:resolve which IS
@@ -239,7 +239,7 @@ const { computePlanSummary, formatPlanSummary, writeSession } = require(
     : './bin/solve-session.cjs'
 );
 const residual = JSON.parse(process.env.BASELINE_RESIDUAL_JSON || '{}');
-const maxIter = parseInt(process.env.MAX_ITERATIONS || '5', 10);
+const maxIter = parseInt(process.env.MAX_ITERATIONS || '100', 10);
 const summary = computePlanSummary(residual, maxIter);
 console.log(formatPlanSummary(summary));
 // Save session for --execute resumption
@@ -267,7 +267,7 @@ If `--report-only` flag was passed:
 
 ## Phase 3: Remediate (convergence loop)
 
-Default `max_iterations = 5`. Override with `--max-iterations=N`.
+Default `max_iterations = 100`. Override with `--max-iterations=N`.
 
 For `iteration = 1` to `max_iterations`:
 
@@ -345,13 +345,12 @@ If incremental filtering fails (script error, no files_touched in output), run t
 Parse `post_residual` from the JSON output.
 
 **3c. Convergence check (Step 5):**
-- If `post_residual.total == 0`: log convergence, break
-- Compute `automatable_residual` = sum of r_to_f, f_to_t, c_to_f, t_to_c, f_to_c, r_to_d, l1_to_l3, l3_to_tc (exclude d_to_c which is manual-only; include gate residuals)
-- If `automatable_residual == 0` OR no automatable layer changed since last iteration: break
+- If `post_residual.automatable == 0`: log convergence (automatable residual is zero), break
+- If no automatable layer changed since last iteration: break (stable — nothing left to fix)
 - **Cycle detection (CONV-01):** Layers exhibiting A-B-A-B oscillation patterns (detected by `bin/solve-cycle-detector.cjs`) are excluded from the "any automatable layer changed" condition. This prevents the loop from continuing solely because oscillating layers keep flip-flopping. The solver reports detected oscillating layers in its JSON output as `oscillating_layers`.
 - Else: update `residual_vector = post_residual`, continue loop
 
-**Cascade-aware convergence:** Do NOT use total residual for the loop condition. Fixing R->F creates F->T gaps (total goes UP), but the system is making progress. Use per-layer change detection: if ANY automatable layer changed (up or down), there is still work to do. Only stop when all automatable layers are stable or at zero.
+**Convergence uses `automatable` bucket, NOT `total`:** The total includes manual-only layers (d_to_c) and informational layers (git_heatmap, config_health, security, etc.) that the solver can never reduce. Only the automatable bucket (r_to_f, f_to_t, c_to_f, t_to_c, f_to_c, r_to_d, l1_to_l3, l3_to_tc, b_to_f, req_quality) should drive convergence decisions. When automatable hits zero, the solver has done all it can — remaining residual is manual/informational and requires human review.
 
 **Debt resolution check:** After convergence check, resolve debt entries whose layers now show zero residual:
 ```javascript
@@ -406,28 +405,22 @@ Display all tables and reports as described in the process section."
 
 ## Phase 5: Auto-Commit Artifacts
 
-After reporting completes, stage and commit all solve artifacts so they don't accumulate as unstaged changes.
+**This phase runs automatically inside `bin/nf-solve.cjs`** — no manual orchestration needed. At the end of every solve run, `nf-solve.cjs` calls `bin/solve-commit-artifacts.cjs` which:
 
+1. Stages all solve-touched paths (`.planning/formal/`, `bin/`, `test/`, etc.)
+2. Commits with message `chore(solve): update formal verification artifacts`
+3. Uses `--no-verify` to skip pre-commit hooks (evidence files may not pass lint)
+
+**To disable:** pass `--no-auto-commit` flag to nf-solve.
+
+**For manual/orchestrator use:** The script can also be called standalone:
 ```bash
-# Stage ALL solve-touched paths — modified, deleted, AND untracked
-# Use git add -A with pathspecs to catch new files the solve created
-git add -A .planning/formal/ 2>/dev/null
-git add .planning/upstream-state.json docs/dev/requirements-coverage.md 2>/dev/null
-# Also catch any bin/ or test/ files that solve sub-skills may have created/modified
-git add -A bin/ test/ 2>/dev/null
-
-# Check if there's anything to commit
-if ! git diff --cached --quiet 2>/dev/null; then
-  git commit -m "chore(solve): update formal verification artifacts
-
-Automated commit from /nf:solve — includes layer manifests, gate results,
-evidence snapshots, model registry, and requirements coverage updates."
-fi
+node bin/solve-commit-artifacts.cjs              # auto-commit
+node bin/solve-commit-artifacts.cjs --json       # JSON output
+node bin/solve-commit-artifacts.cjs --dry-run    # preview staged files
 ```
 
-This commit is non-blocking — if staging or committing fails (e.g., no changes, hook rejection), log and continue. The solve report has already been displayed.
-
-**IMPORTANT:** The `git add -A` with pathspecs stages new (untracked), modified, AND deleted files within those directories. This ensures files created by remediation sub-skills (new Alloy models, test stubs, etc.) and files deleted during cleanup are all captured.
+This commit is non-blocking — if staging or committing fails (e.g., no changes, hook rejection), `nf-solve` logs the failure and continues. The solve report has already been displayed.
 
 ## Phase 6: Auto-Resolve (Post-Process Handoff)
 
