@@ -1,33 +1,15 @@
 {
-  "generated": "2026-04-12T19:01:26.476Z",
+  "generated": "2026-04-12T14:52:59.377Z",
   "total_claims_checked": 171,
   "doc_files_scanned": 8,
-  "raw_broken_count": 36,
-  "weighted_residual": 69,
-  "suppressed_fp_count": 7,
+  "raw_broken_count": 33,
+  "weighted_residual": 64,
+  "suppressed_fp_count": 4,
   "category_breakdown": {
-    "user": 33,
-    "developer": 3
+    "user": 31,
+    "developer": 2
   },
   "broken_claims": [
-    {
-      "doc_file": "README.md",
-      "line": 173,
-      "type": "file_path",
-      "value": ".claude/settings.json",
-      "reason": "file not found",
-      "category": "user",
-      "weight": 2
-    },
-    {
-      "doc_file": "README.md",
-      "line": 684,
-      "type": "file_path",
-      "value": "gates/per-model-gates.json",
-      "reason": "file not found",
-      "category": "user",
-      "weight": 2
-    },
     {
       "doc_file": "README.md",
       "line": 964,
@@ -60,15 +42,6 @@
       "line": 1464,
       "type": "file_path",
       "value": "bin/nf-install.js",
-      "reason": "file not found",
-      "category": "developer",
-      "weight": 1
-    },
-    {
-      "doc_file": "docs/dev/requirements-coverage.md",
-      "line": 1762,
-      "type": "file_path",
-      "value": ".claude/circuit-breaker-state.json",
       "reason": "file not found",
       "category": "developer",
       "weight": 1
