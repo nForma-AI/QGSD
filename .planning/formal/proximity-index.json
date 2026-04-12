@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-12T21:06:14.711Z",
+  "generated": "2026-04-12T21:07:46.121Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -88,8 +88,8 @@
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-04-12T21:05:58.515Z",
-      "hash": "9cce4e14"
+      "mtime": "2026-04-12T21:06:53.574Z",
+      "hash": "88d940a9"
     },
     "invariant-catalog.json": {
       "mtime": "2026-04-12T17:29:36.571Z",
@@ -100,8 +100,8 @@
       "hash": "072a730d"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-04-12T20:54:41.558Z",
-      "hash": "381a5ed7"
+      "mtime": "2026-04-12T21:07:45.813Z",
+      "hash": "86ddea9f"
     },
     "instrumentation-map.json": {
       "mtime": "2026-04-12T20:54:38.079Z",
@@ -120,15 +120,15 @@
       "hash": "2df5c0d7"
     },
     "git-heatmap.json": {
-      "mtime": "2026-04-12T21:06:01.103Z",
-      "hash": "1d2da46f"
+      "mtime": "2026-04-12T21:06:55.772Z",
+      "hash": "74c53d1c"
     },
     "debt.json": {
       "mtime": "2026-04-12T17:29:36.499Z",
       "hash": "4f085cf2"
     },
     "source-annotations": {
-      "mtime": "2026-04-12T21:05:57.982Z"
+      "mtime": "2026-04-12T21:06:53.022Z"
     },
     "code-source-annotations": {
       "mtime": "2026-04-12T20:49:59.310Z"
