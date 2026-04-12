@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-12T21:22:55.873Z",
+  "generated": "2026-04-12T21:40:56.167Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
