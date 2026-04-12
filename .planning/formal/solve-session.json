@@ -51116,7 +51116,7 @@
   "open_debt": [],
   "max_iterations": 5,
   "created_at": "2026-03-25T16:25:27.396Z",
-  "updated_at": "2026-04-12T14:48:49.219Z",
+  "updated_at": "2026-04-10T16:02:33.404Z",
   "iteration_log": [
     {
       "iteration": 1,
@@ -51167,21 +51167,11 @@
       "remediation_summary": "f_to_t: 4→0 (4 stubs generated). All automatable layers at 0. CONVERGED.",
       "converged": true,
       "timestamp": "2026-04-10T16:02:33.403Z"
-    },
-    {
-      "iteration": 1,
-      "residual_snapshot": {
-        "total": 0,
-        "automatable": 10
-      },
-      "remediation_summary": "Dispatched: d_to_c (inline skip), c_to_r/t_to_r/d_to_r (shelved reverse). Skipped: zero-residual and fast-mode layers.",
-      "converged": true,
-      "timestamp": "2026-04-12T14:48:49.218Z"
     }
   ],
-  "last_iteration": 1,
+  "last_iteration": 5,
   "last_residual": {
-    "total": 0,
-    "automatable": 10
+    "total": 46,
+    "automatable": 0
   }
 }
