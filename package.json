@@ -103,6 +103,7 @@
     "formal-verify:alloy": "node bin/run-formal-verify.cjs --only=alloy",
     "formal-verify:prism": "node bin/run-formal-verify.cjs --only=prism",
     "formal-verify:petri": "node bin/run-formal-verify.cjs --only=petri",
+    "benchmark:solve": "node bin/nf-benchmark-solve.cjs",
     "lint:isolation": "node scripts/lint-isolation.js",
     "secrets:gitleaks": "gitleaks detect --no-banner --source . --config .gitleaks.toml --redact --verbose",
     "secrets:scan": "detect-secrets scan --baseline .secrets.baseline",
