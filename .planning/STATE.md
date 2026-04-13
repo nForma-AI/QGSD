@@ -32,7 +32,7 @@ See: .planning/PROJECT.md
 | 387 | Implement scope-contract commit-time enforcement via Claude Code PreToolUse hook per issue 82 | 2026-04-10 | 32907a3b | Verified | [387-implement-scope-contract-commit-time-enf](./quick/387-implement-scope-contract-commit-time-enf/) |
 | 388 | Sync baseline requirements and audit solver-generated formal models and test stubs | 2026-04-10 | cc6d745b | Verified | [388-issue-84](./quick/388-issue-84/) |
 | 389 | Fix shell-prompt-quorum-dedup.als Alloy assertion failure | 2026-04-11 | bf613ce9 | Verified | [389-fix-shell-prompt-quorum-dedup-als-alloy-](./quick/389-fix-shell-prompt-quorum-dedup-als-alloy-/) |
-| 397 | build a command to run nf:solve against nf-benchmark to validate its capacity to solve issues automatically | 2026-04-13 | 93cc7575 | Pending | [397-build-a-command-to-run-nf-solve-against-](./quick/397-build-a-command-to-run-nf-solve-against-/) |
+| 397 | build a command to run nf:solve against nf-benchmark to validate its capacity to solve issues automatically | 2026-04-13 | 93cc7575 | Verified | [397-build-a-command-to-run-nf-solve-against-](./quick/397-build-a-command-to-run-nf-solve-against-/) |
 
 ## Session Log
 
