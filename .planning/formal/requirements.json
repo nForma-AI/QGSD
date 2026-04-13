@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-04-11T07:19:13.227Z",
-  "content_hash": "sha256:af9771fb33a6d73bc2e777745c20bce585e75d1962273ae7bf6485e825b3cac3",
-  "frozen_at": "2026-04-10T21:49:42.228Z",
+  "aggregated_at": "2026-04-13T22:54:57.757Z",
+  "content_hash": "f74afbc6179f4801",
+  "frozen_at": "2026-04-13T22:54:57.757Z",
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
   "last_sync": "2026-03-31T09:45:23.686Z",
@@ -5046,6 +5046,16 @@
         "source_file": "bin/provider-concurrency.cjs",
         "milestone": "solver-tui"
       }
+    },
+    {
+      "id": "SOLVE-11",
+      "text": "Run nf:solve against a versioned fixture set and report per-fixture and aggregate pass rates via the `npm run benchmark:solve` command.",
+      "category": "Solver-Discovered",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Quick task 397 delivered bin/nf-benchmark-solve.cjs as a repeatable, version-controlled benchmark harness for validating nf:solve's autonomous issue resolution capacity. The fixture set (.planning/formal/solve-benchmark-fixtures.json) defines synthetic test cases covering diverse solver modes.",
+      "source_file": ".planning/quick/397-build-a-command-to-run-nf-solve-against-/397-PLAN.md",
+      "milestone": "quick-397"
     },
     {
       "id": "SPEC-01",
