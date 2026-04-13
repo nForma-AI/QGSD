@@ -75,6 +75,7 @@ function queryByField(cwd, category, field, keyword, limit = 5) {
  * Checks if a similar entry exists in recent history (bidirectional substring).
  */
 function isDuplicate(cwd, category, field, value, checkLast = 10) {
+  if (!value || typeof value !== 'string' || value.trim().length === 0) return false;
   const recent = readLastN(cwd, category, checkLast);
   const needle = value.toLowerCase();
   return recent.some(e => {

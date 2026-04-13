@@ -20,7 +20,7 @@ const STATUS_ORDER = { open: 0, acknowledged: 1, resolving: 2, resolved: 3 };
 function mergeDebtEntries(entryA, entryB) {
   // Determine primary: entry with higher occurrences (if equal, entryA is primary)
   let primary, secondary;
-  if ((entryB.occurrences || 1) > (entryA.occurrences || 1)) {
+  if ((entryB.occurrences ?? 0) > (entryA.occurrences ?? 0)) {
     primary = entryB;
     secondary = entryA;
   } else {
@@ -37,7 +37,7 @@ function mergeDebtEntries(entryA, entryB) {
     id: primary.id,
     fingerprint: primary.fingerprint,
     title: primary.title,
-    occurrences: (primary.occurrences || 1) + (secondary.occurrences || 1),
+    occurrences: (primary.occurrences ?? 0) + (secondary.occurrences ?? 0),
     first_seen: primary.first_seen < secondary.first_seen ? primary.first_seen : secondary.first_seen,
     last_seen: primary.last_seen > secondary.last_seen ? primary.last_seen : secondary.last_seen,
     environments: [...new Set([...(primary.environments || []), ...(secondary.environments || [])])],

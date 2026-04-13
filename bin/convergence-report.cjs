@@ -96,7 +96,7 @@ function rankActionItems(verdicts, latestResiduals, maxItems) {
     let action = '';
 
     if (v.blocked) {
-      priority = 100 + residual;
+      priority = 200 + residual;
       action = `BLOCKED — oscillation detected. Run /nf:resolve ${key} for manual triage`;
     } else if (v.trend === 'INCREASING') {
       priority = 80 + residual;

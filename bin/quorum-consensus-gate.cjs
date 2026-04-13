@@ -35,6 +35,12 @@ function poissonBinomialCDF(probabilities, k) {
   if (k > n) return 0;
   if (k <= 0) return 1.0;
 
+  for (let i = 0; i < n; i++) {
+    if (typeof probabilities[i] !== 'number' || isNaN(probabilities[i]) || probabilities[i] < 0 || probabilities[i] > 1) {
+      return NaN;
+    }
+  }
+
   // dp[j] = probability of exactly j successes after processing i trials
   const dp = new Array(n + 1).fill(0);
   dp[0] = 1; // base: P(0 successes with 0 trials) = 1

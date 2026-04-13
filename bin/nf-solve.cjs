@@ -401,9 +401,9 @@ function matchWildcard(pattern, filePath) {
   }
 
   let regex = normPattern
-    .replace(/\./g, '\\.')
-    .replace(/\*\*\//g, '(.+/)?')
-    .replace(/\*/g, '[^/]*');
+    .replace(/\*\*\//g, '(.+/)*')
+    .replace(/\*/g, '[^/]*')
+    .replace(/\./g, '\\.');
   regex = '^(' + regex + ')$';
 
   return new RegExp(regex).test(normPath);
@@ -412,10 +412,11 @@ function matchWildcard(pattern, filePath) {
 /**
  * Recursively walk a directory, returning files up to maxDepth levels.
  */
-function walkDir(dir, maxDepth, currentDepth) {
+function walkDir(dir, maxDepth, currentDepth, visited) {
   if (currentDepth === undefined) currentDepth = 0;
   if (maxDepth === undefined) maxDepth = 10;
   if (currentDepth > maxDepth) return [];
+  if (visited === undefined) visited = new Set();
 
   const results = [];
   let entries;
@@ -427,12 +428,19 @@ function walkDir(dir, maxDepth, currentDepth) {
 
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      if (entry.name === 'node_modules' || entry.name === '.git') continue;
-      const sub = walkDir(fullPath, maxDepth, currentDepth + 1);
-      for (const s of sub) results.push(s);
-    } else if (entry.isFile()) {
-      results.push(fullPath);
+    try {
+      const realPath = fs.realpathSync(fullPath);
+      if (visited.has(realPath)) continue;
+      if (entry.isDirectory()) {
+        if (entry.name === 'node_modules' || entry.name === '.git') continue;
+        visited.add(realPath);
+        const sub = walkDir(fullPath, maxDepth, currentDepth + 1, visited);
+        for (const s of sub) results.push(s);
+      } else if (entry.isFile()) {
+        results.push(fullPath);
+      }
+    } catch (e) {
+      // skip inaccessible entries
     }
   }
   return results;
@@ -663,8 +671,8 @@ function extractStructuralClaims(docContent, filePath) {
       // Classify the claim
       let type = null;
 
-      // CLI command: starts with node, npx, npm
-      if (/^(node|npx|npm)\s+/.test(value)) {
+      // CLI command: starts with node, npx, npm, yarn, pnpm
+      if (/^(node|npx|npm|yarn|pnpm)\s+/.test(value)) {
         type = 'cli_command';
       }
       // File path: contains / with extension, or starts with .
@@ -1453,7 +1461,7 @@ function digestV8Coverage(coverageData) {
               else startLine = Math.max(0, startLine - 1);
 
               let endLine = lineOffsets.findIndex(offset => offset >= endOffset);
-              if (endLine === -1) endLine = lineOffsets.length - 1;
+              if (endLine === -1) endLine = lineOffsets.length;
 
               // Add lines to appropriate set (1-indexed for output)
               for (let lineIdx = startLine; lineIdx < endLine && lineIdx < lineOffsets.length; lineIdx++) {

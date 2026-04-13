@@ -310,12 +310,13 @@ function updateVerdicts(options = {}) {
 
     let credits = prevCredit;
 
-    // Direction change detection (only consume credit if not in grace period)
     if (prevDirection && lastDirection &&
         prevDirection !== lastDirection &&
         prevDirection !== 'flat' && lastDirection !== 'flat' &&
         !hasGrace) {
       credits = Math.max(0, credits - 1);
+    } else if (lastDirection === 'down' || lastDirection === 'flat') {
+      credits = Math.min(1, credits + 1);
     }
 
     const blocked = credits <= 0;

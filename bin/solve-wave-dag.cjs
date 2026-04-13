@@ -80,18 +80,26 @@ function computeWaves(residualVector, priorityWeights = {}) {
 
   // Compute longest-path wave assignment (ensures correct ordering)
   const waveAssignment = new Map();
+  const visiting = new Set(); // Prevent infinite recursion on cycles
 
   function getWave(layer) {
     if (waveAssignment.has(layer)) return waveAssignment.get(layer);
-    const deps = (LAYER_DEPS[layer] || []).filter(d => active.has(d));
-    if (deps.length === 0) {
-      waveAssignment.set(layer, 0);
-      return 0;
+    if (visiting.has(layer)) return 0; // Cycle detected, assume wave 0
+
+    visiting.add(layer);
+    try {
+      const deps = (LAYER_DEPS[layer] || []).filter(d => active.has(d) && d !== layer); // Exclude self-dependencies
+      if (deps.length === 0) {
+        waveAssignment.set(layer, 0);
+        return 0;
+      }
+      const maxDepWave = Math.max(...deps.map(d => getWave(d)));
+      const w = maxDepWave + 1;
+      waveAssignment.set(layer, w);
+      return w;
+    } finally {
+      visiting.delete(layer);
     }
-    const maxDepWave = Math.max(...deps.map(d => getWave(d)));
-    const w = maxDepWave + 1;
-    waveAssignment.set(layer, w);
-    return w;
   }
 
   for (const layer of active) {

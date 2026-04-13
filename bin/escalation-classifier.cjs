@@ -132,7 +132,7 @@ function parseClassificationResponse(responseText) {
   try {
     // Strip markdown code fences if present
     let text = responseText.trim();
-    text = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '');
+    text = text.replace(/^```\s*(?:json)?\s*/i, '').replace(/\s*```$/i, '');
 
     const parsed = JSON.parse(text);
 

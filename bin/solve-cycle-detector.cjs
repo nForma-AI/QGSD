@@ -31,11 +31,11 @@ function detectCycles(history) {
   for (const [layer, values] of Object.entries(history)) {
     if (!Array.isArray(values) || values.length < 4) continue;
 
-    // Check for A-B-A-B pattern: values[2]===values[0] AND values[3]===values[1]
-    // spanning any consecutive 4-point window
+    // Check for A-B-A-B pattern: values[i]===values[i-2] AND values[i+1]===values[i-1] AND A!==B
+    // The A!==B guard avoids false positives on constant/flat series [X,X,X,X]
     let found = false;
     for (let i = 2; i < values.length - 1; i++) {
-      if (values[i] === values[i - 2] && values[i + 1] === values[i - 1]) {
+      if (values[i] === values[i - 2] && values[i + 1] === values[i - 1] && values[i] !== values[i - 1]) {
         found = true;
         break;
       }
