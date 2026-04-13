@@ -18,7 +18,7 @@ must_haves:
     - "Running `node bin/nf-benchmark-solve.cjs` against a fixture set reports pass/fail per issue with overall pass rate and duration"
     - "`npm run benchmark:solve` is a valid script entry in package.json"
     - "The --fixture flag accepts a custom JSON path to override the default fixture file"
-    - "Each fixture result reports: issue label, pass/fail, residual_before, residual_after, duration_ms"
+    - "Each fixture result reports: issue label, pass/fail, total residual, duration_ms"
   artifacts:
     - path: "bin/nf-benchmark-solve.cjs"
       provides: "Benchmark runner for nf:solve end-to-end validation"
