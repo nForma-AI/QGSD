@@ -32,6 +32,8 @@ rl.on('line', (line) => {
 rl.on('close', async () => {
   value = value.trim();
   if (!value) {
+    console.error('Usage: node bin/set-secret.cjs <KEY_NAME>');
+    console.error('Reads secret value from stdin (echo "secret" | node bin/set-secret.cjs KEY_NAME)');
     console.error('Error: No value provided via stdin');
     process.exit(1);
   }
