@@ -82,8 +82,10 @@ async function main() {
     }
   }
 
-  // Write config back with restrictive permissions
-  fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), { mode: 0o600 });
+  // Write config back atomically
+  const tmpPath = CONFIG_PATH + '.tmp';
+  fs.writeFileSync(tmpPath, JSON.stringify(config, null, 2), { mode: 0o600 });
+  fs.renameSync(tmpPath, CONFIG_PATH);
 
   // Enforce permissions on existing file (writeFileSync mode only applies to new files on some systems)
   try {

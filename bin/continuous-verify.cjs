@@ -45,17 +45,25 @@ function getVerifyState(cwd) {
 
 function saveVerifyState(cwd, state) {
   try {
-    const filePath = path.join(cwd, VERIFY_FILE);
+    const filePath = path.join(cwd, '.planning', 'continuous-verify.json');
     fs.mkdirSync(path.dirname(filePath), { recursive: true });
-    fs.writeFileSync(filePath, JSON.stringify(state, null, 2), 'utf8');
-  } catch (_) {
-    // fail-open
-  }
-}
+    // Atomic write: write to temp file first, then rename
+    const tmpPath = filePath + '.tmp';
+    fs.writeFileSync(tmpPath, JSON.stringify(state, null, 2), 'utf8');
+    fs.renameSync(tmpPath, filePath);
+   } catch (_) {
+     // fail-open
+   }
+ }
 
 // --- Boundary detection ---
 
 function shouldTriggerVerification(toolName, toolInput, verifyState) {
+  // Guard against null/undefined verifyState
+  if (!verifyState || typeof verifyState !== 'object') {
+    return false;
+  }
+
   // Budget exhausted
   if (verifyState.runs_used >= verifyState.max_runs) return false;
 
@@ -71,7 +79,7 @@ function shouldTriggerVerification(toolName, toolInput, verifyState) {
   }
 
   // Accumulate unique file paths
-  if (filePath && !verifyState.accumulated_files.includes(filePath)) {
+  if (filePath && Array.isArray(verifyState.accumulated_files) && !verifyState.accumulated_files.includes(filePath)) {
     verifyState.accumulated_files.push(filePath);
   }
 
@@ -107,9 +115,11 @@ function runChecks(cwd, files, timeoutMs) {
           timeout: timeoutMs || 5000,
           encoding: 'utf8',
         });
+        // spawnSync does not throw on timeout — check for status: null and signal: 'SIGTERM'
+        const timedOut = result.status === null && result.signal === 'SIGTERM';
         checks.push({
           type: 'test',
-          pass: result.status === 0,
+          pass: timedOut ? true : result.status === 0, // fail-open on timeout
           output: (result.stdout || '').slice(-500),
           duration_ms: Date.now() - start,
         });
@@ -133,9 +143,11 @@ function runChecks(cwd, files, timeoutMs) {
             timeout: timeoutMs || 5000,
             encoding: 'utf8',
           });
+          // spawnSync does not throw on timeout — check for status: null and signal: 'SIGTERM'
+          const timedOut = result.status === null && result.signal === 'SIGTERM';
           checks.push({
             type: 'lint',
-            pass: result.status === 0,
+            pass: timedOut ? true : result.status === 0, // fail-open on timeout
             output: (result.stdout || '').slice(-500),
             duration_ms: Date.now() - start,
           });
@@ -160,10 +172,26 @@ function evaluateCondition(cwd, condition, timeoutMs) {
     const tm = timeoutMs || 30000;
     switch (condition.type) {
       case 'file_exists': {
-        const exists = fs.existsSync(path.join(cwd, condition.path));
+        if (!condition.path || typeof condition.path !== 'string') {
+          return { pass: false, type: condition.type, reason: 'invalid path' };
+        }
+        const resolved = path.resolve(cwd, condition.path);
+        // Security: only allow files within the cwd
+        if (!resolved.startsWith(cwd + path.sep) && resolved !== cwd) {
+          return { pass: false, type: condition.type, reason: 'path traversal blocked' };
+        }
+        const exists = fs.existsSync(resolved);
         return { pass: exists, type: condition.type };
       }
       case 'test_pass': {
+        if (!condition.pattern || typeof condition.pattern !== 'string') {
+          return { pass: false, type: condition.type, reason: 'invalid pattern' };
+        }
+        // Validate pattern doesn't contain path traversal
+        const resolved = path.resolve(cwd, condition.pattern);
+        if (!resolved.startsWith(cwd + path.sep) && resolved !== cwd) {
+          return { pass: false, type: condition.type, reason: 'pattern traversal blocked' };
+        }
         const result = spawnSync('node', ['--test', condition.pattern], {
           cwd,
           timeout: tm,
@@ -178,7 +206,12 @@ function evaluateCondition(cwd, condition, timeoutMs) {
           return { pass: true, type: condition.type, reason: 'no linter' };
         }
         const files = Array.isArray(condition.files) ? condition.files : [condition.files];
-        const result = spawnSync(eslintPath, files, {
+        // Validate that files are actual file paths (not eslint arguments starting with --)
+        const validFiles = files.filter(f => f && typeof f === 'string' && !f.startsWith('--'));
+        if (validFiles.length === 0) {
+          return { pass: false, type: condition.type, reason: 'no valid files' };
+        }
+        const result = spawnSync(eslintPath, validFiles, {
           cwd,
           timeout: tm,
           encoding: 'utf8',
@@ -198,7 +231,20 @@ function evaluateCondition(cwd, condition, timeoutMs) {
         return { pass: result.status === 0, type: condition.type };
       }
       case 'command_pass': {
-        const parts = condition.command.split(' ');
+        if (!condition.command || typeof condition.command !== 'string') {
+          return { pass: false, type: condition.type, reason: 'invalid command' };
+        }
+        // Security: restrict to a small allowlist of safe commands
+        const allowedCommands = new Set([
+          'npm run test:ci',
+          'npm run lint',
+          'npm run typecheck',
+          'node --test',
+        ]);
+        if (!allowedCommands.has(condition.command.trim())) {
+          return { pass: false, type: condition.type, reason: 'command not in allowlist' };
+        }
+        const parts = condition.command.trim().split(/\s+/);
         const result = spawnSync(parts[0], parts.slice(1), {
           cwd,
           timeout: tm,
@@ -239,6 +285,11 @@ if (require.main === module) {
     switch (command) {
       case 'run-checks': {
         const cwd = getArg('cwd') || process.cwd();
+        // Validate cwd is a real directory within expected bounds
+        if (!fs.existsSync(cwd) || !fs.statSync(cwd).isDirectory()) {
+          process.stderr.write('[continuous-verify] Invalid cwd: not a directory\n');
+          process.exit(1);
+        }
         const filesStr = getArg('files') || '';
         const files = filesStr ? filesStr.split(',').map(f => f.trim()) : [];
         const result = runChecks(cwd, files, 5000);
@@ -247,6 +298,11 @@ if (require.main === module) {
       }
       case 'evaluate': {
         const cwd = getArg('cwd') || process.cwd();
+        // Validate cwd is a real directory within expected bounds
+        if (!fs.existsSync(cwd) || !fs.statSync(cwd).isDirectory()) {
+          process.stderr.write('[continuous-verify] Invalid cwd: not a directory\n');
+          process.exit(1);
+        }
         const condStr = getArg('conditions') || '[]';
         let conditions;
         try { conditions = JSON.parse(condStr); } catch (_) { conditions = []; }

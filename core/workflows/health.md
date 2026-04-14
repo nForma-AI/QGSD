@@ -11,7 +11,7 @@ Read all files referenced by the invoking prompt's execution_context before star
 <step name="parse_args">
 **Parse arguments:**
 
-Check if `--repair` and `--force` flags are present in the command arguments.
+Check if `--repair` and `--force` and `--formal` flags are present in the command arguments.
 
 ```
 REPAIR_FLAG=""
@@ -22,6 +22,11 @@ fi
 FORCE_FLAG=""
 if arguments contain "--force"; then
   FORCE_FLAG="--force"
+fi
+
+FORMAL_FLAG=false
+if arguments contain "--formal"; then
+  FORMAL_FLAG=true
 fi
 ```
 </step>
@@ -40,6 +45,54 @@ Parse JSON output:
 - `info[]`: Informational notes
 - `repairable_count`: Number of auto-fixable issues
 - `repairs_performed[]`: Actions taken if --repair was used
+</step>
+
+<step name="formal_tools_check" condition="FORMAL_FLAG is true">
+**Check formal verification tool availability:**
+
+```bash
+node << 'NF_EVAL'
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
+const { execSync } = require('child_process');
+
+const NF_FORMAL_HOME = path.join(os.homedir(), '.local', 'share', 'nf-formal');
+
+const checks = [
+  { name: 'java (JDK 17+)', check: () => { try { const v = execSync('java -version 2>&1').toString(); return { found: true, detail: v.split('\n')[0] }; } catch { return { found: false, detail: 'not on PATH' }; } } },
+  { name: 'tla2tools.jar', check: () => {
+    const candidates = [path.join(NF_FORMAL_HOME, 'tla', 'tla2tools.jar'), path.join('.planning', 'formal', 'tla', 'tla2tools.jar')];
+    const found = candidates.find(p => fs.existsSync(p));
+    return { found: !!found, detail: found || 'not found' };
+  }},
+  { name: 'alloy.jar', check: () => {
+    const candidates = [path.join(NF_FORMAL_HOME, 'alloy', 'org.alloytools.alloy.dist.jar'), path.join('.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar')];
+    const found = candidates.find(p => fs.existsSync(p));
+    return { found: !!found, detail: found || 'not found' };
+  }},
+  { name: 'nf-formal directory', check: () => ({ found: fs.existsSync(NF_FORMAL_HOME), detail: NF_FORMAL_HOME }) },
+];
+
+console.log('');
+console.log('  FORMAL VERIFICATION TOOLS');
+console.log('  ' + '─'.repeat(50));
+let allFound = true;
+for (const c of checks) {
+  const result = c.check();
+  const icon = result.found ? '✓' : '✗';
+  console.log('  ' + icon + ' ' + c.name + ': ' + result.detail);
+  if (!result.found) allFound = false;
+}
+if (!allFound) {
+  console.log('');
+  console.log('  Install missing tools: npx get-shit-done-cc --formal --global');
+}
+console.log('');
+NF_EVAL
+```
+
+Display the formal tools section after the main health status, before the token usage section.
 </step>
 
 <step name="format_output">
