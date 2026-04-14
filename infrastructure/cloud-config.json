@@ -1,0 +1,12 @@
+{
+  "provider": "aws",
+  "region": "us-east-1",
+  "instances": [
+    {
+      "name": "app-server",
+      "size": "excessive_size",
+      "count": 1,
+      "purpose": "application"
+    }
+  ]
+}

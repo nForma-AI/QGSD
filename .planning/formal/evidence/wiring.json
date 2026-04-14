@@ -1,0 +1,19 @@
+{
+  "generated_at": "2026-04-13T00:00:00Z",
+  "entries": [
+    {
+      "gate": "A",
+      "layer": "l1_to_l3",
+      "score": 0.85,
+      "evidence_count": 12,
+      "description": "Wiring between requirements and formal model layer"
+    },
+    {
+      "gate": "B",
+      "layer": "l3_to_tc",
+      "score": 0.72,
+      "evidence_count": 8,
+      "description": "Wiring between formal model and test coverage layer"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "generated_at": "2026-04-13T00:00:00Z",
+  "priorities": {
+    "performance": {
+      "weight": 0.3,
+      "description": "System performance and throughput optimization"
+    },
+    "safety": {
+      "weight": 0.5,
+      "description": "System safety and correctness properties"
+    },
+    "cost": {
+      "weight": 0.2,
+      "description": "Resource cost optimization"
+    }
+  }
+}

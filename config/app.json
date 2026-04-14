@@ -1,0 +1,14 @@
+{
+  "name": "nForma",
+  "version": "0.1.0",
+  "environment": "development",
+  "features": {
+    "quorum": true,
+    "formal_verification": true,
+    "auto_close": true
+  },
+  "secrets": {
+    "api_key": "plaintext_secret_123",
+    "private_key": "unencrypted_key_data"
+  }
+}
