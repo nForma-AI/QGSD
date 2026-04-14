@@ -13,8 +13,8 @@
     },
     {
       "id": "report-only-full",
-      "label": "Full report-only single-iteration sweep",
-      "args": ["--report-only", "--json", "--no-timeout", "--max-iterations=1"],
+      "label": "Full report-only single-iteration sweep (fast mode)",
+      "args": ["--report-only", "--json", "--no-timeout", "--max-iterations=1", "--fast"],
       "expect_convergence": false,
       "min_residual": null,
       "max_residual": null,
@@ -22,8 +22,8 @@
     },
     {
       "id": "skip-layers-r2f",
-      "label": "Skip R->F layer, single iteration",
-      "args": ["--report-only", "--json", "--no-timeout", "--max-iterations=1", "--skip-layers=r_to_f"],
+      "label": "Skip R->F layer, single iteration (fast mode)",
+      "args": ["--report-only", "--json", "--no-timeout", "--max-iterations=1", "--fast", "--skip-layers=r_to_f"],
       "expect_convergence": false,
       "min_residual": null,
       "max_residual": null,
@@ -31,8 +31,8 @@
     },
     {
       "id": "focus-formal",
-      "label": "Focus filter on 'formal model' topic",
-      "args": ["--report-only", "--json", "--no-timeout", "--max-iterations=1", "--focus=formal model"],
+      "label": "Focus filter on 'formal model' topic (fast mode)",
+      "args": ["--report-only", "--json", "--no-timeout", "--max-iterations=1", "--fast", "--focus=formal model"],
       "expect_convergence": false,
       "min_residual": null,
       "max_residual": null,
@@ -49,8 +49,8 @@
     },
     {
       "id": "invalid-focus-value",
-      "label": "Invalid --focus value should still exit cleanly",
-      "args": ["--report-only", "--json", "--no-timeout", "--max-iterations=1", "--focus=__nonexistent_topic_xyz__"],
+      "label": "Invalid --focus value should still exit cleanly (fast mode)",
+      "args": ["--report-only", "--json", "--no-timeout", "--max-iterations=1", "--fast", "--focus=__nonexistent_topic_xyz__"],
       "expect_convergence": false,
       "min_residual": null,
       "max_residual": null,
