@@ -9,6 +9,25 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.42.3] - 2026-04-11 — Repowise Intelligence Integration (v0.42 milestone)
 
 ### Added
+- `feat(solve)`: Add real impact tracking to solve skill — reports lead with bugs_fixed, tests_added, docs_fixed, dead_code_removed summary computed from git diff excluding .planning directory
+- `feat(solve)`: Remediation dispatches now classified as real_fix, true_positive_closure, fp_suppression, or reclassification
+- `feat(solve)`: Remediation sub-skill runs npm run test:ci and npm run lint:isolation after waves, dispatching /nf:quick fixes for any new failures
+- `feat(solve)`: solve-state.json tracks real_impact per iteration
+
+### Fixed
+- `fix(test)`: River ML statusline tests (TC15/16/19/21/22/23) now mock `HOME` with a fake `nf-python-env/bin/python` — these tests passed locally (where `~/.claude/nf-python-env` exists) but failed in CI where the runner has no python env, causing the River indicator gate to skip the state file check entirely
+
+## [0.42.1-rc.1] - 2026-04-10 — coderlm operational hardening
+
+### Fixed
+- `fix(coderlm)`: circuit-breaker in `sweepGitHeatmap` stops querying after 3 consecutive `getCallersSync` failures — prevents 5 s timeout × N-files overhead when server is unresponsive
+- `fix(coderlm)`: pre-flight `healthSync()` before first sweep emits availability to stderr so fail-open status is visible before queries start
+- `fix(coderlm)`: CDIAG-03 wired into solve loop — in `--skip-layers` incremental mode, call-graph expansion via `computeAffectedLayers` un-skips layers whose transitive callers were affected by remediation
+
+## [0.42.0-rc.1] - 2026-04-10 — Deep coderlm Solve Integration
+>>>>>>> 8715caa0 (feat(solve): implement real impact tracking for solve skill)
+
+### Added
 - `feat(repowise)`: XML context packing — `escape-xml.cjs`, `pack-file.cjs`, `context-packer.cjs` deliver file contents in `<file path="...">...</file>` XML format with proper escaping (PACK-01, PACK-02, PACK-03)
 - `feat(repowise)`: Hotspot detection — `hotspot.cjs` computes per-file churn×complexity risk scores from git log with streaming parsing, mass-refactor weighting, and noise filtering (HOT-01, HOT-03, HOT-04)
 - `feat(repowise)`: AST-based cyclomatic complexity — `computeAstComplexity()` uses skeleton.cjs tree-sitter AST parsing for per-file complexity, with line-count heuristic fallback; `computeHotspotsAst()` async variant and `--use-ast-complexity` CLI flag (HOT-02)

@@ -64,6 +64,43 @@ let ROOT = process.cwd();
 const SCRIPT_DIR = __dirname;
 const DEFAULT_MAX_ITERATIONS = 100;
 
+/**
+ * Compute real impact from git diff since last commit.
+ * Returns { bugs_fixed, tests_added, docs_fixed, dead_code_removed }
+ */
+function computeRealImpact() {
+  try {
+    const { execSync } = require('child_process');
+    const diffOutput = execSync('git diff --stat -- \\:\\(exclude\\).planning HEAD~1', { encoding: 'utf8' });
+    const lines = diffOutput.split('\n');
+    let bugs_fixed = 0;
+    let tests_added = 0;
+    let docs_fixed = 0;
+    let dead_code_removed = 0;
+    for (const line of lines) {
+      if (line.includes('|') && line.includes('Bin')) {
+        const parts = line.split('|');
+        const file = parts[0].trim();
+        if (file.startsWith('src/') || file.startsWith('bin/') || file.startsWith('lib/')) {
+          bugs_fixed++;
+        } else if (file.startsWith('test/') && line.includes('++')) {
+          tests_added++;
+        } else if (file.startsWith('docs/')) {
+          docs_fixed++;
+        }
+        if (line.includes('deletions') && line.includes('insertions')) {
+          const ins = parseInt(line.match(/(\d+) insertions/)[1]) || 0;
+          const del = parseInt(line.match(/(\d+) deletions/)[1]) || 0;
+          if (del > ins) dead_code_removed++;
+        }
+      }
+    }
+    return { bugs_fixed, tests_added, docs_fixed, dead_code_removed };
+  } catch (e) {
+    return { bugs_fixed: 0, tests_added: 0, docs_fixed: 0, dead_code_removed: 0 };
+  }
+}
+
 // QUICK-343: PID of background run-formal-verify.cjs process (null when not running)
 let _formalVerifyBgPid = null;
 
@@ -5112,6 +5149,15 @@ function formatReport(iterations, finalResidual, converged) {
   );
   lines.push('');
 
+  // Real Impact Summary (leads the report)
+  const realImpact = computeRealImpact();
+  lines.push('Real Impact Summary:');
+  lines.push('  Bugs Fixed: ' + realImpact.bugs_fixed);
+  lines.push('  Tests Added: ' + realImpact.tests_added);
+  lines.push('  Docs Fixed: ' + realImpact.docs_fixed);
+  lines.push('  Dead Code Removed: ' + realImpact.dead_code_removed);
+  lines.push('');
+
   // Unified residual vector table
   lines.push('Layer Transition             Residual  Health');
   lines.push('─────────────────────────────────────────────');
@@ -5839,10 +5885,12 @@ function formatJSON(iterations, finalResidual, converged) {
     converged: converged,
     has_residual: truncatedResidual.total > 0,
     residual_vector: truncatedResidual,
+    real_impact: computeRealImpact(),
     iterations: iterations.map((it) => ({
       iteration: it.iteration,
       residual: truncateResidualDetail(it.residual),
       actions: it.actions || [],
+      real_impact: it.real_impact,
     })),
     health: health,
     complexity_profile: complexityProfile,
@@ -6167,9 +6215,9 @@ function main() {
     // Clear formal-test-sync cache so computeResidual() sees fresh data after autoClose() mutations
     formalTestSyncCache = null;
 
-    const residual = computeResidual();
-    const actions = [];
-    iterations.push({ iteration: i, residual: residual, actions: actions });
+  const residual = computeResidual();
+  const actions = [];
+  iterations.push({ iteration: i, residual: residual, actions: actions, real_impact: computeRealImpact() });
 
     // Record per-layer residuals for cycle detection (CONV-01)
     const perLayerResiduals = {};
@@ -6375,6 +6423,8 @@ function main() {
     final_residual_total: finalResidual.total,
     reverse_discovery_total: finalResidual.reverse_discovery_total || 0,
     heatmap_total: finalResidual.heatmap_total || 0,
+    real_impact: computeRealImpact(),
+    real_impact_iterations: iterations.map(it => ({ iteration: it.iteration, real_impact: it.real_impact })),
     known_issues: [],
     r_to_f_progress: {
       total: finalResidual.r_to_f.detail.total || 0,
