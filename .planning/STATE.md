@@ -33,6 +33,7 @@ See: .planning/PROJECT.md
 | 388 | Sync baseline requirements and audit solver-generated formal models and test stubs | 2026-04-10 | cc6d745b | Verified | [388-issue-84](./quick/388-issue-84/) |
 | 389 | Fix shell-prompt-quorum-dedup.als Alloy assertion failure | 2026-04-11 | bf613ce9 | Verified | [389-fix-shell-prompt-quorum-dedup-als-alloy-](./quick/389-fix-shell-prompt-quorum-dedup-als-alloy-/) |
 | 397 | build a command to run nf:solve against nf-benchmark to validate its capacity to solve issues automatically | 2026-04-13 | 93cc7575 | Verified | [397-build-a-command-to-run-nf-solve-against-](./quick/397-build-a-command-to-run-nf-solve-against-/) |
+| 398 | Improve the benchmark to actually test nf:solve autonomy — add a real autonomy track with seeded defects and residual reduction scoring | 2026-04-15 | 8841e863 | Pending | [398-improve-the-benchmark-to-actually-test-n](.planning/quick/398-improve-the-benchmark-to-actually-test-n/) |
 
 ## Session Log
 
@@ -57,4 +58,4 @@ See: .planning/PROJECT.md
 - 2026-04-10 - Completed quick task 388: Sync baseline requirements and audit solver-generated formal models and test stubs
 - 2026-04-11 - Completed quick task 389: Fix shell-prompt-quorum-dedup.als Alloy assertion failure
 
-Last activity: 2026-04-13 - Completed quick task 397: build a command to run nf:solve against nf-benchmark to validate its capacity to solve issues automatically
+Last activity: 2026-04-15 - Completed quick task 398: Improve the benchmark to actually test nf:solve autonomy — add a real autonomy track with seeded defects and residual reduction scoring

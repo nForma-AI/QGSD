@@ -166,6 +166,8 @@ For `residual_decreased` pass condition evaluation:
 
 NOTE: Use `--report-only` for the baseline measurement so it does NOT mutate files.
 
+COST NOTE: Each autonomy fixture invokes nf-solve twice — once (`--report-only --fast`) for baseline measurement and once (full remediation) for the actual fix. Expect ~2x wall-clock time per fixture vs. smoke. With `--max-iterations=1 --fast` the baseline call is typically <2 seconds; total per-fixture overhead is dominated by the remediation run. Pre-computing baselines offline is a future optimization; at 1-2 autonomy fixtures the runtime is acceptable.
+
 Wrap the entire autonomy fixture execution (steps 1-7) in try/finally to guarantee restore:
 ```js
 const snap = snapshotFormalJson();
@@ -287,7 +289,7 @@ If the autonomy fixture fails on this codebase because formal-test-sync.cjs does
   </action>
   <verify>
 node << 'NF_EVAL'
-const d = JSON.parse(require('fs').readFileSync('/Users/jonathanborduas/code/QGSD/.planning/formal/solve-benchmark-fixtures.json', 'utf8'));
+const d = JSON.parse(require('fs').readFileSync('.planning/formal/solve-benchmark-fixtures.json', 'utf8'));
 console.log('smoke fixtures:', d.fixtures.length);
 console.log('autonomy fixtures:', d.autonomy_fixtures ? d.autonomy_fixtures.length : 0);
 if (d.autonomy_fixtures && d.autonomy_fixtures.length > 0) {
@@ -306,7 +308,7 @@ NF_EVAL
 # Verify snapshot/restore works — formal dir files are unchanged after autonomy run
 node << 'NF_EVAL'
 const fs = require('fs');
-const before = fs.readFileSync('/Users/jonathanborduas/code/QGSD/.planning/formal/unit-test-coverage.json', 'utf8');
+const before = fs.readFileSync('.planning/formal/unit-test-coverage.json', 'utf8');
 console.log('ACT-01 covered before:', JSON.parse(before).requirements['ACT-01'].covered);
 NF_EVAL
 # expect: ACT-01 covered before: true (restored to original after any previous run)
