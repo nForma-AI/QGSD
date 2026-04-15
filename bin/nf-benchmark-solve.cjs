@@ -132,8 +132,17 @@ function extractResidual(parsed) {
 }
 
 // Per-layer residual extraction helper
+// nf-solve --json outputs: { residual_vector: { f_to_t: { residual: N, detail: {...} }, total: N, ... } }
 function extractLayerResidual(parsed, layer) {
   if (!parsed || typeof parsed !== 'object') return -1;
+  // Primary format: residual_vector (nf-solve --json output)
+  const rv = parsed.residual_vector;
+  if (rv && typeof rv === 'object' && rv[layer] !== undefined) {
+    const v = rv[layer];
+    if (typeof v === 'object' && v !== null) return typeof v.residual === 'number' ? v.residual : -1;
+    if (typeof v === 'number') return v;
+  }
+  // Legacy format: iterations array
   if (Array.isArray(parsed.iterations) && parsed.iterations.length > 0) {
     const last = parsed.iterations[parsed.iterations.length - 1];
     if (last && last.residuals && typeof last.residuals[layer] === 'object') {
