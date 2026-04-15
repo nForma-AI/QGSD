@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-04-13T22:54:57.757Z",
-  "content_hash": "f74afbc6179f4801",
-  "frozen_at": "2026-04-13T22:54:57.757Z",
+  "aggregated_at": "2026-04-15T11:55:32.827Z",
+  "content_hash": "d03f5e2e06003e39",
+  "frozen_at": "2026-04-15T11:55:32.827Z",
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
   "last_sync": "2026-03-31T09:45:23.686Z",
@@ -5056,6 +5056,21 @@
       "background": "Quick task 397 delivered bin/nf-benchmark-solve.cjs as a repeatable, version-controlled benchmark harness for validating nf:solve's autonomous issue resolution capacity. The fixture set (.planning/formal/solve-benchmark-fixtures.json) defines synthetic test cases covering diverse solver modes.",
       "source_file": ".planning/quick/397-build-a-command-to-run-nf-solve-against-/397-PLAN.md",
       "milestone": "quick-397"
+    },
+    {
+      "id": "SOLVE-12",
+      "text": "The benchmark supports an autonomy track (Track B) that seeds synthetic defects into `.planning/formal/` JSON files, runs nf-solve for remediation, measures residual change via snapshot/restore cycle, and reports per-fixture pass rates.",
+      "category": "Solver-Discovered",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/quick/398-improve-the-benchmark-to-actually-test-n/398-PLAN.md",
+        "milestone": "quick-398"
+      },
+      "formal_models": [],
+      "category_raw": "Solver-Discovered",
+      "background": "Quick task 397 delivered the benchmark harness (SOLVE-11) to measure nf:solve detection capability. Quick task 398 extends this with Track B (autonomy track), which tests whether nf:solve can actually close gaps by seeding a synthetic defect, running full remediation without --report-only, measuring residual reduction, and guaranteeing restoration via try/finally snapshot/restore. This proves autonomous remediation capability beyond detection."
     },
     {
       "id": "SPEC-01",
