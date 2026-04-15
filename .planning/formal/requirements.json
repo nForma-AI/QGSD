@@ -33,9 +33,7 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "formal_models": [
-        ".planning/formal/tla/QGSDActivityTracking.tla"
-      ],
+      "formal_models": [],
       "category_raw": "Activity Tracking"
     },
     {
