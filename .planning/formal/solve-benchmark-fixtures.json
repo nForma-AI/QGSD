@@ -56,5 +56,21 @@
       "max_residual": null,
       "pass_condition": "exits_zero"
     }
+  ],
+  "autonomy_fixtures": [
+    {
+      "id": "seed-f2t-uncover-ACT-01",
+      "label": "Seed f_to_t gap by marking ACT-01 uncovered — verify nf-solve auto-generates stub",
+      "args": ["--json", "--no-timeout", "--max-iterations=1", "--fast"],
+      "seed_mutation": {
+        "type": "set_field",
+        "file": ".planning/formal/unit-test-coverage.json",
+        "field": "requirements.ACT-01",
+        "value": { "covered": false, "test_cases": [] },
+        "target_layer": "f_to_t",
+        "seeded_delta": 1
+      },
+      "pass_condition": "residual_decreased"
+    }
   ]
 }
