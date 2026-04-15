@@ -1,130 +1,130 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-15T20:06:01.809Z",
+  "generated": "2026-04-15T20:10:12.962Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
-      "mtime": "2026-04-15T20:01:50.899Z",
+      "mtime": "2026-04-15T20:10:12.839Z",
       "hash": "496b4503"
     },
     "scope.json:agent-loop": {
-      "mtime": "2026-04-15T20:01:50.899Z",
+      "mtime": "2026-04-15T20:10:12.839Z",
       "hash": "cec2299d"
     },
     "scope.json:breaker": {
-      "mtime": "2026-04-15T20:01:50.899Z",
+      "mtime": "2026-04-15T20:10:12.839Z",
       "hash": "8af7675c"
     },
     "scope.json:convergence": {
-      "mtime": "2026-04-15T20:01:50.899Z",
+      "mtime": "2026-04-15T20:10:12.839Z",
       "hash": "4af11fdd"
     },
     "scope.json:deliberation": {
-      "mtime": "2026-04-15T20:01:50.899Z",
+      "mtime": "2026-04-15T20:10:12.839Z",
       "hash": "8ad85f0e"
     },
     "scope.json:deliberation-revision": {
-      "mtime": "2026-04-15T20:01:50.899Z",
+      "mtime": "2026-04-15T20:10:12.839Z",
       "hash": "b5e414df"
     },
     "scope.json:disttagalignment": {
-      "mtime": "2026-04-15T20:01:50.899Z",
+      "mtime": "2026-04-15T20:10:12.839Z",
       "hash": "ff7b987b"
     },
     "scope.json:formal-proximity-index": {
-      "mtime": "2026-04-15T20:01:50.899Z",
+      "mtime": "2026-04-15T20:10:12.839Z",
       "hash": "1d85bde2"
     },
     "scope.json:installer": {
-      "mtime": "2026-04-15T20:01:50.899Z",
+      "mtime": "2026-04-15T20:10:12.839Z",
       "hash": "7b254fd9"
     },
     "scope.json:mcp-calls": {
-      "mtime": "2026-04-15T20:01:50.899Z",
+      "mtime": "2026-04-15T20:10:12.839Z",
       "hash": "c4479faa"
     },
     "scope.json:oscillation": {
-      "mtime": "2026-04-15T20:01:50.899Z",
+      "mtime": "2026-04-15T20:10:12.839Z",
       "hash": "6318c2f9"
     },
     "scope.json:planningstate": {
-      "mtime": "2026-04-15T20:01:50.899Z",
+      "mtime": "2026-04-15T20:10:12.839Z",
       "hash": "7c1fdd87"
     },
     "scope.json:prefilter": {
-      "mtime": "2026-04-15T20:01:50.899Z",
+      "mtime": "2026-04-15T20:10:12.840Z",
       "hash": "8db746e5"
     },
     "scope.json:quorum": {
-      "mtime": "2026-04-15T20:01:50.900Z",
+      "mtime": "2026-04-15T20:10:12.840Z",
       "hash": "4ca140a7"
     },
     "scope.json:recruiting": {
-      "mtime": "2026-04-15T20:01:50.900Z",
+      "mtime": "2026-04-15T20:10:12.840Z",
       "hash": "1111802b"
     },
     "scope.json:safety": {
-      "mtime": "2026-04-15T20:01:50.900Z",
+      "mtime": "2026-04-15T20:10:12.840Z",
       "hash": "a9b92676"
     },
     "scope.json:sessionpersistence": {
-      "mtime": "2026-04-15T20:01:50.900Z",
+      "mtime": "2026-04-15T20:10:12.840Z",
       "hash": "716f9017"
     },
     "scope.json:solve-convergence": {
-      "mtime": "2026-04-15T20:01:50.900Z",
+      "mtime": "2026-04-15T20:10:12.840Z",
       "hash": "56697a1b"
     },
     "scope.json:stop-hook": {
-      "mtime": "2026-04-15T20:01:50.900Z",
+      "mtime": "2026-04-15T20:10:12.840Z",
       "hash": "c0796108"
     },
     "scope.json:tui-nav": {
-      "mtime": "2026-04-15T20:01:50.900Z",
+      "mtime": "2026-04-15T20:10:12.840Z",
       "hash": "52b50d64"
     },
     "constants-mapping.json": {
-      "mtime": "2026-04-15T20:01:50.859Z",
+      "mtime": "2026-04-15T20:10:12.803Z",
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-04-15T20:01:50.894Z",
+      "mtime": "2026-04-15T20:10:12.836Z",
       "hash": "f3f8d479"
     },
     "invariant-catalog.json": {
-      "mtime": "2026-04-15T20:01:50.897Z",
+      "mtime": "2026-04-15T20:10:12.838Z",
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-04-15T20:01:50.901Z",
+      "mtime": "2026-04-15T20:10:12.841Z",
       "hash": "bc7e05b5"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-04-15T20:01:50.901Z",
+      "mtime": "2026-04-15T20:10:12.841Z",
       "hash": "aa7d48b4"
     },
     "instrumentation-map.json": {
-      "mtime": "2026-04-15T20:01:50.864Z",
+      "mtime": "2026-04-15T20:10:12.807Z",
       "hash": "9e909265"
     },
     "event-vocabulary.json": {
-      "mtime": "2026-04-15T20:01:50.862Z",
+      "mtime": "2026-04-15T20:10:12.806Z",
       "hash": "fa1b7cf9"
     },
     "observed-fsm.json": {
-      "mtime": "2026-04-15T20:01:50.897Z",
+      "mtime": "2026-04-15T20:10:12.838Z",
       "hash": "72435984"
     },
     "risk-heatmap.json": {
-      "mtime": "2026-04-15T20:01:50.895Z",
+      "mtime": "2026-04-15T20:10:12.837Z",
       "hash": "2df5c0d7"
     },
     "git-heatmap.json": {
-      "mtime": "2026-04-15T20:01:50.863Z",
+      "mtime": "2026-04-15T20:10:12.806Z",
       "hash": "43a778a0"
     },
     "debt.json": {
-      "mtime": "2026-04-15T20:01:50.859Z",
+      "mtime": "2026-04-15T20:10:12.803Z",
       "hash": "4f085cf2"
     },
     "source-annotations": {
