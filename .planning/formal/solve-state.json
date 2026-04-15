@@ -1,8 +1,8 @@
 {
-  "last_run": "2026-04-15T21:21:28.982Z",
-  "converged": true,
+  "last_run": "2026-04-15T21:25:41.076Z",
+  "converged": false,
   "iteration_count": 1,
-  "final_residual_total": 88,
+  "final_residual_total": 445,
   "reverse_discovery_total": 17,
   "heatmap_total": 7979,
   "real_impact": {
@@ -23,6 +23,10 @@
     }
   ],
   "known_issues": [
+    {
+      "layer": "r_to_f",
+      "residual": 357
+    },
     {
       "layer": "d_to_c",
       "residual": 88,
