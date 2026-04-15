@@ -6357,50 +6357,6 @@
         "source_file": ".planning/milestones/v0.35-REQUIREMENTS.md",
         "milestone": "unknown"
       }
-    },
-    [
-      {
-        "id": "BENCH-GAP-01",
-        "text": "Gap requirement alpha with no formal coverage",
-        "category": "Benchmark",
-        "tier": "user",
-        "phase": "unknown",
-        "status": "Complete",
-        "provenance": {
-          "source_file": "benchmark",
-          "milestone": "benchmark"
-        },
-        "formal_models": [],
-        "category_raw": "Benchmark"
-      },
-      {
-        "id": "BENCH-GAP-02",
-        "text": "Gap requirement beta with no formal coverage",
-        "category": "Benchmark",
-        "tier": "user",
-        "phase": "unknown",
-        "status": "Complete",
-        "provenance": {
-          "source_file": "benchmark",
-          "milestone": "benchmark"
-        },
-        "formal_models": [],
-        "category_raw": "Benchmark"
-      },
-      {
-        "id": "BENCH-GAP-03",
-        "text": "Gap requirement gamma with no formal coverage",
-        "category": "Benchmark",
-        "tier": "user",
-        "phase": "unknown",
-        "status": "Complete",
-        "provenance": {
-          "source_file": "benchmark",
-          "milestone": "benchmark"
-        },
-        "formal_models": [],
-        "category_raw": "Benchmark"
-      }
-    ]
+    }
   ]
 }
