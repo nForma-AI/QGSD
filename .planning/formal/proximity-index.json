@@ -1,137 +1,137 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-12T21:40:56.167Z",
+  "generated": "2026-04-15T19:36:38.087Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
-      "mtime": "2026-04-12T17:29:36.574Z",
+      "mtime": "2026-04-15T19:36:37.966Z",
       "hash": "496b4503"
     },
     "scope.json:agent-loop": {
-      "mtime": "2026-04-12T17:29:36.575Z",
+      "mtime": "2026-04-15T19:36:37.966Z",
       "hash": "cec2299d"
     },
     "scope.json:breaker": {
-      "mtime": "2026-04-12T17:29:36.575Z",
+      "mtime": "2026-04-15T19:36:37.966Z",
       "hash": "8af7675c"
     },
     "scope.json:convergence": {
-      "mtime": "2026-04-12T17:29:36.575Z",
+      "mtime": "2026-04-15T19:36:37.966Z",
       "hash": "4af11fdd"
     },
     "scope.json:deliberation": {
-      "mtime": "2026-04-12T17:29:36.575Z",
+      "mtime": "2026-04-15T19:36:37.966Z",
       "hash": "8ad85f0e"
     },
     "scope.json:deliberation-revision": {
-      "mtime": "2026-04-12T17:29:36.575Z",
+      "mtime": "2026-04-15T19:36:37.966Z",
       "hash": "b5e414df"
     },
     "scope.json:disttagalignment": {
-      "mtime": "2026-04-12T17:29:36.576Z",
+      "mtime": "2026-04-15T19:36:37.966Z",
       "hash": "ff7b987b"
     },
     "scope.json:formal-proximity-index": {
-      "mtime": "2026-04-12T17:29:36.576Z",
+      "mtime": "2026-04-15T19:36:37.966Z",
       "hash": "1d85bde2"
     },
     "scope.json:installer": {
-      "mtime": "2026-04-12T17:29:36.576Z",
+      "mtime": "2026-04-15T19:36:37.966Z",
       "hash": "7b254fd9"
     },
     "scope.json:mcp-calls": {
-      "mtime": "2026-04-12T17:29:36.576Z",
+      "mtime": "2026-04-15T19:36:37.966Z",
       "hash": "c4479faa"
     },
     "scope.json:oscillation": {
-      "mtime": "2026-04-12T17:29:36.576Z",
+      "mtime": "2026-04-15T19:36:37.966Z",
       "hash": "6318c2f9"
     },
     "scope.json:planningstate": {
-      "mtime": "2026-04-12T17:29:36.577Z",
+      "mtime": "2026-04-15T19:36:37.966Z",
       "hash": "7c1fdd87"
     },
     "scope.json:prefilter": {
-      "mtime": "2026-04-12T17:29:36.577Z",
+      "mtime": "2026-04-15T19:36:37.966Z",
       "hash": "8db746e5"
     },
     "scope.json:quorum": {
-      "mtime": "2026-04-12T17:29:36.577Z",
+      "mtime": "2026-04-15T19:36:37.966Z",
       "hash": "4ca140a7"
     },
     "scope.json:recruiting": {
-      "mtime": "2026-04-12T17:29:36.577Z",
+      "mtime": "2026-04-15T19:36:37.966Z",
       "hash": "1111802b"
     },
     "scope.json:safety": {
-      "mtime": "2026-04-12T17:29:36.577Z",
+      "mtime": "2026-04-15T19:36:37.966Z",
       "hash": "a9b92676"
     },
     "scope.json:sessionpersistence": {
-      "mtime": "2026-04-12T17:29:36.577Z",
+      "mtime": "2026-04-15T19:36:37.966Z",
       "hash": "716f9017"
     },
     "scope.json:solve-convergence": {
-      "mtime": "2026-04-12T17:29:36.577Z",
+      "mtime": "2026-04-15T19:36:37.967Z",
       "hash": "56697a1b"
     },
     "scope.json:stop-hook": {
-      "mtime": "2026-04-12T17:29:36.577Z",
+      "mtime": "2026-04-15T19:36:37.967Z",
       "hash": "c0796108"
     },
     "scope.json:tui-nav": {
-      "mtime": "2026-04-12T17:29:36.577Z",
+      "mtime": "2026-04-15T19:36:37.967Z",
       "hash": "52b50d64"
     },
     "constants-mapping.json": {
-      "mtime": "2026-04-12T17:29:36.498Z",
+      "mtime": "2026-04-15T19:36:37.929Z",
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-04-12T21:15:03.423Z",
-      "hash": "de0320b1"
+      "mtime": "2026-04-15T19:36:37.963Z",
+      "hash": "f3f8d479"
     },
     "invariant-catalog.json": {
-      "mtime": "2026-04-12T17:29:36.571Z",
+      "mtime": "2026-04-15T19:36:37.964Z",
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-04-12T21:11:39.351Z",
-      "hash": "e4e50c04"
+      "mtime": "2026-04-15T19:36:37.968Z",
+      "hash": "bc7e05b5"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-04-12T21:15:22.408Z",
-      "hash": "ecb9aaa9"
+      "mtime": "2026-04-15T19:36:37.968Z",
+      "hash": "aa7d48b4"
     },
     "instrumentation-map.json": {
-      "mtime": "2026-04-12T20:54:38.079Z",
-      "hash": "d4fd2a26"
+      "mtime": "2026-04-15T19:36:37.933Z",
+      "hash": "9e909265"
     },
     "event-vocabulary.json": {
-      "mtime": "2026-04-12T17:29:36.515Z",
+      "mtime": "2026-04-15T19:36:37.932Z",
       "hash": "fa1b7cf9"
     },
     "observed-fsm.json": {
-      "mtime": "2026-04-12T17:29:36.571Z",
+      "mtime": "2026-04-15T19:36:37.965Z",
       "hash": "72435984"
     },
     "risk-heatmap.json": {
-      "mtime": "2026-04-12T17:29:36.570Z",
+      "mtime": "2026-04-15T19:36:37.964Z",
       "hash": "2df5c0d7"
     },
     "git-heatmap.json": {
-      "mtime": "2026-04-12T21:08:59.555Z",
-      "hash": "15cd04b0"
+      "mtime": "2026-04-15T19:36:37.932Z",
+      "hash": "43a778a0"
     },
     "debt.json": {
-      "mtime": "2026-04-12T17:29:36.499Z",
+      "mtime": "2026-04-15T19:36:37.929Z",
       "hash": "4f085cf2"
     },
     "source-annotations": {
-      "mtime": "2026-04-12T21:14:49.843Z"
+      "mtime": "2026-04-15T19:35:02.128Z"
     },
     "code-source-annotations": {
-      "mtime": "2026-04-12T20:49:59.310Z"
+      "mtime": "2026-04-15T19:35:32.588Z"
     }
   },
   "nodes": {
@@ -728,17 +728,17 @@
           "source": "scope.json"
         },
         {
-          "to": "code_line::hooks/nf-prompt.js:733",
+          "to": "code_line::hooks/nf-prompt.js:713",
           "rel": "contains",
           "source": "instrumentation-map"
         },
         {
-          "to": "code_line::hooks/nf-prompt.js:823",
+          "to": "code_line::hooks/nf-prompt.js:803",
           "rel": "contains",
           "source": "instrumentation-map"
         },
         {
-          "to": "code_line::hooks/nf-prompt.js:1072",
+          "to": "code_line::hooks/nf-prompt.js:1030",
           "rel": "contains",
           "source": "instrumentation-map"
         }
@@ -13516,9 +13516,7 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ],
-      "source_layer": "L3",
-      "gate_maturity": "SOFT_GATE"
+      ]
     },
     "formal_model::.planning/formal/alloy/readme-structure.als": {
       "type": "formal_model",
@@ -14707,6 +14705,11 @@
           "to": "invariant::CategoriesMutuallyExclusive",
           "rel": "verified_by",
           "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/SOLVE-11.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         },
         {
           "to": "formal_model::.planning/formal/alloy/result-classification.als",
@@ -20989,9 +20992,7 @@
     "formal_model::.planning/formal/prism/quorum.pm": {
       "type": "formal_model",
       "id": ".planning/formal/prism/quorum.pm",
-      "edges": [],
-      "source_layer": "L3",
-      "gate_maturity": "SOFT_GATE"
+      "edges": []
     },
     "formal_model::.planning/formal/tla/NFAccountManager.tla": {
       "type": "formal_model",
@@ -22446,9 +22447,7 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ],
-      "source_layer": "L3",
-      "gate_maturity": "SOFT_GATE"
+      ]
     },
     "formal_model::.planning/formal/tla/NFQuorum_xstate.tla": {
       "type": "formal_model",
@@ -22459,9 +22458,7 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ],
-      "source_layer": "L3",
-      "gate_maturity": "SOFT_GATE"
+      ]
     },
     "formal_model::.planning/formal/tla/NFReasoning.tla": {
       "type": "formal_model",
@@ -29986,11 +29983,6 @@
         {
           "to": "formal_model::.planning/formal/alloy/debug-integration.als",
           "rel": "modeled_by",
-          "source": "model-registry"
-        },
-        {
-          "to": "formal_model::.planning/formal/alloy/debug-integration.als",
-          "rel": "modeled_by",
           "source": "source-annotation"
         }
       ]
@@ -30001,11 +29993,6 @@
       "edges": [
         {
           "to": "formal_model::.planning/formal/tla/BugModelLookup.tla",
-          "rel": "modeled_by",
-          "source": "model-registry"
-        },
-        {
-          "to": "formal_model::.planning/formal/alloy/debug-integration.als",
           "rel": "modeled_by",
           "source": "model-registry"
         },
@@ -30028,11 +30015,6 @@
         {
           "to": "formal_model::.planning/formal/alloy/debug-integration.als",
           "rel": "modeled_by",
-          "source": "model-registry"
-        },
-        {
-          "to": "formal_model::.planning/formal/alloy/debug-integration.als",
-          "rel": "modeled_by",
           "source": "source-annotation"
         }
       ]
@@ -30043,11 +30025,6 @@
       "edges": [
         {
           "to": "formal_model::.planning/formal/tla/BugModelLookup.tla",
-          "rel": "modeled_by",
-          "source": "model-registry"
-        },
-        {
-          "to": "formal_model::.planning/formal/alloy/debug-integration.als",
           "rel": "modeled_by",
           "source": "model-registry"
         },
@@ -30070,11 +30047,6 @@
         {
           "to": "formal_model::.planning/formal/alloy/debug-workflow.als",
           "rel": "modeled_by",
-          "source": "model-registry"
-        },
-        {
-          "to": "formal_model::.planning/formal/alloy/debug-workflow.als",
-          "rel": "modeled_by",
           "source": "source-annotation"
         }
       ]
@@ -30085,11 +30057,6 @@
       "edges": [
         {
           "to": "formal_model::.planning/formal/tla/BugModelLookup.tla",
-          "rel": "modeled_by",
-          "source": "model-registry"
-        },
-        {
-          "to": "formal_model::.planning/formal/alloy/debug-workflow.als",
           "rel": "modeled_by",
           "source": "model-registry"
         },
@@ -30112,11 +30079,6 @@
         {
           "to": "formal_model::.planning/formal/alloy/debug-workflow.als",
           "rel": "modeled_by",
-          "source": "model-registry"
-        },
-        {
-          "to": "formal_model::.planning/formal/alloy/debug-workflow.als",
-          "rel": "modeled_by",
           "source": "source-annotation"
         }
       ]
@@ -30127,11 +30089,6 @@
       "edges": [
         {
           "to": "formal_model::.planning/formal/tla/BugModelLookup.tla",
-          "rel": "modeled_by",
-          "source": "model-registry"
-        },
-        {
-          "to": "formal_model::.planning/formal/alloy/debug-workflow.als",
           "rel": "modeled_by",
           "source": "model-registry"
         },
@@ -30154,11 +30111,6 @@
         {
           "to": "formal_model::.planning/formal/alloy/model-refinement.als",
           "rel": "modeled_by",
-          "source": "model-registry"
-        },
-        {
-          "to": "formal_model::.planning/formal/alloy/model-refinement.als",
-          "rel": "modeled_by",
           "source": "source-annotation"
         }
       ]
@@ -30175,11 +30127,6 @@
         {
           "to": "formal_model::.planning/formal/alloy/model-refinement.als",
           "rel": "modeled_by",
-          "source": "model-registry"
-        },
-        {
-          "to": "formal_model::.planning/formal/alloy/model-refinement.als",
-          "rel": "modeled_by",
           "source": "source-annotation"
         }
       ]
@@ -30190,11 +30137,6 @@
       "edges": [
         {
           "to": "formal_model::.planning/formal/tla/BugModelLookup.tla",
-          "rel": "modeled_by",
-          "source": "model-registry"
-        },
-        {
-          "to": "formal_model::.planning/formal/alloy/model-refinement.als",
           "rel": "modeled_by",
           "source": "model-registry"
         },
@@ -32483,11 +32425,6 @@
         {
           "to": "formal_model::.planning/formal/alloy/model-refinement.als",
           "rel": "modeled_by",
-          "source": "model-registry"
-        },
-        {
-          "to": "formal_model::.planning/formal/alloy/model-refinement.als",
-          "rel": "modeled_by",
           "source": "source-annotation"
         },
         {
@@ -33672,150 +33609,6 @@
           "source": "source-annotation"
         }
       ]
-    },
-    "formal_model::.planning/formal/alloy/debug-integration.als": {
-      "type": "formal_model",
-      "id": ".planning/formal/alloy/debug-integration.als",
-      "edges": [
-        {
-          "to": "requirement::DBG-01",
-          "rel": "models",
-          "source": "model-registry"
-        },
-        {
-          "to": "requirement::DBG-01",
-          "rel": "models",
-          "source": "source-annotation"
-        },
-        {
-          "to": "requirement::DBG-02",
-          "rel": "models",
-          "source": "model-registry"
-        },
-        {
-          "to": "requirement::DBG-02",
-          "rel": "models",
-          "source": "source-annotation"
-        },
-        {
-          "to": "requirement::DBG-03",
-          "rel": "models",
-          "source": "model-registry"
-        },
-        {
-          "to": "requirement::DBG-03",
-          "rel": "models",
-          "source": "source-annotation"
-        },
-        {
-          "to": "requirement::DBG-04",
-          "rel": "models",
-          "source": "model-registry"
-        },
-        {
-          "to": "requirement::DBG-04",
-          "rel": "models",
-          "source": "source-annotation"
-        }
-      ],
-      "source_layer": "L3",
-      "gate_maturity": "SOFT_GATE"
-    },
-    "formal_model::.planning/formal/alloy/debug-workflow.als": {
-      "type": "formal_model",
-      "id": ".planning/formal/alloy/debug-workflow.als",
-      "edges": [
-        {
-          "to": "requirement::DBUG-01",
-          "rel": "models",
-          "source": "model-registry"
-        },
-        {
-          "to": "requirement::DBUG-01",
-          "rel": "models",
-          "source": "source-annotation"
-        },
-        {
-          "to": "requirement::DBUG-02",
-          "rel": "models",
-          "source": "model-registry"
-        },
-        {
-          "to": "requirement::DBUG-02",
-          "rel": "models",
-          "source": "source-annotation"
-        },
-        {
-          "to": "requirement::DBUG-03",
-          "rel": "models",
-          "source": "model-registry"
-        },
-        {
-          "to": "requirement::DBUG-03",
-          "rel": "models",
-          "source": "source-annotation"
-        },
-        {
-          "to": "requirement::DBUG-04",
-          "rel": "models",
-          "source": "model-registry"
-        },
-        {
-          "to": "requirement::DBUG-04",
-          "rel": "models",
-          "source": "source-annotation"
-        }
-      ],
-      "source_layer": "L3",
-      "gate_maturity": "SOFT_GATE"
-    },
-    "formal_model::.planning/formal/alloy/model-refinement.als": {
-      "type": "formal_model",
-      "id": ".planning/formal/alloy/model-refinement.als",
-      "edges": [
-        {
-          "to": "requirement::MRF-01",
-          "rel": "models",
-          "source": "model-registry"
-        },
-        {
-          "to": "requirement::MRF-01",
-          "rel": "models",
-          "source": "source-annotation"
-        },
-        {
-          "to": "requirement::MRF-02",
-          "rel": "models",
-          "source": "model-registry"
-        },
-        {
-          "to": "requirement::MRF-02",
-          "rel": "models",
-          "source": "source-annotation"
-        },
-        {
-          "to": "requirement::MRF-03",
-          "rel": "models",
-          "source": "model-registry"
-        },
-        {
-          "to": "requirement::MRF-03",
-          "rel": "models",
-          "source": "source-annotation"
-        },
-        {
-          "to": "requirement::SIM-04",
-          "rel": "models",
-          "source": "model-registry"
-        },
-        {
-          "to": "requirement::SIM-04",
-          "rel": "models",
-          "source": "source-annotation"
-        }
-      ],
-      "source_layer": "L3",
-      "gate_maturity": "SOFT_GATE"
     },
     "invariant::TypeOK@MCAgentLoop": {
       "type": "invariant",
@@ -56633,6 +56426,17 @@
         }
       ]
     },
+    "test_file::.planning/formal/generated-stubs/SOLVE-11.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SOLVE-11.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SOLVE-11",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
     "test_file::.planning/formal/generated-stubs/SPEC-01.stub.test.js": {
       "type": "test_file",
       "id": ".planning/formal/generated-stubs/SPEC-01.stub.test.js",
@@ -57612,9 +57416,9 @@
         }
       ]
     },
-    "code_line::hooks/nf-prompt.js:733": {
+    "code_line::hooks/nf-prompt.js:713": {
       "type": "code_line",
-      "id": "hooks/nf-prompt.js:733",
+      "id": "hooks/nf-prompt.js:713",
       "edges": [
         {
           "to": "formal_action::cache_hit",
@@ -57633,15 +57437,15 @@
       "id": "cache_hit",
       "edges": [
         {
-          "to": "code_line::hooks/nf-prompt.js:733",
+          "to": "code_line::hooks/nf-prompt.js:713",
           "rel": "emitted_by",
           "source": "instrumentation-map"
         }
       ]
     },
-    "code_line::hooks/nf-prompt.js:823": {
+    "code_line::hooks/nf-prompt.js:803": {
       "type": "code_line",
-      "id": "hooks/nf-prompt.js:823",
+      "id": "hooks/nf-prompt.js:803",
       "edges": [
         {
           "to": "formal_action::quorum_fallback_t1_required",
@@ -57665,15 +57469,15 @@
           "source": "event-vocabulary"
         },
         {
-          "to": "code_line::hooks/nf-prompt.js:823",
+          "to": "code_line::hooks/nf-prompt.js:803",
           "rel": "emitted_by",
           "source": "instrumentation-map"
         }
       ]
     },
-    "code_line::hooks/nf-prompt.js:1072": {
+    "code_line::hooks/nf-prompt.js:1030": {
       "type": "code_line",
-      "id": "hooks/nf-prompt.js:1072",
+      "id": "hooks/nf-prompt.js:1030",
       "edges": [
         {
           "to": "formal_action::quorum_start",
@@ -57697,7 +57501,7 @@
           "source": "event-vocabulary"
         },
         {
-          "to": "code_line::hooks/nf-prompt.js:1072",
+          "to": "code_line::hooks/nf-prompt.js:1030",
           "rel": "emitted_by",
           "source": "instrumentation-map"
         }
@@ -58416,6 +58220,84 @@
       ],
       "risk_score": 32,
       "risk_tier": "low"
+    },
+    "formal_model::.planning/formal/alloy/debug-integration.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/debug-integration.als",
+      "edges": [
+        {
+          "to": "requirement::DBG-01",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::DBG-02",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::DBG-03",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::DBG-04",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/alloy/debug-workflow.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/debug-workflow.als",
+      "edges": [
+        {
+          "to": "requirement::DBUG-01",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::DBUG-02",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::DBUG-03",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::DBUG-04",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/alloy/model-refinement.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/model-refinement.als",
+      "edges": [
+        {
+          "to": "requirement::MRF-01",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::MRF-02",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::MRF-03",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::SIM-04",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
     },
     "formal_model::.planning/formal/alloy/nf-sync-invariants.als": {
       "type": "formal_model",

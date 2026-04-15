@@ -1,10 +1,409 @@
 {
-  "generated": "2026-04-12T21:40:58.689Z",
+  "generated": "2026-04-15T19:36:40.554Z",
   "total_claims_checked": 188,
   "doc_files_scanned": 8,
-  "raw_broken_count": 0,
-  "weighted_residual": 0,
-  "suppressed_fp_count": 54,
-  "category_breakdown": {},
-  "broken_claims": []
+  "raw_broken_count": 44,
+  "weighted_residual": 88,
+  "suppressed_fp_count": 4,
+  "category_breakdown": {
+    "user": 44
+  },
+  "broken_claims": [
+    {
+      "doc_file": "README.md",
+      "line": 964,
+      "type": "dependency",
+      "value": "api-and-interface-design",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "README.md",
+      "line": 965,
+      "type": "dependency",
+      "value": "deprecation-and-migration",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/USER-GUIDE.md",
+      "line": 362,
+      "type": "dependency",
+      "value": "api-and-interface-design",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/USER-GUIDE.md",
+      "line": 363,
+      "type": "dependency",
+      "value": "deprecation-and-migration",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 69,
+      "type": "dependency",
+      "value": "spec-driven-development",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 69,
+      "type": "dependency",
+      "value": "documentation-and-adrs",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 69,
+      "type": "dependency",
+      "value": "api-and-interface-design",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 70,
+      "type": "dependency",
+      "value": "incremental-implementation",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 70,
+      "type": "dependency",
+      "value": "test-driven-development",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 70,
+      "type": "dependency",
+      "value": "frontend-ui-engineering",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 70,
+      "type": "dependency",
+      "value": "code-simplification",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 71,
+      "type": "dependency",
+      "value": "git-workflow-and-versioning",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 71,
+      "type": "dependency",
+      "value": "ci-cd-and-automation",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 71,
+      "type": "dependency",
+      "value": "deprecation-and-migration",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 72,
+      "type": "dependency",
+      "value": "browser-testing-with-devtools",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 72,
+      "type": "dependency",
+      "value": "security-and-hardening",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 73,
+      "type": "dependency",
+      "value": "performance-optimization",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 109,
+      "type": "dependency",
+      "value": "test-driven-development",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 110,
+      "type": "dependency",
+      "value": "performance-optimization",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 111,
+      "type": "dependency",
+      "value": "code-simplification",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 112,
+      "type": "dependency",
+      "value": "frontend-ui-engineering",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 113,
+      "type": "dependency",
+      "value": "browser-testing-with-devtools",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 114,
+      "type": "dependency",
+      "value": "spec-driven-development",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 115,
+      "type": "dependency",
+      "value": "incremental-implementation",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 116,
+      "type": "dependency",
+      "value": "git-workflow-and-versioning",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 117,
+      "type": "dependency",
+      "value": "ci-cd-and-automation",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 118,
+      "type": "dependency",
+      "value": "documentation-and-adrs",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 119,
+      "type": "dependency",
+      "value": "security-and-hardening",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 120,
+      "type": "dependency",
+      "value": "api-and-interface-design",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 127,
+      "type": "dependency",
+      "value": "nf-planner",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 127,
+      "type": "dependency",
+      "value": "nf-plan-checker",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 128,
+      "type": "dependency",
+      "value": "nf-executor",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 128,
+      "type": "dependency",
+      "value": "nf-verifier",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 139,
+      "type": "dependency",
+      "value": "planning-and-task-breakdown",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 139,
+      "type": "dependency",
+      "value": "context-engineering",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": 139,
+      "type": "dependency",
+      "value": "using-agent-skills",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/coderlm-integration.md",
+      "line": 144,
+      "type": "dependency",
+      "value": "coderlm-darwin-arm64",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/coderlm-integration.md",
+      "line": 145,
+      "type": "dependency",
+      "value": "coderlm-darwin-x64",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/coderlm-integration.md",
+      "line": 146,
+      "type": "dependency",
+      "value": "coderlm-linux-x64",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/coderlm-integration.md",
+      "line": 147,
+      "type": "dependency",
+      "value": "coderlm-linux-arm64",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/coderlm-integration.md",
+      "line": 404,
+      "type": "dependency",
+      "value": "coderlm-darwin-arm64",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/coderlm-integration.md",
+      "line": 405,
+      "type": "dependency",
+      "value": "coderlm-darwin-x64",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/coderlm-integration.md",
+      "line": 406,
+      "type": "dependency",
+      "value": "coderlm-linux-x64",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/coderlm-integration.md",
+      "line": 407,
+      "type": "dependency",
+      "value": "coderlm-linux-arm64",
+      "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    }
+  ]
 }
