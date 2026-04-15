@@ -24,7 +24,9 @@ const { spawnSync } = require('child_process');
 // ─────────────────────────────────────────────────────────────────────────────
 
 const ROOT = process.cwd();
-const DEFAULT_FIXTURE_PATH = path.join(ROOT, '.planning', 'formal', 'solve-benchmark-fixtures.json');
+// Fixture file lives alongside the runner in bin/ — away from .planning/formal/
+// which is managed by nf-solve and gets overwritten on every solver run.
+const DEFAULT_FIXTURE_PATH = path.join(__dirname, 'solve-benchmark-fixtures.json');
 const SOLVE_SCRIPT = path.join(__dirname, 'nf-solve.cjs');
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -187,12 +189,6 @@ function evaluatePassCondition(fixture, spawnResult, parsed, residual) {
 
 const FORMAL_DIR = path.join(ROOT, '.planning', 'formal');
 
-// Files that are benchmark config, not formal artifacts — exclude from snapshot/restore
-// so the benchmark cannot clobber its own fixture list mid-run.
-const SNAPSHOT_EXCLUDE = new Set([
-  path.join(FORMAL_DIR, 'solve-benchmark-fixtures.json'),
-]);
-
 function snapshotFormalJson() {
   // Capture all .json files in .planning/formal/ (non-recursive — top-level only)
   const snap = {};
@@ -201,7 +197,6 @@ function snapshotFormalJson() {
     for (const entry of entries) {
       if (!entry.endsWith('.json')) continue;
       const fullPath = path.join(FORMAL_DIR, entry);
-      if (SNAPSHOT_EXCLUDE.has(fullPath)) continue;
       try {
         snap[fullPath] = fs.readFileSync(fullPath, 'utf8');
       } catch (_) { /* skip unreadable files fail-open */ }
