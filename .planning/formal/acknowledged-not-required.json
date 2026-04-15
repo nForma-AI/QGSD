@@ -830,6 +830,69 @@
       "reason": "quorum-no-consensus (all slots UNAVAIL — infrastructure failure)",
       "acknowledged_at": "2026-04-10T15:38:12.232Z",
       "note": "Revisit: tests solve baseline checking — likely needs a SOLVE-* requirement"
+    },
+    {
+      "file_or_claim": "bin/coderlm-adapter.cjs",
+      "source_scanners": [
+        "C→R",
+        "T→R"
+      ],
+      "evidence": "bin/coderlm-adapter.cjs + bin/coderlm-adapter.test.cjs",
+      "reason": "quorum-no-consensus (external slots unavailable/stalled during solve iteration 1)",
+      "shelved_at": "2026-04-12T14:44:52.083Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "bin/coderlm-cache.cjs",
+      "source_scanners": [
+        "C→R",
+        "T→R"
+      ],
+      "evidence": "bin/coderlm-cache.cjs + bin/coderlm-cache.test.cjs",
+      "reason": "quorum-no-consensus (external slots unavailable/stalled during solve iteration 1)",
+      "shelved_at": "2026-04-12T14:44:52.083Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "bin/coderlm-lifecycle.cjs",
+      "source_scanners": [
+        "C→R",
+        "T→R"
+      ],
+      "evidence": "bin/coderlm-lifecycle.cjs + bin/coderlm-lifecycle.test.cjs",
+      "reason": "quorum-no-consensus (external slots unavailable/stalled during solve iteration 1)",
+      "shelved_at": "2026-04-12T14:44:52.083Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "README.md:702 — /nf:solve pipeline handles it end-to-end",
+      "source_scanners": [
+        "D→R"
+      ],
+      "evidence": "README.md:702",
+      "reason": "quorum-no-consensus (external slots unavailable/stalled during solve iteration 1)",
+      "shelved_at": "2026-04-12T14:44:52.083Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "docs/USER-GUIDE.md:291 — nForma provides commands for the full project lifecycle",
+      "source_scanners": [
+        "D→R"
+      ],
+      "evidence": "docs/USER-GUIDE.md:291",
+      "reason": "quorum-no-consensus (external slots unavailable/stalled during solve iteration 1)",
+      "shelved_at": "2026-04-12T14:44:52.083Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "docs/coderlm-integration.md:74 — Run nf:solve (coderlm auto-detects the running server)",
+      "source_scanners": [
+        "D→R"
+      ],
+      "evidence": "docs/coderlm-integration.md:74",
+      "reason": "quorum-no-consensus (external slots unavailable/stalled during solve iteration 1)",
+      "shelved_at": "2026-04-12T14:44:52.083Z",
+      "iteration": 1
     }
   ]
 }

@@ -19,7 +19,9 @@ function readStore() {
 
 function writeStore(store) {
   fs.mkdirSync(path.dirname(SECRETS_PATH), { recursive: true });
-  fs.writeFileSync(SECRETS_PATH, JSON.stringify(store, null, 2));
+  const tmpPath = SECRETS_PATH + '.tmp';
+  fs.writeFileSync(tmpPath, JSON.stringify(store, null, 2), { mode: 0o600 });
+  fs.renameSync(tmpPath, SECRETS_PATH);
 }
 
 // Check if a key exists — reads local JSON store
@@ -121,7 +123,7 @@ async function syncToClaudeJson(_service) {
 
   if (patched > 0) {
     const tmpPath = claudeJsonPath + '.tmp';
-    fs.writeFileSync(tmpPath, JSON.stringify(claudeJson, null, 2));
+    fs.writeFileSync(tmpPath, JSON.stringify(claudeJson, null, 2), { mode: 0o600 });
     fs.renameSync(tmpPath, claudeJsonPath);
   }
 }
@@ -161,7 +163,7 @@ function patchClaudeJsonForKey(envKey, value) {
   }
 
   if (patched > 0) {
-    fs.writeFileSync(tmpPath, JSON.stringify(claudeJson, null, 2));
+    fs.writeFileSync(tmpPath, JSON.stringify(claudeJson, null, 2), { mode: 0o600 });
     fs.renameSync(tmpPath, claudeJsonPath);
   }
 }
@@ -195,7 +197,7 @@ function patchCcrConfigForKey(envKey, value) {
 
   if (patched > 0) {
     const tmpPath = configPath + '.tmp';
-    fs.writeFileSync(tmpPath, JSON.stringify(config, null, 2));
+    fs.writeFileSync(tmpPath, JSON.stringify(config, null, 2), { mode: 0o600 });
     fs.renameSync(tmpPath, configPath);
   }
 }

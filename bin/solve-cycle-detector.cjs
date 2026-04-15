@@ -31,11 +31,12 @@ function detectCycles(history) {
   for (const [layer, values] of Object.entries(history)) {
     if (!Array.isArray(values) || values.length < 4) continue;
 
-    // Check for A-B-A-B pattern: values[2]===values[0] AND values[3]===values[1]
+    // Check for A-B-A-B pattern: values[i]===values[i-2] AND values[i+1]===values[i-1]
     // spanning any consecutive 4-point window
     let found = false;
     for (let i = 2; i < values.length - 1; i++) {
-      if (values[i] === values[i - 2] && values[i + 1] === values[i - 1]) {
+      // Require that the "alternating" values are actually different (A !== B)
+      if (values[i] === values[i - 2] && values[i + 1] === values[i - 1] && values[i] !== values[i - 1]) {
         found = true;
         break;
       }
@@ -57,7 +58,10 @@ function detectCycles(history) {
  * @returns {string} SHA-256 hex digest (first 16 chars)
  */
 function hashState(perLayerResiduals) {
-  // Sort keys for deterministic hashing
+  if (!perLayerResiduals || typeof perLayerResiduals !== 'object') {
+    return crypto.createHash('sha256').update('empty').digest('hex').slice(0, 16);
+  }
+
   const sorted = Object.keys(perLayerResiduals).sort();
   const values = sorted.map(k => `${k}:${perLayerResiduals[k]}`).join('|');
   return crypto.createHash('sha256').update(values).digest('hex').slice(0, 16);
@@ -80,7 +84,11 @@ function detectStateCycles(stateHashes) {
   // Check for cycles of length K = 2, 3, 4
   for (const K of [2, 3, 4]) {
     if (latest >= K && stateHashes[latest] === stateHashes[latest - K]) {
-      // Verify it's a real cycle (not a one-off match) by checking one more period back
+      // Ensure the cycle involves at least 2 distinct states
+      const cycleWindow = stateHashes.slice(latest - K + 1, latest + 1);
+      const uniqueInCycle = new Set(cycleWindow);
+      if (uniqueInCycle.size < 2) continue; // constant state is not a cycle
+
       if (latest >= 2 * K && stateHashes[latest - K] === stateHashes[latest - 2 * K]) {
         return { detected: true, cycle_length: K };
       }
@@ -146,16 +154,21 @@ class CycleDetector {
   record(iteration, perLayerResiduals) {
     if (!perLayerResiduals || typeof perLayerResiduals !== 'object') return;
 
+    // Filter to numeric values only (consistent between history and hash)
+    const numericResiduals = {};
     for (const [layer, value] of Object.entries(perLayerResiduals)) {
       if (typeof value !== 'number') continue;
+      numericResiduals[layer] = value;
+
+      // Record in history
       if (!this.history[layer]) {
         this.history[layer] = [];
       }
       this.history[layer].push(value);
     }
 
-    // Record state hash for N-cycle detection
-    this.stateHashes.push(hashState(perLayerResiduals));
+    // Record state hash for N-cycle detection (use same filtered data as history)
+    this.stateHashes.push(hashState(numericResiduals));
   }
 
   /**
@@ -181,10 +194,11 @@ class CycleDetector {
    *
    * @returns {{ layer: string, bounces: number }[]} layers exceeding bounce threshold
    */
-  getBlockedLayers() {
+  getBlockedLayers(windowSize = 20) {
     const blocked = [];
     for (const [layer, values] of Object.entries(this.history)) {
-      const bounces = countBounces(values);
+      const recent = values.slice(-windowSize);
+      const bounces = countBounces(recent);
       if (bounces >= this.bounceThreshold) {
         blocked.push({ layer, bounces });
       }
@@ -212,3 +226,8 @@ class CycleDetector {
 }
 
 module.exports = { CycleDetector, detectCycles, detectStateCycles, hashState, countBounces };
+
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark

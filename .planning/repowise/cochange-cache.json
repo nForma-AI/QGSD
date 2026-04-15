@@ -1,6 +1,24 @@
 {
   "pairs": [
     {
+      "file1": "test/golden/tui-config.txt",
+      "file2": "test/golden/tui-reqs.txt",
+      "shared_commits": 24.625,
+      "coupling_degree": 1
+    },
+    {
+      "file1": "test/golden/tui-config.txt",
+      "file2": "test/golden/tui-sessions.txt",
+      "shared_commits": 23.625,
+      "coupling_degree": 1
+    },
+    {
+      "file1": "test/golden/tui-reqs.txt",
+      "file2": "test/golden/tui-sessions.txt",
+      "shared_commits": 23.625,
+      "coupling_degree": 1
+    },
+    {
       "file1": "core/workflows/plan-phase.md",
       "file2": "core/workflows/quick.md",
       "shared_commits": 7.709,
@@ -247,24 +265,6 @@
       "coupling_degree": 1
     },
     {
-      "file1": "test/golden/tui-config.txt",
-      "file2": "test/golden/tui-reqs.txt",
-      "shared_commits": 18.625,
-      "coupling_degree": 1
-    },
-    {
-      "file1": "test/golden/tui-config.txt",
-      "file2": "test/golden/tui-sessions.txt",
-      "shared_commits": 17.625,
-      "coupling_degree": 1
-    },
-    {
-      "file1": "test/golden/tui-reqs.txt",
-      "file2": "test/golden/tui-sessions.txt",
-      "shared_commits": 17.625,
-      "coupling_degree": 1
-    },
-    {
       "file1": "hooks/nf-session-start.js",
       "file2": "hooks/nf-session-start.test.js",
       "shared_commits": 3,
@@ -286,12 +286,6 @@
       "file1": "commands/nf/close-formal-gaps.md",
       "file2": "core/workflows/close-formal-gaps.md",
       "shared_commits": 4.636,
-      "coupling_degree": 1
-    },
-    {
-      "file1": "bin/coderlm-adapter.cjs",
-      "file2": "bin/nf-solve.cjs",
-      "shared_commits": 5,
       "coupling_degree": 1
     },
     {
@@ -10717,28 +10711,16 @@
       "coupling_degree": 1
     },
     {
-      "file1": "test/golden/tui-agents.txt",
-      "file2": "test/golden/tui-reqs.txt",
-      "shared_commits": 30.067,
-      "coupling_degree": 0.968
-    },
-    {
       "file1": "docs/assets/terminal.svg",
       "file2": "package.json",
-      "shared_commits": 35.625,
-      "coupling_degree": 0.947
+      "shared_commits": 36.625,
+      "coupling_degree": 0.948
     },
     {
       "file1": "test/golden/tui-agents.txt",
-      "file2": "test/golden/tui-config.txt",
-      "shared_commits": 17.625,
+      "file2": "test/golden/tui-reqs.txt",
+      "shared_commits": 35.067,
       "coupling_degree": 0.946
-    },
-    {
-      "file1": "test/golden/tui-agents.txt",
-      "file2": "test/golden/tui-sessions.txt",
-      "shared_commits": 16.625,
-      "coupling_degree": 0.943
     },
     {
       "file1": "package.json",
@@ -10757,6 +10739,18 @@
       "file2": "commands/qgsd/solve.md",
       "shared_commits": 3,
       "coupling_degree": 0.94
+    },
+    {
+      "file1": "test/golden/tui-agents.txt",
+      "file2": "test/golden/tui-config.txt",
+      "shared_commits": 22.625,
+      "coupling_degree": 0.919
+    },
+    {
+      "file1": "test/golden/tui-agents.txt",
+      "file2": "test/golden/tui-sessions.txt",
+      "shared_commits": 21.625,
+      "coupling_degree": 0.915
     },
     {
       "file1": "get-shit-done/references/planning-config.md",
@@ -10883,6 +10877,12 @@
       "file2": "hooks/nf-token-collector.js",
       "shared_commits": 3,
       "coupling_degree": 0.861
+    },
+    {
+      "file1": "bin/coderlm-adapter.cjs",
+      "file2": "bin/nf-solve.cjs",
+      "shared_commits": 6,
+      "coupling_degree": 0.857
     },
     {
       "file1": "bin/run-account-manager-tlc.cjs",
@@ -11215,6 +11215,18 @@
       "coupling_degree": 0.828
     },
     {
+      "file1": "bin/solution-simulation-loop.cjs",
+      "file2": "bin/solution-simulation-loop.test.cjs",
+      "shared_commits": 4.625,
+      "coupling_degree": 0.822
+    },
+    {
+      "file1": "bin/nf-solve.cjs",
+      "file2": "bin/nf-solve.test.cjs",
+      "shared_commits": 13.442,
+      "coupling_degree": 0.818
+    },
+    {
       "file1": "bin/run-account-manager-tlc.cjs",
       "file2": "bin/run-breaker-tlc.cjs",
       "shared_commits": 8.946,
@@ -11453,12 +11465,6 @@
       "file2": "get-shit-done/workflows/verify-work.md",
       "shared_commits": 7.639,
       "coupling_degree": 0.793
-    },
-    {
-      "file1": "bin/nf-solve.cjs",
-      "file2": "bin/nf-solve.test.cjs",
-      "shared_commits": 11.442,
-      "coupling_degree": 0.792
     },
     {
       "file1": "agents/qgsd-quorum-orchestrator.md",
@@ -12457,12 +12463,6 @@
       "coupling_degree": 0.714
     },
     {
-      "file1": "CHANGELOG.md",
-      "file2": "docs/assets/terminal.svg",
-      "shared_commits": 26.625,
-      "coupling_degree": 0.708
-    },
-    {
       "file1": "get-shit-done/workflows/add-todo.md",
       "file2": "get-shit-done/workflows/complete-milestone.md",
       "shared_commits": 9.613,
@@ -12875,6 +12875,12 @@
       "file2": "commands/gsd/help.md",
       "shared_commits": 29,
       "coupling_degree": 0.69
+    },
+    {
+      "file1": "CHANGELOG.md",
+      "file2": "docs/assets/terminal.svg",
+      "shared_commits": 26.625,
+      "coupling_degree": 0.689
     },
     {
       "file1": "get-shit-done/references/planning-config.md",
@@ -14743,6 +14749,12 @@
       "coupling_degree": 0.607
     },
     {
+      "file1": "commands/nf/solve-remediate.md",
+      "file2": "commands/nf/solve.md",
+      "shared_commits": 8.442,
+      "coupling_degree": 0.606
+    },
+    {
       "file1": "hooks/nf-prompt.js",
       "file2": "hooks/nf-stop.js",
       "shared_commits": 4.588,
@@ -16019,12 +16031,6 @@
       "file2": "bin/run-breaker-tlc.cjs",
       "shared_commits": 5.946,
       "coupling_degree": 0.543
-    },
-    {
-      "file1": "commands/nf/solve-remediate.md",
-      "file2": "commands/nf/solve.md",
-      "shared_commits": 6.442,
-      "coupling_degree": 0.54
     },
     {
       "file1": "get-shit-done/workflows/execute-phase.md",
@@ -21763,6 +21769,12 @@
       "coupling_degree": 0.33
     },
     {
+      "file1": "bin/nf-solve.cjs",
+      "file2": "commands/nf/solve.md",
+      "shared_commits": 8.442,
+      "coupling_degree": 0.329
+    },
+    {
       "file1": "get-shit-done/workflows/complete-milestone.md",
       "file2": "get-shit-done/workflows/research-phase.md",
       "shared_commits": 8.613,
@@ -22031,12 +22043,6 @@
       "file2": "get-shit-done/workflows/create-roadmap.md",
       "shared_commits": 6,
       "coupling_degree": 0.316
-    },
-    {
-      "file1": "bin/nf-solve.cjs",
-      "file2": "commands/nf/solve.md",
-      "shared_commits": 7.442,
-      "coupling_degree": 0.315
     },
     {
       "file1": "bin/run-oauth-rotation-prism.cjs",
@@ -22370,7 +22376,7 @@
     }
   ],
   "summary": {
-    "total_pairs": 3728,
-    "strong_coupling_count": 2919
+    "total_pairs": 3729,
+    "strong_coupling_count": 2920
   }
 }

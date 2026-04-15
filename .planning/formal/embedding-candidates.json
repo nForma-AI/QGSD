@@ -1,0 +1,286 @@
+{
+  "schema_version": "1",
+  "generated": "2026-04-12T12:25:51.272Z",
+  "model": "Xenova/all-MiniLM-L6-v2",
+  "config": {
+    "threshold": 0.55,
+    "top_k": 30
+  },
+  "stats": {
+    "documents_embedded": 931,
+    "existing_edges": 3384,
+    "candidates_found": 30
+  },
+  "candidates": [
+    {
+      "a": "requirement::TRACE-03",
+      "b": "code_file::bin/generate-traceability-matrix.cjs",
+      "similarity": 0.71,
+      "a_type": "requirement",
+      "b_type": "code_file",
+      "a_text": "[Formal Verification] TRACE-03: The traceability matrix is generated as a step in `run-formal-verify.cjs` after all chec",
+      "b_text": "Code file generate-traceability-matrix (bin/generate-traceability-matrix.cjs)"
+    },
+    {
+      "a": "formal_module::quorum",
+      "b": "code_file::bin/quorum-consensus-gate.cjs",
+      "similarity": 0.709,
+      "a_type": "formal_module",
+      "b_type": "code_file",
+      "a_text": "Module quorum: concepts=[quorum, multi-model, slot, consensus, voting, threshold], files=[run-quorum.cjs, nf-prompt.js, ",
+      "b_text": "Code file quorum-consensus-gate (bin/quorum-consensus-gate.cjs)"
+    },
+    {
+      "a": "requirement::LIVE-01",
+      "b": "invariant::LivenessNeverFail@MCci-checks",
+      "similarity": 0.702,
+      "a_type": "requirement",
+      "b_type": "invariant",
+      "a_text": "[Formal Verification] LIVE-01: CI step detects liveness properties lacking a fairness declaration in `invariants.md` and",
+      "b_text": "Invariant LivenessNeverFail:  [MCci-checks]"
+    },
+    {
+      "a": "requirement::SOLVE-01",
+      "b": "formal_module::formal-proximity-index",
+      "similarity": 0.7,
+      "a_type": "requirement",
+      "b_type": "formal_module",
+      "a_text": "[Solver-Discovered] SOLVE-01: bin/formal-graph-search.cjs provides BFS graph traversal over the proximity index (reachFi",
+      "b_text": "Module formal-proximity-index: concepts=[proximity-index, graph-traversal, reachability, adjacency-list, decay-scoring],"
+    },
+    {
+      "a": "requirement::MCPENV-03",
+      "b": "formal_model::.planning/formal/prism/mcp-availability.pm",
+      "similarity": 0.697,
+      "a_type": "requirement",
+      "b_type": "formal_model",
+      "a_text": "[MCP & Agents] MCPENV-03: MCP availability rates from `run-prism.cjs` feed into the MCP environment model",
+      "b_text": "Formal model mcp-availability.pm (L3): covers [MCPENV-04, FAIL-01]"
+    },
+    {
+      "a": "requirement::STOP-07",
+      "b": "code_file::hooks/nf-stop.js",
+      "similarity": 0.685,
+      "a_type": "requirement",
+      "b_type": "code_file",
+      "a_text": "[Hooks & Enforcement] STOP-07: Stop hook blocks with `{\"decision\": \"block\", \"reason\": \"...\"}` when quorum is missing — r",
+      "b_text": "Code file nf-stop (hooks/nf-stop.js), context=[quorum, safety, stop-hook]"
+    },
+    {
+      "a": "requirement::STOP-06",
+      "b": "formal_module::stop-hook",
+      "similarity": 0.684,
+      "a_type": "requirement",
+      "b_type": "formal_module",
+      "a_text": "[Hooks & Enforcement] STOP-06: Stop hook verifies quorum only when a configured planning command was issued in the curre",
+      "b_text": "Module stop-hook: concepts=[stop-hook, stop, response-blocking, plan-required, quorum-enforcement], files=[nf-stop.js, n"
+    },
+    {
+      "a": "requirement::STOP-07",
+      "b": "formal_module::stop-hook",
+      "similarity": 0.684,
+      "a_type": "requirement",
+      "b_type": "formal_module",
+      "a_text": "[Hooks & Enforcement] STOP-07: Stop hook blocks with `{\"decision\": \"block\", \"reason\": \"...\"}` when quorum is missing — r",
+      "b_text": "Module stop-hook: concepts=[stop-hook, stop, response-blocking, plan-required, quorum-enforcement], files=[nf-stop.js, n"
+    },
+    {
+      "a": "requirement::TRIAGE-02",
+      "b": "code_file::bin/generate-triage-bundle.cjs",
+      "similarity": 0.68,
+      "a_type": "requirement",
+      "b_type": "code_file",
+      "a_text": "[Observability & Diagnostics] TRIAGE-02: `run-formal-verify.cjs` calls `generate-triage-bundle.cjs` as the final step af",
+      "b_text": "Code file generate-triage-bundle (bin/generate-triage-bundle.cjs)"
+    },
+    {
+      "a": "requirement::STOP-05",
+      "b": "code_file::hooks/nf-stop.js",
+      "similarity": 0.674,
+      "a_type": "requirement",
+      "b_type": "code_file",
+      "a_text": "[Hooks & Enforcement] STOP-05: Stop hook reads transcript JSONL as the authoritative source of quorum evidence — no fast",
+      "b_text": "Code file nf-stop (hooks/nf-stop.js), context=[quorum, safety, stop-hook]"
+    },
+    {
+      "a": "requirement::STOP-01",
+      "b": "code_file::hooks/nf-stop.js",
+      "similarity": 0.673,
+      "a_type": "requirement",
+      "b_type": "code_file",
+      "a_text": "[Hooks & Enforcement] STOP-01: Stop hook reads transcript JSONL for tool_use entries matching configured quorum model na",
+      "b_text": "Code file nf-stop (hooks/nf-stop.js), context=[quorum, safety, stop-hook]"
+    },
+    {
+      "a": "formal_module::recruiting",
+      "b": "code_file::bin/call-quorum-slot.cjs",
+      "similarity": 0.669,
+      "a_type": "formal_module",
+      "b_type": "code_file",
+      "a_text": "Module recruiting: concepts=[recruiting, slot-recruitment, provider-selection, available-slots], files=[run-quorum.cjs]",
+      "b_text": "Code file call-quorum-slot (bin/call-quorum-slot.cjs), context=[mcp-calls]"
+    },
+    {
+      "a": "formal_module::quorum",
+      "b": "code_file::bin/call-quorum-slot.cjs",
+      "similarity": 0.668,
+      "a_type": "formal_module",
+      "b_type": "code_file",
+      "a_text": "Module quorum: concepts=[quorum, multi-model, slot, consensus, voting, threshold], files=[run-quorum.cjs, nf-prompt.js, ",
+      "b_text": "Code file call-quorum-slot (bin/call-quorum-slot.cjs), context=[mcp-calls]"
+    },
+    {
+      "a": "formal_module::safety",
+      "b": "code_file::hooks/dist/nf-stop.js",
+      "similarity": 0.667,
+      "a_type": "formal_module",
+      "b_type": "code_file",
+      "a_text": "Module safety: concepts=[safety, stop-hook, blocking, guard, validation], files=[nf-stop.js, nf-prompt.js]",
+      "b_text": "Code file nf-stop (hooks/dist/nf-stop.js), context=[stop-hook]"
+    },
+    {
+      "a": "requirement::TRACE-03",
+      "b": "code_file::bin/verify-formal-results.cjs",
+      "similarity": 0.664,
+      "a_type": "requirement",
+      "b_type": "code_file",
+      "a_text": "[Formal Verification] TRACE-03: The traceability matrix is generated as a step in `run-formal-verify.cjs` after all chec",
+      "b_text": "Code file verify-formal-results (bin/verify-formal-results.cjs)"
+    },
+    {
+      "a": "formal_module::convergence",
+      "b": "code_file::bin/quorum-consensus-gate.cjs",
+      "similarity": 0.661,
+      "a_type": "formal_module",
+      "b_type": "code_file",
+      "a_text": "Module convergence: concepts=[convergence, quorum-rounds, deliberation-rounds, vote-agreement, consensus], files=[run-qu",
+      "b_text": "Code file quorum-consensus-gate (bin/quorum-consensus-gate.cjs)"
+    },
+    {
+      "a": "requirement::STOP-09",
+      "b": "formal_module::stop-hook",
+      "similarity": 0.658,
+      "a_type": "requirement",
+      "b_type": "formal_module",
+      "a_text": "[Hooks & Enforcement] STOP-09: Stop hook passes (exits 0, no decision field) when quorum evidence found or no planning c",
+      "b_text": "Module stop-hook: concepts=[stop-hook, stop, response-blocking, plan-required, quorum-enforcement], files=[nf-stop.js, n"
+    },
+    {
+      "a": "requirement::STOP-06",
+      "b": "code_file::hooks/nf-stop.js",
+      "similarity": 0.657,
+      "a_type": "requirement",
+      "b_type": "code_file",
+      "a_text": "[Hooks & Enforcement] STOP-06: Stop hook verifies quorum only when a configured planning command was issued in the curre",
+      "b_text": "Code file nf-stop (hooks/nf-stop.js), context=[quorum, safety, stop-hook]"
+    },
+    {
+      "a": "requirement::STOP-09",
+      "b": "code_file::hooks/nf-stop.js",
+      "similarity": 0.656,
+      "a_type": "requirement",
+      "b_type": "code_file",
+      "a_text": "[Hooks & Enforcement] STOP-09: Stop hook passes (exits 0, no decision field) when quorum evidence found or no planning c",
+      "b_text": "Code file nf-stop (hooks/nf-stop.js), context=[quorum, safety, stop-hook]"
+    },
+    {
+      "a": "requirement::LIVE-02",
+      "b": "invariant::LivenessNeverFail@MCci-checks",
+      "similarity": 0.654,
+      "a_type": "requirement",
+      "b_type": "invariant",
+      "a_text": "[Formal Verification] LIVE-02: `run-formal-verify.cjs` STEPS includes a `ci:liveness-fairness-lint` step that enforces L",
+      "b_text": "Invariant LivenessNeverFail:  [MCci-checks]"
+    },
+    {
+      "a": "requirement::DEBT-15",
+      "b": "formal_model::.planning/formal/alloy/debt-lifecycle.als",
+      "similarity": 0.653,
+      "a_type": "requirement",
+      "b_type": "formal_model",
+      "a_text": "[Technical Debt] DEBT-15: Create formal model for solve convergence layer-transition sweeps (L1->L2, L2->L3, L3->TC)",
+      "b_text": "Formal model debt-lifecycle.als (L3): covers [DEBT-02, DEBT-03, DEBT-04, DEBT-05, DEBT-06]"
+    },
+    {
+      "a": "requirement::STOP-01",
+      "b": "formal_module::stop-hook",
+      "similarity": 0.652,
+      "a_type": "requirement",
+      "b_type": "formal_module",
+      "a_text": "[Hooks & Enforcement] STOP-01: Stop hook reads transcript JSONL for tool_use entries matching configured quorum model na",
+      "b_text": "Module stop-hook: concepts=[stop-hook, stop, response-blocking, plan-required, quorum-enforcement], files=[nf-stop.js, n"
+    },
+    {
+      "a": "requirement::STOP-05",
+      "b": "formal_module::stop-hook",
+      "similarity": 0.652,
+      "a_type": "requirement",
+      "b_type": "formal_module",
+      "a_text": "[Hooks & Enforcement] STOP-05: Stop hook reads transcript JSONL as the authoritative source of quorum evidence — no fast",
+      "b_text": "Module stop-hook: concepts=[stop-hook, stop, response-blocking, plan-required, quorum-enforcement], files=[nf-stop.js, n"
+    },
+    {
+      "a": "formal_module::deliberation",
+      "b": "code_file::bin/quorum-consensus-gate.cjs",
+      "similarity": 0.652,
+      "a_type": "formal_module",
+      "b_type": "code_file",
+      "a_text": "Module deliberation: concepts=[deliberation, quorum-decision, vote, slot-worker, majority], files=[run-quorum.cjs, nf-pr",
+      "b_text": "Code file quorum-consensus-gate (bin/quorum-consensus-gate.cjs)"
+    },
+    {
+      "a": "requirement::FV-01",
+      "b": "formal_model::.planning/formal/tla/NFSolveConvergenceV2.tla",
+      "similarity": 0.648,
+      "a_type": "requirement",
+      "b_type": "formal_model",
+      "a_text": "[Formal Verification] FV-01: NFSolveConvergence.tla models the outer solve loop with cross-session state (bounded histor",
+      "b_text": "Formal model NFSolveConvergenceV2.tla (L3): covers [CONV-01, CONV-02, CONV-03, CONV-04, OSC-01, OSC-02, OSC-03]"
+    },
+    {
+      "a": "requirement::DISP-07",
+      "b": "formal_module::deliberation",
+      "similarity": 0.647,
+      "a_type": "requirement",
+      "b_type": "formal_module",
+      "a_text": "[Quorum & Dispatch] DISP-07: Quorum dispatcher Mode C delegates structured coding tasks to external agent CLI slots (cod",
+      "b_text": "Module deliberation: concepts=[deliberation, quorum-decision, vote, slot-worker, majority], files=[run-quorum.cjs, nf-pr"
+    },
+    {
+      "a": "requirement::TRIAGE-02",
+      "b": "code_file::bin/verify-formal-results.cjs",
+      "similarity": 0.636,
+      "a_type": "requirement",
+      "b_type": "code_file",
+      "a_text": "[Observability & Diagnostics] TRIAGE-02: `run-formal-verify.cjs` calls `generate-triage-bundle.cjs` as the final step af",
+      "b_text": "Code file verify-formal-results (bin/verify-formal-results.cjs)"
+    },
+    {
+      "a": "formal_module::deliberation",
+      "b": "code_file::bin/call-quorum-slot.cjs",
+      "similarity": 0.636,
+      "a_type": "formal_module",
+      "b_type": "code_file",
+      "a_text": "Module deliberation: concepts=[deliberation, quorum-decision, vote, slot-worker, majority], files=[run-quorum.cjs, nf-pr",
+      "b_text": "Code file call-quorum-slot (bin/call-quorum-slot.cjs), context=[mcp-calls]"
+    },
+    {
+      "a": "formal_module::deliberation-revision",
+      "b": "code_file::bin/quorum-consensus-gate.cjs",
+      "similarity": 0.629,
+      "a_type": "formal_module",
+      "b_type": "code_file",
+      "a_text": "Module deliberation-revision: concepts=[deliberation-revision, revision-round, re-deliberation, improvement-cycle], file",
+      "b_text": "Code file quorum-consensus-gate (bin/quorum-consensus-gate.cjs)"
+    },
+    {
+      "a": "requirement::LIVE-01",
+      "b": "invariant::LivenessProperty3@MCStopHook",
+      "similarity": 0.627,
+      "a_type": "requirement",
+      "b_type": "invariant",
+      "a_text": "[Formal Verification] LIVE-01: CI step detects liveness properties lacking a fairness declaration in `invariants.md` and",
+      "b_text": "Invariant LivenessProperty3:  [MCStopHook]"
+    }
+  ]
+}

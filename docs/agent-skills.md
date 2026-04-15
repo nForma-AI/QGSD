@@ -1,9 +1,36 @@
 # Agent Skills
 
-This document serves two purposes:
+This document serves three purposes:
 
+- define the nForma phase lifecycle — 6 phases that organize all skills and commands
 - explain how packaged skills fit into nForma's workflow model
 - compare nForma's current coverage against the MIT-licensed [`addyosmani/agent-skills`](https://github.com/addyosmani/agent-skills) catalog
+
+## Phase Lifecycle
+
+nForma organizes all human-driven work into 6 phases. Each phase is a top-level skill that routes into sub-skills and slash commands.
+
+```
+nf-idea → nf-plan → [issue] → nf-build → nf-ship → nf-observe → nf-idea
+                               ↑  ↓        ↑  ↓
+                             nf-debug ←────┘
+                             (returns to caller)
+```
+
+| Phase | Purpose | Entry | Exit |
+|---|---|---|---|
+| **nf-idea** | Shape vague ideas into focused concepts | Vague idea, production signal | One-pager → nf-plan |
+| **nf-plan** | Domain research, shape issue, decide track | Shaped idea, direct request | Issue with track label → nf-build |
+| **nf-build** | Codebase research, judge track, execute | Shaped issue | Working code → nf-ship, or blocked → nf-debug |
+| **nf-ship** | Review, verify, release | Working code | Merged code → nf-observe, or CI failure → nf-debug |
+| **nf-debug** | Triage, diagnose, fix, return to caller | Blocked from nf-build or nf-ship | Fix → return to caller |
+| **nf-observe** | Monitor health, detect signals, close loop | Post-ship, periodic check | Signal → nf-idea, or critical → nf-debug |
+
+**The issue is the bridge artifact.** nf-plan produces a GitHub/GitLab issue with a track recommendation (quick / quick-full / milestone). nf-build reads the issue and uses its own codebase research to confirm or adjust the track.
+
+**nf-debug returns to its caller.** It preserves caller context and resumes the calling phase (nf-build or nf-ship) when resolved.
+
+**nf-observe closes the loop.** Detected signals route back to nf-idea to start a new cycle.
 
 ## What packaged skills are for
 
@@ -32,15 +59,37 @@ Use a slash command when:
 - the task belongs to the main project lifecycle
 - you want nForma to create plans, execute work, or verify outcomes
 
-## Lifecycle routing
+## Phase-to-skill mapping
 
-Recommended flow:
+Each phase activates specific packaged skills and slash commands:
 
-`idea-refine -> task-intake -> /nf:new-project or /nf:new-milestone -> /nf:plan-phase -> /nf:execute-phase -> /nf:verify-work -> code-review-and-quality -> shipping-and-launch`
+| Phase | Packaged skills | Slash commands |
+|---|---|---|
+| **nf-idea** | `idea-refine` | `/nf:help`, `/nf:add-todo` |
+| **nf-plan** | `task-intake`, `spec-driven-development`, `documentation-and-adrs`, `api-and-interface-design` | `/nf:research-phase`, `/nf:new-project`, `/nf:new-milestone`, `/nf:plan-phase`, `/nf:plan-milestone-gaps`, `/nf:add-phase`, `/nf:remove-phase`, `/nf:insert-phase`, `/nf:discuss-phase`, `/nf:map-requirements`, `/nf:list-phase-assumptions`, `/nf:review-requirements`, `/nf:discovery-phase`, `/nf:set-profile`, `/nf:add-requirement` |
+| **nf-build** | `incremental-implementation`, `test-driven-development`, `frontend-ui-engineering`, `code-simplification` | `/nf:quick`, `/nf:quick --full`, `/nf:execute-phase`, `/nf:execute-plan`, `/nf:map-codebase`, `/nf:cleanup-review`, `/nf:close-formal-gaps` |
+| **nf-ship** | `code-review-and-quality`, `shipping-and-launch`, `git-workflow-and-versioning`, `ci-cd-and-automation`, `deprecation-and-migration` | `/nf:verify-work`, `/nf:verify-phase`, `/nf:audit-milestone`, `/nf:complete-milestone`, `/nf:transition` |
+| **nf-debug** | `browser-testing-with-devtools`, `security-and-hardening` | `/nf:debug`, `/nf:fix-tests`, `/nf:diagnose-issues`, `/nf:model-driven-fix`, `/nf:oscillation-resolution-mode`, `/nf:pause-work` |
+| **nf-observe** | `performance-optimization` | `/nf:progress`, `/nf:health`, `/nf:check-todos`, `/nf:cleanup`, `/nf:resume-project`, `/nf:settings` |
 
-For smaller ad-hoc work:
+### Lifecycle routing examples
 
-`idea-refine -> task-intake -> /nf:quick --full -> code-review-and-quality -> shipping-and-launch`
+**Milestone path (L/XL work):**
+
+`nf-idea → nf-plan (/nf:new-milestone, /nf:plan-phase) → [issue] → nf-build (/nf:execute-phase) → nf-ship (/nf:verify-phase, /nf:audit-milestone, /nf:complete-milestone) → nf-observe → nf-idea`
+
+**Quick-full path (M work):**
+
+`nf-idea → nf-plan (task-intake) → [issue] → nf-build (/nf:quick --full) → nf-ship (code-review-and-quality) → nf-observe → nf-idea`
+
+**Quick path (S work):**
+
+`nf-plan (task-intake) → [issue] → nf-build (/nf:quick) → nf-ship (code-review-and-quality) → nf-observe`
+
+**Debug escape route:**
+
+`nf-build → nf-debug (/nf:debug) → return to nf-build`
+`nf-ship → nf-debug (/nf:fix-tests) → return to nf-ship`
 
 ## Current packaged skills
 

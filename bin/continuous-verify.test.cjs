@@ -145,9 +145,10 @@ describe('continuous-verify', () => {
       assert.equal(result.type, 'file_exists');
     });
 
-    it('command_pass: echo hello returns pass=true', () => {
+    it('command_pass: blocks disallowed command', () => {
       const result = evaluateCondition(tmpDir, { type: 'command_pass', command: 'echo hello' });
-      assert.equal(result.pass, true);
+      assert.equal(result.pass, false);
+      assert.equal(result.reason, 'command not in allowlist');
       assert.equal(result.type, 'command_pass');
     });
 

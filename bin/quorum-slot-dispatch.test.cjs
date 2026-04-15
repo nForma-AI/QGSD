@@ -936,3 +936,9 @@ test('Mode C: buildModeCPrompt delegates to coding-task-router (not re-inlined)'
   assert.ok(prompt.includes('=== OUTPUT FORMAT ==='),
     'OUTPUT FORMAT section missing -- buildModeCPrompt may be re-inlining instead of delegating');
 });
+
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
