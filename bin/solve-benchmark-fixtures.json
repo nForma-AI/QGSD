@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "description": "nf:solve benchmark fixture set",
   "fixtures": [
     {
@@ -55,6 +55,22 @@
       "min_residual": null,
       "max_residual": null,
       "pass_condition": "exits_zero"
+    },
+    {
+      "id": "layer-residual-regression",
+      "label": "Key layer residuals within known bounds — catch regressions in solver output quality",
+      "args": ["--report-only", "--json", "--no-timeout", "--max-iterations=1", "--fast"],
+      "layer_assertions": {
+        "r_to_f":        { "max": 5 },
+        "f_to_t":        { "max": 5 },
+        "c_to_f":        { "max": 3 },
+        "trace_health":  { "max": 0 },
+        "memory_health": { "max": 0 }
+      },
+      "expect_convergence": false,
+      "min_residual": null,
+      "max_residual": null,
+      "pass_condition": "layer_residuals_in_range"
     }
   ],
   "autonomy_fixtures": [
@@ -79,6 +95,64 @@
         "target_layer": "r_to_f"
       },
       "pass_condition": "residual_increased"
+    },
+    {
+      "id": "seed-f2t-inject-property",
+      "label": "Seed f_to_t gap: add Complete req + TLA+ annotation with no test — nf-solve must detect it",
+      "args": ["--json", "--no-timeout", "--max-iterations=1", "--fast"],
+      "target_layer": "f_to_t",
+      "mutations": [
+        {
+          "type": "append_array_item",
+          "file": ".planning/formal/requirements.json",
+          "array_path": "requirements",
+          "value": {
+            "id": "BENCH-TEST-01",
+            "text": "Benchmark fixture: formally modeled requirement with no test coverage (ephemeral)",
+            "category": "Test",
+            "tier": "system",
+            "phase": "unknown",
+            "status": "Complete",
+            "provenance": { "source_file": "benchmark-fixture", "milestone": "unknown" },
+            "formal_models": [".planning/formal/tla/NFOrchestration.tla"]
+          }
+        },
+        {
+          "type": "add_text_to_file",
+          "file": ".planning/formal/tla/NFOrchestration.tla",
+          "text": "\n\\* @requirement BENCH-TEST-01\nBenchmarkFakeProp == TRUE"
+        }
+      ],
+      "pass_condition": "residual_increased"
+    },
+    {
+      "id": "fix-f2t-stub-generation",
+      "label": "f_to_t autoClose generates + implements stub for injected property — residual must decrease post-fix",
+      "args": ["--json", "--no-timeout", "--max-iterations=1", "--fast"],
+      "target_layer": "f_to_t",
+      "mutations": [
+        {
+          "type": "append_array_item",
+          "file": ".planning/formal/requirements.json",
+          "array_path": "requirements",
+          "value": {
+            "id": "BENCH-TEST-01",
+            "text": "Benchmark fixture: formally modeled requirement with no test coverage (ephemeral)",
+            "category": "Test",
+            "tier": "system",
+            "phase": "unknown",
+            "status": "Complete",
+            "provenance": { "source_file": "benchmark-fixture", "milestone": "unknown" },
+            "formal_models": [".planning/formal/tla/NFOrchestration.tla"]
+          }
+        },
+        {
+          "type": "add_text_to_file",
+          "file": ".planning/formal/tla/NFOrchestration.tla",
+          "text": "\n\\* @requirement BENCH-TEST-01\nBenchmarkFakeProp == TRUE"
+        }
+      ],
+      "pass_condition": "residual_decreased"
     }
   ]
 }
