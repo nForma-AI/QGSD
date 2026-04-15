@@ -25,7 +25,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `fix(coderlm)`: CDIAG-03 wired into solve loop — in `--skip-layers` incremental mode, call-graph expansion via `computeAffectedLayers` un-skips layers whose transitive callers were affected by remediation
 
 ## [0.42.0-rc.1] - 2026-04-10 — Deep coderlm Solve Integration
->>>>>>> 8715caa0 (feat(solve): implement real impact tracking for solve skill)
 
 ### Added
 - `feat(repowise)`: XML context packing — `escape-xml.cjs`, `pack-file.cjs`, `context-packer.cjs` deliver file contents in `<file path="...">...</file>` XML format with proper escaping (PACK-01, PACK-02, PACK-03)
