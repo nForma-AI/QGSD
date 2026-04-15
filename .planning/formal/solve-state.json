@@ -1,9 +1,9 @@
 {
-  "last_run": "2026-04-15T22:18:22.995Z",
+  "last_run": "2026-04-15T22:22:25.788Z",
   "converged": true,
   "iteration_count": 1,
   "final_residual_total": 88,
-  "reverse_discovery_total": 18,
+  "reverse_discovery_total": 19,
   "heatmap_total": 7979,
   "real_impact": {
     "bugs_fixed": 0,
@@ -35,8 +35,8 @@
     },
     {
       "layer": "t_to_r",
-      "residual": 9,
-      "net_residual": 9
+      "residual": 10,
+      "net_residual": 10
     },
     {
       "layer": "d_to_r",
