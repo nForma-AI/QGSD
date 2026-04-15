@@ -369,3 +369,8 @@ if (require.main === module) {
 }
 
 module.exports = { computeWaves, computeWavesFromGraph, getLayerDeps, LAYER_DEPS, MAX_PER_WAVE };
+
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark

@@ -149,3 +149,9 @@ test('CycleDetector: stateHashes recorded correctly', () => {
   assert.equal(cd.getStateHashes().length, 2);
   assert.equal(typeof cd.getStateHashes()[0], 'string');
 });
+
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark

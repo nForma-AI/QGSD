@@ -22,3 +22,27 @@ assert.strictEqual(new Set(LAYER_KEYS).size, 19, 'No duplicate keys');
 assert.ok(Array.isArray(LAYER_KEYS), 'LAYER_KEYS is an array');
 
 console.log('layer-constants.test.cjs: all assertions passed');
+
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark

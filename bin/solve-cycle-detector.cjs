@@ -226,3 +226,8 @@ class CycleDetector {
 }
 
 module.exports = { CycleDetector, detectCycles, detectStateCycles, hashState, countBounces };
+
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark

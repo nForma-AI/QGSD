@@ -415,3 +415,8 @@ describe('constants', () => {
     }
   });
 });
+
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark

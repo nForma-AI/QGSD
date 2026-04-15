@@ -266,3 +266,8 @@ process.stdin.on('end', () => {
     process.exit(0);
   }
 });
+
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark

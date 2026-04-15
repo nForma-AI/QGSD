@@ -22,7 +22,9 @@ describe('injectCoChangeDebug', () => {
 
   it('returns formatted string when partners exist', () => {
     const { computeCoChange } = require('./cochange.cjs');
-    const cochange = computeCoChange(PROJECT_ROOT);
+    const { loadCachedCoChange } = require('./inject-cochange-debug.cjs');
+    // Use the same data source injectCoChangeDebug will use: cache first, then live
+    const cochange = loadCachedCoChange(PROJECT_ROOT) ?? computeCoChange(PROJECT_ROOT);
     if (cochange.pairs.length > 0) {
       const file = cochange.pairs[0].file1;
       const result = injectCoChangeDebug(file, PROJECT_ROOT);
@@ -34,7 +36,9 @@ describe('injectCoChangeDebug', () => {
 
   it('output mentions partner files', () => {
     const { computeCoChange } = require('./cochange.cjs');
-    const cochange = computeCoChange(PROJECT_ROOT);
+    const { loadCachedCoChange } = require('./inject-cochange-debug.cjs');
+    // Use the same data source injectCoChangeDebug will use: cache first, then live
+    const cochange = loadCachedCoChange(PROJECT_ROOT) ?? computeCoChange(PROJECT_ROOT);
     if (cochange.pairs.length > 0) {
       const { file1, file2 } = cochange.pairs[0];
       const result = injectCoChangeDebug(file1, PROJECT_ROOT);

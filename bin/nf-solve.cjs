@@ -6746,3 +6746,8 @@ module.exports = {
 if (require.main === module) {
   main();
 }
+
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
