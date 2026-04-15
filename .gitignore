@@ -153,3 +153,6 @@ bin/.planning/
 # Routing policy runtime state (learned bandit data)
 .nf-routing-rewards.jsonl
 .nf-river-state.json
+
+# Repowise caches (co-change graph, hotspot risk) — regenerated on demand
+.planning/repowise/
