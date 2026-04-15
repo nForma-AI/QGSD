@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-15T21:33:53.550Z",
+  "generated": "2026-04-15T21:37:55.718Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -124,8 +124,8 @@
       "hash": "43a778a0"
     },
     "debt.json": {
-      "mtime": "2026-04-15T21:33:53.395Z",
-      "hash": "4f085cf2"
+      "mtime": "2026-04-15T21:37:55.627Z",
+      "hash": "f5abc47b"
     },
     "source-annotations": {
       "mtime": "2026-04-15T19:35:02.128Z"
@@ -58220,6 +58220,11 @@
       ],
       "risk_score": 32,
       "risk_tier": "low"
+    },
+    "debt_entry::BENCH-DEAD-DEBT-01": {
+      "type": "debt_entry",
+      "id": "BENCH-DEAD-DEBT-01",
+      "edges": []
     },
     "formal_model::.planning/formal/alloy/debug-integration.als": {
       "type": "formal_model",
