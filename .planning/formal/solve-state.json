@@ -1,10 +1,27 @@
 {
-  "last_run": "2026-04-15T19:40:50.306Z",
+  "last_run": "2026-04-15T19:45:02.097Z",
   "converged": true,
   "iteration_count": 1,
   "final_residual_total": 88,
   "reverse_discovery_total": 17,
   "heatmap_total": 7979,
+  "real_impact": {
+    "bugs_fixed": 0,
+    "tests_added": 0,
+    "docs_fixed": 0,
+    "dead_code_removed": 0
+  },
+  "real_impact_iterations": [
+    {
+      "iteration": 1,
+      "real_impact": {
+        "bugs_fixed": 0,
+        "tests_added": 0,
+        "docs_fixed": 0,
+        "dead_code_removed": 0
+      }
+    }
+  ],
   "known_issues": [
     {
       "layer": "d_to_c",
