@@ -1,0 +1,25 @@
+{
+  "nf/quick-397-build-a-command-to-run-nf-solve-against-": {
+    "task_id": 397,
+    "task_description": "build a command to run nf:solve against nf-benchmark to validate its capacity to solve issues automatically",
+    "approach": "Create a command-line utility that runs nf:solve against a configurable set of synthetic or captured issues and reports success/failure metrics to validate autonomous issue resolution capacity.",
+    "out_of_scope": [
+      "Improving or modifying the nf:solve algorithm or logic",
+      "Building a production issue collection system or real issue dataset",
+      "Performance optimization of formal verification runtime",
+      "Creating interactive UI for benchmark results visualization",
+      "Implementing machine learning models to predict solve success rates"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.85,
+      "routed_through_debug": false
+    },
+    "risk_level": "medium",
+    "risk_reason": "Feature task creating a new benchmark runner command touches multiple files across directories (likely source, test, and configuration files) without qualifying for low-risk criteria, and requires new tooling/infrastructure.",
+    "branches_affected": ["nf/quick-397-build-a-command-to-run-nf-solve-against-"],
+    "created_at": "2026-04-13T22:38:34.412Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

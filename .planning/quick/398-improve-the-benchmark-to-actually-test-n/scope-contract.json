@@ -1,0 +1,25 @@
+{
+  "nf/quick-397-build-a-command-to-run-nf-solve-against-": {
+    "task_id": 398,
+    "task_description": "Improve the benchmark to actually test nf:solve autonomy — add a real autonomy track with seeded defects and residual reduction scoring",
+    "approach": "Add a real autonomy track with synthetic defects seeded into fixture requirements, measuring nf:solve's ability to detect and eliminate those injected residuals through iterative remediation cycles.",
+    "out_of_scope": [
+      "Modifying nf-solve.cjs core engine — only fixture definitions and benchmark runner changes",
+      "Creating persistent test repositories or external benchmark datasets — fixtures run against current project root",
+      "Implementing machine learning or statistical significance testing for performance comparisons",
+      "Adding human-in-the-loop validation or manual checkpoint gates during benchmark execution",
+      "Extending the benchmark to test multiple nforma versions or regression detection across releases"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.92,
+      "routed_through_debug": false
+    },
+    "risk_level": "medium",
+    "risk_reason": "Task modifies benchmark functionality in a single file (nf-benchmark-solve.cjs) with feature-level changes to add new autonomy track with seeded defects and scoring logic, requiring non-trivial implementation beyond simple config changes.",
+    "branches_affected": ["nf/quick-397-build-a-command-to-run-nf-solve-against-"],
+    "created_at": "2026-04-15T08:02:59.143Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

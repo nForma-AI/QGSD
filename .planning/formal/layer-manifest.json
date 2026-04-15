@@ -1216,5 +1216,10 @@
       "1": 38
     },
     "spec_modules_with_invariants": 19
-  }
+  },
+  "gate_order": [
+    "l3_to_tc",
+    "l2_to_l3",
+    "l1_to_l2"
+  ]
 }
