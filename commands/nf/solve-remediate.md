@@ -127,8 +127,9 @@ Agent(
 Residual detail (JSON): {residual_vector.{layer_key}}
 Open debt entries: {relevant_debt_subset}
 Heatmap (for 3h only): {heatmap}
-After completing the section, return ONLY this JSON:
-{\"layer\": \"{layer_key}\", \"status\": \"ok\" | \"error\" | \"skipped\", \"actions_taken\": N, \"failures\": N, \"summary\": \"...\"}"
+After completing the section, determine the classification of this remediation action: 'real_fix' for genuine bug fixes or additions to production code (src/, test/, docs/), 'true_positive_closure' for closing false positives that were actually bugs, 'fp_suppression' for suppressing false positives without fixing code, 'reclassification' for changing classifications or categories without code changes.
+Return ONLY this JSON:
+{\"layer\": \"{layer_key}\", \"status\": \"ok\" | \"error\" | \"skipped\", \"actions_taken\": N, \"failures\": N, \"summary\": \"...\", \"classification\": \"real_fix\" | \"true_positive_closure\" | \"fp_suppression\" | \"reclassification\"}"
 )
 ```
 
@@ -843,7 +844,27 @@ The `wave_timing` array in the remediation report captures per-wave detail:
 
 Each wave records: the wave number, layer keys dispatched, start offset from remediation begin, and wall-clock duration. For parallel waves, `duration_ms` is the time of the slowest layer. For sequential waves, it is the sum of all layer durations within the wave.
 
-## Important Constraints
+## Step 4: Run Real Tests and Lint
+
+After all remediation waves complete, run real tests and lint to identify any new failures introduced by the changes:
+
+```bash
+npm run test:ci
+npm run lint:isolation
+```
+
+Parse the output for failures:
+- If `npm run test:ci` exits non-zero, extract failing test files from TAP output
+- If `npm run lint:isolation` exits non-zero, extract lint violations
+
+For each real failure:
+1. Classify the failure type (test failure vs lint error)
+2. Dispatch `/nf:quick` to fix the failure: "Fix {failure_type} in {file}: {error_message}"
+3. Wait for each fix to complete before starting the next
+
+Log: `"Real tests: {pass_count}/{total} pass, {fail_count} failures — dispatched {fix_count} quick fixes"`
+
+This ensures remediation produces working code, not just formal artifacts.
 
 4. **Ordering** — Remediation order is enforced by the dependency DAG in `bin/solve-wave-dag.cjs`. Within each wave, layers run in parallel. Cross-wave dependencies are respected. R->F must precede F->T (new formal specs create new invariants needing test backing). T->C fixes must happen before F->C verification (tests must pass before checking formal properties against code).
 
