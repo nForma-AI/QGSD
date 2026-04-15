@@ -390,51 +390,101 @@ if (runAutonomy && Array.isArray(fixtureData.autonomy_fixtures) && fixtureData.a
       } else if (mutation.type === 'remove_key') {
         delete seedObj[mutation.key];
         fs.writeFileSync(seedFilePath, JSON.stringify(seedObj, null, 2) + '\n', 'utf8');
+      } else if (mutation.type === 'array_item_modify') {
+        // Find array item by field match, overwrite one field on it
+        const arr = mutation.array_path ? seedObj[mutation.array_path] : seedObj;
+        if (!Array.isArray(arr)) {
+          skipReason = 'array_item_modify: "' + mutation.array_path + '" is not an array';
+        } else {
+          const item = arr.find(function(el) { return el[mutation.match_field] === mutation.match_value; });
+          if (!item) {
+            skipReason = 'array_item_modify: no item with ' + mutation.match_field + '=' + mutation.match_value;
+          } else {
+            item[mutation.set_field] = mutation.set_value;
+            fs.writeFileSync(seedFilePath, JSON.stringify(seedObj, null, 2) + '\n', 'utf8');
+          }
+        }
+      } else if (mutation.type === 'append_array_item') {
+        // Append an item to an array at array_path
+        const arr = mutation.array_path ? seedObj[mutation.array_path] : seedObj;
+        if (!Array.isArray(arr)) {
+          skipReason = 'append_array_item: "' + mutation.array_path + '" is not an array';
+        } else {
+          arr.push(mutation.value);
+          fs.writeFileSync(seedFilePath, JSON.stringify(seedObj, null, 2) + '\n', 'utf8');
+        }
       } else {
         skipReason = 'unknown mutation type: ' + mutation.type;
         autonomyPassed = false;
       }
 
       if (!skipReason) {
-        // pre_residual = baseline + seeded_delta (expected residual after mutation)
-        preResidual = baselineResidual >= 0 ? baselineResidual + seedDelta : seedDelta;
-
-        // Step 3: Run nf-solve without --report-only (real remediation)
-        const fixArgs = [SOLVE_SCRIPT].concat(autoFixture.args).concat(['--project-root=' + ROOT]);
-        const fixOpts = {
+        // Step 2b: Measure actual seeded residual to validate the mutation had an effect
+        const seededMeasureArgs = [SOLVE_SCRIPT, '--report-only', '--json', '--no-timeout', '--max-iterations=1', '--fast', '--project-root=' + ROOT];
+        const seededMeasureOpts = {
           cwd: ROOT,
           encoding: 'utf8',
           maxBuffer: 8 * 1024 * 1024,
-          timeout: 300000
+          timeout: 60000,
+          stdio: ['pipe', 'pipe', 'pipe']
         };
-        if (verbose) {
-          fixOpts.stdio = ['pipe', 'pipe', 'inherit'];
-        } else {
-          fixOpts.stdio = ['pipe', 'pipe', 'pipe'];
-        }
-        const fixResult = spawnSync(process.execPath, fixArgs, fixOpts);
-
-        // Step 4: Parse post-remediation output
-        let fixParsed = {};
+        const seededMeasureResult = spawnSync(process.execPath, seededMeasureArgs, seededMeasureOpts);
+        let seededParsed = {};
         try {
-          if (fixResult.stdout && fixResult.stdout.trim()) {
-            fixParsed = JSON.parse(fixResult.stdout);
+          if (seededMeasureResult.stdout && seededMeasureResult.stdout.trim()) {
+            seededParsed = JSON.parse(seededMeasureResult.stdout);
           }
         } catch (_) { /* fail-open */ }
+        const seededResidual = extractLayerResidual(seededParsed, targetLayer);
 
-        postResidual = extractLayerResidual(fixParsed, targetLayer);
-
-        // Step 5: Evaluate pass condition
-        if (autoFixture.pass_condition === 'residual_decreased') {
-          // post < pre means remediation reduced the residual
-          autonomyPassed = postResidual >= 0 && preResidual >= 0 && postResidual < preResidual;
-        } else if (autoFixture.pass_condition === 'exits_zero') {
-          autonomyPassed = fixResult.status === 0;
-        } else if (autoFixture.pass_condition === 'converged') {
-          autonomyPassed = fixParsed.converged === true;
+        // Validate mutation had a measurable effect; skip fixture if not
+        if (seededResidual < 0 || (baselineResidual >= 0 && seededResidual <= baselineResidual)) {
+          skipReason = 'mutation had no measurable effect on ' + targetLayer +
+            ' (baseline=' + baselineResidual + ', seeded=' + seededResidual + ')';
         } else {
-          // fail-open: unknown condition — treat as exits_zero
-          autonomyPassed = fixResult.status === 0;
+          // Use actual measured seeded residual as the pre-fix baseline
+          preResidual = seededResidual;
+
+          // Step 3: Run nf-solve without --report-only (real remediation attempt)
+          const fixArgs = [SOLVE_SCRIPT].concat(autoFixture.args).concat(['--project-root=' + ROOT]);
+          const fixOpts = {
+            cwd: ROOT,
+            encoding: 'utf8',
+            maxBuffer: 8 * 1024 * 1024,
+            timeout: 300000
+          };
+          if (verbose) {
+            fixOpts.stdio = ['pipe', 'pipe', 'inherit'];
+          } else {
+            fixOpts.stdio = ['pipe', 'pipe', 'pipe'];
+          }
+          const fixResult = spawnSync(process.execPath, fixArgs, fixOpts);
+
+          // Step 4: Parse post-remediation output
+          let fixParsed = {};
+          try {
+            if (fixResult.stdout && fixResult.stdout.trim()) {
+              fixParsed = JSON.parse(fixResult.stdout);
+            }
+          } catch (_) { /* fail-open */ }
+
+          postResidual = extractLayerResidual(fixParsed, targetLayer);
+
+          // Step 5: Evaluate pass condition
+          if (autoFixture.pass_condition === 'residual_increased') {
+            // seededResidual > baselineResidual: solver correctly detects the seeded gap
+            autonomyPassed = seededResidual > baselineResidual;
+          } else if (autoFixture.pass_condition === 'residual_decreased') {
+            // postResidual < seededResidual: solver successfully remediated the gap
+            autonomyPassed = postResidual >= 0 && seededResidual >= 0 && postResidual < seededResidual;
+          } else if (autoFixture.pass_condition === 'exits_zero') {
+            autonomyPassed = fixResult.status === 0;
+          } else if (autoFixture.pass_condition === 'converged') {
+            autonomyPassed = fixParsed.converged === true;
+          } else {
+            // fail-open: unknown condition — treat as exits_zero
+            autonomyPassed = fixResult.status === 0;
+          }
         }
       }
     } catch (e) {

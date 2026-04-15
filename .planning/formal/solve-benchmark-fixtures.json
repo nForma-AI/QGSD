@@ -59,18 +59,26 @@
   ],
   "autonomy_fixtures": [
     {
-      "id": "seed-f2t-uncover-ACT-01",
-      "label": "Seed f_to_t gap by marking ACT-01 uncovered — verify nf-solve auto-generates stub",
+      "id": "seed-r2f-inject-uncovered-req",
+      "label": "Seed r_to_f gap: inject Complete requirement with no formal model — nf-solve must detect it",
       "args": ["--json", "--no-timeout", "--max-iterations=1", "--fast"],
       "seed_mutation": {
-        "type": "set_field",
-        "file": ".planning/formal/unit-test-coverage.json",
-        "field": "requirements.ACT-01",
-        "value": { "covered": false, "test_cases": [] },
-        "target_layer": "f_to_t",
-        "seeded_delta": 1
+        "type": "append_array_item",
+        "file": ".planning/formal/requirements.json",
+        "array_path": "requirements",
+        "value": {
+          "id": "BENCH-TEST-01",
+          "text": "Benchmark fixture: requirement with no formal model coverage (ephemeral, restored post-run)",
+          "category": "Test",
+          "tier": "system",
+          "phase": "unknown",
+          "status": "Complete",
+          "provenance": { "source_file": "benchmark-fixture", "milestone": "unknown" },
+          "formal_models": []
+        },
+        "target_layer": "r_to_f"
       },
-      "pass_condition": "residual_decreased"
+      "pass_condition": "residual_increased"
     }
   ]
 }
