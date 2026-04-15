@@ -194,6 +194,9 @@ function migrate(root, dryRun) {
       'memory/',
       'archive/state-backups/',
       '',
+      '# Repowise caches (co-change graph, hotspot risk)',
+      'repowise/',
+      '',
     ].join('\n');
     fs.writeFileSync(gitignorePath, gitignoreContent, 'utf8');
   }
