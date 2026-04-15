@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-04-15T21:13:02.157Z",
+  "last_run": "2026-04-15T21:17:16.359Z",
   "converged": true,
   "iteration_count": 1,
   "final_residual_total": 88,
@@ -52,10 +52,6 @@
       "residual": 61
     },
     {
-      "layer": "req_quality",
-      "residual": 10
-    },
-    {
       "layer": "config_health",
       "residual": 19
     },
@@ -73,7 +69,7 @@
     }
   ],
   "r_to_f_progress": {
-    "total": 467,
+    "total": 468,
     "covered": 0,
     "percentage": "0.0"
   },
