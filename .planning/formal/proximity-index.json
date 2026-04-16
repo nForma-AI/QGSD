@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-16T20:44:21.379Z",
+  "generated": "2026-04-16T20:45:55.124Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -96,8 +96,8 @@
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-04-16T19:50:00.848Z",
-      "hash": "bc7e05b5"
+      "mtime": "2026-04-16T20:45:08.519Z",
+      "hash": "910364c0"
     },
     "unit-test-coverage.json": {
       "mtime": "2026-04-16T19:50:00.849Z",
