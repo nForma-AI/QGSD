@@ -35,7 +35,7 @@ See: .planning/PROJECT.md
 | 397 | build a command to run nf:solve against nf-benchmark to validate its capacity to solve issues automatically | 2026-04-13 | 93cc7575 | Verified | [397-build-a-command-to-run-nf-solve-against-](./quick/397-build-a-command-to-run-nf-solve-against-/) |
 | 398 | Improve the benchmark to actually test nf:solve autonomy — add a real autonomy track with seeded defects and residual reduction scoring | 2026-04-15 | 4b311884 | Verified | [398-improve-the-benchmark-to-actually-test-n](.planning/quick/398-improve-the-benchmark-to-actually-test-n/) |
 | 399 | Add /nf:coderlm query skill | 2026-04-16 | 2cb11083 | Verified | [399-add-a-nf-coderlm-query-skill-that-lets-u](.planning/quick/399-add-a-nf-coderlm-query-skill-that-lets-u/) |
-| 400 | Add smart arg parsing to /nf:coderlm | 2026-04-16 | {commit_hash} | Pending | [400-add-smart-argument-parsing-to-nf-coderlm](.planning/quick/400-add-smart-argument-parsing-to-nf-coderlm/) |
+| 400 | Add smart arg parsing to /nf:coderlm | 2026-04-16 | f5570dc6 | Pending | [400-add-smart-argument-parsing-to-nf-coderlm](.planning/quick/400-add-smart-argument-parsing-to-nf-coderlm/) |
 
 ## Session Log
 
