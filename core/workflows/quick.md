@@ -1694,6 +1694,8 @@ Ready for next task: /nf:quick
 - [ ] (--full) No "skip silently" clauses remain in executor constraints -- all skips are logged
 - [ ] (--full) Loop 2 results always recorded in SUMMARY.md (converged, non-converged, skipped, or N/A)
 - [ ] (--full) FORMAL_TOOLS_MISSING interpolated into executor prompt between files_to_read and constraints
+- [ ] (--full) Step 6.6 adversarial hardening runs when VERIFICATION_STATUS is "Verified"
+- [ ] (--full) Harden status included in final completion banner
 </success_criteria>
 
 <anti_patterns>
