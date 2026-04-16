@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-04-13T22:54:57.757Z",
-  "content_hash": "f74afbc6179f4801",
-  "frozen_at": "2026-04-13T22:54:57.757Z",
+  "aggregated_at": "2026-04-16T10:35:04.548Z",
+  "content_hash": "bcbb376bac79655f504bf01bd8db2a9065485d20d19b030528f3bf1e3cea6470",
+  "frozen_at": "2026-04-16T10:35:04.549Z",
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
   "last_sync": "2026-03-31T09:45:23.686Z",
@@ -5630,6 +5630,30 @@
       "provenance": {
         "source_file": ".planning/milestones/v0.30-REQUIREMENTS.md",
         "milestone": "v0.30"
+      }
+    },
+    {
+      "id": "TOOL-01",
+      "text": "The /nf:coderlm skill exposes four query subcommands (callers, implementation, tests, peek) that provide interactive access to the coderlm symbol server for code navigation and analysis.",
+      "category": "Tool Features",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "The coderlm symbol server indexes source code symbols and call graphs, but accessing its query capabilities previously required direct curl requests or raw Node invocations. The query subcommands expose this API through a first-class skill interface, enabling developers to interactively look up callers of a symbol, find where symbols are defined, discover associated tests, and preview source code—making code navigation and understanding accessible from within nForma.",
+      "provenance": {
+        "source_file": ".planning/quick/399-add-a-nf-coderlm-query-skill-that-lets-u/399-PLAN.md",
+        "milestone": "quick-399"
+      }
+    },
+    {
+      "id": "TOOL-02",
+      "text": "The /nf:coderlm tool auto-detects query intent from argument shape (symbol, file path, line ranges) and automatically invokes the correct subcommand (tests, callers, implementation, peek) without requiring explicit subcommand syntax.",
+      "category": "Tool Features",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Users previously had to remember and type explicit subcommand names (tests, callers, implementation, peek) to query code relationships. This requirement enables natural command-line interaction where argument shape (bare symbol, file path, line ranges) is sufficient to infer the intended operation, reducing cognitive load and making the tool more discoverable.",
+      "provenance": {
+        "source_file": ".planning/quick/400-add-smart-argument-parsing-to-nf-coderlm/400-PLAN.md",
+        "milestone": "quick-400"
       }
     },
     {
