@@ -1,10 +1,10 @@
 {
-  "generated": "2026-04-16T20:51:15.731Z",
+  "generated": "2026-04-16T21:01:53.949Z",
   "total_claims_checked": 188,
   "doc_files_scanned": 8,
   "raw_broken_count": 58,
   "weighted_residual": 114,
-  "suppressed_fp_count": 6,
+  "suppressed_fp_count": 7,
   "category_breakdown": {
     "user": 56,
     "developer": 2
