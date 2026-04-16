@@ -3400,9 +3400,8 @@ function getAggregateGates() {
  * Returns { residual: N, detail: {...} }
  */
 function sweepL1toL3() {
-  if (fastMode) {
-    return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
-  }
+  // Note: fastMode guard removed — getAggregateGates() is a lightweight file read,
+  // not a slow operation. Required for benchmark detection of cross-layer mutations.
 
   const agg = getAggregateGates();
   if (!agg || !agg.gate_a) {
@@ -3438,9 +3437,8 @@ function sweepL1toL3() {
  * Returns { residual: N, detail: {...} }
  */
 function sweepL3toTC() {
-  if (fastMode) {
-    return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
-  }
+  // Note: fastMode guard removed — getAggregateGates() is a lightweight file read.
+  // Required for benchmark detection of cross-layer mutations.
 
   // Check if test-recipes.json exists and staleness
   const recipesPath = path.join(ROOT, '.planning', 'formal', 'test-recipes', 'test-recipes.json');
@@ -3726,9 +3724,8 @@ function sweepGitHistoryEvidence() {
  * Informational — not added to the forward total.
  */
 function sweepFormalLint() {
-  if (fastMode) {
-    return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
-  }
+  // Note: fastMode guard removed — lint-formal-models.cjs is static analysis (fast).
+  // Required for benchmark detection of formal model mutation in multi-layer challenges.
 
   try {
     const result = spawnTool('bin/lint-formal-models.cjs', ['--json']);
@@ -4506,11 +4503,11 @@ function computeResidual() {
   const skipLayer = { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
 
   const _t_l1_to_l3 = Date.now();
-  const l1_to_l3 = checkLayerSkip('l1_to_l3') || (effectiveFastMode() || pastDeadline() ? skipLayer : sweepL1toL3());
+  const l1_to_l3 = checkLayerSkip('l1_to_l3') || (pastDeadline() ? skipLayer : sweepL1toL3());
   _timing.l1_to_l3 = { duration_ms: Date.now() - _t_l1_to_l3, skipped: !!(l1_to_l3.detail && l1_to_l3.detail.skipped) };
 
   const _t_l3_to_tc = Date.now();
-  const l3_to_tc = checkLayerSkip('l3_to_tc') || (effectiveFastMode() || pastDeadline() ? skipLayer : sweepL3toTC());
+  const l3_to_tc = checkLayerSkip('l3_to_tc') || (pastDeadline() ? skipLayer : sweepL3toTC());
   _timing.l3_to_tc = { duration_ms: Date.now() - _t_l3_to_tc, skipped: !!(l3_to_tc.detail && l3_to_tc.detail.skipped) };
 
   // Per-model gate maturity (informational — not added to layer_total)
