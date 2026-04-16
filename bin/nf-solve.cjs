@@ -296,6 +296,7 @@ let _forceFullSweep = false;
 function effectiveFastMode() { return fastMode && !_forceFullSweep; }
 const skipProximity = args.includes('--skip-proximity');
 const skipHeatmap = args.includes('--skip-heatmap');
+const noCoderlm = args.includes('--no-coderlm');
 const skipTests = args.includes('--skip-tests');
 const requireBaselines = args.includes('--require-baselines');
 const noAutoCommit = args.includes('--no-auto-commit');
@@ -6188,12 +6189,12 @@ function main() {
   // CADP-01: Create adapter once per solve run (accumulates metrics across all iterations).
   // resetCache() clears stale data from previous runs before the loop starts.
   // Hoisted here so metrics are non-zero after sync-path queries in queryEdgesSync.
-  const _solveAdapter = createAdapter({ enabled: true });
+  const _solveAdapter = createAdapter({ enabled: !noCoderlm });
   _solveAdapter.resetCache(); // CADP-01: cleared at loop start
   _activeAdapter = _solveAdapter; // CREM-03: Make adapter available to sweepGitHeatmap()
 
   // Start coderlm server early so it's available for all modes (including --report-only)
-  if (!skipProximity) {
+  if (!skipProximity && !noCoderlm) {
     try {
       const lifecycle = ensureRunning({ port: 8787, indexPath: ROOT });
       if (lifecycle.ok) {
@@ -6803,6 +6804,7 @@ if (require.main === module) {
   main();
 }
 
+// modified by benchmark
 // modified by benchmark
 // modified by benchmark
 // modified by benchmark
