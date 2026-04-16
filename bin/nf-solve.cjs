@@ -4467,7 +4467,7 @@ function computeResidual() {
 
   // Rebuild code-trace index for reverse sweeps (skip if past deadline)
   const _t_code_trace_rebuild = Date.now();
-  if (!pastDeadline()) rebuildCodeTraceIndex();
+  if (!effectiveFastMode() && !pastDeadline()) rebuildCodeTraceIndex();
   _timing.code_trace_rebuild = { duration_ms: Date.now() - _t_code_trace_rebuild, skipped: pastDeadline() };
 
   // Reverse traceability discovery (do NOT add to automatable total)

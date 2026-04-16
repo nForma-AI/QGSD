@@ -17,7 +17,9 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "formal_models": [],
+      "formal_models": [
+        ".planning/formal/tla/QGSDActivityTracking.tla"
+      ],
       "category_raw": "Activity Tracking"
     },
     {
@@ -6355,6 +6357,34 @@
         "source_file": ".planning/milestones/v0.35-REQUIREMENTS.md",
         "milestone": "unknown"
       }
+    },
+    {
+      "id": "BENCH-FAKE-01",
+      "text": "Benchmark synthetic requirement with no formal model coverage",
+      "category": "Benchmark",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": "benchmark",
+        "milestone": "benchmark"
+      },
+      "formal_models": [],
+      "category_raw": "Benchmark"
+    },
+    {
+      "id": "BENCH-FAKE-01",
+      "text": "Benchmark synthetic requirement with no formal model coverage",
+      "category": "Benchmark",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": "benchmark",
+        "milestone": "benchmark"
+      },
+      "formal_models": [],
+      "category_raw": "Benchmark"
     }
   ]
 }
