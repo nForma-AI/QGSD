@@ -6357,6 +6357,30 @@
         "source_file": ".planning/milestones/v0.35-REQUIREMENTS.md",
         "milestone": "unknown"
       }
+    },
+    {
+      "id": "TOOL-01",
+      "text": "The /nf:coderlm skill exposes four query subcommands (callers, implementation, tests, peek) that provide interactive access to the coderlm symbol server for code navigation and analysis.",
+      "category": "Tool Features",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "The coderlm symbol server indexes source code symbols and call graphs, but accessing its query capabilities previously required direct curl requests or raw Node invocations. The query subcommands expose this API through a first-class skill interface, enabling developers to interactively look up callers of a symbol, find where symbols are defined, discover associated tests, and preview source code—making code navigation and understanding accessible from within nForma.",
+      "provenance": {
+        "source_file": ".planning/quick/399-add-a-nf-coderlm-query-skill-that-lets-u/399-PLAN.md",
+        "milestone": "quick-399"
+      }
+    },
+    {
+      "id": "TOOL-02",
+      "text": "The /nf:coderlm tool auto-detects query intent from argument shape (symbol, file path, line ranges) and automatically invokes the correct subcommand (tests, callers, implementation, peek) without requiring explicit subcommand syntax.",
+      "category": "Tool Features",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Users previously had to remember and type explicit subcommand names (tests, callers, implementation, peek) to query code relationships. This requirement enables natural command-line interaction where argument shape (bare symbol, file path, line ranges) is sufficient to infer the intended operation, reducing cognitive load and making the tool more discoverable.",
+      "provenance": {
+        "source_file": ".planning/quick/400-add-smart-argument-parsing-to-nf-coderlm/400-PLAN.md",
+        "milestone": "quick-400"
+      }
     }
   ]
 }
