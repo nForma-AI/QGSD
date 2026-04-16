@@ -212,80 +212,78 @@ The benchmark's documentation challenges (BENCH-051 through BENCH-066) inject mu
 sweepDtoC does not scan for `/nf:*` slash-command references in docs and verify their existence
 against the commands registry. This causes 0/16 detection rate.
 
-In sweepDtoC (starting at line ~1963), after the existing broken-claim scanning logic but before
-the return statement, add a new detection block:
+In sweepDtoC (starting at line ~1963), after the existing broken-claim scanning loop but before
+the weighted-residual computation block (the `for (const bc of brokenClaims)` loop at line ~2296),
+add a new ghost-command detection block:
 
 **Add nf: slash-command scan to sweepDtoC:**
 
-After the existing `broken` array is built and before `return { residual: ..., detail: ... }`,
-add:
+Locate the line `// Weighted residual: user-facing broken claims count more` (line ~2293) and
+insert the following block immediately before it:
 
 ```js
   // Scan docs for /nf: slash-command references and verify existence
   // (handles benchmark mutations that inject references to non-existent commands)
-  const nfCommandsDir = path.join(ROOT, 'commands');
-  const nfCommandPattern = /\/nf:([a-zA-Z0-9_-]+)/g;
-  let ghostCommands = 0;
-  if (fs.existsSync(nfCommandsDir)) {
-    // Build set of known command names from commands/ directory
-    const knownCommands = new Set();
-    try {
-      const walkCommands = (dir) => {
-        const entries = fs.readdirSync(dir, { withFileTypes: true });
-        for (const entry of entries) {
-          if (entry.isDirectory()) walkCommands(path.join(dir, entry.name));
-          else if (entry.name.endsWith('.md')) {
-            const stem = entry.name.replace(/\.md$/, '');
-            knownCommands.add(stem);
-          }
-        }
-      };
-      walkCommands(nfCommandsDir);
-    } catch (_) { /* fail-open */ }
-
-    // Scan all doc files for /nf: references
-    for (const { absPath } of docFiles) {
+  {
+    const nfCommandsDir = path.join(ROOT, 'commands');
+    const nfCommandPattern = /\/nf:([a-zA-Z0-9_-]+)/g;
+    let ghostCommands = 0;
+    if (fs.existsSync(nfCommandsDir)) {
+      // Build set of known command names from commands/ directory
+      const knownCommands = new Set();
       try {
-        const docContent = fs.readFileSync(absPath, 'utf8');
+        const walkCommands = (dir) => {
+          const entries = fs.readdirSync(dir, { withFileTypes: true });
+          for (const entry of entries) {
+            if (entry.isDirectory()) walkCommands(path.join(dir, entry.name));
+            else if (entry.name.endsWith('.md')) {
+              const stem = entry.name.replace(/\.md$/, '');
+              knownCommands.add(stem);
+            }
+          }
+        };
+        walkCommands(nfCommandsDir);
+      } catch (_) { /* fail-open */ }
+
+      // Scan all doc files for /nf: references
+      for (const { absPath, category } of docFiles) {
+        const nfCmdContent = (() => {
+          try { return fs.readFileSync(absPath, 'utf8'); } catch (_) { return ''; }
+        })();
         let m;
-        while ((m = nfCommandPattern.exec(docContent)) !== null) {
+        nfCommandPattern.lastIndex = 0;
+        while ((m = nfCommandPattern.exec(nfCmdContent)) !== null) {
           const cmdName = m[1];
           if (!knownCommands.has(cmdName)) {
             ghostCommands++;
-            broken.push({
-              file: path.relative(ROOT, absPath),
+            brokenClaims.push({
+              doc_file: path.relative(ROOT, absPath),
+              line: null,
               type: 'ghost_command',
-              reference: '/nf:' + cmdName,
+              value: '/nf:' + cmdName,
               reason: 'nf: command not found in commands/ directory',
+              category,
+              weight: CATEGORY_WEIGHT[category] || 1,
             });
           }
         }
-      } catch (_) { /* fail-open */ }
+      }
     }
   }
 ```
 
-IMPORTANT: The variable `broken` must be defined before this block. Find where `broken` is
-initialized in sweepDtoC (it's used as the array that accumulates broken claims) and insert
-this block just before the final `return`. Do NOT create a new `broken` variable — append to
-the existing one used by d_to_c.
+IMPORTANT: The variable used by sweepDtoC is `brokenClaims` (initialized at line ~2084 as
+`const brokenClaims = [];`). Append ghost-command entries directly to `brokenClaims` — the
+weighted-residual loop at line ~2296 will pick them up automatically via each entry's `weight`
+field and include them in `Math.ceil(weightedResidual)`. No changes to the return statement
+are needed.
 
-If `broken` is not already an array in scope at that point (check the function structure), add:
+Also add `ghost_commands` to the detail object in the return statement at line ~2352:
 ```js
-  if (!Array.isArray(broken)) broken = [];
+      ghost_commands: ghostCommands,  // add after suppressed_fp_count
 ```
-immediately before the ghost-command scan block.
-
-The final `return` in sweepDtoC uses `broken.length` as the residual — no change to return
-statement needed.
-
-Also add `ghostCommands` to the detail object if > 0:
-```js
-  if (ghostCommands > 0) {
-    detail.ghost_commands = ghostCommands;
-  }
-```
-(Find where the detail object is built in sweepDtoC and add this field.)
+To do this: declare `let ghostCommandCount = 0;` before the ghost-command block, accumulate
+`ghostCommandCount += ghostCommands;` inside the block, and then reference it in the detail.
   </action>
   <verify>
 1. Verify the ghost-command detection works by checking the commands/ directory exists and the scan logic compiles:
