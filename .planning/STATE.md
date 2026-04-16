@@ -36,6 +36,7 @@ See: .planning/PROJECT.md
 | 398 | Improve the benchmark to actually test nf:solve autonomy — add a real autonomy track with seeded defects and residual reduction scoring | 2026-04-15 | 4b311884 | Verified | [398-improve-the-benchmark-to-actually-test-n](.planning/quick/398-improve-the-benchmark-to-actually-test-n/) |
 | 399 | Add /nf:coderlm query skill | 2026-04-16 | 2cb11083 | Verified | [399-add-a-nf-coderlm-query-skill-that-lets-u](.planning/quick/399-add-a-nf-coderlm-query-skill-that-lets-u/) |
 | 400 | Add nf:harden adversarial hardening loop skill | 2026-04-16 | 8c12260b | Verified | [400-add-nf-harden-adversarial-skill](./quick/400-add-nf-harden-adversarial-skill/) |
+| 401 | Fix nf-solve benchmark detection gaps (20.4% to 35%+) | 2026-04-16 | 5a9bafb8 | Pending | [401-fix-nf-solve-benchmark-detection-gaps-20](./quick/401-fix-nf-solve-benchmark-detection-gaps-20/) |
 
 ## Session Log
 
@@ -60,4 +61,4 @@ See: .planning/PROJECT.md
 - 2026-04-10 - Completed quick task 388: Sync baseline requirements and audit solver-generated formal models and test stubs
 - 2026-04-11 - Completed quick task 389: Fix shell-prompt-quorum-dedup.als Alloy assertion failure
 
-Last activity: 2026-04-16 - Completed quick task 400: Add nf:harden adversarial hardening loop skill
+Last activity: 2026-04-16 - Completed quick task 401: Fix nf-solve benchmark detection gaps

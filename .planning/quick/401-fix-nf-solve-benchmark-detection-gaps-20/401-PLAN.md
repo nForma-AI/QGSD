@@ -6,6 +6,7 @@ wave: 1
 depends_on: []
 files_modified:
   - bin/nf-solve.cjs
+  - bin/solve-benchmark-fixtures.json
 autonomous: true
 requirements: [BENCH-DETECT-01, BENCH-DETECT-02, BENCH-DETECT-03]
 formal_artifacts: none
