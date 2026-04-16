@@ -305,7 +305,7 @@ check().then(r => console.log(JSON.stringify(r)));
      * Get callers of a symbol (async).
      * Checks cache first; on miss, fetches from server and caches result.
      * @param {string} symbol - Symbol name
-     * @param {string} file - File path
+     * @param {string} [file] - File path (optional)
      * @returns {Promise<{callers?: string[], error?: string}>}
      */
     async getCallers(symbol, file) {
@@ -318,7 +318,10 @@ check().then(r => console.log(JSON.stringify(r)));
       const start = Date.now();
       try {
         await ensureSession();
-        const url = host + API_PREFIX + '/symbols/callers?symbol=' + encodeURIComponent(symbol) + '&file=' + encodeURIComponent(file);
+        let url = host + API_PREFIX + '/symbols/callers?symbol=' + encodeURIComponent(symbol);
+        if (file !== undefined && file !== null && file !== '') {
+          url += '&file=' + encodeURIComponent(file);
+        }
         const result = await httpGet(url, timeout, sessionHeaders());
         _metrics.queryCount++;
         _metrics.totalLatencyMs += Date.now() - start;
@@ -381,7 +384,8 @@ const client = protocol === 'https:' ? https : http;
 async function getCallers() {
   return new Promise(resolve => {
     let timedOut = false;
-    const path = ${JSON.stringify(API_PREFIX)} + '/symbols/callers?symbol=' + encodeURIComponent(symbol) + '&file=' + encodeURIComponent(file);
+    let path = ${JSON.stringify(API_PREFIX)} + '/symbols/callers?symbol=' + encodeURIComponent(symbol);
+    if (file) { path += '&file=' + encodeURIComponent(file); }
     const options = {
       hostname: hostname,
       port: port,
@@ -447,19 +451,18 @@ getCallers().then(r => console.log(JSON.stringify(r)));
      * Checks cache first; on miss, spawns node process to perform async HTTP GET.
      * Tracks queryCount and totalLatencyMs for CADP-03 session metrics.
      *
-     * Pre-flight note: the live /implementation endpoint returns { file, line } (not a nested
-     * `implementation` object). This matches the shape parsed by the async getImplementation()
-     * method. Response does NOT include a callers array, so queryEdgesSync falls back to
-     * getCallersSync for caller discovery.
+     * Pre-flight note: the live /implementation endpoint returns { file, source, symbol }.
+     * Both `symbol` and `file` params are required by the server.
      *
      * @param {string} symbol - Symbol name
-     * @returns {{file?: string, line?: number, error?: string}}
+     * @param {string} [file] - File path (optional but recommended to avoid HTTP 400)
+     * @returns {{file?: string, source?: string, line?: number, error?: string}}
      */
-    getImplementationSync(symbol) {
+    getImplementationSync(symbol, file) {
       if (!enabled) {
         return { error: 'disabled' };
       }
-      const cacheKey = JSON.stringify({ method: 'getImplementationSync', symbol });
+      const cacheKey = JSON.stringify({ method: 'getImplementationSync', symbol, file });
       const cached = _cache.get(cacheKey);
       if (cached !== undefined) return cached;
       const start = Date.now();
@@ -468,6 +471,7 @@ getCallers().then(r => console.log(JSON.stringify(r)));
         const parsed = parseUrl(host);
         const port = parsed.port || (parsed.protocol === 'https:' ? 443 : 80);
         const sessionId = _sessionId || '';
+        const fileParam = (file !== undefined && file !== null && file !== '') ? file : '';
         const script = `
 const http = require('http');
 const https = require('https');
@@ -476,12 +480,14 @@ const hostname = ${JSON.stringify(parsed.hostname)};
 const port = ${port};
 const sessionId = ${JSON.stringify(sessionId)};
 const symbol = ${JSON.stringify(symbol)};
+const fileParam = ${JSON.stringify(fileParam)};
 const timeout = ${timeout};
 const client = protocol === 'https:' ? https : http;
 async function getImplementation() {
   return new Promise(resolve => {
     let timedOut = false;
-    const path = ${JSON.stringify(API_PREFIX)} + '/symbols/implementation?symbol=' + encodeURIComponent(symbol);
+    let path = ${JSON.stringify(API_PREFIX)} + '/symbols/implementation?symbol=' + encodeURIComponent(symbol);
+    if (fileParam) { path += '&file=' + encodeURIComponent(fileParam); }
     const options = {
       hostname: hostname,
       port: port,
@@ -498,8 +504,8 @@ async function getImplementation() {
           if (res.statusCode === 200) {
             try {
               const parsed = JSON.parse(data);
-              // Live endpoint returns { file, line } — match async getImplementation() shape
-              resolve({ file: parsed.file, line: parsed.line });
+              // Live endpoint returns { file, source, symbol } — return file + source, keep line for compat
+              resolve({ file: parsed.file, source: parsed.source, line: parsed.line });
             } catch (e) {
               resolve({ error: 'parse' });
             }
@@ -547,19 +553,23 @@ getImplementation().then(r => console.log(JSON.stringify(r)));
      * Get implementation location of a symbol (async).
      * Checks cache first; on miss, fetches from server and caches result.
      * @param {string} symbol - Symbol name
-     * @returns {Promise<{file?: string, line?: number, error?: string}>}
+     * @param {string} [file] - File path (optional but recommended to avoid HTTP 400)
+     * @returns {Promise<{file?: string, source?: string, line?: number, error?: string}>}
      */
-    async getImplementation(symbol) {
+    async getImplementation(symbol, file) {
       if (!enabled) {
         return { error: 'disabled' };
       }
-      const cacheKey = JSON.stringify({ method: 'getImplementation', symbol });
+      const cacheKey = JSON.stringify({ method: 'getImplementation', symbol, file });
       const cached = _cache.get(cacheKey);
       if (cached !== undefined) return cached;
       const start = Date.now();
       try {
         await ensureSession();
-        const url = host + API_PREFIX + '/symbols/implementation?symbol=' + encodeURIComponent(symbol);
+        let url = host + API_PREFIX + '/symbols/implementation?symbol=' + encodeURIComponent(symbol);
+        if (file !== undefined && file !== null && file !== '') {
+          url += '&file=' + encodeURIComponent(file);
+        }
         const result = await httpGet(url, timeout, sessionHeaders());
         _metrics.queryCount++;
         _metrics.totalLatencyMs += Date.now() - start;
@@ -569,7 +579,8 @@ getImplementation().then(r => console.log(JSON.stringify(r)));
         if (result.status === 200) {
           try {
             const parsed = JSON.parse(result.body);
-            const out = { file: parsed.file, line: parsed.line };
+            // Live endpoint returns { file, source, symbol } — return file + source, keep line for compat
+            const out = { file: parsed.file, source: parsed.source, line: parsed.line };
             _cache.set(cacheKey, out);
             return out;
           } catch {
@@ -588,19 +599,24 @@ getImplementation().then(r => console.log(JSON.stringify(r)));
      * Find tests for a file (async).
      * Checks cache first; on miss, fetches from server and caches result.
      * @param {string} file - File path
+     * @param {string} [symbol] - Symbol name (required by server; returns error if missing)
      * @returns {Promise<{tests?: string[], error?: string}>}
      */
-    async findTests(file) {
+    async findTests(file, symbol) {
       if (!enabled) {
         return { error: 'disabled' };
       }
-      const cacheKey = JSON.stringify({ method: 'findTests', file });
+      if (!symbol) {
+        return { error: 'symbol required' };
+      }
+      const cacheKey = JSON.stringify({ method: 'findTests', file, symbol });
       const cached = _cache.get(cacheKey);
       if (cached !== undefined) return cached;
       const start = Date.now();
       try {
         await ensureSession();
-        const url = host + API_PREFIX + '/symbols/tests?file=' + encodeURIComponent(file);
+        let url = host + API_PREFIX + '/symbols/tests?file=' + encodeURIComponent(file) +
+                  '&symbol=' + encodeURIComponent(symbol);
         const result = await httpGet(url, timeout, sessionHeaders());
         _metrics.queryCount++;
         _metrics.totalLatencyMs += Date.now() - start;
@@ -644,8 +660,8 @@ getImplementation().then(r => console.log(JSON.stringify(r)));
       try {
         await ensureSession();
         const url = host + API_PREFIX + '/peek?file=' + encodeURIComponent(file) +
-                    '&start=' + encodeURIComponent(startLine) +
-                    '&end=' + encodeURIComponent(endLine);
+                    '&start_line=' + encodeURIComponent(startLine) +
+                    '&end_line=' + encodeURIComponent(endLine);
         const result = await httpGet(url, timeout, sessionHeaders());
         _metrics.queryCount++;
         _metrics.totalLatencyMs += Date.now() - start;
@@ -655,7 +671,8 @@ getImplementation().then(r => console.log(JSON.stringify(r)));
         if (result.status === 200) {
           try {
             const parsed = JSON.parse(result.body);
-            const out = { lines: parsed.lines || [] };
+            // Live endpoint returns { content, file, start_line, end_line, total_lines }
+            const out = { content: parsed.content, lines: (parsed.content || '').split('\n') };
             _cache.set(cacheKey, out);
             return out;
           } catch {

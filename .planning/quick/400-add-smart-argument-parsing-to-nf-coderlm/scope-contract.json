@@ -1,0 +1,25 @@
+{
+  "nf/quick-397-rebase": {
+    "task_id": 400,
+    "task_description": "Add smart argument parsing to /nf:coderlm so it auto-detects callers/implementation/tests/peek from input shape — no subcommand required",
+    "approach": "Implement heuristic-based argument detection in /nf:coderlm to infer query operation (callers, implementation, tests, peek) from input shape and argument count, eliminating the need for explicit subcommands.",
+    "out_of_scope": [
+      "Modifying coderlm-lifecycle.cjs or binary download/spawn behavior",
+      "Changing coderlm-adapter.cjs methods or adding new query endpoints",
+      "Building interactive prompts to disambiguate user intent when input is ambiguous",
+      "Implementing fuzzy matching or spell-checking for symbol/file names",
+      "Caching or persisting query results across invocations"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.95,
+      "routed_through_debug": false
+    },
+    "risk_level": "medium",
+    "risk_reason": "Single file change in commands/ — guardrail requires minimum medium for command/workflow files.",
+    "branches_affected": ["nf/quick-397-rebase"],
+    "created_at": "2026-04-16T08:09:31.740Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

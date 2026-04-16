@@ -1,0 +1,25 @@
+{
+  "nf/quick-397-rebase": {
+    "task_id": 399,
+    "task_description": "Add a /nf:coderlm query skill that lets users interactively query the coderlm symbol server — callers, implementation location, associated tests, and source peek — from within nForma. The skill should start coderlm if not running, accept a subcommand+args, call the adapter, and display results in a readable format.",
+    "approach": "Create a /nf:coderlm query skill that accepts subcommands (callers, implementation, tests, peek) with arguments, auto-starts coderlm if needed, calls the adapter, and displays formatted results in the terminal.",
+    "out_of_scope": [
+      "Modifying the coderlm-lifecycle.cjs or binary download/spawn logic",
+      "Changing the coderlm-adapter.cjs methods or adding new query endpoints",
+      "Implementing caching beyond what the adapter already provides",
+      "Adding interactive prompts or multi-step wizards for parameter entry",
+      "Integrating coderlm query results into other nf: skills or workflow automation"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.95,
+      "routed_through_debug": false
+    },
+    "risk_level": "medium",
+    "risk_reason": "Single primary file (commands/nf/coderlm.md) with skill enhancement, leveraging existing coderlm-adapter.cjs, but adds new query functionality requiring implementation logic beyond simple documentation updates.",
+    "branches_affected": ["nf/quick-397-rebase"],
+    "created_at": "2026-04-16T07:29:47.249Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

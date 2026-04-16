@@ -1,0 +1,25 @@
+{
+  "nf/quick-397-rebase": {
+    "task_id": 401,
+    "task_description": "Fix coderlm-adapter.cjs API parameter and response parsing mismatches: (1) getImplementation needs file param + parses source not line, (2) findTests needs symbol param, (3) peek uses wrong URL params (start/end vs start_line/end_line) and wrong response field (lines vs content), (4) getCallers with undefined file sends file=undefined",
+    "approach": "Update four methods in createAdapter() in bin/coderlm-adapter.cjs to match the actual coderlm server API: add missing required parameters, fix URL query param names, and align response parsing with actual server response shapes.",
+    "out_of_scope": [
+      "Changing the coderlm-lifecycle.cjs or binary download/spawn logic",
+      "Adding session management (already implemented — ensureSession/sessionHeaders exist)",
+      "Modifying coderlm.md skill (only adapter layer is in scope)",
+      "Changing the LRU cache strategy or metrics collection",
+      "Adding new query endpoints or methods"
+    ],
+    "classification": {
+      "type": "bugfix",
+      "confidence": 0.98,
+      "routed_through_debug": false
+    },
+    "risk_level": "medium",
+    "risk_reason": "Single file change in bin/ with existing callers in nf-solve.cjs and formal-scope-scan.cjs.",
+    "branches_affected": ["nf/quick-397-rebase"],
+    "created_at": "2026-04-16T11:15:08.525Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}
