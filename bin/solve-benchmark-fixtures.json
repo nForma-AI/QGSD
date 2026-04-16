@@ -65,7 +65,10 @@
         "f_to_t":        { "max": 5 },
         "c_to_f":        { "max": 3 },
         "trace_health":  { "max": 0 },
-        "memory_health": { "max": 0 }
+        "memory_health": { "max": 0 },
+        "l1_to_l3":      { "max": 3 },
+        "l3_to_tc":      { "max": 3 },
+        "formal_lint":   { "max": 6 }
       },
       "expect_convergence": false,
       "min_residual": null,
