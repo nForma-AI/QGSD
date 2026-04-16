@@ -387,8 +387,9 @@ if [ -d ".planning/formal/spec" ]; then
   done < <(node bin/formal-scope-scan.cjs --description "$DESCRIPTION" --format lines)
   MATCH_COUNT=${#FORMAL_SPEC_CONTEXT[@]}
   if [ "$MATCH_COUNT" -gt 0 ]; then
-    MATCHED_MODULES=$(printf '%s\n' "${FORMAL_SPEC_CONTEXT[@]}" | node -e "
-      const lines=require('fs').readFileSync('/dev/stdin','utf8').trim().split('\n');
+    MATCHED_MODULES=$(printf '%s\n' "${FORMAL_SPEC_CONTEXT[@]}" | node --input-type=module -e "
+      import { readFileSync } from 'fs';
+      const lines = readFileSync('/dev/stdin','utf8').trim().split('\n');
       console.log(lines.map(l=>JSON.parse(l).module).join(', '));
     ")
     echo ":: Formal scope scan: found ${MATCH_COUNT} module(s): ${MATCHED_MODULES}"
@@ -984,15 +985,15 @@ ${DESCRIPTION}
 
 ```bash
 # Read existing scope-contract, update routed_through_debug, write back
-node << 'NF_EVAL'
-const fs = require('fs');
+node --input-type=module << 'NF_EVAL'
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 const scPath = '${task_dir}/scope-contract.json';
-if (fs.existsSync(scPath)) {
-  const sc = JSON.parse(fs.readFileSync(scPath, 'utf8'));
+if (existsSync(scPath)) {
+  const sc = JSON.parse(readFileSync(scPath, 'utf8'));
   const key = Object.keys(sc)[0];
   if (key && sc[key].classification) {
     sc[key].classification.routed_through_debug = true;
-    fs.writeFileSync(scPath, JSON.stringify(sc, null, 2) + '\n');
+    writeFileSync(scPath, JSON.stringify(sc, null, 2) + '\n');
   }
 }
 NF_EVAL
@@ -1432,6 +1433,67 @@ node ~/.claude/nf/bin/nf-tools.cjs commit "docs(quick-${next_num}): update verif
 
 ---
 
+**Step 6.6: Adversarial hardening (only when `$FULL_MODE` AND `$VERIFICATION_STATUS = "Verified"`)**
+
+<!-- MUST_NOT_SKIP: This step runs after verification passes and before requirement elevation. Skip only if NOT $FULL_MODE or VERIFICATION_STATUS is not "Verified". -->
+
+Skip this step if NOT `$FULL_MODE` OR `$VERIFICATION_STATUS` is not `"Verified"`.
+
+Display:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ nForma ► ADVERSARIAL HARDENING (quick --full)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+◆ Spawning hardening loop (max 5 iterations)...
+```
+
+Spawn the harden workflow inline as a Task subagent:
+
+```
+Task(
+  subagent_type="general-purpose",
+  model="{executor_model}",
+  description="Adversarial hardening: ${DESCRIPTION}",
+  prompt="
+Run the adversarial hardening loop for the quick task that just completed.
+
+Read @~/.claude/nf/workflows/harden.md for the full workflow instructions.
+
+## Arguments
+--max 5
+
+## Context
+This is called from nf:quick --full post-verification. The implementation was just verified as passing. The goal is to harden it against edge cases.
+
+## Constraints
+- Max 5 iterations (--max 5)
+- Use the repo root as scope (no --area flag)
+- Fail-open: if no test files found, return status: skipped and stop gracefully
+- Do NOT re-run the verifier after hardening — this step is hardening only
+- Return the final harden status (converged | cap_exhausted | skipped | blocked) in your response (format: 'Harden Status: {status}')
+"
+)
+```
+
+Parse the subagent response for `Harden Status: {status}`.
+
+**Fail-open:** If the subagent errors, times out, or returns no status, log:
+```
+◆ WARNING: Adversarial hardening subagent did not complete cleanly. Proceeding (fail-open).
+```
+Set `$HARDEN_STATUS = "skipped"`. Continue to Step 6.7.
+
+Display result line based on status:
+- `converged` → `◆ Hardening: CONVERGED`
+- `cap_exhausted` → `◆ Hardening: CAP REACHED (5 iterations) — some edge cases may remain`
+- `skipped` → `◆ Hardening: SKIPPED (no test files found)`
+- `blocked` → `◆ Hardening: SKIPPED (baseline failures detected — fix first)`
+
+Store `$HARDEN_STATUS` for inclusion in the final completion banner.
+
+---
+
 **Step 6.7: Requirement elevation (only when `$FULL_MODE` AND `$VERIFICATION_STATUS = "Verified"`)**
 
 Skip this step if NOT `$FULL_MODE` or `$VERIFICATION_STATUS` is not `"Verified"`.
@@ -1579,6 +1641,7 @@ Quick Task ${next_num}: ${DESCRIPTION}
 
 Summary: ${QUICK_DIR}/${next_num}-SUMMARY.md
 Verification: ${QUICK_DIR}/${next_num}-VERIFICATION.md (${VERIFICATION_STATUS})
+Hardening: ${HARDEN_STATUS || 'not run'}
 ${DRAFT_REQ ? 'Requirement: ' + DRAFT_REQ.id + ' (elevated to .planning/formal/requirements.json)' : ''}
 Commit: ${commit_hash}
 Branch: ${CREATED_BRANCH || current_branch}
