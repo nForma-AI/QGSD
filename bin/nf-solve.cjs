@@ -295,6 +295,8 @@ const fastMode = args.includes('--fast');
 let _forceFullSweep = false;
 function effectiveFastMode() { return fastMode && !_forceFullSweep; }
 const skipProximity = args.includes('--skip-proximity');
+const skipHeatmap = args.includes('--skip-heatmap');
+const noCoderlm = args.includes('--no-coderlm');
 const skipTests = args.includes('--skip-tests');
 const requireBaselines = args.includes('--require-baselines');
 const noAutoCommit = args.includes('--no-auto-commit');
@@ -3561,38 +3563,43 @@ function sweepGitHeatmap(adapter) {
     const signals = data.signals || {};
 
     // Repowise enhancement: compute hotspot scores with churn × complexity (cached)
+    // Skip with --skip-heatmap to use cached evidence only (saves ~300s of git mining)
     let repowiseSummary = null;
-    try {
-      const { computeHotspots } = require('./repowise/hotspot.cjs');
-      if (!_repowiseHotspotCache) {
-        _repowiseHotspotCache = computeHotspots(ROOT, { since: '3.months.ago', maxCommits: 300 });
-      }
-      const hotspotResult = _repowiseHotspotCache;
-      if (hotspotResult && hotspotResult.files) {
-        repowiseSummary = hotspotResult.summary;
-        // Build lookup by basename + full path for cross-matching
-        const hotspotByPath = new Map();
-        const hotspotByBasename = new Map();
-        for (const f of hotspotResult.files) {
-          hotspotByPath.set(f.path, f);
-          const base = f.path.split('/').pop();
-          if (!hotspotByBasename.has(base)) hotspotByBasename.set(base, f);
+    if (!skipHeatmap) {
+      try {
+        const { computeHotspots } = require('./repowise/hotspot.cjs');
+        if (!_repowiseHotspotCache) {
+          _repowiseHotspotCache = computeHotspots(ROOT, { since: '3.months.ago', maxCommits: 300 });
         }
-        let enriched = 0;
-        for (const hz of hotZones) {
-          let hf = hotspotByPath.get(hz.file);
-          if (!hf) hf = hotspotByBasename.get(hz.file.split('/').pop());
-          if (hf) {
-            hz.hotspot_score = hf.hotspot_score;
-            hz.complexity = hf.complexity;
-            hz.risk = hf.risk;
-            enriched++;
+        const hotspotResult = _repowiseHotspotCache;
+        if (hotspotResult && hotspotResult.files) {
+          repowiseSummary = hotspotResult.summary;
+          // Build lookup by basename + full path for cross-matching
+          const hotspotByPath = new Map();
+          const hotspotByBasename = new Map();
+          for (const f of hotspotResult.files) {
+            hotspotByPath.set(f.path, f);
+            const base = f.path.split('/').pop();
+            if (!hotspotByBasename.has(base)) hotspotByBasename.set(base, f);
           }
+          let enriched = 0;
+          for (const hz of hotZones) {
+            let hf = hotspotByPath.get(hz.file);
+            if (!hf) hf = hotspotByBasename.get(hz.file.split('/').pop());
+            if (hf) {
+              hz.hotspot_score = hf.hotspot_score;
+              hz.complexity = hf.complexity;
+              hz.risk = hf.risk;
+              enriched++;
+            }
+          }
+          process.stderr.write(TAG + ' Repowise: enriched ' + enriched + '/' + hotZones.length + ' hot-zone(s) with churn×complexity scores (' + hotspotResult.files.length + ' files)\n');
         }
-        process.stderr.write(TAG + ' Repowise: enriched ' + enriched + '/' + hotZones.length + ' hot-zone(s) with churn×complexity scores (' + hotspotResult.files.length + ' files)\n');
+      } catch (_e) {
+        process.stderr.write(TAG + ' Repowise hotspot: unavailable, using git churn ranking only\n');
       }
-    } catch (_e) {
-      process.stderr.write(TAG + ' Repowise hotspot: unavailable, using git churn ranking only\n');
+    } else {
+      process.stderr.write(TAG + ' Repowise hotspot: skipped (--skip-heatmap), using cached evidence only\n');
     }
 
     // CREM-03: Enrich hot-zone callee counts via coderlm getCallersSync (fail-open)
@@ -4461,7 +4468,7 @@ function computeResidual() {
 
   // Rebuild code-trace index for reverse sweeps (skip if past deadline)
   const _t_code_trace_rebuild = Date.now();
-  if (!pastDeadline()) rebuildCodeTraceIndex();
+  if (!effectiveFastMode() && !pastDeadline()) rebuildCodeTraceIndex();
   _timing.code_trace_rebuild = { duration_ms: Date.now() - _t_code_trace_rebuild, skipped: pastDeadline() };
 
   // Reverse traceability discovery (do NOT add to automatable total)
@@ -4530,7 +4537,7 @@ function computeResidual() {
   // Git heatmap sweep (informational — not added to forward total)
   const _t_git_heatmap = Date.now();
   const git_heatmap = sweepGitHeatmap(_activeAdapter);
-  _timing.git_heatmap = { duration_ms: Date.now() - _t_git_heatmap, skipped: false };
+  _timing.git_heatmap = { duration_ms: Date.now() - _t_git_heatmap, skipped: skipHeatmap };
   const heatmap_total = git_heatmap.residual >= 0 ? git_heatmap.residual : 0;
 
   // Git history evidence sweep (informational — not added to forward total)
@@ -6182,12 +6189,12 @@ function main() {
   // CADP-01: Create adapter once per solve run (accumulates metrics across all iterations).
   // resetCache() clears stale data from previous runs before the loop starts.
   // Hoisted here so metrics are non-zero after sync-path queries in queryEdgesSync.
-  const _solveAdapter = createAdapter({ enabled: true });
+  const _solveAdapter = createAdapter({ enabled: !noCoderlm });
   _solveAdapter.resetCache(); // CADP-01: cleared at loop start
   _activeAdapter = _solveAdapter; // CREM-03: Make adapter available to sweepGitHeatmap()
 
   // Start coderlm server early so it's available for all modes (including --report-only)
-  if (!skipProximity) {
+  if (!skipProximity && !noCoderlm) {
     try {
       const lifecycle = ensureRunning({ port: 8787, indexPath: ROOT });
       if (lifecycle.ok) {
@@ -6797,6 +6804,7 @@ if (require.main === module) {
   main();
 }
 
+// modified by benchmark
 // modified by benchmark
 // modified by benchmark
 // modified by benchmark
