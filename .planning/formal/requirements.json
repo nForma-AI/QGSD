@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-04-16T08:04:50.670Z",
-  "content_hash": "15d0e700e1fdb278b58c2395a0b26cb6e5129a6edbd8a9a21e8ad0464464df9e",
-  "frozen_at": "2026-04-16T08:04:50.671Z",
+  "aggregated_at": "2026-04-16T10:34:00.539Z",
+  "content_hash": "f2163bb1db1f2b980cd740f8a19d6423c248fadc94a2f6364f20674f1ecd658a",
+  "frozen_at": "2026-04-16T10:34:00.540Z",
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
   "last_sync": "2026-03-31T09:45:23.686Z",
@@ -5657,6 +5657,16 @@
         "source_file": ".planning/quick/399-add-a-nf-coderlm-query-skill-that-lets-u/399-PLAN.md",
         "milestone": "quick-399"
       }
+    },
+    {
+      "id": "TOOL-02",
+      "text": "The /nf:harden skill runs an adversarial hardening loop—iteratively generating edge-case tests, fixing failures, and converging after 2 consecutive zero-change iterations or exhausting the iteration cap (max 10).",
+      "category": "Tool Features",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Edge-case bugs often escape standard verification steps. The adversarial hardening loop catches gaps missed by typical test coverage by spawning an adversarial test writer that probes boundary conditions, type coercion, and error propagation, then automatically fixes failures. The --area flag scopes testing to specific subsystems; --full mode expands the categories of edge cases probed. Integration with nf:quick --full (max 5 iterations) gives fast tasks a hardening step that strengthens the implementation before final requirement elevation.",
+      "source_file": ".planning/quick/400-add-nf-harden-adversarial-skill/400-PLAN.md",
+      "milestone": "quick-400"
     },
     {
       "id": "TRACE-01",
