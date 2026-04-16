@@ -1,7 +1,7 @@
 ---
 name: nf:coderlm
 description: Manage the coderlm symbol server lifecycle and query its symbol index — callers, implementation location, associated tests, and source peek.
-argument-hint: "<start|stop|status|update|callers|implementation|tests|peek>"
+argument-hint: "<subcommand | symbol | file | symbol file | file startLine endLine>"
 allowed-tools:
   - Bash
   - Read
@@ -35,6 +35,53 @@ Usage:
 
 The server auto-starts during nf:solve runs. Manual control is optional.
 ```
+
+**Step 1.5: Smart argument detection**
+
+This step only fires when the first argument is NOT one of the known explicit subcommands: `start`, `stop`, `status`, `update`, `callers`, `implementation`, `tests`, `peek`.
+
+Use the following heuristics to infer intent from argument shape, then set a resolved subcommand and remapped argument list before proceeding to Step 2:
+
+**Rule 1 — single arg, looks like a file** (`contains '/' OR (contains '.' AND ends with a known extension: `.js`, `.cjs`, `.mjs`, `.ts`, `.tsx`, `.json`)`):
+- Resolved subcommand: `tests`
+- Remapped args: `[arg1]`
+- Example: `/nf:coderlm bin/coderlm-adapter.cjs` → `tests bin/coderlm-adapter.cjs`
+
+**Rule 2 — two args, second looks like a file** (second arg contains `/` or matches file pattern above):
+- Resolved subcommand: `callers`
+- Remapped args: `[arg1, arg2]`
+- Example: `/nf:coderlm myFunction bin/nf-solve.cjs` → `callers myFunction bin/nf-solve.cjs`
+
+**Rule 3 — three args, first looks like a file, second and third are integers**:
+- Validated: second and third args must parse as integers with second <= third
+- Resolved subcommand: `peek`
+- Remapped args: `[arg1, arg2, arg3]`
+- Example: `/nf:coderlm bin/foo.cjs 10 20` → `peek bin/foo.cjs 10 20`
+- If validation fails (non-integer or start > end), display a usage error and stop.
+
+**Rule 4 — single arg, does NOT look like a file** (no `/`, and either no `.` or not a file-like extension `.js`, `.cjs`, `.mjs`, `.ts`, `.tsx`, `.json`):
+- Resolved subcommand: `implementation` + `callers` (combined output)
+- Remapped args: `[arg1]`
+- Example: `/nf:coderlm autoClose` → run both `implementation autoClose` and `callers autoClose`, display both results in sequence
+- Combined output format:
+  ```
+  Implementation of <symbol>:
+    File: <result.file>
+    Line: <result.line>
+
+  Callers of <symbol>:
+    - path/to/caller1.js
+    (N callers found)
+  ```
+
+**Rule 5 — single arg, ambiguous** (no `/` but has a `.` without a recognized extension `.js`, `.cjs`, `.mjs`, `.ts`, `.tsx`, `.json`, or otherwise unclear):
+- Default to Rule 4 (implementation + callers)
+- Prepend a note: "Treating `<arg>` as a symbol name (assumption: not a file path). If you meant a file, use `/nf:coderlm tests <file>` directly."
+
+**Rule 6 — no args or unmatched pattern**:
+- Fall through to the existing "no argument / unrecognized" display in Step 1 (show usage help).
+
+After applying a rule, proceed directly to Step 2 using the resolved subcommand and remapped args. The combined implementation+callers case (Rule 4) executes both query paths sequentially and displays both result blocks before Step 3.
 
 **Step 2: Execute subcommand**
 

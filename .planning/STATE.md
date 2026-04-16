@@ -35,6 +35,7 @@ See: .planning/PROJECT.md
 | 397 | build a command to run nf:solve against nf-benchmark to validate its capacity to solve issues automatically | 2026-04-13 | 93cc7575 | Verified | [397-build-a-command-to-run-nf-solve-against-](./quick/397-build-a-command-to-run-nf-solve-against-/) |
 | 398 | Improve the benchmark to actually test nf:solve autonomy — add a real autonomy track with seeded defects and residual reduction scoring | 2026-04-15 | 4b311884 | Verified | [398-improve-the-benchmark-to-actually-test-n](.planning/quick/398-improve-the-benchmark-to-actually-test-n/) |
 | 399 | Add /nf:coderlm query skill | 2026-04-16 | 2cb11083 | Verified | [399-add-a-nf-coderlm-query-skill-that-lets-u](.planning/quick/399-add-a-nf-coderlm-query-skill-that-lets-u/) |
+| 400 | Add smart arg parsing to /nf:coderlm | 2026-04-16 | {commit_hash} | Pending | [400-add-smart-argument-parsing-to-nf-coderlm](.planning/quick/400-add-smart-argument-parsing-to-nf-coderlm/) |
 
 ## Session Log
 
@@ -59,4 +60,4 @@ See: .planning/PROJECT.md
 - 2026-04-10 - Completed quick task 388: Sync baseline requirements and audit solver-generated formal models and test stubs
 - 2026-04-11 - Completed quick task 389: Fix shell-prompt-quorum-dedup.als Alloy assertion failure
 
-Last activity: 2026-04-16 - Completed quick task 399: Add /nf:coderlm query skill with callers, implementation, tests, and peek subcommands
+Last activity: 2026-04-16 - Completed quick task 400: Add smart argument parsing (Step 1.5 intent detection) to /nf:coderlm
