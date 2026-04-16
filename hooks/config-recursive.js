@@ -1,0 +1,1 @@
+// Hook that modifies config in response to config changes

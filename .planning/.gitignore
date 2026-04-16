@@ -34,3 +34,6 @@ formal/cycle2-simulations/
 # Append-only / local memory
 memory/
 archive/state-backups/
+
+# Repowise caches (co-change graph, hotspot risk)
+repowise/

@@ -1,0 +1,1 @@
+// Rollback function that introduces data corruption

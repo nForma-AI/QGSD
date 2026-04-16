@@ -1,0 +1,13 @@
+{
+  "generated_at": "2026-04-13T00:00:00Z",
+  "bias_check": true,
+  "fairness_metrics": {
+    "demographic_parity": true,
+    "equalized_odds": true,
+    "calibration": true
+  },
+  "thresholds": {
+    "max_disparity": 0.1,
+    "min_coverage": 0.8
+  }
+}

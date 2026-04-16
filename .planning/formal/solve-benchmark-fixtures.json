@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "description": "nf:solve benchmark fixture set",
+  "fixtures": [
+    {
+      "id": "report-only-fast",
+      "label": "Fast report-only sweep (skip proximity)",
+      "args": ["--report-only", "--json", "--no-timeout", "--max-iterations=1", "--fast", "--skip-proximity"],
+      "expect_convergence": false,
+      "min_residual": null,
+      "max_residual": null,
+      "pass_condition": "exits_zero"
+    },
+    {
+      "id": "report-only-full",
+      "label": "Full report-only single-iteration sweep (fast mode)",
+      "args": ["--report-only", "--json", "--no-timeout", "--max-iterations=1", "--fast"],
+      "expect_convergence": false,
+      "min_residual": null,
+      "max_residual": null,
+      "pass_condition": "exits_zero"
+    },
+    {
+      "id": "skip-layers-r2f",
+      "label": "Skip R->F layer, single iteration (fast mode)",
+      "args": ["--report-only", "--json", "--no-timeout", "--max-iterations=1", "--fast", "--skip-layers=r_to_f"],
+      "expect_convergence": false,
+      "min_residual": null,
+      "max_residual": null,
+      "pass_condition": "exits_zero"
+    },
+    {
+      "id": "focus-formal",
+      "label": "Focus filter on 'formal model' topic (fast mode)",
+      "args": ["--report-only", "--json", "--no-timeout", "--max-iterations=1", "--fast", "--focus=formal model"],
+      "expect_convergence": false,
+      "min_residual": null,
+      "max_residual": null,
+      "pass_condition": "exits_zero"
+    },
+    {
+      "id": "zero-residual-check",
+      "label": "Assert solver reports a numeric residual (not -1 error)",
+      "args": ["--report-only", "--json", "--no-timeout", "--max-iterations=1", "--fast"],
+      "expect_convergence": false,
+      "min_residual": 0,
+      "max_residual": null,
+      "pass_condition": "exits_zero"
+    },
+    {
+      "id": "invalid-focus-value",
+      "label": "Invalid --focus value should still exit cleanly (fast mode)",
+      "args": ["--report-only", "--json", "--no-timeout", "--max-iterations=1", "--fast", "--focus=__nonexistent_topic_xyz__"],
+      "expect_convergence": false,
+      "min_residual": null,
+      "max_residual": null,
+      "pass_condition": "exits_zero"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "generated_at": "2026-04-13T00:00:00Z",
+  "rules": {
+    "max_iterations": 10,
+    "oscillation_threshold": 0.05,
+    "convergence_epsilon": 0.01,
+    "stagnation_window": 3
+  },
+  "cycles": {
+    "allowed": true,
+    "max_cycle_length": 5,
+    "detection_enabled": true
+  }
+}

@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-12T21:11:39.342Z",
+    "generated_at": "2026-04-13T23:21:06.096Z",
     "generator_version": "1.1",
     "data_sources": {
       "annotations": {
@@ -12,11 +12,11 @@
         "used_as_fallback": 7
       },
       "check_results": {
-        "entry_count": 440
+        "entry_count": 1833
       },
       "unit_test_coverage": {
         "available": true,
-        "requirements_matched": 450
+        "requirements_matched": 451
       }
     }
   },
@@ -823,7 +823,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/GATE-02.stub.test.js",
-            "test_name": "GATE-02 — Bool: structural verification"
+            "test_name": "GATE-02: nf-solve.cjs autoClose function does not write gate_maturity directly"
           }
         ]
       }
@@ -2185,7 +2185,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/DISP-07.stub.test.js",
-            "test_name": "DISP-07 — Bool: structural verification"
+            "test_name": "DISP-07: quorum-slot-dispatch.cjs exists and contains debate trace persistence logic"
           }
         ]
       }
@@ -2430,7 +2430,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/DIAG-01.stub.test.js",
-            "test_name": "DIAG-01 — Requirement: behavioral verification"
+            "test_name": "DIAG-01 — Requirement: structural verification"
           }
         ]
       }
@@ -2472,7 +2472,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/DIAG-02.stub.test.js",
-            "test_name": "DIAG-02 — Requirement: behavioral verification"
+            "test_name": "DIAG-02 — Requirement: structural verification"
           }
         ]
       }
@@ -3417,7 +3417,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/GATE-03.stub.test.js",
-            "test_name": "GATE-03 — GateLevel: structural verification"
+            "test_name": "GATE-03: promote-gate-maturity.cjs exports promoteModel and validateCriteria"
           }
         ]
       }
@@ -3480,7 +3480,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/GATE-04.stub.test.js",
-            "test_name": "GATE-04 — GateLevel: structural verification"
+            "test_name": "GATE-04: compute-per-model-gates.cjs supports auto-demotion on evidence regression"
           }
         ]
       }
@@ -3508,7 +3508,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/GATE-05.stub.test.js",
-            "test_name": "GATE-05 — Bool: structural verification"
+            "test_name": "GATE-05 — Bool: behavioral verification"
           }
         ]
       }
@@ -5190,7 +5190,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/BRKR-01.stub.test.js",
-            "test_name": "BRKR-01 — MCPServer: structural verification"
+            "test_name": "BRKR-01 — Requirement: structural verification"
           }
         ]
       }
@@ -5260,7 +5260,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/EXEC-01.stub.test.js",
-            "test_name": "EXEC-01 — MCPServer: structural verification"
+            "test_name": "EXEC-01 — Requirement: structural verification"
           }
         ]
       }
@@ -5295,7 +5295,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/LTCY-01.stub.test.js",
-            "test_name": "LTCY-01 — MCPServer: structural verification"
+            "test_name": "LTCY-01 — Requirement: structural verification"
           }
         ]
       }
@@ -5323,7 +5323,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/MCPENV-02.stub.test.js",
-            "test_name": "MCPENV-02 — MCPServer: structural verification"
+            "test_name": "MCPENV-02 — NoSpuriousConsensus: structural verification"
           }
         ]
       }
@@ -5358,7 +5358,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/PRIO-01.stub.test.js",
-            "test_name": "PRIO-01 — MCPServer: structural verification"
+            "test_name": "PRIO-01 — Requirement: structural verification"
           }
         ]
       }
@@ -5393,7 +5393,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/SCHEMA-02.stub.test.js",
-            "test_name": "SCHEMA-02 — MCPServer: behavioral verification"
+            "test_name": "SCHEMA-02 — Requirement: behavioral verification"
           }
         ]
       }
@@ -6207,7 +6207,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/PARA-01.stub.test.js",
-            "test_name": "PARA-01 — Entity: structural verification"
+            "test_name": "PARA-01 — Requirement: structural verification"
           }
         ]
       }
@@ -6249,7 +6249,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/PARA-02.stub.test.js",
-            "test_name": "PARA-02 — Entity: structural verification"
+            "test_name": "PARA-02 — Requirement: structural verification"
           }
         ]
       }
@@ -8125,7 +8125,16 @@
           "latest_result": "pass",
           "check_id": "alloy:solve-result-schema"
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SOLVE-11.stub.test.js",
+            "test_name": "SOLVE-11: VALID_RESULTS includes both "
+          }
+        ]
+      }
     },
     "SCHEMA-01": {
       "id": "SCHEMA-01",
@@ -8602,7 +8611,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/SEM-01.stub.test.js",
-            "test_name": "SEM-01 — Invariant: structural verification"
+            "test_name": "SEM-01 — Requirement: structural verification"
           }
         ]
       }
@@ -8644,7 +8653,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/SEM-02.stub.test.js",
-            "test_name": "SEM-02 — Invariant: behavioral verification"
+            "test_name": "SEM-02 — Requirement: constant verification"
           }
         ]
       }
@@ -8679,7 +8688,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/SEM-03.stub.test.js",
-            "test_name": "SEM-03 — Invariant: structural verification"
+            "test_name": "SEM-03 — Requirement: structural verification"
           }
         ]
       }
@@ -8714,7 +8723,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/SEM-04.stub.test.js",
-            "test_name": "SEM-04 — Invariant: structural verification"
+            "test_name": "SEM-04 — Requirement: behavioral verification"
           }
         ]
       }
@@ -9307,7 +9316,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/SOLVE-08.stub.test.js",
-            "test_name": "SOLVE-08 — HumanGatedLayer: behavioral verification"
+            "test_name": "SOLVE-08 — HumanGatedLayer: structural verification"
           }
         ]
       }
@@ -12146,21 +12155,21 @@
           "property_name": "DeliberationMonotone",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "check_id": "tla:deliberation"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "DeliberationMonotone",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "check_id": "tla:deliberation"
         },
         {
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "DeliberationMonotone",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "check_id": "tla:deliberation"
         }
       ]
     },
@@ -12667,7 +12676,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/FV-01.stub.test.js",
-            "test_name": "FV-01 — SessionBounded: structural verification"
+            "test_name": "FV-01: NFSolveConvergence.tla defines SessionBounded invariant"
           }
         ]
       }
@@ -12721,7 +12730,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "TypeOK",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "fail",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -12742,7 +12751,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "SafetyInvariant1",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "fail",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -12763,7 +12772,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "SafetyInvariant1",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "fail",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -12784,7 +12793,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "SafetyInvariant2",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "fail",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -12805,7 +12814,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "SafetyInvariant3",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "fail",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -12826,7 +12835,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "LivenessProperty1",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "fail",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -12847,7 +12856,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "LivenessProperty2",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "fail",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -12868,7 +12877,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "LivenessProperty3",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "fail",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -13328,8 +13337,8 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "AllChecksEventuallyRun",
           "source": "annotation",
-          "latest_result": "inconclusive",
-          "check_id": "ci:liveness-fairness-lint"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -13349,8 +13358,8 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteRedaction",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "ci:trace-redaction"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -13370,15 +13379,15 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteRedaction",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "ci:trace-redaction"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "AllChecksEventuallyRun",
           "source": "annotation",
-          "latest_result": "inconclusive",
-          "check_id": "ci:liveness-fairness-lint"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -13398,8 +13407,8 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteRedaction",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "ci:trace-redaction"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
@@ -13426,15 +13435,15 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteLiveness",
           "source": "annotation",
-          "latest_result": "inconclusive",
-          "check_id": "ci:liveness-fairness-lint"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "LivenessNeverFail",
           "source": "annotation",
-          "latest_result": "inconclusive",
-          "check_id": "ci:liveness-fairness-lint"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -13454,15 +13463,15 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteLiveness",
           "source": "annotation",
-          "latest_result": "inconclusive",
-          "check_id": "ci:liveness-fairness-lint"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "AllChecksEventuallyRun",
           "source": "annotation",
-          "latest_result": "inconclusive",
-          "check_id": "ci:liveness-fairness-lint"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -13893,7 +13902,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/DISP-08.stub.test.js",
-            "test_name": "DISP-08 — DualTimerTick: behavioral verification"
+            "test_name": "DISP-08: call-quorum-slot.cjs implements idle timer with reset on stdout/stderr"
           }
         ]
       }
@@ -15217,7 +15226,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/PROMO-04.stub.test.js",
-            "test_name": "PROMO-04 — PromotionAlwaysLogged: structural verification"
+            "test_name": "PROMO-04: promote-gate-maturity.cjs pushes to changelog with required fields"
           }
         ]
       }
@@ -15504,7 +15513,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/CONV-03.stub.test.js",
-            "test_name": "CONV-03 — CappedLayerReported: structural verification"
+            "test_name": "CONV-03: solve output JSON schema includes capped_layers array"
           }
         ]
       }
@@ -16986,7 +16995,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/BML-01.stub.test.js",
-            "test_name": "BML-01 — TypeOK: behavioral verification"
+            "test_name": "BML-01: BugModelLookup.tla exists and defines TypeOK invariant"
           }
         ]
       }
@@ -17014,7 +17023,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/BML-02.stub.test.js",
-            "test_name": "BML-02 — MaxThreeCheckers: constant verification"
+            "test_name": "BML-02: BugModelLookup.tla defines MaxThreeCheckers invariant"
           }
         ]
       }
@@ -17035,7 +17044,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/BML-03.stub.test.js",
-            "test_name": "BML-03 — DoneImpliesTracked: structural verification"
+            "test_name": "BML-03: BugModelLookup.tla defines DoneImpliesTracked invariant"
           }
         ]
       }
@@ -17056,7 +17065,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/ROUTE-01.stub.test.js",
-            "test_name": "ROUTE-01 — TypeOK: structural verification"
+            "test_name": "ROUTE-01: TaskClassification.tla defines TypeOK invariant"
           }
         ]
       }
@@ -17077,7 +17086,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/ROUTE-02.stub.test.js",
-            "test_name": "ROUTE-02 — BugFixRoutesToDebug: structural verification"
+            "test_name": "ROUTE-02: TaskClassification.tla defines BugFixRoutesToDebug invariant"
           }
         ]
       }
@@ -17098,7 +17107,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/ROUTE-03.stub.test.js",
-            "test_name": "ROUTE-03 — NonBugRoutesToNormal: structural verification"
+            "test_name": "ROUTE-03: TaskClassification.tla defines NonBugRoutesToNormal invariant"
           }
         ]
       }
@@ -17119,7 +17128,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/ROUTE-04.stub.test.js",
-            "test_name": "ROUTE-04 — StoredBeforeRouting: behavioral verification"
+            "test_name": "ROUTE-04: TaskClassification.tla defines StoredBeforeRouting invariant"
           }
         ]
       }
@@ -17140,7 +17149,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/SESSION-01.stub.test.js",
-            "test_name": "SESSION-01 — TypeOK: structural verification"
+            "test_name": "SESSION-01: SessionStateInjection.tla defines TypeOK invariant"
           }
         ]
       }
@@ -17161,7 +17170,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/SESSION-02.stub.test.js",
-            "test_name": "SESSION-02 — IdempotentInjection: structural verification"
+            "test_name": "SESSION-02: SessionStateInjection.tla defines IdempotentInjection invariant"
           }
         ]
       }
@@ -17182,7 +17191,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/SESSION-03.stub.test.js",
-            "test_name": "SESSION-03 — FailOpen: structural verification"
+            "test_name": "SESSION-03: SessionStateInjection.tla defines FailOpen invariant"
           }
         ]
       }
@@ -17203,7 +17212,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/CEX-01.stub.test.js",
-            "test_name": "CEX-01 — SpecType: structural verification"
+            "test_name": "CEX-01: constraint-extraction.als defines TLAParsing fact"
           }
         ]
       }
@@ -17224,7 +17233,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/CEX-02.stub.test.js",
-            "test_name": "CEX-02 — SpecType: structural verification"
+            "test_name": "CEX-02: constraint-extraction.als defines AlloyParsing fact"
           }
         ]
       }
@@ -17245,7 +17254,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/CEX-03.stub.test.js",
-            "test_name": "CEX-03 — SpecType: structural verification"
+            "test_name": "CEX-03: PlainEnglishRendering fact enforces summaries on all constraints"
           }
         ]
       }
@@ -17266,7 +17275,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/CONST-01.stub.test.js",
-            "test_name": "CONST-01 — SpecType: structural verification"
+            "test_name": "CONST-01: constraint-extraction.als defines EditPromptInjection fact"
           }
         ]
       }
@@ -17287,7 +17296,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/CONST-02.stub.test.js",
-            "test_name": "CONST-02 — SpecType: constant verification"
+            "test_name": "CONST-02: NewFeatureExclusion fact prevents injection on new-feature prompts"
           }
         ]
       }
@@ -17308,7 +17317,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/FV-04.stub.test.js",
-            "test_name": "FV-04 — Bool: constant verification"
+            "test_name": "FV-04: fv-cicd-invariant.als defines CICDIsFirstClass fact"
           }
         ]
       }
@@ -17329,7 +17338,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/ROOT-01.stub.test.js",
-            "test_name": "ROOT-01 — Bool: structural verification"
+            "test_name": "ROOT-01: root-cause-enforcement.als defines DebugPromptsGetTemplate fact"
           }
         ]
       }
@@ -17350,7 +17359,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/ROOT-03.stub.test.js",
-            "test_name": "ROOT-03 — Bool: constant verification"
+            "test_name": "ROOT-03: NonDebugNoTemplate fact prevents injection on non-debug prompts"
           }
         ]
       }
@@ -17371,7 +17380,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/UPPAAL-01.stub.test.js",
-            "test_name": "UPPAAL-01 — Bool: behavioral verification"
+            "test_name": "UPPAAL-01: uppaal-race-modeling.als defines ModelCapturesConcurrency fact"
           }
         ]
       }
@@ -17392,7 +17401,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/UPPAAL-02.stub.test.js",
-            "test_name": "UPPAAL-02 — Bool: behavioral verification"
+            "test_name": "UPPAAL-02: uppaal-race-modeling.als defines RunnerWritesResults fact"
           }
         ]
       }
@@ -17413,7 +17422,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/UPPAAL-03.stub.test.js",
-            "test_name": "UPPAAL-03 — Bool: constant verification"
+            "test_name": "UPPAAL-03: MinimumMeasurementPoints fact requires TwoOrMore"
           }
         ]
       }
@@ -18625,7 +18634,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/DEBT-12.stub.test.js",
-            "test_name": "DEBT-12 — Prompt: structural verification"
+            "test_name": "DEBT-12: call-quorum-slot.cjs exists (shell-safe prompt delivery check)"
           }
         ]
       }
@@ -18688,7 +18697,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/DEBT-13.stub.test.js",
-            "test_name": "DEBT-13 — Prompt: structural verification"
+            "test_name": "DEBT-13: quorum-slot-dispatch.cjs exists (model deduplication check)"
           }
         ]
       }
@@ -18737,7 +18746,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/DEBT-14.stub.test.js",
-            "test_name": "DEBT-14 — TypeOK: structural verification"
+            "test_name": "DEBT-14: NFSolveResidual.tla exists (net_residual formal model)"
           }
         ]
       }
@@ -18786,7 +18795,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/DEBT-15.stub.test.js",
-            "test_name": "DEBT-15 — TypeOK: structural verification"
+            "test_name": "DEBT-15: NFSolveResidual.tla models convergence (converged state reachable)"
           }
         ]
       }
@@ -18842,7 +18851,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/DEBT-07.stub.test.js",
-            "test_name": "DEBT-07 — InvariantKind: structural verification"
+            "test_name": "DEBT-07: propose-debug-invariants.cjs exists (InvariantKind structural check)"
           }
         ]
       }
@@ -18898,7 +18907,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/DEBT-08.stub.test.js",
-            "test_name": "DEBT-08 — InvariantKind: structural verification"
+            "test_name": "DEBT-08: formalization-candidates.cjs exists (InvariantKind instrumentation check)"
           }
         ]
       }
@@ -18940,7 +18949,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/DEBT-09.stub.test.js",
-            "test_name": "DEBT-09 — Bool: behavioral verification"
+            "test_name": "DEBT-09: key bin/ scripts use JSON.parse for reading (standardized read pattern)"
           }
         ]
       }
@@ -18982,7 +18991,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/DEBT-10.stub.test.js",
-            "test_name": "DEBT-10 — Bool: structural verification"
+            "test_name": "DEBT-10: requirement-map.cjs exists (path resolution standardization check)"
           }
         ]
       }
@@ -19024,7 +19033,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/DEBT-11.stub.test.js",
-            "test_name": "DEBT-11 — Bool: structural verification"
+            "test_name": "DEBT-11: nForma.cjs does not have multi-line empty catch blocks (error propagation invariant)"
           }
         ]
       }
@@ -19073,7 +19082,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/DEBT-16.stub.test.js",
-            "test_name": "DEBT-16 — Bool: structural verification"
+            "test_name": "DEBT-16: verify-formal-results.cjs exists (JSON standardization check)"
           }
         ]
       }
@@ -19136,7 +19145,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/DIST-01.stub.test.js",
-            "test_name": "DIST-01 — TypeOK: structural verification"
+            "test_name": "DIST-01: NFDistTag.tla formal model exists"
           }
         ]
       }
@@ -19185,7 +19194,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/ROUTE-05.stub.test.js",
-            "test_name": "ROUTE-05 — TypeOK: structural verification"
+            "test_name": "ROUTE-05: routing-policy.cjs exists (pluggable policy interface check)"
           }
         ]
       }
@@ -19248,7 +19257,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/ROUTE-06.stub.test.js",
-            "test_name": "ROUTE-06 — TypeOK: structural verification"
+            "test_name": "ROUTE-06: routing-policy.cjs implements Q-learning (Bellman update)"
           }
         ]
       }
@@ -19297,7 +19306,7 @@
         "test_cases": [
           {
             "test_file": ".planning/formal/generated-stubs/ROUTE-07.stub.test.js",
-            "test_name": "ROUTE-07 — TypeOK: structural verification"
+            "test_name": "ROUTE-07: routing-policy.cjs exists (E2E learning loop check)"
           }
         ]
       }
@@ -28703,7 +28712,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "tla:quorum-safety"
+      "check_id": "tla:deliberation"
     },
     ".planning/formal/tla/NFDeliberation.tla::ImprovementMonotone": {
       "model_file": ".planning/formal/tla/NFDeliberation.tla",
@@ -28968,7 +28977,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "tla:quorum-safety"
+      "check_id": "tla:deliberation"
     },
     ".planning/formal/tla/NFQuorum.tla::EventualConsensus": {
       "model_file": ".planning/formal/tla/NFQuorum.tla",
@@ -29268,7 +29277,7 @@
         "STOP-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "fail",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::SafetyInvariant1": {
@@ -29279,7 +29288,7 @@
         "SPEC-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "fail",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::SafetyInvariant2": {
@@ -29289,7 +29298,7 @@
         "STOP-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "fail",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::SafetyInvariant3": {
@@ -29299,7 +29308,7 @@
         "STOP-04"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "fail",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::LivenessProperty1": {
@@ -29309,7 +29318,7 @@
         "STOP-05"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "fail",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::LivenessProperty2": {
@@ -29319,7 +29328,7 @@
         "STOP-06"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "fail",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::LivenessProperty3": {
@@ -29329,7 +29338,7 @@
         "STOP-07"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "fail",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFTokenOpt.tla::TypeOK": {
@@ -29691,8 +29700,8 @@
         "REDACT-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "ci:trace-redaction"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/tla/QGSDCIChecks.tla::CompleteLiveness": {
       "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
@@ -29702,8 +29711,8 @@
         "LIVE-02"
       ],
       "source": "annotation",
-      "latest_result": "inconclusive",
-      "check_id": "ci:liveness-fairness-lint"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/tla/QGSDCIChecks.tla::RedactionNeverInconclusive": {
       "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
@@ -29722,8 +29731,8 @@
         "LIVE-01"
       ],
       "source": "annotation",
-      "latest_result": "inconclusive",
-      "check_id": "ci:liveness-fairness-lint"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/tla/QGSDCIChecks.tla::AllChecksEventuallyRun": {
       "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
@@ -29734,8 +29743,8 @@
         "LIVE-02"
       ],
       "source": "annotation",
-      "latest_result": "inconclusive",
-      "check_id": "ci:liveness-fairness-lint"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/tla/QGSDCheckpointGate.tla::TypeOK": {
       "model_file": ".planning/formal/tla/QGSDCheckpointGate.tla",
@@ -30420,7 +30429,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "tla:quorum-safety"
+      "check_id": "tla:deliberation"
     },
     ".planning/formal/tla/QGSDQuorum.tla::EventualConsensus": {
       "model_file": ".planning/formal/tla/QGSDQuorum.tla",
@@ -34280,8 +34289,8 @@
     }
   },
   "coverage_summary": {
-    "total_requirements": 466,
-    "covered_count": 454,
+    "total_requirements": 467,
+    "covered_count": 455,
     "coverage_percentage": 97.4,
     "uncovered_requirements": [
       "DBG-01",
@@ -35112,6 +35121,12 @@
         "detail": "model-registry lists REN-02 for .planning/formal/alloy/rename-migration.als but requirements.json REN-02 does not list .planning/formal/alloy/rename-migration.als in formal_models"
       },
       {
+        "model_file": ".planning/formal/alloy/result-classification.als",
+        "requirement_id": "SOLVE-11",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists SOLVE-11 for .planning/formal/alloy/result-classification.als but requirements.json SOLVE-11 does not list .planning/formal/alloy/result-classification.als in formal_models"
+      },
+      {
         "model_file": ".planning/formal/alloy/schema-extensions.als",
         "requirement_id": "SCHEMA-02",
         "direction": "model_claims_requirement",
@@ -35224,6 +35239,12 @@
         "requirement_id": "PF-05",
         "direction": "model_claims_requirement",
         "detail": "model-registry lists PF-05 for .planning/formal/alloy/solve-pf-layer.als but requirements.json PF-05 does not list .planning/formal/alloy/solve-pf-layer.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/solve-result-schema.als",
+        "requirement_id": "SOLVE-11",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists SOLVE-11 for .planning/formal/alloy/solve-result-schema.als but requirements.json SOLVE-11 does not list .planning/formal/alloy/solve-result-schema.als in formal_models"
       },
       {
         "model_file": ".planning/formal/alloy/solve-tc-coverage.als",
@@ -37071,11 +37092,6 @@
       },
       {
         "type": "unknown_requirement_id",
-        "reference": "SOLVE-11",
-        "referenced_by": "model-registry .planning/formal/alloy/result-classification.als requirements"
-      },
-      {
-        "type": "unknown_requirement_id",
         "reference": "SCBD-04",
         "referenced_by": "model-registry .planning/formal/alloy/scoreboard-recompute.als requirements"
       },
@@ -37138,11 +37154,6 @@
         "type": "unknown_requirement_id",
         "reference": "SOLVE-8",
         "referenced_by": "model-registry .planning/formal/alloy/solve-legacy-merge.als requirements"
-      },
-      {
-        "type": "unknown_requirement_id",
-        "reference": "SOLVE-11",
-        "referenced_by": "model-registry .planning/formal/alloy/solve-result-schema.als requirements"
       },
       {
         "type": "unknown_requirement_id",
@@ -37432,8 +37443,8 @@
     ],
     "summary": {
       "total_checked": 729,
-      "asymmetric_count": 406,
-      "stale_count": 138,
+      "asymmetric_count": 408,
+      "stale_count": 136,
       "clean": false
     }
   },
@@ -38192,7 +38203,7 @@
   },
   "coverage_preservation": {
     "baseline_found": true,
-    "baseline_date": "2026-04-12T21:10:50.784Z",
+    "baseline_date": "2026-04-13T23:21:05.167Z",
     "requirements_checked": 586,
     "regressions": [],
     "summary": {
