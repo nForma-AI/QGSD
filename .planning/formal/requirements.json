@@ -6357,20 +6357,6 @@
         "source_file": ".planning/milestones/v0.35-REQUIREMENTS.md",
         "milestone": "unknown"
       }
-    },
-    {
-      "id": "BENCH-FAKE-08",
-      "text": "Requirement with invalid layer classification",
-      "category": "NonexistentCategory",
-      "tier": "user",
-      "phase": "unknown",
-      "status": "Complete",
-      "provenance": {
-        "source_file": "benchmark",
-        "milestone": "benchmark"
-      },
-      "formal_models": [],
-      "category_raw": "Invalid Category XYZ"
     }
   ]
 }
