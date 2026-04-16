@@ -10,7 +10,7 @@
       "session_id": null,
       "description": "",
       "layer_maturity": 3,
-      "gate_maturity": 0,
+      "gate_maturity": "SOFT_GATE",
       "source_layer": "L3",
       "requirements": [
         "CRED-07",
