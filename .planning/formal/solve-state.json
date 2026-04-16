@@ -1,8 +1,8 @@
 {
-  "last_run": "2026-04-16T20:50:36.809Z",
+  "last_run": "2026-04-16T20:52:01.331Z",
   "converged": false,
   "iteration_count": 1,
-  "final_residual_total": 114,
+  "final_residual_total": 337,
   "reverse_discovery_total": 351,
   "heatmap_total": 0,
   "real_impact": {
@@ -23,6 +23,18 @@
     }
   ],
   "known_issues": [
+    {
+      "layer": "r_to_f",
+      "residual": 3
+    },
+    {
+      "layer": "f_to_t",
+      "residual": 219
+    },
+    {
+      "layer": "r_to_d",
+      "residual": 1
+    },
     {
       "layer": "d_to_c",
       "residual": 114,
@@ -85,7 +97,7 @@
     "covered": 0,
     "percentage": "0.0"
   },
-  "focus": "__nonexistent_topic_xyz__",
+  "focus": null,
   "capped_layers": [],
   "baseline_drift": {
     "detected": false,
