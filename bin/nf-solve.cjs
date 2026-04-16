@@ -2290,6 +2290,57 @@ function sweepDtoC() {
     }
   }
 
+  // Scan docs for /nf: slash-command references and verify existence
+  // (handles benchmark mutations that inject references to non-existent commands)
+  let ghostCommandCount = 0;
+  {
+    const nfCommandsDir = path.join(ROOT, 'commands');
+    const nfCommandPattern = /\/nf:([a-zA-Z0-9_-]+)/g;
+    let ghostCommands = 0;
+    if (fs.existsSync(nfCommandsDir)) {
+      // Build set of known command names from commands/ directory
+      const knownCommands = new Set();
+      try {
+        const walkCommands = (dir) => {
+          const entries = fs.readdirSync(dir, { withFileTypes: true });
+          for (const entry of entries) {
+            if (entry.isDirectory()) walkCommands(path.join(dir, entry.name));
+            else if (entry.name.endsWith('.md')) {
+              const stem = entry.name.replace(/\.md$/, '');
+              knownCommands.add(stem);
+            }
+          }
+        };
+        walkCommands(nfCommandsDir);
+      } catch (_) { /* fail-open */ }
+
+      // Scan all doc files for /nf: references
+      for (const { absPath, category } of docFiles) {
+        const nfCmdContent = (() => {
+          try { return fs.readFileSync(absPath, 'utf8'); } catch (_) { return ''; }
+        })();
+        let m;
+        nfCommandPattern.lastIndex = 0;
+        while ((m = nfCommandPattern.exec(nfCmdContent)) !== null) {
+          const cmdName = m[1];
+          if (!knownCommands.has(cmdName)) {
+            ghostCommands++;
+            brokenClaims.push({
+              doc_file: path.relative(ROOT, absPath),
+              line: null,
+              type: 'ghost_command',
+              value: '/nf:' + cmdName,
+              reason: 'nf: command not found in commands/ directory',
+              category,
+              weight: CATEGORY_WEIGHT[category] || 1,
+            });
+          }
+        }
+      }
+    }
+    ghostCommandCount = ghostCommands;
+  }
+
   // Weighted residual: user-facing broken claims count more
   let weightedResidual = 0;
   const categoryBreakdown = {};
@@ -2348,6 +2399,7 @@ function sweepDtoC() {
       weighted_residual: weightedResidual,
       category_breakdown: categoryBreakdown,
       suppressed_fp_count: suppressedFpCount,
+      ghost_commands: ghostCommandCount,
       fingerprint_drift: fingerprintDriftDetail,
       scoped: focusSet ? false : undefined,
     },
