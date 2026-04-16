@@ -6357,6 +6357,23 @@
         "source_file": ".planning/milestones/v0.35-REQUIREMENTS.md",
         "milestone": "unknown"
       }
+    },
+    {
+      "id": "BENCH-CIRC-A",
+      "text": "Circular dependency test requirement A",
+      "category": "Benchmark",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": "benchmark",
+        "milestone": "benchmark"
+      },
+      "formal_models": [],
+      "depends_on": [
+        "BENCH-CIRC-B"
+      ],
+      "category_raw": "Benchmark"
     }
   ]
 }
