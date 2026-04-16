@@ -1,0 +1,25 @@
+{
+  "feature/issue-101-add-nf-harden-adversarial": {
+    "task_id": 400,
+    "task_description": "Add nf:harden adversarial hardening loop skill",
+    "approach": "Create nf:harden skill with iterative adversarial test-write-fix loop (max 10 iterations) detecting convergence at 2 consecutive zero-change iterations, add --area and --full flags, integrate with nf:quick --full for max 5 loop simple hardening, and document in commands/nf/harden.md and ~/.claude/nf/workflows/harden.md.",
+    "out_of_scope": [
+      "Implementing alternative hardening strategies beyond adversarial test-write-fix loops",
+      "Performance optimization or caching of test execution results",
+      "Detailed metrics collection or analytics reporting beyond convergence detection",
+      "Modifying the core nf:quorum-test command implementation",
+      "Creating additional skill commands beyond nf:harden"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.95,
+      "routed_through_debug": false
+    },
+    "risk_level": "medium",
+    "risk_reason": "Task modifies multiple workflow files (commands/nf/harden.md, ~/.claude/nf/workflows/harden.md, and quick.md) with cross-feature integration into quorum-test and quick workflows, triggering guardrail for workflow file changes.",
+    "branches_affected": ["feature/issue-101-add-nf-harden-adversarial"],
+    "created_at": "2026-04-16T08:09:42.755Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}
