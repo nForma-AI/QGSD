@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-16T10:05:30.989Z",
+  "generated": "2026-04-16T10:09:30.328Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -88,8 +88,8 @@
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-04-16T10:05:30.847Z",
-      "hash": "f3f8d479"
+      "mtime": "2026-04-16T10:09:30.238Z",
+      "hash": "aec3954b"
     },
     "invariant-catalog.json": {
       "mtime": "2026-04-16T10:05:30.849Z",
@@ -2616,8 +2616,7 @@
           "source": "source-annotation"
         }
       ],
-      "source_layer": "L3",
-      "gate_maturity": "SOFT_GATE"
+      "source_layer": "L3"
     },
     "requirement::CRED-07": {
       "type": "requirement",
