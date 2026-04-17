@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-04-17T08:47:12.772Z",
-  "content_hash": "1a076eeaf997308ce4fe3dfb472a7e420aabee9661ff3a3aa4baa070f210131f",
-  "frozen_at": "2026-04-17T08:47:12.773Z",
+  "aggregated_at": "2026-04-17T10:29:51.189Z",
+  "content_hash": "8acbfb69c621bb8e4064601c55edabb73973993ff504f05409f36f19cb947118",
+  "frozen_at": "2026-04-17T10:29:51.191Z",
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
   "last_sync": "2026-03-31T09:45:23.686Z",
@@ -322,6 +322,16 @@
       "background": "To scale quality assurance across multiple skills (quick, solve, future skills), extract shared benchmark utilities into a reusable module and build a generic runner that works for any skill without duplication. This enables consistent, CI-enforced quality gates and supports future skill onboarding.",
       "source_file": ".planning/quick/402-build-generic-benchmark-runner-for-nform/402-PLAN.md",
       "milestone": "quick-402"
+    },
+    {
+      "id": "BENCH-08",
+      "text": "The system detects seeded algorithmic bugs via TLC counterexample discovery and verifies fixes through TLC verification pass conditions, integrated with the nf:debug benchmark track.",
+      "category": "Benchmark Infrastructure",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Automated defect detection validates that the benchmark runner can identify intentional bugs in algorithm stubs using formal verification. The debug track exercises the TLC pass condition infrastructure (counterexample detection and fix verification) to ensure algorithmic debugging via formal modeling works end-to-end.",
+      "source_file": ".planning/quick/403-add-nf-debug-benchmark-track-with-generi/403-PLAN.md",
+      "milestone": "quick-403"
     },
     {
       "id": "BENCH-FAKE-03",
