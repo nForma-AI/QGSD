@@ -36,7 +36,7 @@ See: .planning/PROJECT.md
 | 398 | Improve the benchmark to actually test nf:solve autonomy — add a real autonomy track with seeded defects and residual reduction scoring | 2026-04-15 | 4b311884 | Verified | [398-improve-the-benchmark-to-actually-test-n](.planning/quick/398-improve-the-benchmark-to-actually-test-n/) |
 | 399 | Add /nf:coderlm query skill | 2026-04-16 | 2cb11083 | Verified | [399-add-a-nf-coderlm-query-skill-that-lets-u](.planning/quick/399-add-a-nf-coderlm-query-skill-that-lets-u/) |
 | 400 | Add nf:harden adversarial hardening loop skill | 2026-04-16 | 8c12260b | Verified | [400-add-nf-harden-adversarial-skill](./quick/400-add-nf-harden-adversarial-skill/) |
-| 402 | Build generic benchmark runner for nForma skills (issue #107) | 2026-04-17 | aa9c535c | Pending | [402-build-generic-benchmark-runner-for-nform](.planning/quick/402-build-generic-benchmark-runner-for-nform/) |
+| 402 | Build generic benchmark runner for nForma skills (issue #107) | 2026-04-17 | aa9c535c | Verified | [402-build-generic-benchmark-runner-for-nform](.planning/quick/402-build-generic-benchmark-runner-for-nform/) |
 
 ## Session Log
 
