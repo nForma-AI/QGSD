@@ -1,0 +1,5 @@
+{
+  "pass_rate": 0,
+  "updated_at": "2026-04-17",
+  "note": "Debug track floor. Set to 0 initially — raise after TLC infrastructure confirmed available in CI."
+}

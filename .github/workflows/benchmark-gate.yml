@@ -50,3 +50,26 @@ jobs:
           cat bench-quick-output.json
       - name: Check score against baseline
         run: node scripts/check-benchmark-gate.cjs bench-quick-output.json benchmarks/quick/baseline.json
+
+  benchmark-debug:
+    name: Debug full benchmark
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: benchmark-quick
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm ci --ignore-scripts || npm install --ignore-scripts
+      - name: Build artifacts
+        run: npm run build:hooks && npm run build:machines
+      - name: Run debug full benchmark
+        run: |
+          node bin/nf-benchmark.cjs --skill=debug --track=full --json > bench-debug-output.json 2>&1 || true
+          cat bench-debug-output.json
+      - name: Check score against baseline
+        run: node scripts/check-benchmark-gate.cjs bench-debug-output.json benchmarks/debug/baseline.json

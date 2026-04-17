@@ -6,6 +6,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { spawnSync } = require('child_process');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Formal snapshot directory (resolved relative to cwd at call time)
@@ -78,8 +79,61 @@ function evaluatePassCondition(fixture, spawnResult, parsed, residual) {
     const floor = parseFloat(cond.slice('residual_gte:'.length));
     return residual >= floor;
   }
+  if (cond === 'tlc_counterexample_found') {
+    // Pass if TLC finds a counterexample in the bug model
+    const bugModel = path.resolve(process.cwd(), fixture.bug_model);
+    const bugCfg = bugModel.replace(/\.tla$/, '.cfg');
+    const tlcResult = runTlcOnModel(bugModel, bugCfg);
+    fixture._traces = tlcResult.traces;  // always set so runner can include in output
+    return tlcResult.has_counterexample;
+  }
+  if (cond === 'tlc_fix_verified') {
+    // Pass if TLC finds NO counterexample in the fix model
+    const fixModel = path.resolve(process.cwd(), fixture.fix_model);
+    const fixCfg = fixModel.replace(/\.tla$/, '.cfg');
+    const tlcResult = runTlcOnModel(fixModel, fixCfg);
+    fixture._traces = tlcResult.traces;  // always set so runner can include in output
+    return !tlcResult.has_counterexample;
+  }
   // Unknown condition — fail-open: treat as passing if exits_zero
   return spawnResult.status === 0;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TLC runner for debug-bench pass conditions
+// ─────────────────────────────────────────────────────────────────────────────
+
+function runTlcOnModel(modelPath, cfgPath) {
+  // Locate TLC jar: check standard nForma locations
+  const tlcCandidates = [
+    path.join(process.cwd(), 'bin', 'tla2tools.jar'),
+    path.join(process.cwd(), '.planning', 'formal', 'tla2tools.jar'),
+    path.join(process.env.HOME || '', '.tla', 'tla2tools.jar')
+  ];
+  const tlcJar = tlcCandidates.find(function(p) { return fs.existsSync(p); });
+
+  if (!tlcJar) {
+    return { exit_code: -1, output: 'tla2tools.jar not found', has_counterexample: false, traces: [] };
+  }
+
+  const result = spawnSync('java', ['-jar', tlcJar, '-config', cfgPath, modelPath], {
+    cwd: process.cwd(),
+    encoding: 'utf8',
+    maxBuffer: 4 * 1024 * 1024,
+    timeout: 30000
+  });
+
+  const output = (result.stdout || '') + (result.stderr || '');
+  const lines = output.split('\n').filter(Boolean);
+  // TLC prints "Error: Invariant X is violated" on counterexample
+  const has_counterexample = output.includes('is violated') || output.includes('Error:') || result.status !== 0;
+
+  return {
+    exit_code: result.status,
+    output: output,
+    has_counterexample: has_counterexample,
+    traces: lines.slice(0, 30)  // cap to 30 lines for JSON output
+  };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -138,5 +192,6 @@ module.exports = {
   extractLayerResidual,
   snapshotFormalJson,
   restoreFormalJson,
-  setNestedField
+  setNestedField,
+  runTlcOnModel
 };

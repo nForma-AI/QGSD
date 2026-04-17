@@ -188,7 +188,8 @@ for (const fixture of fixtures) {
     skipped: false,
     skip_reason: null,
     exit_status: spawnResult.status,
-    duration_ms: duration
+    duration_ms: duration,
+    traces: fixture._traces || []
   });
 }
 
