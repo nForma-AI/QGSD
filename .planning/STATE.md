@@ -37,7 +37,7 @@ See: .planning/PROJECT.md
 | 399 | Add /nf:coderlm query skill | 2026-04-16 | 2cb11083 | Verified | [399-add-a-nf-coderlm-query-skill-that-lets-u](.planning/quick/399-add-a-nf-coderlm-query-skill-that-lets-u/) |
 | 400 | Add nf:harden adversarial hardening loop skill | 2026-04-16 | 8c12260b | Verified | [400-add-nf-harden-adversarial-skill](./quick/400-add-nf-harden-adversarial-skill/) |
 | 402 | Build generic benchmark runner for nForma skills (issue #107) | 2026-04-17 | aa9c535c | Verified | [402-build-generic-benchmark-runner-for-nform](.planning/quick/402-build-generic-benchmark-runner-for-nform/) |
-| 403 | Add nf:debug benchmark track with TLA+ bug/fix models and TLC trace output | 2026-04-17 | 0748ec12 | Pending | [403-add-nf-debug-benchmark-track-with-generi](.planning/quick/403-add-nf-debug-benchmark-track-with-generi/) |
+| 403 | Add nf:debug benchmark track with TLA+ bug/fix models and TLC trace output | 2026-04-17 | 0748ec12 | Verified | [403-add-nf-debug-benchmark-track-with-generi](.planning/quick/403-add-nf-debug-benchmark-track-with-generi/) |
 
 ## Session Log
 
