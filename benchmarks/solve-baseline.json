@@ -1,0 +1,5 @@
+{
+  "pass_rate": 25,
+  "updated_at": "2026-04-17",
+  "note": "Floor for the solve smoke benchmark. A release PR is blocked if its pass_rate < this value. Run scripts/update-benchmark-baseline.sh after each successful release to advance the floor."
+}
