@@ -1,5 +1,5 @@
 {
-  "pass_rate": 0,
+  "pass_rate": 100,
   "updated_at": "2026-04-17",
-  "note": "Debug track floor. Set to 0 initially — raise after TLC infrastructure confirmed available in CI."
+  "note": "All 6 TLA+ fixtures verified passing with tla2tools.jar. Bug models find counterexamples; fix models pass clean."
 }

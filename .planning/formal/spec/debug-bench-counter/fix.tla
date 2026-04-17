@@ -4,7 +4,7 @@ VARIABLES x, counted
 
 CONSTANTS Lo, Hi
 
-Init == x \in {1, 2, 3} /\ counted = FALSE
+Init == x \in {1, 2, 3} /\ counted = (x >= Lo /\ x <= Hi)
 
 \* Fixed: x <= Hi includes the upper boundary
 Next == /\ counted' = (x >= Lo /\ x <= Hi)
