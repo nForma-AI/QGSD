@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-04-16T10:34:00.539Z",
-  "content_hash": "f2163bb1db1f2b980cd740f8a19d6423c248fadc94a2f6364f20674f1ecd658a",
-  "frozen_at": "2026-04-16T10:34:00.540Z",
+  "aggregated_at": "2026-04-17T07:02:36.329Z",
+  "content_hash": "7a0683c94eb64c97",
+  "frozen_at": "2026-04-17T07:02:36.333Z",
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
   "last_sync": "2026-03-31T09:45:23.686Z",
@@ -312,6 +312,18 @@
         ".planning/formal/alloy/codebase-arch-constraints.als"
       ],
       "category_raw": "Architecture"
+    },
+    {
+      "id": "BENCH-DETECT-04",
+      "text": "nf-solve detects cross-layer mutations, formal model changes, and documentation claim violations in fast mode with active layer sweeps for l1_to_l3, l3_to_tc, formal_lint, and ghost-command scanning for /nf: slash-command references in doc files.",
+      "category": "Benchmark Detection",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Quick task 401 addressed systematic gaps in nf-solve's mutation detection capability across three benchmark categories that previously scored 0%: cross-layer-alignment, multi-layer formal_lint, and documentation challenges. By removing fast-mode guards from lightweight layer sweeps and adding /nf: slash-command existence verification to sweepDtoC, the benchmark detection pass rate improved from 20.4% to 35%+, enabling continuous validation of nf-solve's mutation detection quality in CI.",
+      "provenance": {
+        "source_file": ".planning/quick/401-fix-nf-solve-benchmark-detection-gaps-20/401-PLAN.md",
+        "milestone": "quick-401"
+      }
     },
     {
       "id": "BENCH-FAKE-03",
