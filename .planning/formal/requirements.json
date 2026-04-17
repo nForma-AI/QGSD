@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-04-16T10:34:00.539Z",
-  "content_hash": "f2163bb1db1f2b980cd740f8a19d6423c248fadc94a2f6364f20674f1ecd658a",
-  "frozen_at": "2026-04-16T10:34:00.540Z",
+  "aggregated_at": "2026-04-17T08:47:12.772Z",
+  "content_hash": "1a076eeaf997308ce4fe3dfb472a7e420aabee9661ff3a3aa4baa070f210131f",
+  "frozen_at": "2026-04-17T08:47:12.773Z",
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
   "last_sync": "2026-03-31T09:45:23.686Z",
@@ -312,6 +312,16 @@
         ".planning/formal/alloy/codebase-arch-constraints.als"
       ],
       "category_raw": "Architecture"
+    },
+    {
+      "id": "BENCH-07",
+      "text": "Provide a generic benchmark runner CLI (bin/nf-benchmark.cjs) that loads fixtures from benchmarks/<skill>/fixtures.json, evaluates pass conditions, and enforces skill-specific baseline floors in CI gates.",
+      "category": "Benchmark Infrastructure",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "To scale quality assurance across multiple skills (quick, solve, future skills), extract shared benchmark utilities into a reusable module and build a generic runner that works for any skill without duplication. This enables consistent, CI-enforced quality gates and supports future skill onboarding.",
+      "source_file": ".planning/quick/402-build-generic-benchmark-runner-for-nform/402-PLAN.md",
+      "milestone": "quick-402"
     },
     {
       "id": "BENCH-FAKE-03",
