@@ -1,38 +1,52 @@
 name: Benchmark gate
 
-# Runs on release PRs only — blocks merge if solve smoke pass_rate < baseline.
-# Baseline is stored in benchmarks/solve-baseline.json.
-# Update it with: bash scripts/update-benchmark-baseline.sh <pass_rate>
 on:
   pull_request:
     branches: [main]
 
 jobs:
-  benchmark:
+  benchmark-solve:
     name: Solve smoke benchmark
     runs-on: ubuntu-latest
     timeout-minutes: 15
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-
       - name: Install dependencies
         run: npm ci --ignore-scripts || npm install --ignore-scripts
-
       - name: Build artifacts
         run: npm run build:hooks && npm run build:machines
-
       - name: Run solve smoke benchmark
         id: bench
         run: |
-          node bin/nf-benchmark-solve.cjs --json --track=smoke > bench-output.json 2>&1 || true
-          cat bench-output.json
-
+          node bin/nf-benchmark-solve.cjs --json --track=smoke > bench-solve-output.json 2>&1 || true
+          cat bench-solve-output.json
       - name: Check score against baseline
-        run: node scripts/check-benchmark-gate.cjs bench-output.json
+        run: node scripts/check-benchmark-gate.cjs bench-solve-output.json benchmarks/solve-baseline.json
+
+  benchmark-quick:
+    name: Quick smoke benchmark
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: benchmark-solve
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm ci --ignore-scripts || npm install --ignore-scripts
+      - name: Build artifacts
+        run: npm run build:hooks && npm run build:machines
+      - name: Run quick smoke benchmark
+        run: |
+          node bin/nf-benchmark.cjs --skill=quick --track=smoke --json > bench-quick-output.json 2>&1 || true
+          cat bench-quick-output.json
+      - name: Check score against baseline
+        run: node scripts/check-benchmark-gate.cjs bench-quick-output.json benchmarks/quick/baseline.json
