@@ -10,8 +10,6 @@ on:
 jobs:
   benchmark:
     name: Solve smoke benchmark
-    # Only run on release branches
-    if: startsWith(github.head_ref, 'release/')
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
