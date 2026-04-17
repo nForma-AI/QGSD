@@ -1,5 +1,5 @@
 {
-  "pass_rate": 100,
+  "pass_rate": 43,
   "updated_at": "2026-04-17",
-  "note": "All 6 TLA+ fixtures verified passing with tla2tools.jar. Bug models find counterexamples; fix models pass clean."
+  "note": "Realistic floor: AI pipeline expected to fix all 3 easy stubs (sort, filter, counter) = 3/7 = 43%. Medium and hard stubs require deeper reasoning; floor assumes 0 fixes there."
 }
