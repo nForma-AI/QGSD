@@ -27,11 +27,11 @@ formal_artifacts: none
 must_haves:
   truths:
     - "Running any test file in benchmarks/debug/tests/ produces a non-zero exit code (test fails on the buggy stub)"
-    - "bench-buggy-sort.cjs returns definitively wrong output (e.g., [3,1,2] for input [3,1,2] — no-op sort)"
+    - "bench-buggy-sort.cjs returns definitively wrong output (e.g., [3,2,1] for input [3,1,2] — sorts descending instead of ascending)"
     - "Each medium/hard stub produces wrong output detectable without running equal-element edge cases"
     - "bin/nf-debug-runner.cjs exits 0 with --dry-run for any stub path without calling external AI"
     - "bin/nf-benchmark-debug.cjs --dry-run prints 7 stub IDs and a 0–100 score line without invoking AI"
-    - "baseline.json reflects a realistic easy-tier floor (pass_rate between 60 and 80)"
+    - "baseline.json reflects a realistic easy-tier floor (pass_rate 43, representing 3/7 easy stubs expected fixed by AI pipeline)"
   artifacts:
     - path: "bin/bench-buggy-sort.cjs"
       provides: "Easy stub with observable wrong output (wrong comparator direction)"
