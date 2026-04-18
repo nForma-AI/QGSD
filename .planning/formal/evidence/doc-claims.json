@@ -1,14 +1,33 @@
 {
-  "generated": "2026-04-16T07:30:16.130Z",
+  "generated": "2026-04-16T21:04:43.632Z",
   "total_claims_checked": 188,
   "doc_files_scanned": 8,
-  "raw_broken_count": 44,
-  "weighted_residual": 88,
-  "suppressed_fp_count": 4,
+  "raw_broken_count": 58,
+  "weighted_residual": 114,
+  "suppressed_fp_count": 7,
   "category_breakdown": {
-    "user": 44
+    "user": 56,
+    "developer": 2
   },
   "broken_claims": [
+    {
+      "doc_file": "README.md",
+      "line": 173,
+      "type": "file_path",
+      "value": ".claude/settings.json",
+      "reason": "file not found",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "README.md",
+      "line": 684,
+      "type": "file_path",
+      "value": "gates/per-model-gates.json",
+      "reason": "file not found",
+      "category": "user",
+      "weight": 2
+    },
     {
       "doc_file": "README.md",
       "line": 964,
@@ -26,6 +45,15 @@
       "reason": "not in any dependency manifest",
       "category": "user",
       "weight": 2
+    },
+    {
+      "doc_file": "docs/dev/requirements-coverage.md",
+      "line": 1762,
+      "type": "file_path",
+      "value": ".claude/circuit-breaker-state.json",
+      "reason": "file not found",
+      "category": "developer",
+      "weight": 1
     },
     {
       "doc_file": "docs/USER-GUIDE.md",
@@ -402,6 +430,105 @@
       "type": "dependency",
       "value": "coderlm-linux-arm64",
       "reason": "not in any dependency manifest",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/dev/requirements-coverage.md",
+      "line": null,
+      "type": "ghost_command",
+      "value": "/nf:mcp",
+      "reason": "nf: command not found in commands/ directory",
+      "category": "developer",
+      "weight": 1
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": null,
+      "type": "ghost_command",
+      "value": "/nf:discovery-phase",
+      "reason": "nf: command not found in commands/ directory",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": null,
+      "type": "ghost_command",
+      "value": "/nf:execute-plan",
+      "reason": "nf: command not found in commands/ directory",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": null,
+      "type": "ghost_command",
+      "value": "/nf:cleanup-review",
+      "reason": "nf: command not found in commands/ directory",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": null,
+      "type": "ghost_command",
+      "value": "/nf:verify-phase",
+      "reason": "nf: command not found in commands/ directory",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": null,
+      "type": "ghost_command",
+      "value": "/nf:transition",
+      "reason": "nf: command not found in commands/ directory",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": null,
+      "type": "ghost_command",
+      "value": "/nf:diagnose-issues",
+      "reason": "nf: command not found in commands/ directory",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": null,
+      "type": "ghost_command",
+      "value": "/nf:oscillation-resolution-mode",
+      "reason": "nf: command not found in commands/ directory",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": null,
+      "type": "ghost_command",
+      "value": "/nf:resume-project",
+      "reason": "nf: command not found in commands/ directory",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": null,
+      "type": "ghost_command",
+      "value": "/nf:verify-phase",
+      "reason": "nf: command not found in commands/ directory",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "docs/agent-skills.md",
+      "line": null,
+      "type": "ghost_command",
+      "value": "/nf:solve-",
+      "reason": "nf: command not found in commands/ directory",
       "category": "user",
       "weight": 2
     }

@@ -328,29 +328,43 @@ if (runAutonomy && Array.isArray(fixtureData.autonomy_fixtures) && fixtureData.a
 
   for (const autoFixture of fixtureData.autonomy_fixtures) {
     const start = Date.now();
-    const mutation = autoFixture.seed_mutation;
-    const targetLayer = mutation.target_layer;
-    const seedDelta = typeof mutation.seeded_delta === 'number' ? mutation.seeded_delta : 1;
 
-    // Pre-flight: verify seed target file exists
-    const seedFilePath = path.join(ROOT, mutation.file);
-    if (!fs.existsSync(seedFilePath)) {
+    // Normalize schema: support both old (seed_mutation) and new (mutations[] + target_layer)
+    const mutations = autoFixture.mutations
+      || (autoFixture.seed_mutation ? [autoFixture.seed_mutation] : []);
+    const targetLayer = autoFixture.target_layer
+      || (autoFixture.seed_mutation && autoFixture.seed_mutation.target_layer);
+    const seedDelta = (autoFixture.seed_mutation && typeof autoFixture.seed_mutation.seeded_delta === 'number')
+      ? autoFixture.seed_mutation.seeded_delta : 1;
+
+    if (!targetLayer || mutations.length === 0) {
       const duration = Date.now() - start;
       if (!jsonOutput) {
-        console.log('  [SKIP] ' + autoFixture.id + ': seed target file missing: ' + mutation.file + '  duration=' + duration + 'ms');
+        console.log('  [SKIP] ' + autoFixture.id + ': fixture missing targetLayer or mutations  duration=' + duration + 'ms');
       }
       autonomyResults.push({
         id: autoFixture.id,
         label: autoFixture.label,
         passed: false,
         skipped: true,
-        skip_reason: 'seed target file missing: ' + mutation.file,
+        skip_reason: 'fixture missing targetLayer or mutations',
         duration_ms: duration
       });
       continue;
     }
 
+    // Snapshot: formal JSON files + all files referenced by mutations
     const snap = snapshotFormalJson();
+    for (const m of mutations) {
+      if (m.file) {
+        const fp = path.join(ROOT, m.file);
+        if (!snap[fp]) {
+          try {
+            if (fs.existsSync(fp)) snap[fp] = fs.readFileSync(fp, 'utf8');
+          } catch (_) { /* fail-open */ }
+        }
+      }
+    }
     let autonomyPassed = false;
     let skipReason = null;
     let preResidual = -1;
@@ -376,48 +390,59 @@ if (runAutonomy && Array.isArray(fixtureData.autonomy_fixtures) && fixtureData.a
       } catch (_) { /* fail-open */ }
       baselineResidual = extractLayerResidual(baselineParsed, targetLayer);
 
-      // Step 2: Apply seed mutation
-      let seedObj;
-      try {
-        seedObj = JSON.parse(fs.readFileSync(seedFilePath, 'utf8'));
-      } catch (e) {
-        skipReason = 'failed to parse seed file: ' + e.message;
-        autonomyPassed = false;
-        return; // will be caught by finally
-      }
+      // Step 2: Apply all seed mutations in sequence
+      for (const m of mutations) {
+        if (skipReason) break;
+        const mFilePath = path.join(ROOT, m.file);
 
-      if (mutation.type === 'set_field') {
-        setNestedField(seedObj, mutation.field, mutation.value);
-        fs.writeFileSync(seedFilePath, JSON.stringify(seedObj, null, 2) + '\n', 'utf8');
-      } else if (mutation.type === 'remove_key') {
-        delete seedObj[mutation.key];
-        fs.writeFileSync(seedFilePath, JSON.stringify(seedObj, null, 2) + '\n', 'utf8');
-      } else if (mutation.type === 'array_item_modify') {
-        // Find array item by field match, overwrite one field on it
-        const arr = mutation.array_path ? seedObj[mutation.array_path] : seedObj;
-        if (!Array.isArray(arr)) {
-          skipReason = 'array_item_modify: "' + mutation.array_path + '" is not an array';
-        } else {
-          const item = arr.find(function(el) { return el[mutation.match_field] === mutation.match_value; });
-          if (!item) {
-            skipReason = 'array_item_modify: no item with ' + mutation.match_field + '=' + mutation.match_value;
-          } else {
-            item[mutation.set_field] = mutation.set_value;
-            fs.writeFileSync(seedFilePath, JSON.stringify(seedObj, null, 2) + '\n', 'utf8');
+        if (m.type === 'add_text_to_file') {
+          try {
+            const existing = fs.existsSync(mFilePath) ? fs.readFileSync(mFilePath, 'utf8') : '';
+            fs.writeFileSync(mFilePath, existing + m.text, 'utf8');
+          } catch (e) {
+            skipReason = 'add_text_to_file failed on ' + m.file + ': ' + e.message;
           }
+          continue;
         }
-      } else if (mutation.type === 'append_array_item') {
-        // Append an item to an array at array_path
-        const arr = mutation.array_path ? seedObj[mutation.array_path] : seedObj;
-        if (!Array.isArray(arr)) {
-          skipReason = 'append_array_item: "' + mutation.array_path + '" is not an array';
+
+        let seedObj;
+        try {
+          seedObj = JSON.parse(fs.readFileSync(mFilePath, 'utf8'));
+        } catch (e) {
+          skipReason = 'failed to parse ' + m.file + ': ' + e.message;
+          break;
+        }
+
+        if (m.type === 'set_field') {
+          setNestedField(seedObj, m.field, m.value);
+          fs.writeFileSync(mFilePath, JSON.stringify(seedObj, null, 2) + '\n', 'utf8');
+        } else if (m.type === 'remove_key') {
+          delete seedObj[m.key];
+          fs.writeFileSync(mFilePath, JSON.stringify(seedObj, null, 2) + '\n', 'utf8');
+        } else if (m.type === 'array_item_modify') {
+          const arr = m.array_path ? seedObj[m.array_path] : seedObj;
+          if (!Array.isArray(arr)) {
+            skipReason = 'array_item_modify: "' + m.array_path + '" is not an array';
+          } else {
+            const item = arr.find(function(el) { return el[m.match_field] === m.match_value; });
+            if (!item) {
+              skipReason = 'array_item_modify: no item with ' + m.match_field + '=' + m.match_value;
+            } else {
+              item[m.set_field] = m.set_value;
+              fs.writeFileSync(mFilePath, JSON.stringify(seedObj, null, 2) + '\n', 'utf8');
+            }
+          }
+        } else if (m.type === 'append_array_item') {
+          const arr = m.array_path ? seedObj[m.array_path] : seedObj;
+          if (!Array.isArray(arr)) {
+            skipReason = 'append_array_item: "' + m.array_path + '" is not an array';
+          } else {
+            arr.push(m.value);
+            fs.writeFileSync(mFilePath, JSON.stringify(seedObj, null, 2) + '\n', 'utf8');
+          }
         } else {
-          arr.push(mutation.value);
-          fs.writeFileSync(seedFilePath, JSON.stringify(seedObj, null, 2) + '\n', 'utf8');
+          skipReason = 'unknown mutation type: ' + m.type;
         }
-      } else {
-        skipReason = 'unknown mutation type: ' + mutation.type;
-        autonomyPassed = false;
       }
 
       if (!skipReason) {
