@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-04-17T10:29:51.189Z",
-  "content_hash": "8acbfb69c621bb8e4064601c55edabb73973993ff504f05409f36f19cb947118",
+  "aggregated_at": "2026-04-17T04:37:59.710Z",
+  "content_hash": "cc8c06dea75836cdb69342890f822e12c0c44d5f80b71e07a2e3660ea69ad288",
   "frozen_at": "2026-04-17T10:29:51.191Z",
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
@@ -332,6 +332,16 @@
       "background": "Automated defect detection validates that the benchmark runner can identify intentional bugs in algorithm stubs using formal verification. The debug track exercises the TLC pass condition infrastructure (counterexample detection and fix verification) to ensure algorithmic debugging via formal modeling works end-to-end.",
       "source_file": ".planning/quick/403-add-nf-debug-benchmark-track-with-generi/403-PLAN.md",
       "milestone": "quick-403"
+    },
+    {
+      "id": "BENCH-09",
+      "text": "The nf:debug pipeline measures autonomy via a graded benchmark suite scoring 0-100 based on the fraction of seeded bugs (7 stubs across 3 difficulty tiers) that the AI quorum fixes end-to-end.",
+      "category": "Benchmark Infrastructure",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Quantifying the nf:debug pipeline's autonomous debugging capability requires reproducible test fixtures with known failures and a scoring mechanism that tracks fix success rates across difficulty levels. This benchmark provides a concrete autonomy metric for evaluating pipeline improvements and enforcing quality gates in CI.",
+      "source_file": ".planning/quick/404-build-nf-debug-autonomy-benchmark-with-g/404-PLAN.md",
+      "milestone": "quick-404"
     },
     {
       "id": "BENCH-FAKE-03",
