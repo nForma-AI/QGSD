@@ -198,7 +198,9 @@ STUBS.forEach(function(entry) {
       // Try to parse error from runner stdout
       try {
         const parsed = JSON.parse(runResult.stdout || '{}');
-        errorCode = parsed.error || 'runner_failed';
+        // parsed.error is set for infrastructure failures (no_code_block, invalid_syntax, etc.)
+        // No error field means fix was applied but test still failed — that's an AI failure
+        errorCode = parsed.error || 'ai_failed';
       } catch (_) {
         errorCode = 'runner_failed';
       }

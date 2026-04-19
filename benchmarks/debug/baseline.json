@@ -1,13 +1,13 @@
 {
-  "pass_rate": 20,
+  "pass_rate": 93,
   "total_stubs": 100,
   "tiers": {
     "easy": 20,
-    "medium": 20,
-    "hard": 20,
-    "extreme": 20,
-    "legendary": 20
+    "medium": 19,
+    "hard": 19,
+    "extreme": 19,
+    "legendary": 16
   },
   "updated_at": "2026-04-19",
-  "note": "Floor: AI pipeline expected to fix easy tier (20/100 = 20%). Medium/hard require deeper reasoning. Extreme tier demands distributed-systems formal invariant understanding. Legendary tier requires full protocol-level formal reasoning (Raft, Paxos, BFT, MVCC, etc.) — designed to challenge any AI without formal model guidance."
+  "note": "Hardened baseline: stubs stripped of all hint comments, test assert helpers emit only FAIL {label} with no expected/actual/info diagnostics. Haiku scored 93/100 on hardened benchmark. Failures: medium=deep-equal, hard=scheduler, extreme=monotonic-reads, legendary=percolator-write-conflict+ssi-conflict+distributed-snapshot-fifo+linearizability-checker."
 }
