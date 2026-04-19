@@ -4,7 +4,7 @@
 const { buggyCounter } = require('../../../bin/bench-buggy-counter.cjs');
 let failed = 0;
 function assert(label, actual, expected) {
-  if (actual !== expected) { process.stderr.write('FAIL ' + label + ': got ' + actual + ', want ' + expected + '\n'); failed++; }
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 assert('includes hi boundary', buggyCounter([1,2,3,4,5], 2, 4), 3);
 assert('single element at hi', buggyCounter([5], 1, 5), 1);

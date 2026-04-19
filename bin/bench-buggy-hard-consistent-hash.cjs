@@ -1,8 +1,4 @@
 'use strict';
-// BUG: binary search doesn't wrap around the ring
-// When a key hashes to a value greater than all node hashes, the loop exhausts
-// and returns null instead of wrapping to the first node
-// FIX: change `return null` to `return ring[0].node`
 
 function simpleHash(s) {
   var h = 0;
@@ -17,7 +13,7 @@ function consistentHash(nodes, key) {
   for (var i = 0; i < ring.length; i++) {
     if (ring[i].hash >= keyHash) return ring[i].node;
   }
-  return null; // BUG: should wrap around and return ring[0].node
+  return null; 
 }
 
 module.exports = { consistentHash, simpleHash };

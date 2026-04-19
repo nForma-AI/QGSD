@@ -1,8 +1,8 @@
 'use strict';
 const { deepEqual } = require('../../../bin/bench-buggy-medium-deep-equal.cjs');
 let failed = 0;
-function assert(label, cond, info) {
-  if (!cond) { process.stderr.write('FAIL ' + label + (info ? ': ' + info : '') + '\n'); failed++; }
+function assert(label, cond) {
+  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 assert('nested equal', deepEqual({x:{y:1}},{x:{y:1}}), true);

@@ -1,5 +1,5 @@
 'use strict';
 function shouldAcceptWrite(producerEpoch, registeredEpoch) {
-  return producerEpoch > registeredEpoch;  // BUG: should be >=
+  return producerEpoch > registeredEpoch;  
 }
 module.exports = { shouldAcceptWrite };

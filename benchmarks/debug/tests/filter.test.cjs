@@ -4,8 +4,7 @@
 const { buggyFilter } = require('../../../bin/bench-buggy-filter.cjs');
 let failed = 0;
 function assert(label, actual, expected) {
-  const ok = JSON.stringify(actual) === JSON.stringify(expected);
-  if (!ok) { process.stderr.write('FAIL ' + label + ': got ' + JSON.stringify(actual) + ', want ' + JSON.stringify(expected) + '\n'); failed++; }
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 assert('includes threshold', buggyFilter([1,2,3,4,5], 3), [3,4,5]);
 assert('all above', buggyFilter([10,20,30], 5), [10,20,30]);

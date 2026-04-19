@@ -1,11 +1,8 @@
 'use strict';
 const { bftQuorumSize, bftClusterSize } = require('../../../bin/bench-buggy-legendary-bft-quorum-size.cjs');
 let failed = 0;
-function assert(label, cond, info) {
-  if (!cond) {
-    process.stderr.write('FAIL ' + label + (info ? ': ' + info : '') + '\n');
-    failed++;
-  }
+function assert(label, cond) {
+  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // With f Byzantine faults, any two quorums must intersect in at least f+1 nodes

@@ -1,8 +1,8 @@
 'use strict';
 const { isPalindrome } = require('../../../bin/bench-buggy-is-palindrome.cjs');
 let failed = 0;
-function assert(label, cond, info) {
-  if (!cond) { process.stderr.write('FAIL ' + label + (info ? ': ' + info : '') + '\n'); failed++; }
+function assert(label, cond) {
+  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 assert('racecar', isPalindrome('racecar') === true, 'got ' + isPalindrome('racecar'));
 assert('abba', isPalindrome('abba') === true, 'got ' + isPalindrome('abba'));

@@ -1,11 +1,8 @@
 'use strict';
 const { shouldAcceptWrite } = require('../../../bin/bench-buggy-legendary-kafka-producer-epoch.cjs');
 let failed = 0;
-function assert(label, actual, expected, info) {
-  if (actual !== expected) {
-    process.stderr.write('FAIL ' + label + ': expected=' + expected + ' actual=' + actual + (info ? ' ' + info : '') + '\n');
-    failed++;
-  }
+function assert(label, actual, expected) {
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 assert('same epoch accepted (producer registered at this epoch)', shouldAcceptWrite(5, 5), true);

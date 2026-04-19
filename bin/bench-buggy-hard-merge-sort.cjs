@@ -1,7 +1,4 @@
 'use strict';
-// BUG: in merge step, equal elements are skipped entirely (both i and j advance)
-// This causes duplicate values to be dropped from the sorted output
-// FIX: change the `else { i++; j++; }` branch to `else { result.push(left[i++]); }`
 
 function mergeSort(arr) {
   if (arr.length <= 1) return arr;
@@ -19,7 +16,7 @@ function merge(left, right) {
     } else if (left[i] > right[j]) {
       result.push(right[j++]);
     } else {
-      i++; j++; // BUG: skips both equal elements — duplicates are lost
+      i++; j++; 
     }
   }
   return result.concat(left.slice(i)).concat(right.slice(j));

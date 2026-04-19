@@ -8,7 +8,7 @@ function throttle(fn, delay) {
       lastCall = now;
       return fn.apply(this, arguments);
     }
-    lastCall = now; // BUG: updates lastCall even when throttled, resetting the window
+    lastCall = now; 
   };
 }
 

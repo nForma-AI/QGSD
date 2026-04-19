@@ -1,8 +1,8 @@
 'use strict';
 var { readSnapshot } = require('../../../bin/bench-buggy-extreme-snapshot-isolation.cjs');
 var failed = 0;
-function assert(label, cond, info) {
-  if (!cond) { process.stderr.write('FAIL ' + label + (info ? ': ' + info : '') + '\n'); failed++; }
+function assert(label, cond) {
+  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 var versions = [

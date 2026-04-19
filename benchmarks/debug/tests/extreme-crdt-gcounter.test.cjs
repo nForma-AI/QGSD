@@ -1,8 +1,8 @@
 'use strict';
 var { merge, value } = require('../../../bin/bench-buggy-extreme-crdt-gcounter.cjs');
 var failed = 0;
-function assert(label, cond, info) {
-  if (!cond) { process.stderr.write('FAIL ' + label + (info ? ': ' + info : '') + '\n'); failed++; }
+function assert(label, cond) {
+  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // Formal invariant: for all a, b: value(merge(a,b)) >= value(a) AND value(merge(a,b)) >= value(b).

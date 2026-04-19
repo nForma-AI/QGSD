@@ -1,8 +1,8 @@
 'use strict';
 var { canReclaim } = require('../../../bin/bench-buggy-extreme-epoch-reclamation.cjs');
 var failed = 0;
-function assert(label, cond, info) {
-  if (!cond) { process.stderr.write('FAIL ' + label + (info ? ': ' + info : '') + '\n'); failed++; }
+function assert(label, cond) {
+  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // Formal invariant: canReclaim(readers, E) iff every reader's epoch > E.

@@ -4,8 +4,7 @@
 const { buggyDedup } = require('../../../bin/bench-buggy-medium-dedup.cjs');
 let failed = 0;
 function assert(label, actual, expected) {
-  const ok = JSON.stringify(actual) === JSON.stringify(expected);
-  if (!ok) { process.stderr.write('FAIL ' + label + ': got ' + JSON.stringify(actual) + ', want ' + JSON.stringify(expected) + '\n'); failed++; }
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 assert('preserves number and string 1', buggyDedup([1, "1", 2]), [1, "1", 2]);
 assert('normal dedup still works', buggyDedup([1, 1, 2]), [1, 2]);

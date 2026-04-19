@@ -2,10 +2,7 @@
 const { bfs } = require('../../../bin/bench-buggy-hard-bfs.cjs');
 let failed = 0;
 function assert(label, actual, expected) {
-  if (actual !== expected) {
-    process.stderr.write('FAIL ' + label + ': expected ' + JSON.stringify(expected) + ' got ' + JSON.stringify(actual) + '\n');
-    failed++;
-  }
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // Diamond graph: 0->1, 0->2, 1->3, 2->3

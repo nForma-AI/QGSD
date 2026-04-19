@@ -1,8 +1,8 @@
 'use strict';
 var { makeMonotonicClock } = require('../../../bin/bench-buggy-extreme-monotonic-clock.cjs');
 var failed = 0;
-function assert(label, cond, info) {
-  if (!cond) { process.stderr.write('FAIL ' + label + (info ? ': ' + info : '') + '\n'); failed++; }
+function assert(label, cond) {
+  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // Invariant: after any sequence of updates, clock value must be >= its previous value.

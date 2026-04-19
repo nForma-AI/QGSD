@@ -6,7 +6,7 @@ function curry(fn) {
     var args = Array.prototype.slice.call(arguments);
     if (args.length >= arity) return fn.apply(this, args.slice(0, arity));
     return function() {
-      return curried.apply(this, args); // BUG: doesn't concatenate new arguments with existing
+      return curried.apply(this, args); 
     };
   };
 }

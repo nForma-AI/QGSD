@@ -2,10 +2,7 @@
 const { kmpSearch } = require('../../../bin/bench-buggy-hard-kmp-search.cjs');
 let failed = 0;
 function assert(label, actual, expected) {
-  if (actual !== expected) {
-    process.stderr.write('FAIL ' + label + ': expected ' + JSON.stringify(expected) + ' got ' + JSON.stringify(actual) + '\n');
-    failed++;
-  }
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // 'abc' found at index 0 in 'abcabc' — buggy returns 1 (off by one)

@@ -1,11 +1,8 @@
 'use strict';
 const { canCommit } = require('../../../bin/bench-buggy-legendary-raft-commit-safety.cjs');
 let failed = 0;
-function assert(label, actual, expected, info) {
-  if (actual !== expected) {
-    process.stderr.write('FAIL ' + label + ': expected=' + expected + ' actual=' + actual + (info ? ' ' + info : '') + '\n');
-    failed++;
-  }
+function assert(label, actual, expected) {
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // Raft Figure 8 scenario: trying to commit an old-term entry is unsafe.

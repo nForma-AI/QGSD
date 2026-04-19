@@ -2,10 +2,7 @@
 const { mergeSort } = require('../../../bin/bench-buggy-hard-merge-sort.cjs');
 let failed = 0;
 function assert(label, actual, expected) {
-  if (actual !== expected) {
-    process.stderr.write('FAIL ' + label + ': expected ' + JSON.stringify(expected) + ' got ' + JSON.stringify(actual) + '\n');
-    failed++;
-  }
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // Equal elements get dropped: [3,1,2,1,3] should produce [1,1,2,3,3]

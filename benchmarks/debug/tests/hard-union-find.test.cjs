@@ -2,10 +2,7 @@
 const { makeUnionFind } = require('../../../bin/bench-buggy-hard-union-find.cjs');
 let failed = 0;
 function assert(label, actual, expected) {
-  if (actual !== expected) {
-    process.stderr.write('FAIL ' + label + ': expected ' + JSON.stringify(expected) + ' got ' + JSON.stringify(actual) + '\n');
-    failed++;
-  }
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // After union(0,1): parent[1]=0 (correct), find(0)=0, find(1)=0 — OK so far

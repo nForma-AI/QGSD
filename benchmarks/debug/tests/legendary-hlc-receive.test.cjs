@@ -1,11 +1,8 @@
 'use strict';
 const { hlcReceive } = require('../../../bin/bench-buggy-legendary-hlc-receive.cjs');
 let failed = 0;
-function assert(label, cond, info) {
-  if (!cond) {
-    process.stderr.write('FAIL ' + label + (info ? ': ' + info : '') + '\n');
-    failed++;
-  }
+function assert(label, cond) {
+  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // HLC invariant: the receive event must have a strictly greater HLC value than the message

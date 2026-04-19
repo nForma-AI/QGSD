@@ -1,8 +1,8 @@
 'use strict';
 const { deepClone } = require('../../../bin/bench-buggy-medium-deep-clone.cjs');
 let failed = 0;
-function assert(label, cond, info) {
-  if (!cond) { process.stderr.write('FAIL ' + label + (info ? ': ' + info : '') + '\n'); failed++; }
+function assert(label, cond) {
+  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 assert('array clone is array', Array.isArray(deepClone([1,2,3])), true);

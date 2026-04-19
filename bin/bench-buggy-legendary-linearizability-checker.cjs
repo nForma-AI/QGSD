@@ -6,6 +6,6 @@ function isLinearizable(operations) {
       if (op1.end < op2.start && op1.seqPos > op2.seqPos) return false;
     }
   }
-  return true;  // BUG: doesn't verify that the values are consistent with any linearization
+  return true;  
 }
 module.exports = { isLinearizable };

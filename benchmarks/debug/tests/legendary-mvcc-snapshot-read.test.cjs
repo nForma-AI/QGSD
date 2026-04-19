@@ -1,11 +1,8 @@
 'use strict';
 const { readMVCC } = require('../../../bin/bench-buggy-legendary-mvcc-snapshot-read.cjs');
 let failed = 0;
-function assert(label, actual, expected, info) {
-  if (actual !== expected) {
-    process.stderr.write('FAIL ' + label + ': expected=' + JSON.stringify(expected) + ' actual=' + JSON.stringify(actual) + (info ? ' ' + info : '') + '\n');
-    failed++;
-  }
+function assert(label, actual, expected) {
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 var versions = [{value:'v1',commitTs:1},{value:'v2',commitTs:3},{value:'v3',commitTs:5}];

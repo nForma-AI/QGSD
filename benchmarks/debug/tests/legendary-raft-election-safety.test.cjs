@@ -1,11 +1,8 @@
 'use strict';
 const { hasWonElection } = require('../../../bin/bench-buggy-legendary-raft-election-safety.cjs');
 let failed = 0;
-function assert(label, cond, info) {
-  if (!cond) {
-    process.stderr.write('FAIL ' + label + (info ? ': ' + info : '') + '\n');
-    failed++;
-  }
+function assert(label, cond) {
+  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // At most one candidate can win in any cluster size for any vote split

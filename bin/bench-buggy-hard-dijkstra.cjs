@@ -1,7 +1,4 @@
 'use strict';
-// BUG: picks the FARTHEST unvisited node instead of the nearest (uses > instead of <)
-// This is the opposite of greedy shortest-path selection
-// FIX: change `dist[n] > dist[u]` to `dist[n] < dist[u]`
 
 function dijkstra(graph, start) {
   var dist = {}, visited = new Set();
@@ -10,7 +7,7 @@ function dijkstra(graph, start) {
   while (true) {
     var u = null;
     Object.keys(dist).forEach(function(n) {
-      // BUG: picks farthest unvisited node, should pick nearest
+      
       if (!visited.has(n) && (u === null || dist[n] > dist[u])) u = n;
     });
     if (u === null || dist[u] === Infinity) break;

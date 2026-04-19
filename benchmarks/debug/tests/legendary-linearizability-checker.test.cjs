@@ -1,11 +1,8 @@
 'use strict';
 const { isLinearizable } = require('../../../bin/bench-buggy-legendary-linearizability-checker.cjs');
 let failed = 0;
-function assert(label, actual, expected, info) {
-  if (actual !== expected) {
-    process.stderr.write('FAIL ' + label + ': expected=' + expected + ' actual=' + actual + (info ? ' ' + info : '') + '\n');
-    failed++;
-  }
+function assert(label, actual, expected) {
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // Non-linearizable: write(x=1) completes, then read(x) returns 0 (stale)

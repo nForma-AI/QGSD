@@ -1,6 +1,6 @@
 'use strict';
 function takeSnapshot(process) {
-  process.sendMarker();    // BUG: should recordState first, then sendMarker
+  process.sendMarker();    
   process.recordState();
   return process.localState;
 }

@@ -2,10 +2,7 @@
 const { binarySearch } = require('../../../bin/bench-buggy-hard-binary-search.cjs');
 let failed = 0;
 function assert(label, actual, expected) {
-  if (actual !== expected) {
-    process.stderr.write('FAIL ' + label + ': expected ' + JSON.stringify(expected) + ' got ' + JSON.stringify(actual) + '\n');
-    failed++;
-  }
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // Single-element array: loop never runs when left === right, returns -1 instead of 0

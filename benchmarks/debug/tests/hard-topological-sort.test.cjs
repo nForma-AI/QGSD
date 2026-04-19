@@ -2,10 +2,7 @@
 const { topoSort } = require('../../../bin/bench-buggy-hard-topological-sort.cjs');
 let failed = 0;
 function assert(label, actual, expected) {
-  if (actual !== expected) {
-    process.stderr.write('FAIL ' + label + ': expected ' + JSON.stringify(expected) + ' got ' + JSON.stringify(actual) + '\n');
-    failed++;
-  }
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 assert('acyclic sort', JSON.stringify(topoSort(['a', 'b', 'c'], [['a', 'b'], ['b', 'c']])), JSON.stringify(['a', 'b', 'c']));

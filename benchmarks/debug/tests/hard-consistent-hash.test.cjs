@@ -2,10 +2,7 @@
 const { consistentHash, simpleHash } = require('../../../bin/bench-buggy-hard-consistent-hash.cjs');
 let failed = 0;
 function assert(label, actual, expected) {
-  if (actual !== expected) {
-    process.stderr.write('FAIL ' + label + ': expected ' + JSON.stringify(expected) + ' got ' + JSON.stringify(actual) + '\n');
-    failed++;
-  }
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // simpleHash('A') = 65, simpleHash('B') = 66, simpleHash('C') = 67

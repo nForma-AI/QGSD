@@ -1,8 +1,8 @@
 'use strict';
 const { curry } = require('../../../bin/bench-buggy-medium-curry.cjs');
 let failed = 0;
-function assert(label, got, expected) {
-  if (got !== expected) { process.stderr.write('FAIL ' + label + ': got ' + JSON.stringify(got) + ', expected ' + JSON.stringify(expected) + '\n'); failed++; }
+function assert(label, actual, expected) {
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 var add = function(a, b, c) { return a + b + c; };

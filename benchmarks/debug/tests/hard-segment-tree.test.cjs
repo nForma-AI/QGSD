@@ -2,10 +2,7 @@
 const { buildSegTree } = require('../../../bin/bench-buggy-hard-segment-tree.cjs');
 let failed = 0;
 function assert(label, actual, expected) {
-  if (actual !== expected) {
-    process.stderr.write('FAIL ' + label + ': expected ' + JSON.stringify(expected) + ' got ' + JSON.stringify(actual) + '\n');
-    failed++;
-  }
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 var st = buildSegTree([1, 3, 5, 7, 9]);

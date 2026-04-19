@@ -1,9 +1,4 @@
 'use strict';
-// BUG: heapPush does not sift UP after inserting — it only swaps once with parent
-// instead of looping until the heap property is restored.
-// This means after inserting a very small value deep in the heap, it only moves up one level,
-// leaving the heap property violated.
-// FIX: change the condition to a proper while loop that continues until parent <= child
 
 function heapPush(heap, val) {
   heap.push(val);
@@ -12,8 +7,8 @@ function heapPush(heap, val) {
     var parent = Math.floor((i - 1) / 2);
     if (heap[parent] > heap[i]) {
       var tmp = heap[parent]; heap[parent] = heap[i]; heap[i] = tmp;
-      // BUG: stops after one swap — does not continue sifting up
-      // The loop should continue: i = parent; and repeat until i === 0 or parent <= child
+      
+      
     }
   }
 }

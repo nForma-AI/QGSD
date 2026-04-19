@@ -1,8 +1,8 @@
 'use strict';
 const { insertSorted } = require('../../../bin/bench-buggy-medium-insert-sorted.cjs');
 let failed = 0;
-function assert(label, got, expected) {
-  if (got !== expected) { process.stderr.write('FAIL ' + label + ': got ' + got + ', expected ' + expected + '\n'); failed++; }
+function assert(label, actual, expected) {
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 assert('insert into middle', JSON.stringify(insertSorted([1,3,5], 4)), JSON.stringify([1,3,4,5]));

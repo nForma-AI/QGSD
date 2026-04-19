@@ -1,8 +1,8 @@
 'use strict';
 var { canDeliver } = require('../../../bin/bench-buggy-extreme-causal-broadcast.cjs');
 var failed = 0;
-function assert(label, cond, info) {
-  if (!cond) { process.stderr.write('FAIL ' + label + (info ? ': ' + info : '') + '\n'); failed++; }
+function assert(label, cond) {
+  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // delivered[p1]=2 means messages 1 and 2 from p1 have been delivered.

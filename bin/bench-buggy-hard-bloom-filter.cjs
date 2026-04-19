@@ -1,10 +1,4 @@
 'use strict';
-// BUG: add() uses seed (i+1) while has() uses seed (i) — the seeds are mismatched
-// So add() sets bits at positions hash(item,1), hash(item,2), hash(item,3)
-// but has() checks positions hash(item,0), hash(item,1), hash(item,2)
-// The position hash(item,0) is never set by add(), causing has() to return false
-// for items that were added
-// FIX: change `hash(item, i + 1)` to `hash(item, i)` in the add() function
 
 function makeBloomFilter(size, numHashes) {
   var bits = new Array(size).fill(0);
@@ -18,7 +12,7 @@ function makeBloomFilter(size, numHashes) {
   return {
     add: function(item) {
       for (var i = 0; i < numHashes; i++) {
-        bits[hash(item, i + 1)] = 1; // BUG: seed i+1 doesn't match has() which uses seed i
+        bits[hash(item, i + 1)] = 1; 
       }
     },
     has: function(item) {

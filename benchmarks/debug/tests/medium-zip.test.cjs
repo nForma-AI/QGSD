@@ -1,8 +1,8 @@
 'use strict';
 const { zip } = require('../../../bin/bench-buggy-medium-zip.cjs');
 let failed = 0;
-function assert(label, got, expected) {
-  if (got !== expected) { process.stderr.write('FAIL ' + label + ': got ' + JSON.stringify(got) + ', expected ' + JSON.stringify(expected) + '\n'); failed++; }
+function assert(label, actual, expected) {
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 var result = zip([1,2,3],[4,5]);

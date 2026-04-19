@@ -1,11 +1,8 @@
 'use strict';
 const { getCommitTimestamp } = require('../../../bin/bench-buggy-legendary-spanner-external-consistency.cjs');
 let failed = 0;
-function assert(label, actual, expected, info) {
-  if (actual !== expected) {
-    process.stderr.write('FAIL ' + label + ': expected=' + expected + ' actual=' + actual + (info ? ' ' + info : '') + '\n');
-    failed++;
-  }
+function assert(label, actual, expected) {
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // External consistency: commit timestamp must be >= truetime.latest

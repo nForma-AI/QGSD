@@ -1,8 +1,8 @@
 'use strict';
 const { pick } = require('../../../bin/bench-buggy-medium-pick.cjs');
 let failed = 0;
-function assert(label, got, expected) {
-  if (got !== expected) { process.stderr.write('FAIL ' + label + ': got ' + JSON.stringify(got) + ', expected ' + JSON.stringify(expected) + '\n'); failed++; }
+function assert(label, actual, expected) {
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 var result = pick({a:1, b:2}, ['a', 'c']);

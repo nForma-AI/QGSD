@@ -1,6 +1,4 @@
 'use strict';
-// BUG: neighbors are pushed to queue without checking visited, causing duplicates in output
-// FIX: add `if (!visited.has(neighbor))` check before queue.push(neighbor)
 
 function bfs(graph, start) {
   var visited = new Set([start]);
@@ -10,7 +8,7 @@ function bfs(graph, start) {
     var node = queue.shift();
     result.push(node);
     (graph[node] || []).forEach(function(neighbor) {
-      queue.push(neighbor); // BUG: should check visited before pushing
+      queue.push(neighbor); 
       visited.add(neighbor);
     });
   }

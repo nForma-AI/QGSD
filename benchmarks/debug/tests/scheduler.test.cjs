@@ -4,8 +4,7 @@
 const { buggyScheduler } = require('../../../bin/bench-buggy-hard-scheduler.cjs');
 let failed = 0;
 function assert(label, actual, expected) {
-  const ok = actual && actual.name === expected;
-  if (!ok) { process.stderr.write('FAIL ' + label + ': got ' + JSON.stringify(actual) + ', want name=' + expected + '\n'); failed++; }
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 assert('picks min priority', buggyScheduler([{name:'a',priority:3},{name:'b',priority:1}]), 'b');
 assert('single task', buggyScheduler([{name:'x',priority:5}]), 'x');

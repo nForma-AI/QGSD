@@ -1,8 +1,8 @@
 'use strict';
 var { isCausallyConsistent } = require('../../../bin/bench-buggy-extreme-causal-consistency.cjs');
 var failed = 0;
-function assert(label, cond, info) {
-  if (!cond) { process.stderr.write('FAIL ' + label + (info ? ': ' + info : '') + '\n'); failed++; }
+function assert(label, cond) {
+  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // W1 → W2: if W2 is visible, W1 must also be visible.

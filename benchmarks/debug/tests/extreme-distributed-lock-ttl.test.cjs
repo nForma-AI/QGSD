@@ -1,8 +1,8 @@
 'use strict';
 var { tryAcquire } = require('../../../bin/bench-buggy-extreme-distributed-lock-ttl.cjs');
 var failed = 0;
-function assert(label, cond, info) {
-  if (!cond) { process.stderr.write('FAIL ' + label + (info ? ': ' + info : '') + '\n'); failed++; }
+function assert(label, cond) {
+  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // Lock acquired at t=0 with ttl=10 → expires at t=10.

@@ -13,11 +13,8 @@
 const { happensBefore } = require('../../../bin/bench-buggy-extreme-vector-clock.cjs');
 let failed = 0;
 
-function assert(label, cond, info) {
-  if (!cond) {
-    process.stderr.write('FAIL ' + label + (info ? ': ' + info : '') + '\n');
-    failed++;
-  }
+function assert(label, cond) {
+  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // --- Ordered cases (should pass with both correct and buggy implementations for these) ---

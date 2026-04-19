@@ -1,8 +1,8 @@
 'use strict';
 const { partition } = require('../../../bin/bench-buggy-medium-partition.cjs');
 let failed = 0;
-function assert(label, got, expected) {
-  if (got !== expected) { process.stderr.write('FAIL ' + label + ': got ' + got + ', expected ' + expected + '\n'); failed++; }
+function assert(label, actual, expected) {
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 var result = partition([1,2,3,4,5], function(x) { return x % 2 === 0; });

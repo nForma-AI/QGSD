@@ -1,7 +1,4 @@
 'use strict';
-// BUG: calls select with k+1 instead of k, returning the (k+1)th smallest element
-// instead of the kth smallest (0-indexed)
-// FIX: change `select(0, arr.length - 1, k + 1)` to `select(0, arr.length - 1, k)`
 
 function quickSelect(arr, k) {
   arr = arr.slice();
@@ -26,7 +23,7 @@ function quickSelect(arr, k) {
     return select(lo, p - 1, k);
   }
 
-  return select(0, arr.length - 1, k + 1); // BUG: k+1 instead of k
+  return select(0, arr.length - 1, k + 1); 
 }
 
 module.exports = { quickSelect };

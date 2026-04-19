@@ -2,10 +2,7 @@
 const { makeBloomFilter } = require('../../../bin/bench-buggy-hard-bloom-filter.cjs');
 let failed = 0;
 function assert(label, actual, expected) {
-  if (actual !== expected) {
-    process.stderr.write('FAIL ' + label + ': expected ' + JSON.stringify(expected) + ' got ' + JSON.stringify(actual) + '\n');
-    failed++;
-  }
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // add() sets bits using seeds 1,2,3 but has() checks seeds 0,1,2

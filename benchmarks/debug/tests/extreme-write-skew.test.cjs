@@ -1,8 +1,8 @@
 'use strict';
 var { detectConflict } = require('../../../bin/bench-buggy-extreme-write-skew.cjs');
 var failed = 0;
-function assert(label, cond, info) {
-  if (!cond) { process.stderr.write('FAIL ' + label + (info ? ': ' + info : '') + '\n'); failed++; }
+function assert(label, cond) {
+  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // Classic write skew: T1 reads {A,B} and writes {A}; T2 reads {A,B} and writes {B}.

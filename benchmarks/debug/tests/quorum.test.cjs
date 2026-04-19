@@ -8,11 +8,8 @@
 const { hasQuorum } = require('../../../bin/bench-buggy-extreme-quorum.cjs');
 let failed = 0;
 
-function assert(label, cond, info) {
-  if (!cond) {
-    process.stderr.write('FAIL ' + label + (info ? ': ' + info : '') + '\n');
-    failed++;
-  }
+function assert(label, cond) {
+  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // Enumerate all cluster sizes and all partitions

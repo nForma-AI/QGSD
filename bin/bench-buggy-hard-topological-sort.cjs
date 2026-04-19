@@ -1,6 +1,4 @@
 'use strict';
-// BUG: doesn't detect cycles — returns partial result instead of empty array
-// FIX: add `if (result.length !== nodes.length) return [];` before the final return
 
 function topoSort(nodes, edges) {
   var inDegree = {};
@@ -16,7 +14,7 @@ function topoSort(nodes, edges) {
       if (inDegree[e[1]] === 0) queue.push(e[1]);
     });
   }
-  // BUG: should return [] if result.length !== nodes.length (cycle detected)
+  
   return result;
 }
 

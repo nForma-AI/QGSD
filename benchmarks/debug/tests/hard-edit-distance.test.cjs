@@ -2,10 +2,7 @@
 const { editDistance } = require('../../../bin/bench-buggy-hard-edit-distance.cjs');
 let failed = 0;
 function assert(label, actual, expected) {
-  if (actual !== expected) {
-    process.stderr.write('FAIL ' + label + ': expected ' + JSON.stringify(expected) + ' got ' + JSON.stringify(actual) + '\n');
-    failed++;
-  }
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // 'cat' -> 'bat': one substitution, should be distance 1, buggy returns 2

@@ -1,5 +1,5 @@
 'use strict';
 function shouldAcceptProposal(proposal, followerEpoch) {
-  return proposal.epoch >= followerEpoch;  // BUG: should be > (strictly newer epoch required)
+  return proposal.epoch >= followerEpoch;  
 }
 module.exports = { shouldAcceptProposal };

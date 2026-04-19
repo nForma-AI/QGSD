@@ -4,8 +4,7 @@
 const { buggyTokenize } = require('../../../bin/bench-buggy-hard-parser.cjs');
 let failed = 0;
 function assert(label, actual, expected) {
-  const ok = JSON.stringify(actual) === JSON.stringify(expected);
-  if (!ok) { process.stderr.write('FAIL ' + label + ': got ' + JSON.stringify(actual) + ', want ' + JSON.stringify(expected) + '\n'); failed++; }
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 assert('two tokens', buggyTokenize('hello world'), ['hello', 'world']);
 assert('three tokens', buggyTokenize('foo bar baz'), ['foo', 'bar', 'baz']);

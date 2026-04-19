@@ -9,11 +9,8 @@
 const { receive } = require('../../../bin/bench-buggy-extreme-lamport.cjs');
 let failed = 0;
 
-function assert(label, cond, info) {
-  if (!cond) {
-    process.stderr.write('FAIL ' + label + (info ? ': ' + info : '') + '\n');
-    failed++;
-  }
+function assert(label, cond) {
+  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // Enumerate critical boundary: local == received (the case that requires +1)

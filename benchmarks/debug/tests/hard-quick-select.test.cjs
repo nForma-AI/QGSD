@@ -2,10 +2,7 @@
 const { quickSelect } = require('../../../bin/bench-buggy-hard-quick-select.cjs');
 let failed = 0;
 function assert(label, actual, expected) {
-  if (actual !== expected) {
-    process.stderr.write('FAIL ' + label + ': expected ' + JSON.stringify(expected) + ' got ' + JSON.stringify(actual) + '\n');
-    failed++;
-  }
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // 0th smallest of [5,3,1,4,2] is 1; buggy: returns 2nd smallest = 2

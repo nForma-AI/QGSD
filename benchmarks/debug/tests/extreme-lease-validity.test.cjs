@@ -1,8 +1,8 @@
 'use strict';
 var { isLeaseValid } = require('../../../bin/bench-buggy-extreme-lease-validity.cjs');
 var failed = 0;
-function assert(label, cond, info) {
-  if (!cond) { process.stderr.write('FAIL ' + label + (info ? ': ' + info : '') + '\n'); failed++; }
+function assert(label, cond) {
+  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // Formal invariant: isLeaseValid(clock, expiry, skew) iff clock < expiry - skew.

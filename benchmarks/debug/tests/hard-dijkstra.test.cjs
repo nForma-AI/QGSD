@@ -2,10 +2,7 @@
 const { dijkstra } = require('../../../bin/bench-buggy-hard-dijkstra.cjs');
 let failed = 0;
 function assert(label, actual, expected) {
-  if (actual !== expected) {
-    process.stderr.write('FAIL ' + label + ': expected ' + JSON.stringify(expected) + ' got ' + JSON.stringify(actual) + '\n');
-    failed++;
-  }
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // Graph: A->B(1), A->C(4), B->C(2), B->D(5), C->D(1)

@@ -1,8 +1,4 @@
 'use strict';
-// BUG: in the update function, the right child recursive call uses `mid` instead of `mid+1`
-// as the start of the right child's range. This causes updates to right-subtree indices
-// to be applied to overlapping ranges and the tree node values become corrupted.
-// FIX: change `update(2*node+1, mid, end, idx, val)` to `update(2*node+1, mid+1, end, idx, val)`
 
 function buildSegTree(arr) {
   var n = arr.length;
@@ -22,7 +18,7 @@ function buildSegTree(arr) {
     if (idx <= mid) {
       update(2 * node, start, mid, idx, val);
     } else {
-      update(2 * node + 1, mid, end, idx, val); // BUG: should be mid+1 not mid
+      update(2 * node + 1, mid, end, idx, val); 
     }
     tree[node] = tree[2 * node] + tree[2 * node + 1];
   }

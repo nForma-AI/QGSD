@@ -1,11 +1,8 @@
 'use strict';
 const { canServeRead } = require('../../../bin/bench-buggy-legendary-raft-read-index.cjs');
 let failed = 0;
-function assert(label, actual, expected, info) {
-  if (actual !== expected) {
-    process.stderr.write('FAIL ' + label + ': expected=' + expected + ' actual=' + actual + (info ? ' ' + info : '') + '\n');
-    failed++;
-  }
+function assert(label, actual, expected) {
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // Stale leader: claims leadership but no heartbeat confirmation — must not serve reads

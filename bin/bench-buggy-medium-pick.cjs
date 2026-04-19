@@ -2,7 +2,7 @@
 
 function pick(obj, keys) {
   return keys.reduce(function(acc, k) {
-    acc[k] = obj[k]; // BUG: should check k in obj first
+    acc[k] = obj[k]; 
     return acc;
   }, {});
 }

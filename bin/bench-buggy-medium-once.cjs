@@ -3,7 +3,7 @@
 function once(fn) {
   var called = false;
   return function() {
-    if (called) return undefined; // BUG: should return cached result
+    if (called) return undefined; 
     called = true;
     return fn.apply(this, arguments);
   };

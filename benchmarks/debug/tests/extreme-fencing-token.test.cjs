@@ -1,8 +1,8 @@
 'use strict';
 var { isValidToken } = require('../../../bin/bench-buggy-extreme-fencing-token.cjs');
 var failed = 0;
-function assert(label, cond, info) {
-  if (!cond) { process.stderr.write('FAIL ' + label + (info ? ': ' + info : '') + '\n'); failed++; }
+function assert(label, cond) {
+  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // Formal invariant: isValidToken(cur, tok) iff tok >= cur (numeric comparison).

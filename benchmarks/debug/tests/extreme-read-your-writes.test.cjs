@@ -1,8 +1,8 @@
 'use strict';
 var { satisfiesReadYourWrites } = require('../../../bin/bench-buggy-extreme-read-your-writes.cjs');
 var failed = 0;
-function assert(label, cond, info) {
-  if (!cond) { process.stderr.write('FAIL ' + label + (info ? ': ' + info : '') + '\n'); failed++; }
+function assert(label, cond) {
+  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // Invariant: satisfiesReadYourWrites(r, w) iff r >= w.

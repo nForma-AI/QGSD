@@ -1,8 +1,8 @@
 'use strict';
 var { shouldPromise } = require('../../../bin/bench-buggy-extreme-paxos-promise.cjs');
 var failed = 0;
-function assert(label, cond, info) {
-  if (!cond) { process.stderr.write('FAIL ' + label + (info ? ': ' + info : '') + '\n'); failed++; }
+function assert(label, cond) {
+  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
 }
 
 // Formal invariant: shouldPromise(ballot, promised) iff ballot > promised (strictly greater).
