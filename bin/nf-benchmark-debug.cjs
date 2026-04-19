@@ -22,6 +22,13 @@ const jsonOutput = args.includes('--json');
 const verbose = args.includes('--verbose');
 const timeoutIdx = args.indexOf('--timeout');
 const runnerTimeout = timeoutIdx !== -1 ? parseInt(args[timeoutIdx + 1], 10) : 180000;
+const trackIdx = args.indexOf('--track');
+const track = trackIdx !== -1 ? args[trackIdx + 1] : 'full';
+
+// Smoke track: 5 representative easy stubs, ~3 min in CI.
+// Used on every PR to verify the fix pipeline works end-to-end without
+// running all 100 stubs.  Score should be 5/5 on any functional pipeline.
+const SMOKE_IDS = new Set(['filter', 'sum-array', 'factorial', 'starts-with', 'clamp']);
 
 const ROOT = process.cwd();
 const NF_DEBUG_RUNNER = path.join(__dirname, 'nf-debug-runner.cjs');
@@ -134,21 +141,29 @@ const STUBS = [
   { id: 'consistent-cut-termination',            tier: 'legendary', stub: 'bin/bench-buggy-legendary-consistent-cut-termination.cjs',            test: 'benchmarks/debug/tests/legendary-consistent-cut-termination.test.cjs' },
 ];
 
+// Apply track filter
+const ACTIVE_STUBS = track === 'smoke'
+  ? STUBS.filter(function(s) { return SMOKE_IDS.has(s.id); })
+  : STUBS;
+
 if (dryRun) {
   if (jsonOutput) {
     const result = {
       score: 0,
-      total: STUBS.length,
+      pass_rate: 0,
+      total: ACTIVE_STUBS.length,
       fixed: 0,
+      passed: 0,
       dry_run: true,
+      track,
       by_tier: { easy: { total: 20, fixed: 0 }, medium: { total: 20, fixed: 0 }, hard: { total: 20, fixed: 0 }, extreme: { total: 20, fixed: 0 }, legendary: { total: 20, fixed: 0 } },
-      stubs: STUBS.map(function(s) { return { id: s.id, tier: s.tier, fixed: false, stub: s.stub, test: s.test }; })
+      stubs: ACTIVE_STUBS.map(function(s) { return { id: s.id, tier: s.tier, fixed: false, stub: s.stub, test: s.test }; })
     };
     process.stdout.write(JSON.stringify(result, null, 2) + '\n');
   } else {
     process.stdout.write('nf:debug autonomy benchmark — DRY RUN\n');
-    process.stdout.write('Stubs (' + STUBS.length + '):\n');
-    STUBS.forEach(function(s) {
+    process.stdout.write('Stubs (' + ACTIVE_STUBS.length + ') [track=' + track + ']:\n');
+    ACTIVE_STUBS.forEach(function(s) {
       process.stdout.write('  [' + s.tier.padEnd(6) + '] ' + s.id.padEnd(12) + '  stub: ' + s.stub + '\n');
       process.stdout.write('                       test: ' + s.test + '\n');
     });
@@ -161,7 +176,7 @@ if (dryRun) {
 const results = [];
 let fixedCount = 0;
 
-STUBS.forEach(function(entry) {
+ACTIVE_STUBS.forEach(function(entry) {
   const absStubPath = path.join(ROOT, entry.stub);
   const absTestPath = path.join(ROOT, entry.test);
 
@@ -225,7 +240,8 @@ STUBS.forEach(function(entry) {
   results.push({ id: entry.id, tier: entry.tier, fixed, error: errorCode || null });
 });
 
-const score = Math.round((fixedCount / STUBS.length) * 100);
+const total = ACTIVE_STUBS.length;
+const score = Math.round((fixedCount / total) * 100);
 
 const byTier = {
   easy: { total: 0, fixed: 0 },
@@ -244,8 +260,11 @@ results.forEach(function(r) {
 if (jsonOutput) {
   const out = {
     score,
-    total: STUBS.length,
+    pass_rate: score,   // alias for check-benchmark-gate.cjs compatibility
+    total,
     fixed: fixedCount,
+    passed: fixedCount, // alias for check-benchmark-gate.cjs compatibility
+    track,
     by_tier: byTier,
     stubs: results
   };
@@ -259,7 +278,7 @@ if (jsonOutput) {
     const status = r.fixed ? 'PASS' : ('FAIL' + (r.error ? ' (' + r.error + ')' : ''));
     process.stdout.write((r.id).padEnd(13) + r.tier.padEnd(9) + status + '\n');
   });
-  process.stdout.write('\nScore: ' + score + '/100 (' + fixedCount + '/' + STUBS.length + ' fixed)\n');
+  process.stdout.write('\nScore: ' + score + '/' + total + ' (' + fixedCount + '/' + total + ' fixed) [track=' + track + ']\n');
   process.stdout.write('By tier: easy=' + byTier.easy.fixed + '/' + byTier.easy.total +
     ' medium=' + byTier.medium.fixed + '/' + byTier.medium.total +
     ' hard=' + byTier.hard.fixed + '/' + byTier.hard.total +

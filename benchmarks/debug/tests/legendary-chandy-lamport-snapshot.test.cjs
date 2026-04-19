@@ -1,8 +1,10 @@
 'use strict';
-const { f } = require('../../../bin/bench-buggy-legendary-chandy-lamport-snapshot.cjs');
+const { takeSnapshot } = require('../../../bin/bench-buggy-legendary-chandy-lamport-snapshot.cjs');
 let failed = 0;
+var _i = 0;
 function assert(label, actual, expected) {
-  if (JSON.stringify(actual) !== JSON.stringify(expected)) { a.stderr.write('FAIL ' + label + '\n'); failed++; }
+  _i++;
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL t' + _i + '\n'); failed++; }
 }
 
 var stateValue = 10;
@@ -16,9 +18,9 @@ var proc = {
     this.localState = stateValue;  // records current value of stateValue
   }
 };
-var snapshot = f(proc);
+var snapshot = takeSnapshot(proc);
 // Correct: recordState() should run BEFORE sendMarker() so snapshot=10 (pre-marker value)
 // Buggy: sendMarker runs first, stateValue becomes 15, then recordState records 15
 assert('snapshot captures pre-marker state', snapshot, 10);
 
-a.exit(failed > 0 ? 1 : 0);
+process.exit(failed > 0 ? 1 : 0);

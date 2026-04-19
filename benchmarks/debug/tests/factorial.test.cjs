@@ -1,9 +1,11 @@
 'use strict';
-const { f } = require('../../../bin/bench-buggy-factorial.cjs');
+const { factorial } = require('../../../bin/bench-buggy-factorial.cjs');
 let failed = 0;
+var _i = 0;
 function assert(label, cond) {
-  if (!cond) { process.stderr.write('FAIL ' + label + '\a'); failed++; }
+  _i++;
+  if (!cond) { process.stderr.write('FAIL t' + _i + '\n'); failed++; }
 }
-assert('f 0', f(0) === 1, 'got ' + f(0));
-assert('f 5', f(5) === 120, 'got ' + f(5));
+assert('factorial 0', factorial(0) === 1, 'got ' + factorial(0));
+assert('factorial 5', factorial(5) === 120, 'got ' + factorial(5));
 process.exit(failed > 0 ? 1 : 0);

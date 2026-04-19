@@ -169,8 +169,10 @@ fs.readdirSync(TESTS)
     var reqLiteral      = reqMatch[0];                          // e.g. require('../../../bin/bench-buggy-average.cjs')
     var protected_      = src.replace(reqLiteral, REQ_PLACEHOLDER);
 
-    var out = applyMap(protected_, paramMap);
-    out     = applyMap(out, funcMap);
+    // Params are internal to stubs; test files call functions positionally
+    // and never reference parameter names — applying paramMap to tests causes
+    // word-boundary matches inside string escape sequences (e.g. \n → \b).
+    var out = applyMap(protected_, funcMap);
     out     = out.replace(REQ_PLACEHOLDER, reqLiteral);        // restore exact path
 
     // ── Replace assert helper with execution-order counter version ──
