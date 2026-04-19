@@ -67,6 +67,16 @@ jobs:
         working-directory: nf-benchmark
         run: npm ci
 
+      - name: Restore coderlm binary cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.claude/nf-bin/coderlm
+          key: coderlm-${{ runner.os }}-${{ runner.arch }}
+
+      - name: Install Rust toolchain (for coderlm build)
+        if: ${{ hashFiles('~/.claude/nf-bin/coderlm') == '' }}
+        uses: dtolnay/rust-toolchain@stable
+
       - name: Restore baseline cache
         uses: actions/cache/restore@v4
         with:
