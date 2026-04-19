@@ -78,10 +78,15 @@ jobs:
       - name: Run full benchmark
         working-directory: nf-benchmark
         run: |
+          COMPARE_FLAG=""
+          if [ -f baseline.json ]; then
+            COMPARE_FLAG="--compare-baseline --baseline-tolerance 0"
+          fi
           node bin/nf-benchmark.cjs run \
             --project-root .. \
             --timeout 600 \
-            --save-baseline
+            --save-baseline \
+            $COMPARE_FLAG
         env:
           CI: true
 
