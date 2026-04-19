@@ -27,13 +27,16 @@ const ROOT = process.cwd();
 const NF_DEBUG_RUNNER = path.join(__dirname, 'nf-debug-runner.cjs');
 
 const STUBS = [
-  { id: 'sort',        tier: 'easy',   stub: 'bin/bench-buggy-sort.cjs',               test: 'benchmarks/debug/tests/sort.test.cjs' },
-  { id: 'filter',      tier: 'easy',   stub: 'bin/bench-buggy-filter.cjs',             test: 'benchmarks/debug/tests/filter.test.cjs' },
-  { id: 'counter',     tier: 'easy',   stub: 'bin/bench-buggy-counter.cjs',            test: 'benchmarks/debug/tests/counter.test.cjs' },
-  { id: 'dedup',       tier: 'medium', stub: 'bin/bench-buggy-medium-dedup.cjs',       test: 'benchmarks/debug/tests/dedup.test.cjs' },
-  { id: 'accumulator', tier: 'medium', stub: 'bin/bench-buggy-medium-accumulator.cjs', test: 'benchmarks/debug/tests/accumulator.test.cjs' },
-  { id: 'parser',      tier: 'hard',   stub: 'bin/bench-buggy-hard-parser.cjs',        test: 'benchmarks/debug/tests/parser.test.cjs' },
-  { id: 'scheduler',   tier: 'hard',   stub: 'bin/bench-buggy-hard-scheduler.cjs',     test: 'benchmarks/debug/tests/scheduler.test.cjs' },
+  { id: 'sort',         tier: 'easy',    stub: 'bin/bench-buggy-sort.cjs',                    test: 'benchmarks/debug/tests/sort.test.cjs' },
+  { id: 'filter',       tier: 'easy',    stub: 'bin/bench-buggy-filter.cjs',                  test: 'benchmarks/debug/tests/filter.test.cjs' },
+  { id: 'counter',      tier: 'easy',    stub: 'bin/bench-buggy-counter.cjs',                 test: 'benchmarks/debug/tests/counter.test.cjs' },
+  { id: 'dedup',        tier: 'medium',  stub: 'bin/bench-buggy-medium-dedup.cjs',            test: 'benchmarks/debug/tests/dedup.test.cjs' },
+  { id: 'accumulator',  tier: 'medium',  stub: 'bin/bench-buggy-medium-accumulator.cjs',      test: 'benchmarks/debug/tests/accumulator.test.cjs' },
+  { id: 'parser',       tier: 'hard',    stub: 'bin/bench-buggy-hard-parser.cjs',             test: 'benchmarks/debug/tests/parser.test.cjs' },
+  { id: 'scheduler',    tier: 'hard',    stub: 'bin/bench-buggy-hard-scheduler.cjs',          test: 'benchmarks/debug/tests/scheduler.test.cjs' },
+  { id: 'lamport',      tier: 'extreme', stub: 'bin/bench-buggy-extreme-lamport.cjs',         test: 'benchmarks/debug/tests/lamport.test.cjs' },
+  { id: 'quorum',       tier: 'extreme', stub: 'bin/bench-buggy-extreme-quorum.cjs',          test: 'benchmarks/debug/tests/quorum.test.cjs' },
+  { id: 'vector-clock', tier: 'extreme', stub: 'bin/bench-buggy-extreme-vector-clock.cjs',    test: 'benchmarks/debug/tests/vector-clock.test.cjs' },
 ];
 
 if (dryRun) {
@@ -43,7 +46,7 @@ if (dryRun) {
       total: STUBS.length,
       fixed: 0,
       dry_run: true,
-      by_tier: { easy: { total: 3, fixed: 0 }, medium: { total: 2, fixed: 0 }, hard: { total: 2, fixed: 0 } },
+      by_tier: { easy: { total: 3, fixed: 0 }, medium: { total: 2, fixed: 0 }, hard: { total: 2, fixed: 0 }, extreme: { total: 3, fixed: 0 } },
       stubs: STUBS.map(function(s) { return { id: s.id, tier: s.tier, fixed: false, stub: s.stub, test: s.test }; })
     };
     process.stdout.write(JSON.stringify(result, null, 2) + '\n');
@@ -130,7 +133,8 @@ const score = Math.round((fixedCount / STUBS.length) * 100);
 const byTier = {
   easy: { total: 0, fixed: 0 },
   medium: { total: 0, fixed: 0 },
-  hard: { total: 0, fixed: 0 }
+  hard: { total: 0, fixed: 0 },
+  extreme: { total: 0, fixed: 0 }
 };
 results.forEach(function(r) {
   if (byTier[r.tier]) {
@@ -160,7 +164,8 @@ if (jsonOutput) {
   process.stdout.write('\nScore: ' + score + '/100 (' + fixedCount + '/' + STUBS.length + ' fixed)\n');
   process.stdout.write('By tier: easy=' + byTier.easy.fixed + '/' + byTier.easy.total +
     ' medium=' + byTier.medium.fixed + '/' + byTier.medium.total +
-    ' hard=' + byTier.hard.fixed + '/' + byTier.hard.total + '\n');
+    ' hard=' + byTier.hard.fixed + '/' + byTier.hard.total +
+    ' extreme=' + byTier.extreme.fixed + '/' + byTier.extreme.total + '\n');
 }
 
 process.exit(0);

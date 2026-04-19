@@ -1,5 +1,5 @@
 {
-  "pass_rate": 43,
+  "pass_rate": 30,
   "updated_at": "2026-04-17",
-  "note": "Realistic floor: AI pipeline expected to fix all 3 easy stubs (sort, filter, counter) = 3/7 = 43%. Medium and hard stubs require deeper reasoning; floor assumes 0 fixes there."
+  "note": "Floor: AI pipeline expected to fix all 3 easy stubs = 3/10 = 30%. Medium/hard may partially pass. Extreme tier (lamport, quorum, vector-clock) requires formal distributed-systems reasoning — these are designed to exceed current AI capability without formal model guidance."
 }
