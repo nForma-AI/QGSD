@@ -1,5 +1,13 @@
 {
-  "pass_rate": 30,
-  "updated_at": "2026-04-17",
-  "note": "Floor: AI pipeline expected to fix all 3 easy stubs = 3/10 = 30%. Medium/hard may partially pass. Extreme tier (lamport, quorum, vector-clock) requires formal distributed-systems reasoning — these are designed to exceed current AI capability without formal model guidance."
+  "pass_rate": 20,
+  "total_stubs": 100,
+  "tiers": {
+    "easy": 20,
+    "medium": 20,
+    "hard": 20,
+    "extreme": 20,
+    "legendary": 20
+  },
+  "updated_at": "2026-04-19",
+  "note": "Floor: AI pipeline expected to fix easy tier (20/100 = 20%). Medium/hard require deeper reasoning. Extreme tier demands distributed-systems formal invariant understanding. Legendary tier requires full protocol-level formal reasoning (Raft, Paxos, BFT, MVCC, etc.) — designed to challenge any AI without formal model guidance."
 }
