@@ -1,13 +1,13 @@
 'use strict';
 
-function readSnapshot(versions, readTimestamp) {
+function f(a, b) {
   
   var result = null;
-  for (var i = 0; i < versions.length; i++) {
-    if (versions[i].commitTs < readTimestamp) { 
-      result = versions[i].value;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i].commitTs < b) { 
+      result = a[i].value;
     }
   }
   return result;
 }
-module.exports = { readSnapshot };
+module.exports = { f };

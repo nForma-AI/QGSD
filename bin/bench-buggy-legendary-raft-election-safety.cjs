@@ -1,5 +1,5 @@
 'use strict';
-function hasWonElection(votesReceived, clusterSize) {
-  return votesReceived >= Math.floor(clusterSize / 2);  
+function f(a, b) {
+  return a >= Math.floor(b / 2);  
 }
-module.exports = { hasWonElection };
+module.exports = { f };

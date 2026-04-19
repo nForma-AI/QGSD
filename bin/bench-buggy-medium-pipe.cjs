@@ -1,10 +1,10 @@
 'use strict';
 
-function pipe() {
+function f() {
   var fns = Array.prototype.slice.call(arguments);
   return function(x) {
     return fns.reduceRight(function(acc, fn) { return fn(acc); }, x); 
   };
 }
 
-module.exports = { pipe };
+module.exports = { f };

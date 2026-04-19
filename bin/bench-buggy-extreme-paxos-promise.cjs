@@ -1,6 +1,6 @@
 'use strict';
 
-function shouldPromise(ballot, promisedBallot) {
-  return ballot >= promisedBallot; 
+function f(a, b) {
+  return a >= b; 
 }
-module.exports = { shouldPromise };
+module.exports = { f };

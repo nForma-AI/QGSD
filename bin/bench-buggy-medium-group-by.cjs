@@ -1,11 +1,11 @@
 'use strict';
 
-function groupBy(arr, keyFn) {
-  return arr.reduce(function(acc, item) {
-    var k = keyFn(item);
+function f(a, b) {
+  return a.reduce(function(acc, item) {
+    var k = b(item);
     acc[k] = item; 
     return acc;
   }, {});
 }
 
-module.exports = { groupBy };
+module.exports = { f };

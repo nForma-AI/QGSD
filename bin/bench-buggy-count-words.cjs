@@ -1,6 +1,6 @@
 'use strict';
 
-function countWords(s) {
-  return s.trim().split(' ').length;
+function f(a) {
+  return a.trim().split(' ').length;
 }
-module.exports = { countWords };
+module.exports = { f };

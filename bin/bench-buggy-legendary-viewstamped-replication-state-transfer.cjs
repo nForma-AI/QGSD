@@ -1,7 +1,7 @@
 'use strict';
-function getStateTransfer(log, lastCommitted) {
-  return log.filter(function(entry) {
-    return entry.opNum < lastCommitted;  
+function f(a, b) {
+  return a.filter(function(entry) {
+    return entry.opNum < b;  
   });
 }
-module.exports = { getStateTransfer };
+module.exports = { f };

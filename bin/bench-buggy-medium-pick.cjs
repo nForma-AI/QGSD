@@ -1,10 +1,10 @@
 'use strict';
 
-function pick(obj, keys) {
-  return keys.reduce(function(acc, k) {
-    acc[k] = obj[k]; 
+function f(a, b) {
+  return b.reduce(function(acc, k) {
+    acc[k] = a[k]; 
     return acc;
   }, {});
 }
 
-module.exports = { pick };
+module.exports = { f };

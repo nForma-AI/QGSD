@@ -1,10 +1,10 @@
 'use strict';
-function readMVCC(versions, snapshotTs) {
-  for (var i = 0; i < versions.length; i++) {
-    if (versions[i].commitTs <= snapshotTs) {
-      return versions[i].value;  
+function f(a, b) {
+  for (var i = 0; i < a.length; i++) {
+    if (a[i].commitTs <= b) {
+      return a[i].value;  
     }
   }
   return null;
 }
-module.exports = { readMVCC };
+module.exports = { f };

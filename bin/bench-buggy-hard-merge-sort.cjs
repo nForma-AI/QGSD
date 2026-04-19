@@ -1,10 +1,10 @@
 'use strict';
 
-function mergeSort(arr) {
-  if (arr.length <= 1) return arr;
-  var mid = Math.floor(arr.length / 2);
-  var left = mergeSort(arr.slice(0, mid));
-  var right = mergeSort(arr.slice(mid));
+function f(a) {
+  if (a.length <= 1) return a;
+  var mid = Math.floor(a.length / 2);
+  var left = f(a.slice(0, mid));
+  var right = f(a.slice(mid));
   return merge(left, right);
 }
 
@@ -22,4 +22,4 @@ function merge(left, right) {
   return result.concat(left.slice(i)).concat(right.slice(j));
 }
 
-module.exports = { mergeSort };
+module.exports = { f };

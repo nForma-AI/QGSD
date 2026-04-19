@@ -1,6 +1,6 @@
 'use strict';
 
-function sumArray(arr) {
-  return arr.reduce(function(s, x) { return s + x; }, 1);
+function f(a) {
+  return a.reduce(function(s, x) { return s + x; }, 1);
 }
-module.exports = { sumArray };
+module.exports = { f };

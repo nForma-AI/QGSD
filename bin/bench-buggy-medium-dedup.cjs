@@ -1,12 +1,12 @@
 'use strict';
 
-function buggyDedup(arr) {
+function f(a) {
   const seen = new Set();
-  return arr.filter(function(x) {
+  return a.filter(function(x) {
     const key = '' + x;  
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
   });
 }
-module.exports = { buggyDedup };
+module.exports = { f };

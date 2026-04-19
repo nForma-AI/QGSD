@@ -1,13 +1,13 @@
 'use strict';
 
-function uniqueBy(arr, keyFn) {
+function f(a, b) {
   var seen = {};
   var result = [];
-  for (var i = arr.length - 1; i >= 0; i--) { 
-    var k = String(keyFn(arr[i]));
-    if (!(k in seen)) { seen[k] = true; result.unshift(arr[i]); }
+  for (var i = a.length - 1; i >= 0; i--) { 
+    var k = String(b(a[i]));
+    if (!(k in seen)) { seen[k] = true; result.unshift(a[i]); }
   }
   return result;
 }
 
-module.exports = { uniqueBy };
+module.exports = { f };

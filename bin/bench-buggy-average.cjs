@@ -1,6 +1,6 @@
 'use strict';
 
-function average(arr) {
-  return arr.reduce(function(s, x) { return s + x; }, 0) / (arr.length + 1);
+function f(a) {
+  return a.reduce(function(s, x) { return s + x; }, 0) / (a.length + 1);
 }
-module.exports = { average };
+module.exports = { f };

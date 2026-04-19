@@ -1,10 +1,10 @@
 'use strict';
 
-function compactObject(obj) {
-  return Object.keys(obj).reduce(function(acc, k) {
-    if (obj[k]) acc[k] = obj[k]; 
+function f(a) {
+  return Object.keys(a).reduce(function(acc, k) {
+    if (a[k]) acc[k] = a[k]; 
     return acc;
   }, {});
 }
 
-module.exports = { compactObject };
+module.exports = { f };

@@ -1,8 +1,10 @@
 'use strict';
-var { mergeState } = require('../../../bin/bench-buggy-extreme-gossip-idempotency.cjs');
+var { f } = require('../../../bin/bench-buggy-extreme-gossip-idempotency.cjs');
 var failed = 0;
+var _i = 0;
 function assert(label, cond) {
-  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
+  _i++;
+  if (!cond) { process.stderr.write('FAIL t' + _i + '\n'); failed++; }
 }
 
 function deepEqual(a, b) {
@@ -26,8 +28,8 @@ var states = [
 
 states.forEach(function(a) {
   states.forEach(function(b) {
-    var once = mergeState(a, b);
-    var twice = mergeState(once, b);
+    var once = f(a, b);
+    var twice = f(once, b);
 
     // Idempotency: applying b again must not change the result
     assert(
@@ -48,9 +50,9 @@ states.forEach(function(a) {
 });
 
 // Specific case: merge({x:2},{x:3}) applied twice should not give x=8
-var r1 = mergeState({x: 2}, {x: 3});
+var r1 = f({x: 2}, {x: 3});
 assert('first merge x=max(2,3)=3', r1.x === 3, 'got ' + r1.x);
-var r2 = mergeState(r1, {x: 3});
+var r2 = f(r1, {x: 3});
 assert('idempotent: second merge x still 3', r2.x === 3, 'got ' + r2.x + ' (expected 3, bug gives 6)');
 
 process.exit(failed > 0 ? 1 : 0);

@@ -1,7 +1,7 @@
 'use strict';
 
-function canDeliver(delivered, msg) {
-  var prev = delivered[msg.sender] || 0;
-  return msg.seqNum >= prev; 
+function f(a, b) {
+  var prev = a[b.sender] || 0;
+  return b.seqNum >= prev; 
 }
-module.exports = { canDeliver };
+module.exports = { f };

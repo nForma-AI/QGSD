@@ -1,14 +1,14 @@
 'use strict';
-function hlcReceive(local, msg) {
-  var lPrime = Math.max(local.l, msg.l);
+function f(a, b) {
+  var lPrime = Math.max(a.l, b.l);
   var cPrime;
-  if (lPrime === local.l && lPrime === msg.l) {
-    cPrime = Math.max(local.c, msg.c);  
-  } else if (lPrime === local.l) {
-    cPrime = local.c + 1;
+  if (lPrime === a.l && lPrime === b.l) {
+    cPrime = Math.max(a.c, b.c);  
+  } else if (lPrime === a.l) {
+    cPrime = a.c + 1;
   } else {
-    cPrime = msg.c + 1;
+    cPrime = b.c + 1;
   }
   return {l: lPrime, c: cPrime};
 }
-module.exports = { hlcReceive };
+module.exports = { f };

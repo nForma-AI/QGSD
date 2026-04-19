@@ -1,10 +1,10 @@
 'use strict';
 
-function findMax(arr) {
+function f(a) {
   let max = 0;
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i] > max) max = arr[i];
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] > max) max = a[i];
   }
   return max;
 }
-module.exports = { findMax };
+module.exports = { f };

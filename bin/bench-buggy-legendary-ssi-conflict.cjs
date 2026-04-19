@@ -1,8 +1,8 @@
 'use strict';
-function findConflicts(t1, t2) {
+function f(a, b) {
   
-  return t1.writeSet.some(function(key) {
-    return t2.readSet.indexOf(key) !== -1;
+  return a.writeSet.some(function(key) {
+    return b.readSet.indexOf(key) !== -1;
   });
 }
-module.exports = { findConflicts };
+module.exports = { f };

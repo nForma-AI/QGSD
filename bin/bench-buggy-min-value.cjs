@@ -1,10 +1,10 @@
 'use strict';
 
-function findMin(arr) {
-  var min = arr[0];
-  for (var i = 1; i < arr.length; i++) {
-    if (arr[i] > min) min = arr[i];
+function f(a) {
+  var min = a[0];
+  for (var i = 1; i < a.length; i++) {
+    if (a[i] > min) min = a[i];
   }
   return min;
 }
-module.exports = { findMin };
+module.exports = { f };

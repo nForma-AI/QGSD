@@ -1,10 +1,10 @@
 'use strict';
 
-function buggySort(arr) {
-  const a = [...arr];
+function f(a) {
+  const a = [...a];
   for (let i = 0; i < a.length; i++)
     for (let j = i + 1; j < a.length; j++)
       if (a[i] < a[j]) { const t = a[i]; a[i] = a[j]; a[j] = t; }
   return a;
 }
-module.exports = { buggySort };
+module.exports = { f };

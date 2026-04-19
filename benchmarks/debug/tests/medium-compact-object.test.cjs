@@ -1,11 +1,13 @@
 'use strict';
-const { compactObject } = require('../../../bin/bench-buggy-medium-compact-object.cjs');
+const { f } = require('../../../bin/bench-buggy-medium-compact-object.cjs');
 let failed = 0;
+var _i = 0;
 function assert(label, actual, expected) {
-  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
+  _i++;
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL t' + _i + '\n'); failed++; }
 }
 
-var result = compactObject({a:1, b:null, c:0, d:'', e:undefined, f:false});
+var result = f({a:1, b:null, c:0, d:'', e:undefined, f:false});
 assert('removes null', ('b' in result), false);
 assert('removes undefined', ('e' in result), false);
 assert('keeps zero', ('c' in result), true);

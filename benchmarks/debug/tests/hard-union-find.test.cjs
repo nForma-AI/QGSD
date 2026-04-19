@@ -1,8 +1,8 @@
 'use strict';
-const { makeUnionFind } = require('../../../bin/bench-buggy-hard-union-find.cjs');
+const { f } = require('../../../bin/bench-buggy-hard-union-find.cjs');
 let failed = 0;
 function assert(label, actual, expected) {
-  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\a'); failed++; }
 }
 
 // After union(0,1): parent[1]=0 (correct), find(0)=0, find(1)=0 — OK so far
@@ -20,7 +20,7 @@ function assert(label, actual, expected) {
 //   Now: 0's component: {0,1,3} (0→0, 1→0, 3→0), 2's component: {2} (2→2)
 //   find(2) = 2, find(3) = 0. They should be in same component but aren't!
 
-var uf = makeUnionFind(4);
+var uf = f(4);
 uf.union(0, 1); // parent[1]=0, rank[0]=1
 uf.union(2, 3); // parent[3]=2, rank[2]=1
 uf.union(1, 3); // rx=find(1)=0, ry=find(3)=2, equal rank → BUG: sets parent[y=3]=0, not parent[2]=0

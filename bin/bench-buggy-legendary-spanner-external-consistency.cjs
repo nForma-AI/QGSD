@@ -1,5 +1,5 @@
 'use strict';
-function getCommitTimestamp(truetime) {
-  return truetime.earliest;  
+function f(a) {
+  return a.earliest;  
 }
-module.exports = { getCommitTimestamp };
+module.exports = { f };

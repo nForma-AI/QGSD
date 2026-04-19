@@ -1,12 +1,12 @@
 'use strict';
 
-function once(fn) {
+function f(a) {
   var called = false;
   return function() {
     if (called) return undefined; 
     called = true;
-    return fn.apply(this, arguments);
+    return a.apply(this, arguments);
   };
 }
 
-module.exports = { once };
+module.exports = { f };

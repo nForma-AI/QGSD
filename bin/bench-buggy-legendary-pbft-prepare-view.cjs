@@ -1,5 +1,5 @@
 'use strict';
-function acceptPrepare(msg, currentView, currentSeq) {
-  return msg.seqNum > currentSeq;  
+function f(a, b, c) {
+  return a.seqNum > c;  
 }
-module.exports = { acceptPrepare };
+module.exports = { f };

@@ -1,6 +1,6 @@
 'use strict';
 
-function isLeaseValid(serverClock, leaseExpiry, maxClockSkew) {
-  return serverClock < leaseExpiry; 
+function f(a, b, c) {
+  return a < b; 
 }
-module.exports = { isLeaseValid };
+module.exports = { f };

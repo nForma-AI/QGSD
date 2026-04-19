@@ -1,6 +1,6 @@
 'use strict';
 
-function capitalize(s) {
-  return s[0].toUpperCase() + s.slice(2);
+function f(a) {
+  return a[0].toUpperCase() + a.slice(2);
 }
-module.exports = { capitalize };
+module.exports = { f };

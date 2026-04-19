@@ -1,11 +1,13 @@
 'use strict';
-const { LRUCache } = require('../../../bin/bench-buggy-hard-lru-cache.cjs');
+const { f } = require('../../../bin/bench-buggy-hard-lru-cache.cjs');
 let failed = 0;
+var _i = 0;
 function assert(label, actual, expected) {
-  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
+  _i++;
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL t' + _i + '\n'); failed++; }
 }
 
-var lru = new LRUCache(2);
+var lru = new f(2);
 lru.set('a', 1);
 lru.set('b', 2);
 lru.get('a');    // 'a' is now most recently used

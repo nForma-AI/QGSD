@@ -1,14 +1,16 @@
 'use strict';
-var { makeMonotonicClock } = require('../../../bin/bench-buggy-extreme-monotonic-clock.cjs');
+var { f } = require('../../../bin/bench-buggy-extreme-monotonic-clock.cjs');
 var failed = 0;
+var _i = 0;
 function assert(label, cond) {
-  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
+  _i++;
+  if (!cond) { process.stderr.write('FAIL t' + _i + '\n'); failed++; }
 }
 
 // Invariant: after any sequence of updates, clock value must be >= its previous value.
 // Also: final value must be the maximum of all updates.
 var updates = [5, 3, 8, 1, 6];
-var c = makeMonotonicClock();
+var c = f();
 var prev = 0;
 for (var i = 0; i < updates.length; i++) {
   c.update(updates[i]);
@@ -21,7 +23,7 @@ for (var i = 0; i < updates.length; i++) {
 assert('final value is max of all updates', c.read() === 8, 'got ' + c.read());
 
 // Additional: monotonicity over decreasing sequence
-var c2 = makeMonotonicClock();
+var c2 = f();
 c2.update(10);
 var v1 = c2.read();
 c2.update(7);
@@ -32,7 +34,7 @@ assert('advances on higher update', c2.read() >= 10, 'expected >=10 got ' + c2.r
 // Enumerate all permutations of [1,2,3] and verify monotonicity at each step
 var perms = [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]];
 perms.forEach(function(perm) {
-  var cp = makeMonotonicClock();
+  var cp = f();
   var p = 0;
   perm.forEach(function(val) {
     cp.update(val);

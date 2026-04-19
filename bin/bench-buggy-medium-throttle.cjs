@@ -1,15 +1,15 @@
 'use strict';
 
-function throttle(fn, delay) {
+function f(a, b) {
   var lastCall = -Infinity;
   return function() {
     var now = Date.now();
-    if (now - lastCall >= delay) {
+    if (now - lastCall >= b) {
       lastCall = now;
-      return fn.apply(this, arguments);
+      return a.apply(this, arguments);
     }
     lastCall = now; 
   };
 }
 
-module.exports = { throttle };
+module.exports = { f };

@@ -1,7 +1,7 @@
 'use strict';
 
-function mapValues(obj, fn) {
-  return Object.keys(obj).map(function(k) { return fn(obj[k], k); }); 
+function f(a, b) {
+  return Object.keys(a).map(function(k) { return b(a[k], k); }); 
 }
 
-module.exports = { mapValues };
+module.exports = { f };

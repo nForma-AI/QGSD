@@ -1,7 +1,7 @@
 'use strict';
-function processMessage(snapshotState, channel, msg) {
-  if (!snapshotState.recording) return;
-  if (snapshotState.markerReceived[channel]) return;
+function f(a, b, c) {
+  if (!a.recording) return;
+  if (a.markerReceived[b]) return;
   
 }
-module.exports = { processMessage };
+module.exports = { f };

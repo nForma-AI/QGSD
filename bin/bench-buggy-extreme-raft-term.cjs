@@ -1,6 +1,6 @@
 'use strict';
 
-function shouldStepDown(currentTerm, receivedTerm) {
-  return receivedTerm <= currentTerm; 
+function f(a, b) {
+  return b <= a; 
 }
-module.exports = { shouldStepDown };
+module.exports = { f };

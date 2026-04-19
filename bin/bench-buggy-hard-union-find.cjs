@@ -1,8 +1,8 @@
 'use strict';
 
-function makeUnionFind(n) {
+function f(a) {
   var parent = [], rank = [];
-  for (var i = 0; i < n; i++) { parent[i] = i; rank[i] = 0; }
+  for (var i = 0; i < a; i++) { parent[i] = i; rank[i] = 0; }
 
   function find(x) {
     while (parent[x] !== x) x = parent[x];
@@ -26,4 +26,4 @@ function makeUnionFind(n) {
   return { find: find, union: union };
 }
 
-module.exports = { makeUnionFind };
+module.exports = { f };

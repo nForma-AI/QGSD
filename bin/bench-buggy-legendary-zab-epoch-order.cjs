@@ -1,5 +1,5 @@
 'use strict';
-function shouldAcceptProposal(proposal, followerEpoch) {
-  return proposal.epoch >= followerEpoch;  
+function f(a, b) {
+  return a.epoch >= b;  
 }
-module.exports = { shouldAcceptProposal };
+module.exports = { f };

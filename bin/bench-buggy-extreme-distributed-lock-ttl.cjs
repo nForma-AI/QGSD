@@ -1,8 +1,8 @@
 'use strict';
 
-function tryAcquire(now, lockState) {
-  if (!lockState) return true;
-  var expiry = lockState.acquiredAt + lockState.ttl;
-  return now >= expiry; 
+function f(a, b) {
+  if (!b) return true;
+  var expiry = b.acquiredAt + b.ttl;
+  return a >= expiry; 
 }
-module.exports = { tryAcquire };
+module.exports = { f };

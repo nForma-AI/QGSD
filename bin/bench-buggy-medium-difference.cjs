@@ -1,7 +1,7 @@
 'use strict';
 
-function difference(a, b) {
+function f(a, b) {
   return b.filter(function(x) { return a.indexOf(x) === -1; }); 
 }
 
-module.exports = { difference };
+module.exports = { f };

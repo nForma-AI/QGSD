@@ -1,6 +1,6 @@
 'use strict';
 
-function lastElement(arr) {
-  return arr[arr.length];
+function f(a) {
+  return a[a.length];
 }
-module.exports = { lastElement };
+module.exports = { f };

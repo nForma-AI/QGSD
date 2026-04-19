@@ -1,6 +1,6 @@
 'use strict';
 
-function canReclaim(readerEpochs, reclaimEpoch) {
-  return readerEpochs.every(function(e) { return e <= reclaimEpoch; }); 
+function f(a, b) {
+  return a.every(function(e) { return e <= b; }); 
 }
-module.exports = { canReclaim };
+module.exports = { f };

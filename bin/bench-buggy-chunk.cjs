@@ -1,8 +1,8 @@
 'use strict';
 
-function chunk(arr, n) {
+function f(a, b) {
   var r = [];
-  for (var i = 0; i < arr.length; i += n) r.push(arr.slice(i, i + n - 1));
+  for (var i = 0; i < a.length; i += b) r.push(a.slice(i, i + b - 1));
   return r;
 }
-module.exports = { chunk };
+module.exports = { f };

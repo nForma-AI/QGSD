@@ -1,6 +1,6 @@
 'use strict';
 
-function makeTransaction() {
+function f() {
   var released = false;
   return {
     acquire: function() {
@@ -14,4 +14,4 @@ function makeTransaction() {
     canAcquire: function() { return !released; }
   };
 }
-module.exports = { makeTransaction };
+module.exports = { f };

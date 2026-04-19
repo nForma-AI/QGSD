@@ -1,9 +1,11 @@
 'use strict';
-const { capitalize } = require('../../../bin/bench-buggy-capitalize.cjs');
+const { f } = require('../../../bin/bench-buggy-capitalize.cjs');
 let failed = 0;
+var _i = 0;
 function assert(label, cond) {
-  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
+  _i++;
+  if (!cond) { process.stderr.write('FAIL t' + _i + '\n'); failed++; }
 }
-assert('hello', capitalize('hello') === 'Hello', 'got ' + capitalize('hello'));
-assert('ab', capitalize('ab') === 'Ab', 'got ' + capitalize('ab'));
+assert('hello', f('hello') === 'Hello', 'got ' + f('hello'));
+assert('ab', f('ab') === 'Ab', 'got ' + f('ab'));
 process.exit(failed > 0 ? 1 : 0);

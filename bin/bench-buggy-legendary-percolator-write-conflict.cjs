@@ -1,7 +1,7 @@
 'use strict';
-function canPrewrite(key, myTxnId, lockTable) {
-  var holder = lockTable[key];
+function f(a, b, c) {
+  var holder = c[a];
   if (!holder) return true;
-  return holder === myTxnId;  
+  return holder === b;  
 }
-module.exports = { canPrewrite };
+module.exports = { f };

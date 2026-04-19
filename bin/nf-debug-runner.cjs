@@ -71,7 +71,7 @@ try {
   // Step 2: assemble formal context
   const stubSource = fs.readFileSync(stubPath, 'utf8');
   originalStubSource = stubSource;
-  const description = 'Bug in ' + path.basename(stubPath) + '. Test failure:\n' + testFailureOutput.slice(0, 1000);
+  const description = 'Bug in fn.cjs. Test failure:\n' + testFailureOutput.slice(0, 1000);
 
   const ctxResult = spawnSync('node', [DEBUG_FORMAL_CTX, '--description', description, '--format', 'json'], {
     cwd: ROOT, encoding: 'utf8', maxBuffer: 4 * 1024 * 1024, timeout: 30000
@@ -91,7 +91,7 @@ try {
     'The test is failing with this output:',
     testFailureOutput.slice(0, 500),
     '',
-    'Buggy source (file: ' + path.basename(stubPath) + '):',
+    'Buggy source (file: fn.cjs):',
     '```js',
     stubSource,
     '```',

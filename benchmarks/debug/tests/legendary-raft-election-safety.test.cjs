@@ -1,15 +1,17 @@
 'use strict';
-const { hasWonElection } = require('../../../bin/bench-buggy-legendary-raft-election-safety.cjs');
+const { f } = require('../../../bin/bench-buggy-legendary-raft-election-safety.cjs');
 let failed = 0;
+var _i = 0;
 function assert(label, cond) {
-  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
+  _i++;
+  if (!cond) { process.stderr.write('FAIL t' + _i + '\n'); failed++; }
 }
 
 // At most one candidate can win in any cluster size for any vote split
 for (var n = 3; n <= 8; n++) {
   for (var k = 0; k <= n; k++) {
-    var aWins = hasWonElection(k, n);
-    var bWins = hasWonElection(n - k, n);
+    var aWins = f(k, n);
+    var bWins = f(n - k, n);
     assert(
       'at most one winner: n='+n+' k='+k,
       !(aWins && bWins),

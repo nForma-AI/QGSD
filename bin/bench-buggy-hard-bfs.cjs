@@ -1,13 +1,13 @@
 'use strict';
 
-function bfs(graph, start) {
-  var visited = new Set([start]);
-  var queue = [start];
+function f(a, b) {
+  var visited = new Set([b]);
+  var queue = [b];
   var result = [];
   while (queue.length > 0) {
     var node = queue.shift();
     result.push(node);
-    (graph[node] || []).forEach(function(neighbor) {
+    (a[node] || []).forEach(function(neighbor) {
       queue.push(neighbor); 
       visited.add(neighbor);
     });
@@ -15,4 +15,4 @@ function bfs(graph, start) {
   return result;
 }
 
-module.exports = { bfs };
+module.exports = { f };

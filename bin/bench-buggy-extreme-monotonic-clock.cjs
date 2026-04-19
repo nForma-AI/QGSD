@@ -1,6 +1,6 @@
 'use strict';
 
-function makeMonotonicClock() {
+function f() {
   var current = 0;
   return {
     update: function(t) {
@@ -9,4 +9,4 @@ function makeMonotonicClock() {
     read: function() { return current; }
   };
 }
-module.exports = { makeMonotonicClock };
+module.exports = { f };

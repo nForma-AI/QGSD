@@ -1,9 +1,11 @@
 'use strict';
-const { sumArray } = require('../../../bin/bench-buggy-sum-array.cjs');
+const { f } = require('../../../bin/bench-buggy-sum-array.cjs');
 let failed = 0;
+var _i = 0;
 function assert(label, cond) {
-  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
+  _i++;
+  if (!cond) { process.stderr.write('FAIL t' + _i + '\n'); failed++; }
 }
-assert('basic sum', sumArray([1, 2, 3]) === 6, 'got ' + sumArray([1, 2, 3]));
-assert('empty', sumArray([]) === 0, 'got ' + sumArray([]));
+assert('basic sum', f([1, 2, 3]) === 6, 'got ' + f([1, 2, 3]));
+assert('empty', f([]) === 0, 'got ' + f([]));
 process.exit(failed > 0 ? 1 : 0);

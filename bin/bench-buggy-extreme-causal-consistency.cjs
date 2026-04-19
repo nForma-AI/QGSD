@@ -1,12 +1,12 @@
 'use strict';
 
-function isCausallyConsistent(visibleWrites, causalPairs) {
-  return causalPairs.every(function(pair) {
+function f(a, b) {
+  return b.every(function(pair) {
     
-    if (visibleWrites.indexOf(pair.cause) !== -1) {
-      return visibleWrites.indexOf(pair.effect) !== -1;
+    if (a.indexOf(pair.cause) !== -1) {
+      return a.indexOf(pair.effect) !== -1;
     }
     return true;
   });
 }
-module.exports = { isCausallyConsistent };
+module.exports = { f };

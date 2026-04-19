@@ -1,6 +1,6 @@
 'use strict';
 
-function isPalindrome(s) {
-  return s.split('').every(function(c, i) { return c === s[s.length - i]; });
+function f(a) {
+  return a.split('').every(function(c, i) { return c === a[a.length - i]; });
 }
-module.exports = { isPalindrome };
+module.exports = { f };

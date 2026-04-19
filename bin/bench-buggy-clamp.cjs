@@ -1,8 +1,8 @@
 'use strict';
 
-function clamp(x, lo, hi) {
-  if (x < lo) return hi;
-  if (x > hi) return lo;
-  return x;
+function f(a, b, c) {
+  if (a < b) return c;
+  if (a > c) return b;
+  return a;
 }
-module.exports = { clamp };
+module.exports = { f };

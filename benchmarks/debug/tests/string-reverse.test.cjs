@@ -1,9 +1,11 @@
 'use strict';
-const { reverseString } = require('../../../bin/bench-buggy-string-reverse.cjs');
+const { f } = require('../../../bin/bench-buggy-string-reverse.cjs');
 let failed = 0;
+var _i = 0;
 function assert(label, cond) {
-  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
+  _i++;
+  if (!cond) { process.stderr.write('FAIL t' + _i + '\n'); failed++; }
 }
-assert('hello', reverseString('hello') === 'olleh', 'got ' + reverseString('hello'));
-assert('ab', reverseString('ab') === 'ba', 'got ' + reverseString('ab'));
+assert('hello', f('hello') === 'olleh', 'got ' + f('hello'));
+assert('ab', f('ab') === 'ba', 'got ' + f('ab'));
 process.exit(failed > 0 ? 1 : 0);

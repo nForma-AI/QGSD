@@ -1,7 +1,7 @@
 'use strict';
-function isSnapshotComplete(process) {
-  return process.incomingChannels.some(function(ch) {
-    return process.markersReceived[ch];  
+function f(a) {
+  return a.incomingChannels.some(function(ch) {
+    return a.markersReceived[ch];  
   });
 }
-module.exports = { isSnapshotComplete };
+module.exports = { f };

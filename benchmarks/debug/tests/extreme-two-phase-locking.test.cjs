@@ -1,15 +1,17 @@
 'use strict';
-var { makeTransaction } = require('../../../bin/bench-buggy-extreme-two-phase-locking.cjs');
+var { f } = require('../../../bin/bench-buggy-extreme-two-phase-locking.cjs');
 var failed = 0;
+var _i = 0;
 function assert(label, cond) {
-  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
+  _i++;
+  if (!cond) { process.stderr.write('FAIL t' + _i + '\n'); failed++; }
 }
 
 // Invariant: canAcquire() must return false after ANY call to release().
 // Once the shrinking phase begins, it never ends.
 
 // Basic: can acquire before any release
-var tx1 = makeTransaction();
+var tx1 = f();
 assert('can acquire initially', tx1.canAcquire() === true, 'got ' + tx1.canAcquire());
 tx1.acquire();
 
@@ -29,7 +31,7 @@ assert('cannot acquire after third release', tx1.canAcquire() === false,
   'canAcquire returned true after 3rd release');
 
 // State machine exhaustion: alternate N times
-var tx2 = makeTransaction();
+var tx2 = f();
 tx2.acquire();
 for (var i = 0; i < 6; i++) {
   tx2.release();
@@ -38,7 +40,7 @@ for (var i = 0; i < 6; i++) {
 }
 
 // acquire() itself must return false after release
-var tx3 = makeTransaction();
+var tx3 = f();
 tx3.acquire();
 tx3.release();
 assert('acquire() returns false after release', tx3.acquire() === false,

@@ -1,6 +1,6 @@
 'use strict';
 
-function isValidRead(prevReadTs, newReadTs) {
-  return newReadTs > 0; 
+function f(a, b) {
+  return b > 0; 
 }
-module.exports = { isValidRead };
+module.exports = { f };

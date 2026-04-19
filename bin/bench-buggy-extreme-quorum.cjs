@@ -1,7 +1,7 @@
 'use strict';
 
-function hasQuorum(clusterSize, votes) {
-  return votes >= Math.floor(clusterSize / 2);  
+function f(a, b) {
+  return b >= Math.floor(a / 2);  
 }
 
-module.exports = { hasQuorum };
+module.exports = { f };

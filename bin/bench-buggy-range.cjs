@@ -1,8 +1,8 @@
 'use strict';
 
-function range(start, end) {
+function f(a, b) {
   var r = [];
-  for (var i = start; i <= end; i++) r.push(i);
+  for (var i = a; i <= b; i++) r.push(i);
   return r;
 }
-module.exports = { range };
+module.exports = { f };

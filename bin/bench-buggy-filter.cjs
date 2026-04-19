@@ -1,6 +1,6 @@
 'use strict';
 
-function buggyFilter(arr, threshold) {
-  return arr.filter(function(x) { return x > threshold; });
+function f(a, b) {
+  return a.filter(function(x) { return x > b; });
 }
-module.exports = { buggyFilter };
+module.exports = { f };

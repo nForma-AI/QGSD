@@ -1,15 +1,15 @@
 'use strict';
 
-function tick(clock) {
-  return clock + 1;
+function f(b) {
+  return b + 1;
 }
 
-function send(clock) {
-  return tick(clock);
+function g(b) {
+  return f(b);
 }
 
-function receive(localClock, receivedTimestamp) {
-  return Math.max(localClock, receivedTimestamp);  
+function h(c, d) {
+  return Math.max(c, d);  
 }
 
-module.exports = { tick, send, receive };
+module.exports = { f, g, h };

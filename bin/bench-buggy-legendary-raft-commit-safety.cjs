@@ -1,6 +1,6 @@
 'use strict';
-function canCommit(log, currentTerm, replicaCount, clusterSize) {
-  var majority = Math.floor(clusterSize / 2) + 1;
-  return replicaCount >= majority;  
+function f(a, b, c, d) {
+  var majority = Math.floor(d / 2) + 1;
+  return c >= majority;  
 }
-module.exports = { canCommit };
+module.exports = { f };

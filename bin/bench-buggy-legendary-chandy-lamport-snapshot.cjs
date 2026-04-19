@@ -1,7 +1,7 @@
 'use strict';
-function takeSnapshot(process) {
-  process.sendMarker();    
-  process.recordState();
-  return process.localState;
+function f(a) {
+  a.sendMarker();    
+  a.recordState();
+  return a.localState;
 }
-module.exports = { takeSnapshot };
+module.exports = { f };

@@ -1,15 +1,15 @@
 'use strict';
 
-function buggyTokenize(str) {
+function f(a) {
   const tokens = [];
   let i = 0;
-  while (i < str.length) {
-    while (i < str.length && str[i] === ' ') i++;
-    if (i >= str.length) break;
+  while (i < a.length) {
+    while (i < a.length && a[i] === ' ') i++;
+    if (i >= a.length) break;
     let start = i;
-    while (i < str.length && str[i] !== ' ') i++;
-    tokens.push(str.slice(start, i - 1));  
+    while (i < a.length && a[i] !== ' ') i++;
+    tokens.push(a.slice(start, i - 1));  
   }
   return tokens;
 }
-module.exports = { buggyTokenize };
+module.exports = { f };

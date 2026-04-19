@@ -1,6 +1,6 @@
 'use strict';
 
-function isValidToken(currentEpoch, tokenEpoch) {
-  return String(tokenEpoch) >= String(currentEpoch); 
+function f(a, b) {
+  return String(b) >= String(a); 
 }
-module.exports = { isValidToken };
+module.exports = { f };

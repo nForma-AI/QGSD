@@ -1,6 +1,6 @@
 'use strict';
 
-function countOccurrences(arr, val) {
-  return arr.filter(function(x) { return x == val; }).length;
+function f(a, b) {
+  return a.filter(function(x) { return x == b; }).length;
 }
-module.exports = { countOccurrences };
+module.exports = { f };

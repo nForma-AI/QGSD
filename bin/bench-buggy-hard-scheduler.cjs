@@ -1,11 +1,11 @@
 'use strict';
 
-function buggyScheduler(tasks) {
-  if (tasks.length === 0) return null;
+function f(a) {
+  if (a.length === 0) return null;
   let minIdx = 0;
-  for (let i = 1; i < tasks.length; i++) {
-    if (tasks[i].priority > tasks[minIdx].priority) minIdx = i;  
+  for (let i = 1; i < a.length; i++) {
+    if (a[i].priority > a[minIdx].priority) minIdx = i;  
   }
-  return tasks[minIdx];
+  return a[minIdx];
 }
-module.exports = { buggyScheduler };
+module.exports = { f };

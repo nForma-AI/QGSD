@@ -1,15 +1,15 @@
 'use strict';
 
-function merge(counterA, counterB) {
+function f(a, b) {
   var result = {};
-  var keys = Object.keys(counterA).concat(Object.keys(counterB));
+  var keys = Object.keys(a).concat(Object.keys(b));
   var allNodes = keys.filter(function(k, i) { return keys.indexOf(k) === i; });
   allNodes.forEach(function(node) {
-    result[node] = Math.min(counterA[node] || 0, counterB[node] || 0); 
+    result[node] = Math.min(a[node] || 0, b[node] || 0); 
   });
   return result;
 }
-function value(counter) {
-  return Object.values(counter).reduce(function(s, x) { return s + x; }, 0);
+function g(c) {
+  return Object.values(c).reduce(function(s, x) { return s + x; }, 0);
 }
-module.exports = { merge, value };
+module.exports = { f, g };

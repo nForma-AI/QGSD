@@ -1,11 +1,11 @@
 'use strict';
 
-function LRUCache(capacity) {
-  this.capacity = capacity;
+function f(a) {
+  this.a = a;
   this.cache = new Map();
 }
 
-LRUCache.prototype.get = function(key) {
+f.prototype.get = function(key) {
   if (!this.cache.has(key)) return -1;
   var val = this.cache.get(key);
   this.cache.delete(key);
@@ -13,13 +13,13 @@ LRUCache.prototype.get = function(key) {
   return val;
 };
 
-LRUCache.prototype.set = function(key, val) {
+f.prototype.set = function(key, val) {
   if (this.cache.has(key)) this.cache.delete(key);
-  if (this.cache.size >= this.capacity) {
+  if (this.cache.size >= this.a) {
     
     this.cache.delete(Array.from(this.cache.keys()).pop());
   }
   this.cache.set(key, val);
 };
 
-module.exports = { LRUCache };
+module.exports = { f };

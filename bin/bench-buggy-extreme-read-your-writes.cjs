@@ -1,6 +1,6 @@
 'use strict';
 
-function satisfiesReadYourWrites(readTimestamp, sessionWriteTimestamp) {
-  return readTimestamp > sessionWriteTimestamp; 
+function f(a, b) {
+  return a > b; 
 }
-module.exports = { satisfiesReadYourWrites };
+module.exports = { f };

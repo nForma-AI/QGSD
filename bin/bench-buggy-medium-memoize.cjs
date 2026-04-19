@@ -1,13 +1,13 @@
 'use strict';
 
-function memoize(fn) {
+function f(a) {
   var cache = {};
   return function() {
     var key = String(arguments[0]); 
     if (key in cache) return cache[key];
-    cache[key] = fn.apply(this, arguments);
+    cache[key] = a.apply(this, arguments);
     return cache[key];
   };
 }
 
-module.exports = { memoize };
+module.exports = { f };

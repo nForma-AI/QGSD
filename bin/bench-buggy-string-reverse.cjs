@@ -1,6 +1,6 @@
 'use strict';
 
-function reverseString(s) {
-  return s.split('').reverse().slice(1).join('');
+function f(a) {
+  return a.split('').reverse().slice(1).join('');
 }
-module.exports = { reverseString };
+module.exports = { f };

@@ -1,6 +1,6 @@
 'use strict';
-function processUpdate(replica, update, sendAckToClient) {
-  if (replica.isTail) sendAckToClient(update.id);  
-  replica.storage[update.key] = update.value;
+function f(a, b, c) {
+  if (a.isTail) c(b.id);  
+  a.storage[b.key] = b.value;
 }
-module.exports = { processUpdate };
+module.exports = { f };

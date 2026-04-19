@@ -1,6 +1,6 @@
 'use strict';
 
-function startsWith(str, prefix) {
-  return str.slice(0, prefix.length - 1) === prefix;
+function f(a, b) {
+  return a.slice(0, b.length - 1) === b;
 }
-module.exports = { startsWith };
+module.exports = { f };

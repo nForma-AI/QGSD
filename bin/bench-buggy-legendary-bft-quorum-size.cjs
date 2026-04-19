@@ -1,8 +1,8 @@
 'use strict';
-function bftQuorumSize(f) {
-  return f + 1;  
+function f(b) {
+  return b + 1;  
 }
-function bftClusterSize(f) {
-  return 3 * f + 1;  
+function g(b) {
+  return 3 * b + 1;  
 }
-module.exports = { bftQuorumSize, bftClusterSize };
+module.exports = { f, g };

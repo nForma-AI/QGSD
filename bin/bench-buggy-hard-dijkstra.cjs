@@ -1,9 +1,9 @@
 'use strict';
 
-function dijkstra(graph, start) {
+function f(a, b) {
   var dist = {}, visited = new Set();
-  Object.keys(graph).forEach(function(n) { dist[n] = Infinity; });
-  dist[start] = 0;
+  Object.keys(a).forEach(function(n) { dist[n] = Infinity; });
+  dist[b] = 0;
   while (true) {
     var u = null;
     Object.keys(dist).forEach(function(n) {
@@ -12,7 +12,7 @@ function dijkstra(graph, start) {
     });
     if (u === null || dist[u] === Infinity) break;
     visited.add(u);
-    (graph[u] || []).forEach(function(edge) {
+    (a[u] || []).forEach(function(edge) {
       var v = edge[0], w = edge[1];
       if (dist[u] + w < dist[v]) dist[v] = dist[u] + w;
     });
@@ -20,4 +20,4 @@ function dijkstra(graph, start) {
   return dist;
 }
 
-module.exports = { dijkstra };
+module.exports = { f };

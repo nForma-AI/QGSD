@@ -1,5 +1,5 @@
 'use strict';
-function shouldAcceptWrite(producerEpoch, registeredEpoch) {
-  return producerEpoch > registeredEpoch;  
+function f(a, b) {
+  return a > b;  
 }
-module.exports = { shouldAcceptWrite };
+module.exports = { f };

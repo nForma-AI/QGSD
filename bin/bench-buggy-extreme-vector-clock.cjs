@@ -1,9 +1,9 @@
 'use strict';
 
-function happensBefore(vcA, vcB) {
-  const sumA = vcA.reduce(function(s, x) { return s + x; }, 0);
-  const sumB = vcB.reduce(function(s, x) { return s + x; }, 0);
+function f(a, b) {
+  const sumA = a.reduce(function(s, x) { return s + x; }, 0);
+  const sumB = b.reduce(function(s, x) { return s + x; }, 0);
   return sumA < sumB;  
 }
 
-module.exports = { happensBefore };
+module.exports = { f };

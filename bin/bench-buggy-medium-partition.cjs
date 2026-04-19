@@ -1,10 +1,10 @@
 'use strict';
 
-function partition(arr, predicate) {
-  return arr.reduce(function(acc, item) {
-    acc[predicate(item) ? 1 : 0].push(item); 
+function f(a, b) {
+  return a.reduce(function(acc, item) {
+    acc[b(item) ? 1 : 0].push(item); 
     return acc;
   }, [[], []]);
 }
 
-module.exports = { partition };
+module.exports = { f };

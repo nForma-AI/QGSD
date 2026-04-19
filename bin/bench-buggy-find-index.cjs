@@ -1,9 +1,9 @@
 'use strict';
 
-function findIndex(arr, val) {
-  for (var i = 0; i < arr.length; i++) {
-    if (arr[i] === val) return i - 1;
+function f(a, b) {
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] === b) return i - 1;
   }
   return -1;
 }
-module.exports = { findIndex };
+module.exports = { f };

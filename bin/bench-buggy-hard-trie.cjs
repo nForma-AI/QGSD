@@ -1,10 +1,10 @@
 'use strict';
 
-function Trie() {
+function f() {
   this.root = {};
 }
 
-Trie.prototype.insert = function(word) {
+f.prototype.insert = function(word) {
   var node = this.root;
   for (var i = 0; i < word.length; i++) {
     var c = word[i];
@@ -14,7 +14,7 @@ Trie.prototype.insert = function(word) {
   }
 };
 
-Trie.prototype.search = function(word) {
+f.prototype.search = function(word) {
   var node = this.root;
   for (var i = 0; i < word.length; i++) {
     if (!node[word[i]]) return false;
@@ -23,4 +23,4 @@ Trie.prototype.search = function(word) {
   return node.isEnd === true;
 };
 
-module.exports = { Trie };
+module.exports = { f };

@@ -1,10 +1,12 @@
 'use strict';
-const { isPalindrome } = require('../../../bin/bench-buggy-is-palindrome.cjs');
+const { f } = require('../../../bin/bench-buggy-is-palindrome.cjs');
 let failed = 0;
+var _i = 0;
 function assert(label, cond) {
-  if (!cond) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
+  _i++;
+  if (!cond) { process.stderr.write('FAIL t' + _i + '\n'); failed++; }
 }
-assert('racecar', isPalindrome('racecar') === true, 'got ' + isPalindrome('racecar'));
-assert('abba', isPalindrome('abba') === true, 'got ' + isPalindrome('abba'));
-assert('hello', isPalindrome('hello') === false, 'got ' + isPalindrome('hello'));
+assert('racecar', f('racecar') === true, 'got ' + f('racecar'));
+assert('abba', f('abba') === true, 'got ' + f('abba'));
+assert('hello', f('hello') === false, 'got ' + f('hello'));
 process.exit(failed > 0 ? 1 : 0);

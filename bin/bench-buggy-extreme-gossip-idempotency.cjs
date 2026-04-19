@@ -1,10 +1,10 @@
 'use strict';
 
-function mergeState(local, remote) {
-  var result = Object.assign({}, local);
-  Object.keys(remote).forEach(function(k) {
-    result[k] = (result[k] || 0) + remote[k]; 
+function f(a, b) {
+  var result = Object.assign({}, a);
+  Object.keys(b).forEach(function(k) {
+    result[k] = (result[k] || 0) + b[k]; 
   });
   return result;
 }
-module.exports = { mergeState };
+module.exports = { f };

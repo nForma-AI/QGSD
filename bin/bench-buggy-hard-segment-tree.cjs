@@ -1,11 +1,11 @@
 'use strict';
 
-function buildSegTree(arr) {
-  var n = arr.length;
+function f(a) {
+  var n = a.length;
   var tree = new Array(4 * n).fill(0);
 
   function build(node, start, end) {
-    if (start === end) { tree[node] = arr[start]; return; }
+    if (start === end) { tree[node] = a[start]; return; }
     var mid = Math.floor((start + end) / 2);
     build(2 * node, start, mid);
     build(2 * node + 1, mid + 1, end);
@@ -13,7 +13,7 @@ function buildSegTree(arr) {
   }
 
   function update(node, start, end, idx, val) {
-    if (start === end) { tree[node] = val; arr[idx] = val; return; }
+    if (start === end) { tree[node] = val; a[idx] = val; return; }
     var mid = Math.floor((start + end) / 2);
     if (idx <= mid) {
       update(2 * node, start, mid, idx, val);
@@ -37,4 +37,4 @@ function buildSegTree(arr) {
   };
 }
 
-module.exports = { buildSegTree };
+module.exports = { f };

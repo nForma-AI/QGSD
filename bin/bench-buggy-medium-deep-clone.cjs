@@ -1,10 +1,10 @@
 'use strict';
 
-function deepClone(obj) {
-  if (obj === null || typeof obj !== 'object') return obj;
+function f(a) {
+  if (a === null || typeof a !== 'object') return a;
   var result = {}; 
-  Object.keys(obj).forEach(function(k) { result[k] = deepClone(obj[k]); });
+  Object.keys(a).forEach(function(k) { result[k] = f(a[k]); });
   return result;
 }
 
-module.exports = { deepClone };
+module.exports = { f };

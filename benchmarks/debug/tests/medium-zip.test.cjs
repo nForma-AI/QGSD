@@ -1,11 +1,13 @@
 'use strict';
-const { zip } = require('../../../bin/bench-buggy-medium-zip.cjs');
+const { f } = require('../../../bin/bench-buggy-medium-zip.cjs');
 let failed = 0;
+var _i = 0;
 function assert(label, actual, expected) {
-  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL ' + label + '\n'); failed++; }
+  _i++;
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) { process.stderr.write('FAIL t' + _i + '\n'); failed++; }
 }
 
-var result = zip([1,2,3],[4,5]);
+var result = f([1,2,3],[4,5]);
 assert('zips to shorter length', result.length, 2);
 assert('no undefined', result.every(function(p) { return p[0] !== undefined && p[1] !== undefined; }), true);
 
