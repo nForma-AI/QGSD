@@ -101,10 +101,10 @@ try {
     'Return ONLY the fixed source code in a ```js ... ``` code block. Do not explain.',
   ].join('\n');
 
-  const quorumResult = spawnSync('node', [CALL_QUORUM_SLOT, '--slot', 'coding'], {
+  const claudeCli = require('./resolve-cli.cjs').resolveCli('claude') || 'claude';
+  const quorumResult = spawnSync(claudeCli, ['-p', prompt, '--dangerously-skip-permissions', '--model', 'claude-haiku-4-5-20251001'], {
     cwd: ROOT,
     encoding: 'utf8',
-    input: prompt,
     maxBuffer: 4 * 1024 * 1024,
     timeout: quorumTimeout
   });
