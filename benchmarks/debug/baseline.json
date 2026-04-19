@@ -1,13 +1,13 @@
 {
-  "pass_rate": 93,
+  "pass_rate": 58,
   "total_stubs": 100,
   "tiers": {
-    "easy": 20,
-    "medium": 19,
-    "hard": 19,
-    "extreme": 19,
-    "legendary": 16
+    "easy": 17,
+    "medium": 13,
+    "hard": 17,
+    "extreme": 8,
+    "legendary": 3
   },
   "updated_at": "2026-04-19",
-  "note": "Hardened baseline: stubs stripped of all hint comments, test assert helpers emit only FAIL {label} with no expected/actual/info diagnostics. Haiku scored 93/100 on hardened benchmark. Failures: medium=deep-equal, hard=scheduler, extreme=monotonic-reads, legendary=percolator-write-conflict+ssi-conflict+distributed-snapshot-fifo+linearizability-checker."
+  "note": "Fully obfuscated baseline: exported function names → f/g/h, params → a/b/c, test labels → t1/t2/..., filename → fn.cjs. Haiku scored 58/100. Extreme/legendary tier collapse (8/20, 3/20) confirms the benchmark now requires genuine distributed-systems reasoning rather than pattern-matching on semantic names."
 }
