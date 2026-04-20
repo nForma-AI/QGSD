@@ -1,0 +1,76 @@
+{
+  "saved_at": "2026-04-20T19:54:44Z",
+  "total": 230,
+  "passed": 35,
+  "pass_rate": 15.2,
+  "avg_reduction_score": 0,
+  "by_category": {
+    "requirements": {
+      "passed": 1,
+      "total": 11
+    },
+    "formal-models": {
+      "passed": 1,
+      "total": 23
+    },
+    "tests": {
+      "passed": 2,
+      "total": 16
+    },
+    "code": {
+      "passed": 4,
+      "total": 36
+    },
+    "documentation": {
+      "passed": 0,
+      "total": 16
+    },
+    "cross-layer-alignment": {
+      "passed": 0,
+      "total": 11
+    },
+    "config-hooks": {
+      "passed": 4,
+      "total": 24
+    },
+    "convergence": {
+      "passed": 3,
+      "total": 20
+    },
+    "reverse-flow": {
+      "passed": 1,
+      "total": 19
+    },
+    "integration": {
+      "passed": 4,
+      "total": 29
+    },
+    "stability": {
+      "passed": 15,
+      "total": 15
+    },
+    "multi-layer": {
+      "passed": 0,
+      "total": 10
+    }
+  },
+  "by_difficulty": {
+    "easy": {
+      "passed": 23,
+      "total": 37
+    },
+    "medium": {
+      "passed": 4,
+      "total": 40
+    },
+    "hard": {
+      "passed": 4,
+      "total": 30
+    },
+    "expert": {
+      "passed": 4,
+      "total": 123
+    }
+  },
+  "note": "Source of truth for nForma's benchmark score. Re-baselined to CI median (15.2%) from 3 runs. Updated automatically by CI on push to main when score improves. PRs that degrade this score are blocked."
+}
