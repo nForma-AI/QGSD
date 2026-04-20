@@ -1,15 +1,17 @@
 name: Benchmark gate
 
-# Runs on all PRs to main — blocks merge if solve full pass_rate < baseline.
-# Baseline is stored in benchmarks/solve-baseline.json.
-# Update it with: bash scripts/update-benchmark-baseline.sh <pass_rate>
+# PR: full benchmark (local fixtures) — blocks merge if regression
+# Push to main: full benchmark (submodule challenges, ~45 min) — updates baseline
 on:
   pull_request:
+    branches: [main]
+  push:
     branches: [main]
 
 jobs:
   benchmark:
     name: Solve full benchmark
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
@@ -36,3 +38,81 @@ jobs:
 
       - name: Check score against baseline
         run: node scripts/check-benchmark-gate.cjs bench-output.json
+
+  full:
+    name: Full benchmark (230 challenges)
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    steps:
+      - name: Checkout (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install nForma dependencies
+        run: npm ci --ignore-scripts || npm install --ignore-scripts
+
+      - name: Build nForma artifacts
+        run: npm run build:hooks && npm run build:machines
+
+      - name: Install benchmark dependencies
+        working-directory: nf-benchmark
+        run: npm ci
+
+      - name: Restore coderlm binary cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.claude/nf-bin/coderlm
+          key: coderlm-${{ runner.os }}-${{ runner.arch }}
+
+      - name: Install Rust toolchain (for coderlm build)
+        if: ${{ hashFiles('~/.claude/nf-bin/coderlm') == '' }}
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Restore baseline cache
+        uses: actions/cache/restore@v4
+        with:
+          path: nf-benchmark/baseline.json
+          key: benchmark-baseline-${{ github.sha }}
+          restore-keys: |
+            benchmark-baseline-
+
+      - name: Run full benchmark
+        working-directory: nf-benchmark
+        run: |
+          COMPARE_FLAG=""
+          if [ -f baseline.json ]; then
+            COMPARE_FLAG="--compare-baseline --baseline-tolerance 0"
+          fi
+          node bin/nf-benchmark.cjs run \
+            --project-root .. \
+            --timeout 600 \
+            --save-baseline \
+            $COMPARE_FLAG
+        env:
+          CI: true
+
+      - name: Save baseline cache
+        if: success()
+        uses: actions/cache/save@v4
+        with:
+          path: nf-benchmark/baseline.json
+          key: benchmark-baseline-${{ github.sha }}
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results-${{ github.run_id }}
+          path: |
+            nf-benchmark/results/
+            nf-benchmark/baseline.json
+          retention-days: 30
