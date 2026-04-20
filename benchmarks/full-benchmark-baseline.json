@@ -1,0 +1,76 @@
+{
+  "saved_at": "2026-04-19T10:45:54.078Z",
+  "total": 230,
+  "passed": 45,
+  "pass_rate": 19.6,
+  "avg_reduction_score": -0.0334593572778828,
+  "by_category": {
+    "requirements": {
+      "passed": 8,
+      "total": 11
+    },
+    "formal-models": {
+      "passed": 2,
+      "total": 23
+    },
+    "tests": {
+      "passed": 2,
+      "total": 16
+    },
+    "code": {
+      "passed": 4,
+      "total": 36
+    },
+    "documentation": {
+      "passed": 0,
+      "total": 16
+    },
+    "cross-layer-alignment": {
+      "passed": 0,
+      "total": 11
+    },
+    "config-hooks": {
+      "passed": 4,
+      "total": 24
+    },
+    "convergence": {
+      "passed": 5,
+      "total": 20
+    },
+    "reverse-flow": {
+      "passed": 1,
+      "total": 19
+    },
+    "integration": {
+      "passed": 4,
+      "total": 29
+    },
+    "stability": {
+      "passed": 15,
+      "total": 15
+    },
+    "multi-layer": {
+      "passed": 0,
+      "total": 10
+    }
+  },
+  "by_difficulty": {
+    "easy": {
+      "passed": 25,
+      "total": 37
+    },
+    "medium": {
+      "passed": 7,
+      "total": 40
+    },
+    "hard": {
+      "passed": 7,
+      "total": 30
+    },
+    "expert": {
+      "passed": 6,
+      "total": 123
+    }
+  },
+  "note": "Source of truth for nForma's benchmark score. Updated automatically by CI on push to main when score improves. PRs that degrade this score are blocked."
+}
