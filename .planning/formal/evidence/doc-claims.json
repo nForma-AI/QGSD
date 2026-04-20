@@ -1,14 +1,42 @@
 {
-  "generated": "2026-04-16T07:30:16.130Z",
+  "generated": "2026-04-20T18:18:39.723Z",
   "total_claims_checked": 188,
   "doc_files_scanned": 8,
-  "raw_broken_count": 44,
-  "weighted_residual": 88,
-  "suppressed_fp_count": 4,
+  "raw_broken_count": 49,
+  "weighted_residual": 96,
+  "suppressed_fp_count": 9,
   "category_breakdown": {
-    "user": 44
+    "user": 47,
+    "developer": 2
   },
   "broken_claims": [
+    {
+      "doc_file": "README.md",
+      "line": 173,
+      "type": "file_path",
+      "value": ".claude/settings.json",
+      "reason": "file not found",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "README.md",
+      "line": 684,
+      "type": "file_path",
+      "value": "gates/per-model-gates.json",
+      "reason": "file not found",
+      "category": "user",
+      "weight": 2
+    },
+    {
+      "doc_file": "README.md",
+      "line": 685,
+      "type": "file_path",
+      "value": "gates/gate-a-grounding.json",
+      "reason": "file not found",
+      "category": "user",
+      "weight": 2
+    },
     {
       "doc_file": "README.md",
       "line": 964,
@@ -26,6 +54,24 @@
       "reason": "not in any dependency manifest",
       "category": "user",
       "weight": 2
+    },
+    {
+      "doc_file": "docs/dev/requirements-coverage.md",
+      "line": 1762,
+      "type": "file_path",
+      "value": ".claude/circuit-breaker-state.json",
+      "reason": "file not found",
+      "category": "developer",
+      "weight": 1
+    },
+    {
+      "doc_file": "docs/dev/requirements-coverage.md",
+      "line": 1997,
+      "type": "file_path",
+      "value": ".planning/formal/promotion-changelog.json",
+      "reason": "file not found",
+      "category": "developer",
+      "weight": 1
     },
     {
       "doc_file": "docs/USER-GUIDE.md",
