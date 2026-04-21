@@ -4,6 +4,13 @@ All notable changes to nForma will be documented in this file.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+## [0.42.5] - 2026-04-21
+
+### Fixed
+- `fix(providers)`: remove duplicate ccr-1..ccr-6 entries with hardcoded `/opt/homebrew/bin/ccr` path — quorum wiring now works on Linux/WSL (#108)
+
 ## [0.42.4] - 2026-04-21
 
 ### Added
