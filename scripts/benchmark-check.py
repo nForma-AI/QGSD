@@ -12,15 +12,27 @@ def main():
         )
         sys.exit(1)
 
+    current_arg = sys.argv[1]
+    if isinstance(current_arg, bool):
+        print("FAIL: current rate must be a number")
+        sys.exit(1)
+    if isinstance(current_arg, str):
+        current_arg = current_arg.strip()
     try:
-        current = float(sys.argv[1])
-    except ValueError:
+        current = float(current_arg)
+    except (ValueError, TypeError):
         print("FAIL: current rate must be a number")
         sys.exit(1)
 
+    baseline_arg = sys.argv[2]
+    if isinstance(baseline_arg, bool):
+        print("FAIL: baseline rate must be a number")
+        sys.exit(1)
+    if isinstance(baseline_arg, str):
+        baseline_arg = baseline_arg.strip()
     try:
-        baseline = float(sys.argv[2])
-    except ValueError:
+        baseline = float(baseline_arg)
+    except (ValueError, TypeError):
         print("FAIL: baseline rate must be a number")
         sys.exit(1)
 
@@ -38,7 +50,17 @@ def main():
         )
         sys.exit(1)
 
-    tolerance = float(sys.argv[3]) if len(sys.argv) > 3 else 3.0
+    tolerance_arg = sys.argv[3] if len(sys.argv) > 3 else "3.0"
+    if isinstance(tolerance_arg, bool):
+        print("FAIL: tolerance must be a number")
+        sys.exit(1)
+    if isinstance(tolerance_arg, str):
+        tolerance_arg = tolerance_arg.strip()
+    try:
+        tolerance = float(tolerance_arg)
+    except (ValueError, TypeError):
+        print("FAIL: tolerance must be a number")
+        sys.exit(1)
     if tolerance < 0:
         print("FAIL: tolerance {:.1f} cannot be negative".format(tolerance))
         sys.exit(1)

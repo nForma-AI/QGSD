@@ -1,17 +1,17 @@
 name: Benchmark gate
 
-# Runs on all PRs to main — blocks merge if solve full pass_rate < baseline.
+# Runs on all PRs to main — blocks merge if solve benchmark regresses vs baseline.
 # Baseline is stored in benchmarks/solve-baseline.json.
-# Update it with: bash scripts/update-benchmark-baseline.sh <pass_rate>
-on:
+# Update it with: bash scripts/update-benchmark-baseline.sh
+"on":
   pull_request:
     branches: [main]
 
 jobs:
   benchmark:
-    name: Solve full benchmark
+    name: nf:solve benchmark
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 240
 
     steps:
       - name: Checkout
@@ -28,11 +28,37 @@ jobs:
       - name: Build artifacts
         run: npm run build:hooks && npm run build:machines
 
-      - name: Run solve full benchmark
+      - name: Run nf-benchmark solve
         id: bench
+        env:
+          NF_SOLVE_SESSION_ID: benchmark-${{ github.run_id }}-${{ github.run_attempt }}
         run: |
-          node bin/nf-benchmark-solve.cjs --json --track=all > bench-output.json 2>&1 || true
-          cat bench-output.json
+          node "$HOME/code/nf-benchmark/bin/nf-benchmark.cjs" run \
+            --project-root "$PWD" \
+            --parallel 4
 
-      - name: Check score against baseline
-        run: node scripts/check-benchmark-gate.cjs bench-output.json
+      - name: Find latest report
+        id: report
+        run: |
+          REPORT=$(ls "$HOME/code/nf-benchmark/results"/report-*.json 2>/dev/null | sort -r | head -1)
+          echo "report=$(realpath "$REPORT")" >> "$GITHUB_OUTPUT"
+
+      - name: Parse and compare results
+        id: results
+        env:
+          REPORT: ${{ steps.report.outputs.report }}
+          BASELINE: ${{ github.workspace }}/benchmarks/solve-baseline.json
+        run: python3 scripts/benchmark-gate-parse.py
+
+      - name: Show summary
+        run: |
+          echo "Benchmark result: ${{ steps.results.outputs.passed }}/${{ steps.results.outputs.total }} (${{ steps.results.outputs.pass_rate }}%)"
+          echo "Baseline floor  : ${{ steps.results.outputs.baseline_rate }}%"
+          echo "Delta          : ${{ steps.results.outputs.delta }}pp"
+          python3 scripts/benchmark-check.py \
+            ${{ steps.results.outputs.pass_rate }} \
+            ${{ steps.results.outputs.baseline_rate }}
+
+      - name: Store per-category scores as GitHub secrets
+        if: always()
+        run: python3 scripts/benchmark-secrets-sync.py || true

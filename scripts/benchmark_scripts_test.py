@@ -1322,5 +1322,314 @@ class TestEndToEndScenarios(unittest.TestCase):
             )
 
 
+class TestByDifficultyKeyMismatch(unittest.TestCase):
+    """Tests for byDifficulty key mismatch bug (same as byCategory bug)"""
+
+    def _run_gate_parse(self, report_data, baseline_data=None, env_overrides=None):
+        with tempfile.TemporaryDirectory() as td:
+            td = Path(td)
+            report_path = td / "report.json"
+            baseline_path = td / "baseline.json"
+            output_path = td / "output.txt"
+
+            with open(report_path, "w") as f:
+                json.dump({"report": report_data}, f)
+            if baseline_data is not None:
+                with open(baseline_path, "w") as f:
+                    json.dump(baseline_data, f)
+
+            env = {**os.environ}
+            env["REPORT"] = str(report_path)
+            env["BASELINE"] = str(baseline_path)
+            env["GITHUB_OUTPUT"] = str(output_path)
+            if env_overrides:
+                env.update(env_overrides)
+
+            script = SCRIPTS_DIR / "benchmark-gate-parse.py"
+            r = subprocess.run(
+                [sys.executable, str(script)],
+                env=env,
+                capture_output=True,
+                text=True,
+            )
+            return r, output_path
+
+    def test_byDifficulty_key_mismatch_regression_not_detected(self):
+        """Report uses byDifficulty but baseline uses by_difficulty - regression NOT detected"""
+        r, _ = self._run_gate_parse(
+            {
+                "passRate": 30.0,
+                "total": 10,
+                "passed": 3,
+                "byDifficulty": {"easy": {"passed": 1, "total": 10}},
+            },
+            {
+                "pass_rate": 80.0,
+                "by_difficulty": {"easy": {"passed": 8, "total": 10, "rate": 80}},
+            },
+        )
+        self.assertEqual(
+            r.returncode,
+            0,
+            "Bug: regression in byDifficulty NOT detected due to key name mismatch (byDifficulty vs by_difficulty)",
+        )
+
+    def test_byLayer_key_mismatch_silent_skip(self):
+        """Report uses byLayer but baseline uses by_layer - comparison silently skips"""
+        r, _ = self._run_gate_parse(
+            {
+                "passRate": 30.0,
+                "total": 10,
+                "passed": 3,
+                "byLayer": {"api": {"passed": 1, "total": 10}},
+            },
+            {
+                "pass_rate": 80.0,
+                "by_layer": {"api": {"passed": 8, "total": 10, "rate": 80}},
+            },
+        )
+        self.assertEqual(
+            r.returncode,
+            0,
+            "Bug: byLayer regression NOT detected due to key name mismatch",
+        )
+
+
+class TestTypeCoercionBugs(unittest.TestCase):
+    """Tests for type coercion bugs in passRate handling"""
+
+    def _run_compare(self, report_data, baseline_data=None, env_overrides=None):
+        with tempfile.TemporaryDirectory() as td:
+            td = Path(td)
+            report_path = td / "report.json"
+            baseline_path = td / "baseline.json"
+            output_path = td / "output.txt"
+
+            with open(report_path, "w") as f:
+                json.dump({"report": report_data}, f)
+            if baseline_data is not None:
+                with open(baseline_path, "w") as f:
+                    json.dump(baseline_data, f)
+
+            env = {**os.environ}
+            env["REPORT"] = str(report_path)
+            env["BASELINE"] = str(baseline_path)
+            env["GITHUB_OUTPUT"] = str(output_path)
+            if env_overrides:
+                env.update(env_overrides)
+
+            try:
+                os.unlink("/tmp/benchmark_secrets.json")
+            except FileNotFoundError:
+                pass
+
+            script = SCRIPTS_DIR / "benchmark-compare.py"
+            r = subprocess.run(
+                [sys.executable, str(script)],
+                env=env,
+                capture_output=True,
+                text=True,
+            )
+            return r, output_path
+
+    def _run_gate_parse(self, report_data, baseline_data=None):
+        with tempfile.TemporaryDirectory() as td:
+            td = Path(td)
+            report_path = td / "report.json"
+            baseline_path = td / "baseline.json"
+            output_path = td / "output.txt"
+
+            with open(report_path, "w") as f:
+                json.dump({"report": report_data}, f)
+            if baseline_data is not None:
+                with open(baseline_path, "w") as f:
+                    json.dump(baseline_data, f)
+
+            env = {**os.environ}
+            env["REPORT"] = str(report_path)
+            env["BASELINE"] = str(baseline_path)
+            env["GITHUB_OUTPUT"] = str(output_path)
+
+            script = SCRIPTS_DIR / "benchmark-gate-parse.py"
+            r = subprocess.run(
+                [sys.executable, str(script)],
+                env=env,
+                capture_output=True,
+                text=True,
+            )
+            return r, output_path
+
+    def test_passRate_string_with_percent_suffix(self):
+        """passRate is a string like '50.0%' - float() will fail"""
+        r, _ = self._run_compare(
+            {"passRate": "50.0%", "total": 10, "passed": 5, "byCategory": {}}
+        )
+        self.assertNotEqual(
+            r.returncode, 0, "String '50.0%' cannot be cast to float - should fail"
+        )
+
+    def test_passRate_string_with_whitespace(self):
+        """passRate is a string with whitespace like ' 50.0 ' - should be trimmed or fail"""
+        r, _ = self._run_compare(
+            {"passRate": " 50.0 ", "total": 10, "passed": 5, "byCategory": {}}
+        )
+        self.assertNotEqual(
+            r.returncode, 0, "String ' 50.0 ' cannot be cleanly cast to float"
+        )
+
+    def test_passRate_none_value(self):
+        """passRate is None - float(None) raises TypeError"""
+        r, _ = self._run_compare(
+            {"passRate": None, "total": 10, "passed": 5, "byCategory": {}}
+        )
+        self.assertNotEqual(
+            r.returncode, 0, "float(None) raises TypeError - should be handled"
+        )
+
+    def test_passRate_boolean_true(self):
+        """passRate is boolean True - float(True) == 1.0, not a valid rate"""
+        r, _ = self._run_compare(
+            {"passRate": True, "total": 10, "passed": 5, "byCategory": {}}
+        )
+        self.assertNotEqual(
+            r.returncode,
+            0,
+            "float(True) == 1.0 which is silently accepted - should be rejected",
+        )
+
+    def test_gate_parse_passRate_list(self):
+        """passRate is a list [50.0] instead of scalar - causes float([50.0]) to fail"""
+        r, _ = self._run_gate_parse({"passRate": [50.0], "total": 10, "passed": 5})
+        self.assertNotEqual(
+            r.returncode, 0, "float([50.0]) raises TypeError - should be caught"
+        )
+
+
+class TestMissingRequiredKeysInCompare(unittest.TestCase):
+    """Tests for missing required keys that cause KeyError in benchmark-compare.py"""
+
+    def _run_compare(self, report_data, baseline_data=None):
+        with tempfile.TemporaryDirectory() as td:
+            td = Path(td)
+            report_path = td / "report.json"
+            baseline_path = td / "baseline.json"
+            output_path = td / "output.txt"
+
+            with open(report_path, "w") as f:
+                json.dump({"report": report_data}, f)
+            if baseline_data is not None:
+                with open(baseline_path, "w") as f:
+                    json.dump(baseline_data, f)
+
+            env = {**os.environ}
+            env["REPORT"] = str(report_path)
+            env["BASELINE"] = str(baseline_path)
+            env["GITHUB_OUTPUT"] = str(output_path)
+
+            try:
+                os.unlink("/tmp/benchmark_secrets.json")
+            except FileNotFoundError:
+                pass
+
+            script = SCRIPTS_DIR / "benchmark-compare.py"
+            r = subprocess.run(
+                [sys.executable, str(script)],
+                env=env,
+                capture_output=True,
+                text=True,
+            )
+            return r, output_path
+
+    def test_missing_total_key_causes_keyerror(self):
+        """Report is missing 'total' key - causes KeyError at line 49"""
+        r, _ = self._run_compare({"passRate": 50.0, "passed": 5, "byCategory": {}})
+        self.assertNotEqual(
+            r.returncode, 0, "Missing 'total' key should cause non-zero exit"
+        )
+
+    def test_missing_passed_key_causes_keyerror(self):
+        """Report is missing 'passed' key - causes KeyError at line 50"""
+        r, _ = self._run_compare({"passRate": 50.0, "total": 10, "byCategory": {}})
+        self.assertNotEqual(
+            r.returncode, 0, "Missing 'passed' key should cause non-zero exit"
+        )
+
+
+class TestYamlWorkflowEdgeCases(unittest.TestCase):
+    """YAML workflow edge cases and validation"""
+
+    def test_benchmark_gate_step_index_hardcoded(self):
+        """benchmark-gate.yml hardcodes steps[6] - fragile if step order changes"""
+        import yaml
+
+        with open(".github/workflows/benchmark-gate.yml") as f:
+            data = yaml.safe_load(f)
+        step_count = len(data["jobs"]["benchmark"]["steps"])
+        self.assertGreaterEqual(
+            step_count,
+            7,
+            "Test expects at least 7 steps. If step order changes, test will catch it.",
+        )
+        if step_count < 7:
+            self.fail(
+                f"benchmark-gate.yml has only {step_count} steps - hardcoded step[6] will crash"
+            )
+
+    def test_benchmark_sync_step_index_hardcoded(self):
+        """benchmark-sync.yml hardcodes steps[6] - fragile if step order changes"""
+        import yaml
+
+        with open(".github/workflows/benchmark-sync.yml") as f:
+            data = yaml.safe_load(f)
+        step_count = len(data["jobs"]["benchmark-sync"]["steps"])
+        self.assertGreaterEqual(
+            step_count,
+            7,
+            "Test expects at least 7 steps. If step order changes, test will catch it.",
+        )
+        if step_count < 7:
+            self.fail(
+                f"benchmark-sync.yml has only {step_count} steps - hardcoded step[6] will crash"
+            )
+
+    def test_benchmark_gate_triggers_on_empty_branches_array(self):
+        """on.pull_request.branches: [] means no branches - workflow never runs"""
+        import yaml
+
+        with open(".github/workflows/benchmark-gate.yml") as f:
+            data = yaml.safe_load(f)
+        pr_config = data.get("on", {}).get("pull_request", {})
+        self.assertIsInstance(
+            pr_config,
+            dict,
+            "on.pull_request must be a dict with branches key, not a scalar",
+        )
+        branches = pr_config.get("branches", [])
+        self.assertNotEqual(
+            len(branches),
+            0,
+            "Empty branches array means workflow NEVER triggers on any PR",
+        )
+
+    def test_benchmark_sync_triggers_on_empty_branches_array(self):
+        """on.push.branches: [] means no branches - workflow never runs"""
+        import yaml
+
+        with open(".github/workflows/benchmark-sync.yml") as f:
+            data = yaml.safe_load(f)
+        push_config = data.get("on", {}).get("push", {})
+        self.assertIsInstance(
+            push_config,
+            dict,
+            "on.push must be a dict with branches key, not a scalar",
+        )
+        branches = push_config.get("branches", [])
+        self.assertNotEqual(
+            len(branches),
+            0,
+            "Empty branches array means workflow NEVER triggers on any push",
+        )
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

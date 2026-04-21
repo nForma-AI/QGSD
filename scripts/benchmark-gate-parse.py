@@ -26,7 +26,21 @@ def main():
     TOLERANCE = 3.0
     regressions = []
 
-    current_rate = float(report["passRate"])
+    pass_rate_value = report["passRate"]
+    if isinstance(pass_rate_value, bool):
+        print("FAIL: passRate cannot be a boolean")
+        sys.exit(1)
+    if isinstance(pass_rate_value, str):
+        stripped = pass_rate_value.strip()
+        if pass_rate_value != stripped:
+            print("FAIL: passRate string cannot have leading/trailing whitespace")
+            sys.exit(1)
+        pass_rate_value = stripped
+    try:
+        current_rate = float(pass_rate_value)
+    except (ValueError, TypeError):
+        print("FAIL: passRate must be a number")
+        sys.exit(1)
     if math.isinf(current_rate) or math.isnan(current_rate):
         print("FAIL: passRate must be a finite number (Infinity/NaN not allowed)")
         sys.exit(1)
