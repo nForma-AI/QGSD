@@ -26,6 +26,12 @@ def main():
     TOLERANCE = 3.0
     regressions = []
 
+    total = report["total"]
+    passed = report["passed"]
+    if passed > total:
+        print("FAIL: passed ({}) cannot exceed total ({})".format(passed, total))
+        sys.exit(1)
+
     pass_rate_value = report["passRate"]
     if isinstance(pass_rate_value, bool):
         print("FAIL: passRate cannot be a boolean")

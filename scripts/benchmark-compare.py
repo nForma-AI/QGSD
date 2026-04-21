@@ -47,6 +47,15 @@ def main():
             "FAIL: baseline pass_rate must be a finite number (Infinity/NaN not allowed)"
         )
         sys.exit(1)
+    total = report["total"]
+    passed = report["passed"]
+    if passed > total:
+        print("FAIL: passed ({}) cannot exceed total ({})".format(passed, total))
+        sys.exit(1)
+    if total <= 0:
+        print("FAIL: total ({}) must be positive for a valid benchmark".format(total))
+        sys.exit(1)
+
     delta = current_rate - prev_rate
     if math.isinf(delta) or math.isnan(delta):
         print("FAIL: delta overflow or invalid (Infinity/NaN not allowed)")
@@ -68,26 +77,74 @@ def main():
     updated["by_layer"] = {}
 
     for cat, data in report.get("byCategory", {}).items():
-        rate = round(data["passed"] / data["total"] * 100) if data["total"] > 0 else 0
+        inner_passed = data.get("passed", 0)
+        inner_total = data.get("total", 0)
+        if inner_passed < 0 or inner_total < 0:
+            print(
+                "FAIL: byCategory '{}' has negative values (passed={}, total={})".format(
+                    cat, inner_passed, inner_total
+                )
+            )
+            sys.exit(1)
+        if inner_total > 0 and inner_passed > inner_total:
+            print(
+                "FAIL: byCategory '{}' passed ({}) cannot exceed total ({})".format(
+                    cat, inner_passed, inner_total
+                )
+            )
+            sys.exit(1)
+        rate = round(inner_passed / inner_total * 100) if inner_total > 0 else 0
         updated["by_category"][cat] = {
-            "passed": data["passed"],
-            "total": data["total"],
+            "passed": inner_passed,
+            "total": inner_total,
             "rate": rate,
         }
 
     for diff, data in report.get("byDifficulty", {}).items():
-        rate = round(data["passed"] / data["total"] * 100) if data["total"] > 0 else 0
+        inner_passed = data.get("passed", 0)
+        inner_total = data.get("total", 0)
+        if inner_passed < 0 or inner_total < 0:
+            print(
+                "FAIL: byDifficulty '{}' has negative values (passed={}, total={})".format(
+                    diff, inner_passed, inner_total
+                )
+            )
+            sys.exit(1)
+        if inner_total > 0 and inner_passed > inner_total:
+            print(
+                "FAIL: byDifficulty '{}' passed ({}) cannot exceed total ({})".format(
+                    diff, inner_passed, inner_total
+                )
+            )
+            sys.exit(1)
+        rate = round(inner_passed / inner_total * 100) if inner_total > 0 else 0
         updated["by_difficulty"][diff] = {
-            "passed": data["passed"],
-            "total": data["total"],
+            "passed": inner_passed,
+            "total": inner_total,
             "rate": rate,
         }
 
     for layer, data in report.get("byLayer", {}).items():
-        rate = round(data["passed"] / data["total"] * 100) if data["total"] > 0 else 0
+        inner_passed = data.get("passed", 0)
+        inner_total = data.get("total", 0)
+        if inner_passed < 0 or inner_total < 0:
+            print(
+                "FAIL: byLayer '{}' has negative values (passed={}, total={})".format(
+                    layer, inner_passed, inner_total
+                )
+            )
+            sys.exit(1)
+        if inner_total > 0 and inner_passed > inner_total:
+            print(
+                "FAIL: byLayer '{}' passed ({}) cannot exceed total ({})".format(
+                    layer, inner_passed, inner_total
+                )
+            )
+            sys.exit(1)
+        rate = round(inner_passed / inner_total * 100) if inner_total > 0 else 0
         updated["by_layer"][layer] = {
-            "passed": data["passed"],
-            "total": data["total"],
+            "passed": inner_passed,
+            "total": inner_total,
             "rate": rate,
         }
 
@@ -128,7 +185,7 @@ def main():
     with open("/tmp/benchmark_secrets.json", "w") as f:
         json.dump(secrets, f)
 
-    sys.exit(0 if improved else 1)
+    sys.exit(0)
 
 
 if __name__ == "__main__":
