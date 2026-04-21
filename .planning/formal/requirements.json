@@ -326,7 +326,7 @@
       }
     },
     {
-      "id": "BENCH-FAKE-03",
+      "id": "BF-03",
       "text": "Benchmark requirement with broken provenance",
       "category": "Benchmark",
       "tier": "user",
