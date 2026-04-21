@@ -4,18 +4,22 @@ All notable changes to nForma will be documented in this file.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [0.42.4] - 2026-04-21
 
 ### Added
 - Six human phase skills ship with nForma: `nf:idea`, `nf:plan`, `nf:build`, `nf:ship`, `nf:debug`, `nf:observe` — each `SKILL.md` documents sub-skills, commands, entry/exit conditions, and routing across the full development lifecycle (closes #94)
-- Adversarial test coverage for aggregate-requirements, continuous-verify, oscillation-detector, and solve-cycle-detector modules (`bin/*-adversarial.test.cjs`)
-- `bin/resolve-formal-tools.test.cjs` — new test suite for formal tool resolution
+- `benchmarks/full-benchmark-baseline.json` — source of truth for nForma's benchmark score (15.2% / 35/230)
+- `nf-benchmark` submodule integrated for full 230-challenge benchmark suite
+
+### Changed
+- Benchmark CI gate now runs full 230-challenge suite on PRs with zero-tolerance regression blocking
+- Baseline auto-updates in nForma repo on push to main when score improves
 
 ### Fixed
-- `fix(set-secret)`: restore Usage message when stdin value is missing
-- `fix(continuous-verify)`: correctness bugs surfaced during adversarial testing
-- `fix(solve-cycle-detector)`: edge-case fixes found during adversarial testing
-- `fix(secrets)`: hardening identified during adversarial test runs
+- `fix(nf-stop)`: `parseQuorumSizeFlag` now rejects fractional values (`--n 1.5`) instead of silently truncating to solo mode
+- `fix(nf-stop)`: adversarial hardening added `--n 0` boundary handling and `is_error: true` propagation checks
+- `fix(config-loader)`: `slotToToolCall` fallback invariants verified
+- `fix(nf-circuit-breaker)`: `makeFileSetHash` order-independence and empty-array handling confirmed
 
 ## [0.42.3] - 2026-04-11 — Repowise Intelligence Integration (v0.42 milestone)
 
