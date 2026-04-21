@@ -191,6 +191,16 @@ test('TC19: KNOWN_FAMILIES correctly derives families by stripping -N suffix', (
   assert.ok(families.size >= 5, 'derived families should be at least 5');
 });
 
+// ADVERSARIAL: MCP tool name with slot family NOT in SLOT_TOOL_SUFFIX falls back to 'claude'
+// Slots like "ccr-1" or "custom-1" derive family "ccr"/"custom" which aren't in the suffix map.
+// This test verifies the fallback behavior — such slots are NOT blocked even if they're in KNOWN_FAMILIES.
+test('ADVERSARIAL: slot family not in SLOT_TOOL_SUFFIX fallback behavior', () => {
+  // 'custom-family-1' is not in KNOWN_FAMILIES, so it passes through
+  const result = run(makeInput('mcp__custom-family-1__ask'));
+  assert.strictEqual(result.exitCode, 0, 'mcp__custom-family-1__ask should pass through (custom-family not in KNOWN_FAMILIES)');
+  assert.strictEqual(result.stdout, '', 'stdout must be empty — not blocked');
+});
+
 // Run all tests
 for (const t of tests) {
   try {
