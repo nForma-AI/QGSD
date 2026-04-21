@@ -2,7 +2,7 @@
 # scripts/benchmark-check.py
 # Checks if current pass rate is within tolerance of baseline.
 # Usage: python3 scripts/benchmark-check.py <current_rate> <baseline_rate> [tolerance]
-import sys
+import math, sys
 
 
 def main():
@@ -22,6 +22,14 @@ def main():
         baseline = float(sys.argv[2])
     except ValueError:
         print("FAIL: baseline rate must be a number")
+        sys.exit(1)
+
+    if math.isinf(current) or math.isnan(current):
+        print("FAIL: current rate must be a finite number (Infinity/NaN not allowed)")
+        sys.exit(1)
+
+    if math.isinf(baseline) or math.isnan(baseline):
+        print("FAIL: baseline rate must be a finite number (Infinity/NaN not allowed)")
         sys.exit(1)
 
     if current < 0 or current > 100:
