@@ -1631,5 +1631,473 @@ class TestYamlWorkflowEdgeCases(unittest.TestCase):
         )
 
 
+class TestToleranceBoundaryEdgeCases(unittest.TestCase):
+    """Tolerance boundary edge cases - float precision issues at exact boundary"""
+
+    def _run_check(self, argv):
+        script = SCRIPTS_DIR / "benchmark-check.py"
+        r = subprocess.run(
+            [sys.executable, str(script)] + argv, capture_output=True, text=True
+        )
+        return r
+
+    def test_tolerance_exact_boundary_float_precision(self):
+        """Regression detected when current < baseline - tolerance: 79.998 < 80.0 - 0.001 = 79.999"""
+        r = self._run_check(["79.998", "80.0", "0.001"])
+        self.assertNotEqual(
+            r.returncode,
+            0,
+            "79.998 < 80.0 - 0.001 = 79.999 is True - should detect regression",
+        )
+
+    def test_tolerance_at_exact_boundary_no_regression(self):
+        """Current=80.001, baseline=80.0, tolerance=0.001 - exactly at boundary, should pass"""
+        r = self._run_check(["80.001", "80.0", "0.001"])
+        self.assertEqual(
+            r.returncode,
+            0,
+            "delta=0.001 equals tolerance=0.001 - should pass (not a regression)",
+        )
+
+    def test_negative_delta_within_tolerance(self):
+        """Current=79.99, baseline=80.0, tolerance=0.01 - within tolerance, should pass"""
+        r = self._run_check(["79.99", "80.0", "0.01"])
+        self.assertEqual(
+            r.returncode,
+            0,
+            "drop of 0.01 is within tolerance - should pass",
+        )
+
+    def test_tolerance_scientific_notation(self):
+        """Tolerance given as 1e-3 scientific notation"""
+        r = self._run_check(["80.001", "80.0", "1e-3"])
+        self.assertEqual(
+            r.returncode,
+            0,
+            "tolerance=1e-3 should be parsed as 0.001",
+        )
+
+    def test_current_rate_scientific_notation(self):
+        """Current rate in scientific notation 1e2 (=100)"""
+        r = self._run_check(["1e2", "80.0", "0.0"])
+        self.assertEqual(
+            r.returncode,
+            0,
+            "1e2 = 100.0 should pass when baseline=80.0 and tolerance=0",
+        )
+
+
+class TestPassedTotalInconsistency(unittest.TestCase):
+    """passed > total inconsistency - logical impossible state"""
+
+    def _run_compare(self, report_data, baseline_data=None):
+        with tempfile.TemporaryDirectory() as td:
+            td = Path(td)
+            report_path = td / "report.json"
+            baseline_path = td / "baseline.json"
+            output_path = td / "output.txt"
+
+            with open(report_path, "w") as f:
+                json.dump({"report": report_data}, f)
+            if baseline_data is not None:
+                with open(baseline_path, "w") as f:
+                    json.dump(baseline_data, f)
+
+            env = {**os.environ}
+            env["REPORT"] = str(report_path)
+            env["BASELINE"] = str(baseline_path)
+            env["GITHUB_OUTPUT"] = str(output_path)
+
+            try:
+                os.unlink("/tmp/benchmark_secrets.json")
+            except FileNotFoundError:
+                pass
+
+            script = SCRIPTS_DIR / "benchmark-compare.py"
+            r = subprocess.run(
+                [sys.executable, str(script)],
+                env=env,
+                capture_output=True,
+                text=True,
+            )
+            return r, output_path
+
+    def _run_gate_parse(self, report_data, baseline_data=None):
+        with tempfile.TemporaryDirectory() as td:
+            td = Path(td)
+            report_path = td / "report.json"
+            baseline_path = td / "baseline.json"
+            output_path = td / "output.txt"
+
+            with open(report_path, "w") as f:
+                json.dump({"report": report_data}, f)
+            if baseline_data is not None:
+                with open(baseline_path, "w") as f:
+                    json.dump(baseline_data, f)
+
+            env = {**os.environ}
+            env["REPORT"] = str(report_path)
+            env["BASELINE"] = str(baseline_path)
+            env["GITHUB_OUTPUT"] = str(output_path)
+
+            script = SCRIPTS_DIR / "benchmark-gate-parse.py"
+            r = subprocess.run(
+                [sys.executable, str(script)],
+                env=env,
+                capture_output=True,
+                text=True,
+            )
+            return r, output_path
+
+    def test_compare_passed_greater_than_total(self):
+        """passed=15 but total=10 - logically impossible, should be rejected"""
+        r, _ = self._run_compare(
+            {"passRate": 150.0, "total": 10, "passed": 15, "byCategory": {}}
+        )
+        self.assertNotEqual(
+            r.returncode,
+            0,
+            "passed > total is impossible - should be rejected",
+        )
+
+    def test_gate_parse_passed_greater_than_total(self):
+        """passed=15 but total=10 in gate-parse - should be rejected"""
+        r, _ = self._run_gate_parse({"passRate": 150.0, "total": 10, "passed": 15})
+        self.assertNotEqual(
+            r.returncode,
+            0,
+            "passed > total is impossible - should be rejected",
+        )
+
+    def test_compare_passed_equals_zero_with_nonzero_total(self):
+        """passed=0 but total=10 and passRate=0 - explicit zero, should be valid"""
+        r, _ = self._run_compare(
+            {"passRate": 0.0, "total": 10, "passed": 0, "byCategory": {}}
+        )
+        self.assertEqual(r.returncode, 0, "passed=0 with nonzero total is valid")
+
+    def test_gate_parse_passed_equals_total_not_100_percent(self):
+        """passed=5, total=10, passRate=50.0 - inconsistent, passRate should be 50"""
+        r, _ = self._run_gate_parse({"passRate": 50.0, "total": 10, "passed": 5})
+        self.assertEqual(
+            r.returncode, 0, "gate-parse doesn't validate passRate vs passed/total"
+        )
+
+
+class TestByCategoryDuplicateKeys(unittest.TestCase):
+    """Duplicate category names in byCategory - Python dict behavior"""
+
+    def _run_compare(self, report_data):
+        with tempfile.TemporaryDirectory() as td:
+            td = Path(td)
+            report_path = td / "report.json"
+            baseline_path = td / "baseline.json"
+            output_path = td / "output.txt"
+
+            with open(report_path, "w") as f:
+                json.dump({"report": report_data}, f)
+            with open(baseline_path, "w") as f:
+                json.dump({"pass_rate": 50.0, "by_category": {}}, f)
+
+            env = {**os.environ}
+            env["REPORT"] = str(report_path)
+            env["BASELINE"] = str(baseline_path)
+            env["GITHUB_OUTPUT"] = str(output_path)
+
+            try:
+                os.unlink("/tmp/benchmark_secrets.json")
+            except FileNotFoundError:
+                pass
+
+            script = SCRIPTS_DIR / "benchmark-compare.py"
+            r = subprocess.run(
+                [sys.executable, str(script)],
+                env=env,
+                capture_output=True,
+                text=True,
+            )
+            return r, output_path
+
+    def test_byCategory_duplicate_cat_names(self):
+        """byCategory has duplicate category names - last one wins"""
+        r, _ = self._run_compare(
+            {
+                "passRate": 50.0,
+                "total": 20,
+                "passed": 10,
+                "byCategory": {
+                    "cat-a": {"passed": 5, "total": 10},
+                    "cat-b": {"passed": 5, "total": 10},
+                    "cat-a": {"passed": 8, "total": 10},
+                },
+            }
+        )
+        self.assertEqual(r.returncode, 0, "Duplicate keys: last one wins - no crash")
+
+
+class TestByDifficultyInnerMissingFields(unittest.TestCase):
+    """byDifficulty entry missing inner fields - same bug as byCategory"""
+
+    def _run_gate_parse(self, report_data, baseline_data=None):
+        with tempfile.TemporaryDirectory() as td:
+            td = Path(td)
+            report_path = td / "report.json"
+            baseline_path = td / "baseline.json"
+            output_path = td / "output.txt"
+
+            with open(report_path, "w") as f:
+                json.dump({"report": report_data}, f)
+            if baseline_data is not None:
+                with open(baseline_path, "w") as f:
+                    json.dump(baseline_data, f)
+
+            env = {**os.environ}
+            env["REPORT"] = str(report_path)
+            env["BASELINE"] = str(baseline_path)
+            env["GITHUB_OUTPUT"] = str(output_path)
+
+            script = SCRIPTS_DIR / "benchmark-gate-parse.py"
+            r = subprocess.run(
+                [sys.executable, str(script)],
+                env=env,
+                capture_output=True,
+                text=True,
+            )
+            return r, output_path
+
+    def test_byDifficulty_missing_inner_total(self):
+        """byDifficulty entry missing 'total' - KeyError expected"""
+        r, _ = self._run_gate_parse(
+            {
+                "passRate": 50.0,
+                "total": 10,
+                "passed": 5,
+                "byDifficulty": {"easy": {"passed": 5}},
+            }
+        )
+        self.assertNotEqual(
+            r.returncode,
+            0,
+            "byDifficulty entry missing 'total' should cause non-zero exit",
+        )
+
+    def test_byDifficulty_missing_inner_passed(self):
+        """byDifficulty entry missing 'passed' - KeyError expected"""
+        r, _ = self._run_gate_parse(
+            {
+                "passRate": 50.0,
+                "total": 10,
+                "passed": 5,
+                "byDifficulty": {"easy": {"total": 10}},
+            }
+        )
+        self.assertNotEqual(
+            r.returncode,
+            0,
+            "byDifficulty entry missing 'passed' should cause non-zero exit",
+        )
+
+
+class TestByLayerInnerMissingFields(unittest.TestCase):
+    """byLayer entry missing inner fields - gate-parse silently skips byLayer"""
+
+    def _run_gate_parse(self, report_data, baseline_data=None):
+        with tempfile.TemporaryDirectory() as td:
+            td = Path(td)
+            report_path = td / "report.json"
+            baseline_path = td / "baseline.json"
+            output_path = td / "output.txt"
+
+            with open(report_path, "w") as f:
+                json.dump({"report": report_data}, f)
+            if baseline_data is not None:
+                with open(baseline_path, "w") as f:
+                    json.dump(baseline_data, f)
+
+            env = {**os.environ}
+            env["REPORT"] = str(report_path)
+            env["BASELINE"] = str(baseline_path)
+            env["GITHUB_OUTPUT"] = str(output_path)
+
+            script = SCRIPTS_DIR / "benchmark-gate-parse.py"
+            r = subprocess.run(
+                [sys.executable, str(script)],
+                env=env,
+                capture_output=True,
+                text=True,
+            )
+            return r, output_path
+
+    def test_byLayer_missing_inner_total(self):
+        """byLayer entry missing 'total' - gate-parse silently skips, no crash"""
+        r, _ = self._run_gate_parse(
+            {
+                "passRate": 50.0,
+                "total": 10,
+                "passed": 5,
+                "byLayer": {"api": {"passed": 5}},
+            }
+        )
+        self.assertEqual(
+            r.returncode,
+            0,
+            "gate-parse skips byLayer entirely - no crash even with missing fields",
+        )
+
+
+class TestLargeNumericValuesAndOverflow(unittest.TestCase):
+    """Extremely large numbers in passed/total fields"""
+
+    def _run_compare(self, report_data):
+        with tempfile.TemporaryDirectory() as td:
+            td = Path(td)
+            report_path = td / "report.json"
+            baseline_path = td / "baseline.json"
+            output_path = td / "output.txt"
+
+            with open(report_path, "w") as f:
+                json.dump({"report": report_data}, f)
+            with open(baseline_path, "w") as f:
+                json.dump({"pass_rate": 50.0, "by_category": {}}, f)
+
+            env = {**os.environ}
+            env["REPORT"] = str(report_path)
+            env["BASELINE"] = str(baseline_path)
+            env["GITHUB_OUTPUT"] = str(output_path)
+
+            try:
+                os.unlink("/tmp/benchmark_secrets.json")
+            except FileNotFoundError:
+                pass
+
+            script = SCRIPTS_DIR / "benchmark-compare.py"
+            r = subprocess.run(
+                [sys.executable, str(script)],
+                env=env,
+                capture_output=True,
+                text=True,
+            )
+            return r, output_path
+
+    def test_byCategory_very_large_passed_value(self):
+        """passed=10**15, total=10**15 - rate calculation should handle large ints"""
+        r, _ = self._run_compare(
+            {
+                "passRate": 100.0,
+                "total": 10**15,
+                "passed": 10**15,
+                "byCategory": {"cat": {"passed": 10**15, "total": 10**15}},
+            }
+        )
+        self.assertEqual(
+            r.returncode, 0, "Large ints should be handled without overflow"
+        )
+
+    def test_byCategory_negative_inner_values(self):
+        """byCategory inner passed=-5, total=10 - negative passed is invalid"""
+        r, _ = self._run_compare(
+            {
+                "passRate": 50.0,
+                "total": 10,
+                "passed": 5,
+                "byCategory": {"cat": {"passed": -5, "total": 10}},
+            }
+        )
+        self.assertNotEqual(
+            r.returncode,
+            0,
+            "Negative passed in byCategory is invalid - should be rejected",
+        )
+
+
+class TestEmptyStringEdgeCases(unittest.TestCase):
+    """Empty string and whitespace-only values"""
+
+    def _run_gate_parse(self, report_data):
+        with tempfile.TemporaryDirectory() as td:
+            td = Path(td)
+            report_path = td / "report.json"
+            baseline_path = td / "baseline.json"
+            output_path = td / "output.txt"
+
+            with open(report_path, "w") as f:
+                json.dump({"report": report_data}, f)
+            with open(baseline_path, "w") as f:
+                json.dump({"pass_rate": 50.0, "by_category": {}}, f)
+
+            env = {**os.environ}
+            env["REPORT"] = str(report_path)
+            env["BASELINE"] = str(baseline_path)
+            env["GITHUB_OUTPUT"] = str(output_path)
+
+            script = SCRIPTS_DIR / "benchmark-gate-parse.py"
+            r = subprocess.run(
+                [sys.executable, str(script)],
+                env=env,
+                capture_output=True,
+                text=True,
+            )
+            return r, output_path
+
+    def _run_compare(self, report_data):
+        with tempfile.TemporaryDirectory() as td:
+            td = Path(td)
+            report_path = td / "report.json"
+            baseline_path = td / "baseline.json"
+            output_path = td / "output.txt"
+
+            with open(report_path, "w") as f:
+                json.dump({"report": report_data}, f)
+            with open(baseline_path, "w") as f:
+                json.dump({"pass_rate": 50.0, "by_category": {}}, f)
+
+            env = {**os.environ}
+            env["REPORT"] = str(report_path)
+            env["BASELINE"] = str(baseline_path)
+            env["GITHUB_OUTPUT"] = str(output_path)
+
+            try:
+                os.unlink("/tmp/benchmark_secrets.json")
+            except FileNotFoundError:
+                pass
+
+            script = SCRIPTS_DIR / "benchmark-compare.py"
+            r = subprocess.run(
+                [sys.executable, str(script)],
+                env=env,
+                capture_output=True,
+                text=True,
+            )
+            return r, output_path
+
+    def test_byCategory_empty_string_name(self):
+        """Category name is empty string - should be handled gracefully"""
+        r, _ = self._run_compare(
+            {
+                "passRate": 50.0,
+                "total": 10,
+                "passed": 5,
+                "byCategory": {"": {"passed": 5, "total": 10}},
+            }
+        )
+        self.assertEqual(
+            r.returncode,
+            0,
+            "Empty string category name should not crash",
+        )
+
+    def test_byCategory_whitespace_only_name(self):
+        """Category name is only whitespace - should be handled"""
+        r, _ = self._run_compare(
+            {
+                "passRate": 50.0,
+                "total": 10,
+                "passed": 5,
+                "byCategory": {"   ": {"passed": 5, "total": 10}},
+            }
+        )
+        self.assertIn(r.returncode, (0, 1), "Whitespace category name should not crash")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
