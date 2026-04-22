@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-22T11:28:02.329Z",
+  "generated": "2026-04-22T11:30:10.388Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -88,8 +88,8 @@
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-04-22T11:27:55.487Z",
-      "hash": "bb6a4385"
+      "mtime": "2026-04-22T11:30:10.000Z",
+      "hash": "68f412e4"
     },
     "invariant-catalog.json": {
       "mtime": "2026-04-21T21:47:49.415Z",
@@ -104,8 +104,8 @@
       "hash": "985c8e53"
     },
     "instrumentation-map.json": {
-      "mtime": "2026-04-22T11:27:43.042Z",
-      "hash": "f910010c"
+      "mtime": "2026-04-22T11:30:10.098Z",
+      "hash": "3f6a0773"
     },
     "event-vocabulary.json": {
       "mtime": "2026-04-21T21:47:49.394Z",
@@ -128,10 +128,10 @@
       "hash": "4f085cf2"
     },
     "source-annotations": {
-      "mtime": "2026-04-22T11:27:55.488Z"
+      "mtime": "2026-04-22T11:30:10.001Z"
     },
     "code-source-annotations": {
-      "mtime": "2026-04-22T11:25:24.870Z"
+      "mtime": "2026-04-22T11:28:32.898Z"
     }
   },
   "nodes": {
