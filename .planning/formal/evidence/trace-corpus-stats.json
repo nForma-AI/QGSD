@@ -1,11 +1,11 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-22T11:20:59.122Z",
+  "generated": "2026-04-22T11:21:24.263Z",
   "session_gap_ms": 300000,
-  "total_events": 1119,
+  "total_events": 1121,
   "date_range": {
     "earliest": "2026-04-16T20:36:55.599Z",
-    "latest": "2026-04-22T11:18:24.002Z"
+    "latest": "2026-04-22T11:21:14.609Z"
   },
   "sessions": [
     {
@@ -99,16 +99,16 @@
     {
       "id": "session-010",
       "start": "2026-04-22T11:17:53.565Z",
-      "end": "2026-04-22T11:18:24.002Z",
-      "event_count": 3,
+      "end": "2026-04-22T11:21:14.609Z",
+      "event_count": 5,
       "actions": {
-        "security_sweep": 3
+        "security_sweep": 5
       }
     }
   ],
   "action_index": {
     "security_sweep": {
-      "total": 619,
+      "total": 621,
       "sessions": [
         "session-001",
         "session-003",
@@ -151,5 +151,5 @@
     "unknown": 0,
     "unknown_actions": []
   },
-  "summary": "1119 events across 10 sessions (2026-04-16T20:36:55.599Z to 2026-04-22T11:18:24.002Z). 4 known actions, 0 unknown. 0 distinct transitions."
+  "summary": "1121 events across 10 sessions (2026-04-16T20:36:55.599Z to 2026-04-22T11:21:14.609Z). 4 known actions, 0 unknown. 0 distinct transitions."
 }
