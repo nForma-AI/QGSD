@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-22T11:39:43.069Z",
+  "generated": "2026-04-22T11:40:00.967Z",
   "summary": {
     "total_commits": 7713,
     "by_type": {
@@ -85129,7 +85129,7 @@
       "recent_commits": 15,
       "recent_feat_or_fix": 12,
       "tla_spec": ".planning/formal/tla/NFQuorum.tla",
-      "tla_last_updated": "2026-04-22T11:38:06.302Z"
+      "tla_last_updated": "2026-04-22T11:39:45.147Z"
     },
     {
       "file": "bin/generate-formal-specs.cjs",
@@ -85318,7 +85318,7 @@
       "recent_commits": 2,
       "recent_feat_or_fix": 1,
       "tla_spec": ".planning/formal/tla/NFQuorum.tla",
-      "tla_last_updated": "2026-04-22T11:38:06.302Z"
+      "tla_last_updated": "2026-04-22T11:39:45.147Z"
     },
     {
       "file": "src/machines/nf-workflow.machine.ts",
