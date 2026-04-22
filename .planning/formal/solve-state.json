@@ -1,10 +1,10 @@
 {
-  "last_run": "2026-04-22T11:27:08.888Z",
+  "last_run": "2026-04-22T11:35:57.232Z",
   "converged": false,
   "iteration_count": 1,
-  "final_residual_total": 338,
-  "reverse_discovery_total": 354,
-  "heatmap_total": 8296,
+  "final_residual_total": 119,
+  "reverse_discovery_total": 9,
+  "heatmap_total": 666,
   "real_impact": {
     "bugs_fixed": 0,
     "tests_added": 0,
@@ -28,10 +28,6 @@
       "residual": 4
     },
     {
-      "layer": "f_to_t",
-      "residual": 219
-    },
-    {
       "layer": "r_to_d",
       "residual": 1
     },
@@ -42,13 +38,13 @@
     },
     {
       "layer": "c_to_r",
-      "residual": 156,
-      "net_residual": 143
+      "residual": 3,
+      "net_residual": 3
     },
     {
       "layer": "t_to_r",
-      "residual": 195,
-      "net_residual": 185
+      "residual": 3,
+      "net_residual": 3
     },
     {
       "layer": "d_to_r",
@@ -57,7 +53,7 @@
     },
     {
       "layer": "l1_to_l3",
-      "residual": 4
+      "residual": 2
     },
     {
       "layer": "l3_to_tc",
@@ -65,7 +61,7 @@
     },
     {
       "layer": "git_heatmap",
-      "residual": 8296
+      "residual": 666
     },
     {
       "layer": "git_history",
