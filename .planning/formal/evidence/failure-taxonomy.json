@@ -1,93 +1,111 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-13T23:11:04.132Z",
-  "total_failures": 3,
+  "generated": "2026-04-22T11:07:23.084Z",
+  "total_failures": 4,
   "categories": {
     "crash": [
       {
         "tool": "run-tlc",
         "formalism": "tla",
         "result": "error",
-        "timestamp": "2026-04-13T23:11:00.646Z",
-        "check_id": "tla:mcnfriverpolicy",
-        "surface": "tla",
-        "property": "MCNFRiverPolicy",
+        "timestamp": "2026-04-22T11:07:22.112Z",
+        "check_id": "tla:mcagentloop",
+        "surface": "agent-loop",
+        "property": "MCAgentLoop",
         "runtime_ms": 0,
-        "summary": "error: state-space guard blocked MCNFRiverPolicy (HIGH risk, ~null states)",
+        "summary": "error: state-space guard blocked MCAgentLoop (HIGH risk, ~null states)",
         "triage_tags": [
           "state-space-blocked"
         ],
         "requirement_ids": [],
         "metadata": {
-          "config": "MCNFRiverPolicy",
+          "config": "MCAgentLoop",
           "estimated_states": null,
           "risk": "HIGH"
         },
         "category": "crash",
-        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCNFRiverPolicy (HIGH risk, ~null states)"
-      }
-    ],
-    "timeout": [],
-    "logic_violation": [
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCAgentLoop (HIGH risk, ~null states)"
+      },
       {
         "tool": "run-tlc",
         "formalism": "tla",
-        "result": "fail",
-        "timestamp": "2026-04-13T23:11:01.869Z",
-        "check_id": "tla:mcnfhazardmodelmerge",
+        "result": "error",
+        "timestamp": "2026-04-22T11:07:22.255Z",
+        "check_id": "tla:mcbugmodellookup",
         "surface": "tla",
-        "property": "MCNFHazardModelMerge",
-        "runtime_ms": 11754,
-        "summary": "fail: MCNFHazardModelMerge in 11754ms",
-        "triage_tags": [],
-        "requirement_ids": [],
-        "metadata": {
-          "config": "MCNFHazardModelMerge"
-        },
-        "category": "logic_violation",
-        "classification_reason": "Logic violation: fail: MCNFHazardModelMerge in 11754ms"
-      }
-    ],
-    "drift": [
-      {
-        "tool": "validate-traces",
-        "formalism": "trace",
-        "result": "fail",
-        "timestamp": "2026-04-13T23:11:00.423Z",
-        "check_id": "ci:conformance-traces",
-        "surface": "ci",
-        "property": "Conformance event replay through XState machine",
-        "runtime_ms": 9,
-        "summary": "fail: 1 divergence(s) in 1 traces (9ms)",
+        "property": "MCBugModelLookup",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCBugModelLookup (HIGH risk, ~null states)",
         "triage_tags": [
-          "trace-divergence"
+          "state-space-blocked"
         ],
         "requirement_ids": [],
         "metadata": {
-          "divergences": 1,
-          "total": 1
+          "config": "MCBugModelLookup",
+          "estimated_states": null,
+          "risk": "HIGH"
         },
-        "observation_window": {
-          "window_start": "2026-04-13T23:11:00.418Z",
-          "window_end": "2026-04-13T23:11:00.420Z",
-          "n_traces": 0,
-          "n_events": 1,
-          "window_days": 0
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCBugModelLookup (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-04-22T11:07:22.413Z",
+        "check_id": "tla:mcconvergencetest",
+        "surface": "convergence",
+        "property": "MCConvergenceTest",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCConvergenceTest (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCConvergenceTest",
+          "estimated_states": null,
+          "risk": "HIGH"
         },
-        "category": "drift",
-        "classification_reason": "Trace divergence: 1 divergence(s) detected"
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCConvergenceTest (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-04-22T11:07:22.585Z",
+        "check_id": "tla:mcdeliberationrevision",
+        "surface": "deliberation-revision",
+        "property": "MCDeliberationRevision",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCDeliberationRevision (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCDeliberationRevision",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCDeliberationRevision (HIGH risk, ~null states"
       }
     ],
+    "timeout": [],
+    "logic_violation": [],
+    "drift": [],
     "degradation": []
   },
   "category_counts": {
-    "crash": 1,
+    "crash": 4,
     "timeout": 0,
-    "logic_violation": 1,
-    "drift": 1,
+    "logic_violation": 0,
+    "drift": 0,
     "degradation": 0
   },
   "degradation_fallback_note": "When no baseline exists, potential degradation entries are classified as logic_violation",
   "unclassified": [],
-  "summary": "3 failures classified: crash=1, timeout=0, logic_violation=1, drift=1, degradation=0. 0 unclassified."
+  "summary": "4 failures classified: crash=4, timeout=0, logic_violation=0, drift=0, degradation=0. 0 unclassified."
 }

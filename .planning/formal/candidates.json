@@ -1,15 +1,15 @@
 {
   "metadata": {
-    "generated": "2026-04-13T23:11:01.347Z",
-    "proximity_index_hash": "fcf3a2b6",
+    "generated": "2026-04-22T11:07:22.238Z",
+    "proximity_index_hash": "7a47d221",
     "threshold": 0.7,
     "max_hops": 5,
     "total_pairs_checked": 0,
     "candidates_found": 0,
     "candidates_filtered": 0,
     "orphan_models_count": 1,
-    "orphan_requirements_count": 0,
-    "uncovered_requirements_count": 11,
+    "orphan_requirements_count": 4,
+    "uncovered_requirements_count": 2,
     "non_neighbor_top": 20,
     "fast_path": true
   },
@@ -21,52 +21,33 @@
         "edges": 0
       }
     ],
-    "requirements": []
+    "requirements": [
+      {
+        "id": "BENCH-DETECT-04",
+        "edges": 0
+      },
+      {
+        "id": "BENCH-FAKE-03",
+        "edges": 0
+      },
+      {
+        "id": "TOOL-01",
+        "edges": 0
+      },
+      {
+        "id": "TOOL-02",
+        "edges": 0
+      }
+    ]
   },
   "uncovered_requirements": [
     {
-      "id": "DBG-01",
-      "text": "/nf:debug Step A.5 runs formal model consultation before quorum dispatch, appending $FORMAL_CONTEXT to the worker bundle"
+      "id": "BENCH-DETECT-04",
+      "text": "nf-solve detects cross-layer mutations, formal model changes, and documentation claim violations in fast mode with active layer sweeps for l1_to_l3, l3_to_tc, formal_lint, and ghost-command scanning for /nf: slash-command references in doc files."
     },
     {
-      "id": "DBG-02",
-      "text": "Quorum worker prompts include a rule to respect fix constraints and not violate listed invariants"
-    },
-    {
-      "id": "DBG-03",
-      "text": "NEXT STEP result table includes a FORMAL row showing model verdict (reproduced/not-reproduced/no-model)"
-    },
-    {
-      "id": "DBG-04",
-      "text": "When no model covers the failure, debug Step G appends an entry to bug-model-gaps.json for future model creation"
-    },
-    {
-      "id": "DBUG-01",
-      "text": "/nf:debug absorbs model-driven-fix Phases 1-4 (discovery, reproduction, refinement, constraint extraction)"
-    },
-    {
-      "id": "DBUG-02",
-      "text": "Loop 1 (autoresearch-refine.cjs) runs natively within debug flow for bug reproduction"
-    },
-    {
-      "id": "DBUG-03",
-      "text": "Extracted constraints from Loop 1 feed back into debug fix guidance and quorum worker prompts"
-    },
-    {
-      "id": "DBUG-04",
-      "text": "Debug skill produces a reproducing formal model as a deliverable (not just a fix)"
-    },
-    {
-      "id": "MRF-01",
-      "text": "close-formal-gaps.md accepts `--bug-context` flag that injects failure description into spec generation, biasing toward capturing the failure mode"
-    },
-    {
-      "id": "MRF-02",
-      "text": "Model refinement loop creates/refines a model, verifies it FAILS (reproduces the bug), and iterates up to 2 additional times if model passes despite bug"
-    },
-    {
-      "id": "MRF-03",
-      "text": "model-driven-fix.md workflow orchestrates the 6-phase prescriptive cycle (discovery, reproduction, refinement, constraint extraction, constrained fix, pre-verification)"
+      "id": "BENCH-FAKE-03",
+      "text": "Benchmark requirement with broken provenance"
     }
   ]
 }
