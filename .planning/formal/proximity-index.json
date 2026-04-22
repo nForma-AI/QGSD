@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-22T11:10:25.678Z",
+  "generated": "2026-04-22T11:17:51.078Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -88,24 +88,24 @@
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-04-22T11:10:19.785Z",
-      "hash": "2615fdf2"
+      "mtime": "2026-04-22T11:17:50.253Z",
+      "hash": "96705c7e"
     },
     "invariant-catalog.json": {
       "mtime": "2026-04-21T21:47:49.415Z",
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-04-22T11:08:57.328Z",
-      "hash": "981c64fa"
+      "mtime": "2026-04-22T11:15:07.946Z",
+      "hash": "cdfa5c1b"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-04-22T11:10:09.723Z",
-      "hash": "676a93a6"
+      "mtime": "2026-04-22T11:10:30.058Z",
+      "hash": "a3858da6"
     },
     "instrumentation-map.json": {
-      "mtime": "2026-04-22T11:10:07.643Z",
-      "hash": "496c35c5"
+      "mtime": "2026-04-22T11:10:25.933Z",
+      "hash": "6faa1e27"
     },
     "event-vocabulary.json": {
       "mtime": "2026-04-21T21:47:49.394Z",
@@ -119,12 +119,16 @@
       "mtime": "2026-04-21T21:47:49.413Z",
       "hash": "2df5c0d7"
     },
+    "git-heatmap.json": {
+      "mtime": "2026-04-22T11:11:45.142Z",
+      "hash": "c17b7378"
+    },
     "debt.json": {
       "mtime": "2026-04-21T21:47:49.389Z",
       "hash": "4f085cf2"
     },
     "source-annotations": {
-      "mtime": "2026-04-22T11:10:19.786Z"
+      "mtime": "2026-04-22T11:10:28.453Z"
     },
     "code-source-annotations": {
       "mtime": "2026-04-22T11:08:38.373Z"
@@ -13272,7 +13276,9 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/alloy/readme-structure.als": {
       "type": "formal_model",
@@ -20543,7 +20549,9 @@
     "formal_model::.planning/formal/prism/quorum.pm": {
       "type": "formal_model",
       "id": ".planning/formal/prism/quorum.pm",
-      "edges": []
+      "edges": [],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/tla/NFAccountManager.tla": {
       "type": "formal_model",
@@ -21998,7 +22006,9 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/tla/NFQuorum_xstate.tla": {
       "type": "formal_model",
