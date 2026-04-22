@@ -1,11 +1,11 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-22T11:21:24.263Z",
+  "generated": "2026-04-22T11:24:13.348Z",
   "session_gap_ms": 300000,
-  "total_events": 1121,
+  "total_events": 1188,
   "date_range": {
     "earliest": "2026-04-16T20:36:55.599Z",
-    "latest": "2026-04-22T11:21:14.609Z"
+    "latest": "2026-04-22T11:21:55.997Z"
   },
   "sessions": [
     {
@@ -99,16 +99,19 @@
     {
       "id": "session-010",
       "start": "2026-04-22T11:17:53.565Z",
-      "end": "2026-04-22T11:21:14.609Z",
-      "event_count": 5,
+      "end": "2026-04-22T11:21:55.997Z",
+      "event_count": 72,
       "actions": {
-        "security_sweep": 5
+        "security_sweep": 6,
+        "circuit_break": 10,
+        "quorum_start": 52,
+        "quorum_block": 4
       }
     }
   ],
   "action_index": {
     "security_sweep": {
-      "total": 621,
+      "total": 622,
       "sessions": [
         "session-001",
         "session-003",
@@ -121,27 +124,30 @@
       ]
     },
     "circuit_break": {
-      "total": 80,
+      "total": 90,
       "sessions": [
         "session-002",
         "session-004",
-        "session-009"
+        "session-009",
+        "session-010"
       ]
     },
     "quorum_start": {
-      "total": 388,
+      "total": 440,
       "sessions": [
         "session-002",
         "session-004",
-        "session-009"
+        "session-009",
+        "session-010"
       ]
     },
     "quorum_block": {
-      "total": 32,
+      "total": 36,
       "sessions": [
         "session-002",
         "session-004",
-        "session-009"
+        "session-009",
+        "session-010"
       ]
     }
   },
@@ -151,5 +157,5 @@
     "unknown": 0,
     "unknown_actions": []
   },
-  "summary": "1121 events across 10 sessions (2026-04-16T20:36:55.599Z to 2026-04-22T11:21:14.609Z). 4 known actions, 0 unknown. 0 distinct transitions."
+  "summary": "1188 events across 10 sessions (2026-04-16T20:36:55.599Z to 2026-04-22T11:21:55.997Z). 4 known actions, 0 unknown. 0 distinct transitions."
 }
