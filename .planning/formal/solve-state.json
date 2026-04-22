@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-04-22T11:42:04.899Z",
+  "last_run": "2026-04-22T11:42:55.899Z",
   "converged": false,
   "iteration_count": 1,
   "final_residual_total": 119,
@@ -57,7 +57,7 @@
     },
     {
       "layer": "l3_to_tc",
-      "residual": 1
+      "residual": 2
     },
     {
       "layer": "git_heatmap",
