@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-04-22T11:43:49.621Z",
+  "generated": "2026-04-22T19:15:20.404Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -88,24 +88,24 @@
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-04-22T11:43:47.294Z",
-      "hash": "325310b2"
+      "mtime": "2026-04-22T19:15:18.321Z",
+      "hash": "10dfd3b0"
     },
     "invariant-catalog.json": {
       "mtime": "2026-04-21T21:47:49.415Z",
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-04-22T11:42:31.202Z",
-      "hash": "d5692b5a"
+      "mtime": "2026-04-22T18:17:45.522Z",
+      "hash": "b133c741"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-04-22T11:43:49.265Z",
+      "mtime": "2026-04-22T18:17:45.523Z",
       "hash": "c211d63a"
     },
     "instrumentation-map.json": {
-      "mtime": "2026-04-22T11:30:31.330Z",
-      "hash": "e4b7edfa"
+      "mtime": "2026-04-22T19:15:15.291Z",
+      "hash": "a6002522"
     },
     "event-vocabulary.json": {
       "mtime": "2026-04-21T21:47:49.394Z",
@@ -120,15 +120,15 @@
       "hash": "2df5c0d7"
     },
     "git-heatmap.json": {
-      "mtime": "2026-04-22T11:42:38.320Z",
-      "hash": "05453dfa"
+      "mtime": "2026-04-22T11:43:51.861Z",
+      "hash": "e89c2ece"
     },
     "debt.json": {
       "mtime": "2026-04-21T21:47:49.389Z",
       "hash": "4f085cf2"
     },
     "source-annotations": {
-      "mtime": "2026-04-22T11:43:46.149Z"
+      "mtime": "2026-04-22T19:15:17.546Z"
     },
     "code-source-annotations": {
       "mtime": "2026-04-22T11:31:15.667Z"
