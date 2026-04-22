@@ -1,10 +1,10 @@
 {
-  "last_run": "2026-04-22T11:36:56.342Z",
+  "last_run": "2026-04-22T11:39:54.847Z",
   "converged": false,
   "iteration_count": 1,
   "final_residual_total": 119,
   "reverse_discovery_total": 9,
-  "heatmap_total": 666,
+  "heatmap_total": 663,
   "real_impact": {
     "bugs_fixed": 0,
     "tests_added": 0,
@@ -61,7 +61,7 @@
     },
     {
       "layer": "git_heatmap",
-      "residual": 666
+      "residual": 663
     },
     {
       "layer": "git_history",
