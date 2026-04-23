@@ -11,8 +11,8 @@
     "auth_env_var": "NF_API_KEY",
     "cert_path": "/etc/nforma/keys/private.pem"
   },
-  "secrets": {
-    "api_key": "plaintext_secret_123",
-    "private_key": "unencrypted_key_data"
+  "example_data": {
+    "item_a": "abc123",
+    "item_b": "xyz789"
   }
 }
