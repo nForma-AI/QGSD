@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "description": "nf:quick skill smoke fixtures — no LLM API key required",
+  "fixtures": [
+    {
+      "id": "bench-pure-util-identity",
+      "label": "bench-pure-util identity function returns input",
+      "command": "node",
+      "args": ["-e", "const m=require('./bin/bench-pure-util.cjs'); process.exit(m.identity(42)===42?0:1)"],
+      "pass_condition": "exits_zero",
+      "env_required": []
+    },
+    {
+      "id": "bench-feature-handler-process",
+      "label": "bench-feature-handler processFeature returns processed:true",
+      "command": "node",
+      "args": ["-e", "const m=require('./bin/bench-feature-handler.cjs'); const r=m.processFeature({name:'smoke'}); process.exit(r.processed===true?0:1)"],
+      "pass_condition": "exits_zero",
+      "env_required": []
+    },
+    {
+      "id": "bench-utility-transform",
+      "label": "bench-utility benchTransform filters empty lines",
+      "command": "node",
+      "args": ["-e", "const m=require('./bin/bench-utility.cjs'); const r=m.benchTransform('a\\n\\nb'); process.exit(r.length===2?0:1)"],
+      "pass_condition": "exits_zero",
+      "env_required": []
+    }
+  ]
+}

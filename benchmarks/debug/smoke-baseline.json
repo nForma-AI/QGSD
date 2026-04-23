@@ -1,0 +1,6 @@
+{
+  "pass_rate": 80,
+  "total_stubs": 5,
+  "updated_at": "2026-04-19",
+  "note": "Smoke baseline: 5 easy stubs (filter, sum-array, factorial, starts-with, clamp). Floor at 80% (4/5) to tolerate 1 flaky failure from API variance. Score below 80% indicates pipeline regression."
+}

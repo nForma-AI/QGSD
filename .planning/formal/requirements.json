@@ -1,7 +1,13 @@
 {
+<<<<<<< HEAD
+  "aggregated_at": "2026-04-17T04:37:59.710Z",
+  "content_hash": "cc8c06dea75836cdb69342890f822e12c0c44d5f80b71e07a2e3660ea69ad288",
+  "frozen_at": "2026-04-17T10:29:51.191Z",
+=======
   "aggregated_at": "2026-04-17T07:02:36.329Z",
   "content_hash": "7a0683c94eb64c97",
   "frozen_at": "2026-04-17T07:02:36.333Z",
+>>>>>>> origin/main
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
   "last_sync": "2026-03-31T09:45:23.686Z",
@@ -314,6 +320,39 @@
       "category_raw": "Architecture"
     },
     {
+<<<<<<< HEAD
+      "id": "BENCH-07",
+      "text": "Provide a generic benchmark runner CLI (bin/nf-benchmark.cjs) that loads fixtures from benchmarks/<skill>/fixtures.json, evaluates pass conditions, and enforces skill-specific baseline floors in CI gates.",
+      "category": "Benchmark Infrastructure",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "To scale quality assurance across multiple skills (quick, solve, future skills), extract shared benchmark utilities into a reusable module and build a generic runner that works for any skill without duplication. This enables consistent, CI-enforced quality gates and supports future skill onboarding.",
+      "source_file": ".planning/quick/402-build-generic-benchmark-runner-for-nform/402-PLAN.md",
+      "milestone": "quick-402"
+    },
+    {
+      "id": "BENCH-08",
+      "text": "The system detects seeded algorithmic bugs via TLC counterexample discovery and verifies fixes through TLC verification pass conditions, integrated with the nf:debug benchmark track.",
+      "category": "Benchmark Infrastructure",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Automated defect detection validates that the benchmark runner can identify intentional bugs in algorithm stubs using formal verification. The debug track exercises the TLC pass condition infrastructure (counterexample detection and fix verification) to ensure algorithmic debugging via formal modeling works end-to-end.",
+      "source_file": ".planning/quick/403-add-nf-debug-benchmark-track-with-generi/403-PLAN.md",
+      "milestone": "quick-403"
+    },
+    {
+      "id": "BENCH-09",
+      "text": "The nf:debug pipeline measures autonomy via a graded benchmark suite scoring 0-100 based on the fraction of seeded bugs (7 stubs across 3 difficulty tiers) that the AI quorum fixes end-to-end.",
+      "category": "Benchmark Infrastructure",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Quantifying the nf:debug pipeline's autonomous debugging capability requires reproducible test fixtures with known failures and a scoring mechanism that tracks fix success rates across difficulty levels. This benchmark provides a concrete autonomy metric for evaluating pipeline improvements and enforcing quality gates in CI.",
+      "source_file": ".planning/quick/404-build-nf-debug-autonomy-benchmark-with-g/404-PLAN.md",
+      "milestone": "quick-404"
+    },
+    {
+      "id": "BENCH-FAKE-03",
+=======
       "id": "BENCH-DETECT-04",
       "text": "nf-solve detects cross-layer mutations, formal model changes, and documentation claim violations in fast mode with active layer sweeps for l1_to_l3, l3_to_tc, formal_lint, and ghost-command scanning for /nf: slash-command references in doc files.",
       "category": "Benchmark Detection",
@@ -327,6 +366,7 @@
     },
     {
       "id": "BF-03",
+>>>>>>> origin/main
       "text": "Benchmark requirement with broken provenance",
       "category": "Benchmark",
       "tier": "user",

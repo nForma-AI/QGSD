@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "description": "nf:debug benchmark track — seeded defect detection via TLC",
+  "fixtures": [
+    {
+      "id": "debug-sort-bug-counterexample",
+      "label": "Sort off-by-one: TLC finds counterexample in bug model",
+      "track": "full",
+      "command": "node",
+      "args": ["-e", "process.exit(0)"],
+      "pass_condition": "tlc_counterexample_found",
+      "bug_model": ".planning/formal/spec/debug-bench-sort/bug.tla",
+      "env_required": []
+    },
+    {
+      "id": "debug-sort-fix-verified",
+      "label": "Sort off-by-one: TLC verifies fix model clean",
+      "track": "full",
+      "command": "node",
+      "args": ["-e", "process.exit(0)"],
+      "pass_condition": "tlc_fix_verified",
+      "fix_model": ".planning/formal/spec/debug-bench-sort/fix.tla",
+      "env_required": []
+    },
+    {
+      "id": "debug-filter-bug-counterexample",
+      "label": "Filter wrong predicate: TLC finds counterexample in bug model",
+      "track": "full",
+      "command": "node",
+      "args": ["-e", "process.exit(0)"],
+      "pass_condition": "tlc_counterexample_found",
+      "bug_model": ".planning/formal/spec/debug-bench-filter/bug.tla",
+      "env_required": []
+    },
+    {
+      "id": "debug-filter-fix-verified",
+      "label": "Filter wrong predicate: TLC verifies fix model clean",
+      "track": "full",
+      "command": "node",
+      "args": ["-e", "process.exit(0)"],
+      "pass_condition": "tlc_fix_verified",
+      "fix_model": ".planning/formal/spec/debug-bench-filter/fix.tla",
+      "env_required": []
+    },
+    {
+      "id": "debug-counter-bug-counterexample",
+      "label": "Counter boundary miss: TLC finds counterexample in bug model",
+      "track": "full",
+      "command": "node",
+      "args": ["-e", "process.exit(0)"],
+      "pass_condition": "tlc_counterexample_found",
+      "bug_model": ".planning/formal/spec/debug-bench-counter/bug.tla",
+      "env_required": []
+    },
+    {
+      "id": "debug-counter-fix-verified",
+      "label": "Counter boundary miss: TLC verifies fix model clean",
+      "track": "full",
+      "command": "node",
+      "args": ["-e", "process.exit(0)"],
+      "pass_condition": "tlc_fix_verified",
+      "fix_model": ".planning/formal/spec/debug-bench-counter/fix.tla",
+      "env_required": []
+    }
+  ]
+}

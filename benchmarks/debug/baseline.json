@@ -1,0 +1,13 @@
+{
+  "pass_rate": 58,
+  "total_stubs": 100,
+  "tiers": {
+    "easy": 17,
+    "medium": 13,
+    "hard": 17,
+    "extreme": 8,
+    "legendary": 3
+  },
+  "updated_at": "2026-04-19",
+  "note": "Fully obfuscated baseline: exported function names → f/g/h, params → a/b/c, test labels → t1/t2/..., filename → fn.cjs. Haiku scored 58/100. Extreme/legendary tier collapse (8/20, 3/20) confirms the benchmark now requires genuine distributed-systems reasoning rather than pattern-matching on semantic names."
+}

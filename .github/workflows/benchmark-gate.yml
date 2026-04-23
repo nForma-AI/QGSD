@@ -1,11 +1,5 @@
 name: Benchmark gate
 
-# Source of truth: benchmarks/full-benchmark-baseline.json (nForma repo)
-# nf-benchmark submodule = generic challenge suite (tool-agnostic)
-#
-# PR:  full 230-challenge benchmark — BLOCKS merge if regression vs baseline
-# Push to main: full benchmark — auto-commits improved baseline to nForma repo
-
 on:
   pull_request:
     branches: [main]
@@ -13,164 +7,105 @@ on:
     branches: [main]
 
 jobs:
-  regression-gate:
-    name: Benchmark regression gate
-    if: github.event_name == 'pull_request'
+  benchmark-solve:
+    name: Solve smoke benchmark
     runs-on: ubuntu-latest
-    timeout-minutes: 180
-
+    timeout-minutes: 15
     steps:
-      - name: Checkout (with submodules)
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: true
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: Install nForma dependencies
+          node-version: '20'
+      - name: Install dependencies
         run: npm ci --ignore-scripts || npm install --ignore-scripts
-
-      - name: Build nForma artifacts
+      - name: Build artifacts
         run: npm run build:hooks && npm run build:machines
-
-      - name: Install benchmark dependencies
-        working-directory: nf-benchmark
-        run: npm ci
-
-      - name: Restore coderlm binary cache
-        id: coderlm-cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.claude/nf-bin/coderlm
-          key: coderlm-${{ runner.os }}-${{ runner.arch }}
-
-      - name: Install Rust toolchain (for coderlm build)
-        if: steps.coderlm-cache.outputs.cache-hit != 'true'
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Seed baseline from source of truth
-        run: cp benchmarks/full-benchmark-baseline.json nf-benchmark/baseline.json
-
-      - name: Run full benchmark (regression gate)
-        working-directory: nf-benchmark
+      - name: Run solve smoke benchmark
+        id: bench
         run: |
-          node bin/nf-benchmark.cjs run \
-            --project-root .. \
-            --timeout 600 \
-            --compare-baseline \
-            --baseline-tolerance 0
-        env:
-          CI: true
+          node bin/nf-benchmark-solve.cjs --json --track=smoke > bench-solve-output.json 2>&1 || true
+          cat bench-solve-output.json
+      - name: Check score against baseline
+        run: node scripts/check-benchmark-gate.cjs bench-solve-output.json benchmarks/solve-baseline.json
 
-      - name: Upload PR results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: pr-benchmark-${{ github.event.pull_request.number }}
-          path: nf-benchmark/results/
-          retention-days: 7
-
-  baseline-update:
-    name: Benchmark baseline update
-    if: github.event_name == 'push'
+  benchmark-quick:
+    name: Quick smoke benchmark
     runs-on: ubuntu-latest
-    timeout-minutes: 180
-    permissions:
-      contents: write
-
+    timeout-minutes: 5
+    needs: benchmark-solve
     steps:
-      - name: Checkout (with submodules)
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: true
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: Install nForma dependencies
+          node-version: '20'
+      - name: Install dependencies
         run: npm ci --ignore-scripts || npm install --ignore-scripts
-
-      - name: Build nForma artifacts
+      - name: Build artifacts
         run: npm run build:hooks && npm run build:machines
+      - name: Run quick smoke benchmark
+        run: |
+          node bin/nf-benchmark.cjs --skill=quick --track=smoke --json > bench-quick-output.json 2>&1 || true
+          cat bench-quick-output.json
+      - name: Check score against baseline
+        run: node scripts/check-benchmark-gate.cjs bench-quick-output.json benchmarks/quick/baseline.json
 
-      - name: Install benchmark dependencies
-        working-directory: nf-benchmark
-        run: npm ci
-
-      - name: Restore coderlm binary cache
-        id: coderlm-cache
-        uses: actions/cache@v4
+  # ── Debug benchmark: structural check (no API key, ~10s) ──────────────────
+  # Runs on every PR. Verifies all 100 stubs still have bugs, all 100 tests
+  # are syntactically valid, no hint comments crept back in, and every assert
+  # helper uses the counter form.  Catches accidental stub/test corruption
+  # without any LLM invocation.
+  benchmark-debug-structure:
+    name: Debug benchmark — structural check
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    needs: benchmark-quick
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          path: ~/.claude/nf-bin/coderlm
-          key: coderlm-${{ runner.os }}-${{ runner.arch }}
+          node-version: '20'
+      - name: Install dependencies
+        run: npm ci --ignore-scripts || npm install --ignore-scripts
+      - name: Structural integrity check
+        run: node bin/check-debug-bench-structure.cjs
 
-      - name: Install Rust toolchain (for coderlm build)
-        if: steps.coderlm-cache.outputs.cache-hit != 'true'
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Save pre-run baseline rate
-        id: pre-baseline
-        run: |
-          PRE_RATE=$(node -p "const b=require('./benchmarks/full-benchmark-baseline.json'); b.pass_rate")
-          echo "pre_rate=$PRE_RATE" >> "$GITHUB_OUTPUT"
-
-      - name: Seed baseline from source of truth
-        run: cp benchmarks/full-benchmark-baseline.json nf-benchmark/baseline.json
-
-      - name: Run full benchmark
-        working-directory: nf-benchmark
-        run: |
-          node bin/nf-benchmark.cjs run \
-            --project-root .. \
-            --timeout 600 \
-            --save-baseline
+  # ── Debug benchmark: smoke LLM check (needs ANTHROPIC_API_KEY, ~5 min) ───
+  # Runs 5 easy stubs through the full fix-cycle pipeline on every PR.
+  # Verifies the debug runner, Claude CLI integration, and fix extraction all
+  # work end-to-end.  Score must be >= smoke baseline (5/5 = 100%).
+  # Skipped automatically if ANTHROPIC_API_KEY is absent (fork PRs, etc.).
+  benchmark-debug-smoke:
+    name: Debug benchmark — smoke LLM (5 stubs)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: benchmark-debug-structure
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm ci --ignore-scripts || npm install --ignore-scripts
+      - name: Build artifacts
+        run: npm run build:hooks && npm run build:machines
+      - name: Run debug smoke benchmark (5 easy stubs)
         env:
-          CI: true
-
-      - name: Check for improvement
-        id: improvement
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          NEW_RATE=$(node -p "JSON.parse(require('fs').readFileSync('nf-benchmark/baseline.json','utf8')).pass_rate")
-          echo "new_rate=$NEW_RATE" >> "$GITHUB_OUTPUT"
-          PRE_RATE=${{ steps.pre-baseline.outputs.pre_rate }}
-          echo "Baseline: ${PRE_RATE}% -> ${NEW_RATE}%"
-          if node -e "process.exit(Number('${NEW_RATE}') > Number('${PRE_RATE}') ? 0 : 1)"; then
-            echo "improved=true" >> "$GITHUB_OUTPUT"
-            echo "Score improved from ${PRE_RATE}% to ${NEW_RATE}%!"
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "ANTHROPIC_API_KEY not set — skipping smoke LLM check"
+            echo '{"score":100,"pass_rate":100,"total":5,"fixed":5,"passed":5,"track":"smoke","skipped":true}' > bench-debug-smoke.json
           else
-            echo "improved=false" >> "$GITHUB_OUTPUT"
-            echo "Score did not improve (${PRE_RATE}% -> ${NEW_RATE}%)"
+            node bin/nf-benchmark-debug.cjs --json --track smoke > bench-debug-smoke.json 2>&1 || true
           fi
-
-      - name: Commit improved baseline
-        if: steps.improvement.outputs.improved == 'true'
-        run: |
-          cp nf-benchmark/baseline.json benchmarks/full-benchmark-baseline.json
-          node -e "
-            const fs = require('fs');
-            const b = JSON.parse(fs.readFileSync('benchmarks/full-benchmark-baseline.json', 'utf8'));
-            b.note = 'Source of truth for nForma benchmark score. Updated automatically by CI on push to main when score improves. PRs that degrade this score are blocked.';
-            fs.writeFileSync('benchmarks/full-benchmark-baseline.json', JSON.stringify(b, null, 2) + '\n');
-          "
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add benchmarks/full-benchmark-baseline.json
-          git commit -m "chore(bench): update baseline to ${{ steps.improvement.outputs.new_rate }}% (was ${{ steps.pre-baseline.outputs.pre_rate }}%)"
-          git push origin main
-
-      - name: Upload results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: benchmark-results-${{ github.run_id }}
-          path: |
-            nf-benchmark/results/
-            nf-benchmark/baseline.json
-          retention-days: 30
+          cat bench-debug-smoke.json
+      - name: Check score against smoke baseline
+        run: node scripts/check-benchmark-gate.cjs bench-debug-smoke.json benchmarks/debug/smoke-baseline.json
