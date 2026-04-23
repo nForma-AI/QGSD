@@ -591,8 +591,16 @@ describe('virgin install: npm global simulation', () => {
 // ── TUI data loading: real requirements.json ─────────────────────────────────
 // Validates that requirements-core.cjs can load real project data.
 // This catches regressions where the data file schema changes or paths break.
+//
+// NOTE: .planning/formal/requirements.json is a LOCAL DEV FILE not included in
+// the npm package. These tests require local project context and must be
+// skipped when running as part of virgin install tests (where only the
+// installed package exists, not the full dev tree).
 
-describe('TUI data loading: requirements', () => {
+const REQ_JSON_PATH = path.join(__dirname, '..', '.planning', 'formal', 'requirements.json');
+const hasLocalRequirements = fs.existsSync(REQ_JSON_PATH);
+
+describe('TUI data loading: requirements', { skip: !hasLocalRequirements }, () => {
   test('readRequirementsJson returns non-empty requirements array', () => {
     const reqCore = require('../bin/requirements-core.cjs');
     const { envelope, requirements } = reqCore.readRequirementsJson();
