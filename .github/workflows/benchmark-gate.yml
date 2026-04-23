@@ -1,4 +1,5 @@
 name: Benchmark gate
+# Trigger CI for PR #115
 
 on:
   pull_request:
