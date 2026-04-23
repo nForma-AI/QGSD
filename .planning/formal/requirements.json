@@ -1,13 +1,10 @@
 {
-<<<<<<< HEAD
   "aggregated_at": "2026-04-17T04:37:59.710Z",
   "content_hash": "cc8c06dea75836cdb69342890f822e12c0c44d5f80b71e07a2e3660ea69ad288",
   "frozen_at": "2026-04-17T10:29:51.191Z",
-=======
   "aggregated_at": "2026-04-17T07:02:36.329Z",
   "content_hash": "7a0683c94eb64c97",
   "frozen_at": "2026-04-17T07:02:36.333Z",
->>>>>>> origin/main
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
   "last_sync": "2026-03-31T09:45:23.686Z",
@@ -320,7 +317,6 @@
       "category_raw": "Architecture"
     },
     {
-<<<<<<< HEAD
       "id": "BENCH-07",
       "text": "Provide a generic benchmark runner CLI (bin/nf-benchmark.cjs) that loads fixtures from benchmarks/<skill>/fixtures.json, evaluates pass conditions, and enforces skill-specific baseline floors in CI gates.",
       "category": "Benchmark Infrastructure",
@@ -352,7 +348,6 @@
     },
     {
       "id": "BENCH-FAKE-03",
-=======
       "id": "BENCH-DETECT-04",
       "text": "nf-solve detects cross-layer mutations, formal model changes, and documentation claim violations in fast mode with active layer sweeps for l1_to_l3, l3_to_tc, formal_lint, and ghost-command scanning for /nf: slash-command references in doc files.",
       "category": "Benchmark Detection",
@@ -366,7 +361,6 @@
     },
     {
       "id": "BF-03",
->>>>>>> origin/main
       "text": "Benchmark requirement with broken provenance",
       "category": "Benchmark",
       "tier": "user",

@@ -6,6 +6,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.42.6] - 2026-04-23 — CI/CD testing
+
+### Changed
+- ci: prepare-release.sh and release.sh now test the full release pipeline
+
 ## [0.42.5] - 2026-04-21
 
 ### Fixed

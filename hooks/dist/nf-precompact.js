@@ -335,3 +335,9 @@ if (typeof module !== 'undefined') {
   module.exports.formatProgressInjection = formatProgressInjection;
   module.exports.readMemoryInjection = readMemoryInjection;
 }
+
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
