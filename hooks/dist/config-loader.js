@@ -700,3 +700,14 @@ function writeConfig(filePath, config) {
 }
 
 module.exports = { loadConfig, validateConfig, DEFAULT_CONFIG, SLOT_TOOL_SUFFIX, slotToToolCall, shouldRunHook, HOOK_PROFILE_MAP, validateHookInput, HOOK_INPUT_SCHEMAS, DEFAULT_HOOK_PRIORITIES, normalizeConfigValue, normalizeConfig, flattenNestedKeys, nestFlatKeys, writeConfig };
+
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark

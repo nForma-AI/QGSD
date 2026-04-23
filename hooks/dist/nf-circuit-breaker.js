@@ -862,3 +862,9 @@ module.exports = {
   makePatternHash,
   getEvidencePath,
 };
+
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
+// modified by benchmark
