@@ -1360,3 +1360,37 @@ test('Quorum gate preservation: ROOT CAUSE injection does NOT suppress GSD_DECIS
     fs.rmSync(tempDir, { recursive: true, force: true });
   }
 });
+
+// ADVERSARIAL TEST: parseQuorumSizeFlag silently ignores trailing non-numeric chars
+// --n 2abc captures "2" via \d+ and returns 2 (valid). This could cause confusion
+// if a user mistakenly types "--n 2.5" expecting 2.5 but getting 2 (or null if we fix it).
+// This test documents the current behavior: trailing chars after digits are silently dropped.
+test('ADVERSARIAL: parseQuorumSizeFlag drops trailing non-digit characters like --n 2abc', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-adv-parse-'));
+  try {
+    spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
+    const claudeDir = path.join(tempDir, '.claude');
+    fs.mkdirSync(claudeDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(claudeDir, 'nf.json'),
+      JSON.stringify({ quorum_active: ['codex-1', 'gemini-1', 'opencode-1', 'copilot-1', 'claude-1'] }),
+      'utf8'
+    );
+
+    // --n 2abc: \d+ matches "2", parseInt("2")=2, n>=1 → returns 2
+    // The "abc" is silently ignored. This is arguably wrong UX.
+    const { stdout } = runHook({ prompt: '/qnf:plan-phase --n 2abc', cwd: tempDir });
+    const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
+    // The quorum instruction should reference --n 2 (not --n 2abc)
+    // Current buggy behavior: "2abc" is silently truncated to "2"
+    assert.ok(
+      ctx.includes('--n 2'),
+      'parseQuorumSizeFlag should handle --n 2abc by truncating to 2 (documenting current behavior)'
+    );
+    // Task lines should show only 1 external slot (N-1 = 1) since fanOutCount=2
+    const taskLineCount = (ctx.match(/\d+\. Task\(subagent_type="nf-quorum-slot-worker"/g) || []).length;
+    assert.strictEqual(taskLineCount, 1, '--n 2abc with 2→1 external slot should produce exactly 1 Task line');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});

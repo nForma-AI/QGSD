@@ -2,7 +2,11 @@
 -- GENERATED — do not edit by hand.
 -- Source of truth: src/machines/nf-workflow.machine.ts
 -- Regenerate:      node bin/generate-formal-specs.cjs
+<<<<<<< HEAD
 -- Generated:       2026-04-19
+=======
+-- Generated:       2026-04-16
+>>>>>>> origin/main
 
 -- nForma Quorum Vote-Counting Model (Alloy 6)
 -- Requirements: ALY-01

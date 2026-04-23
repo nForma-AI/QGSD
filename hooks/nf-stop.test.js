@@ -1421,6 +1421,66 @@ test('TC-N-OVERRIDE-BLOCK: --n 3 requires 2 calls; 1 call blocks despite config 
   }
 });
 
+// ── TC-PARSE-N: parseQuorumSizeFlag edge cases via integration ─────────────────
+//
+// These tests exercise parseQuorumSizeFlag indirectly through the hook's --n flag
+// handling in the prompt text (GUARD 6 solo mode bypass, N-OVERRIDE path).
+
+// TC-PARSE-N-EDGE: --n=5 (equals sign instead of space) is NOT recognized
+// The parseQuorumSizeFlag regex is /\s+--n\s+(\d+)/ — requires whitespace before --n
+// If a user types --n=5 (with equals), the flag is not detected and solo mode
+// is NOT triggered. This tests that --n=5 does NOT trigger --n 1 solo bypass.
+test('TC-PARSE-N-EDGE: --n=5 (equals sign) is NOT recognized as solo mode trigger', () => {
+  const tmpFile = writeTempTranscript([
+    userLine('/qnf:plan-phase 1 --n=5', 'human-eq'),
+    assistantLine([bashCommitBlock('node /path/nf-tools.cjs commit "docs: plan" --files 04-01-PLAN.md')], 'assistant-commit'),
+    assistantLine([{ type: 'text', text: 'Plan with equals syntax.' }], 'assistant-final'),
+  ]);
+  try {
+    const { stdout, exitCode } = runHook({
+      stop_hook_active: false,
+      hook_event_name: 'Stop',
+      transcript_path: tmpFile,
+      last_assistant_message: 'Plan with equals syntax.',
+    });
+    // --n=5 is not recognized, so solo mode (--n 1) is NOT triggered
+    // The prompt contains a quorum command + decision turn + no quorum calls
+    // → should block (not pass silently)
+    assert.strictEqual(exitCode, 0, 'exit code must be 0 even when blocking');
+    assert.ok(stdout.length > 0, 'stdout must contain block decision — --n=5 not recognized as --n flag');
+    const parsed = JSON.parse(stdout);
+    assert.strictEqual(parsed.decision, 'block', 'decision must be block — --n=5 does not trigger solo bypass');
+  } finally {
+    fs.unlinkSync(tmpFile);
+  }
+});
+
+// TC-PARSE-N-ZERO: --n 0 should NOT trigger solo mode (n must be >= 1)
+// GUARD 6 solo mode requires quorumSizeOverride === 1. --n 0 → n=0 → null (fails n>=1 check)
+test('TC-PARSE-N-ZERO: --n 0 is invalid and does NOT trigger solo mode bypass', () => {
+  const tmpFile = writeTempTranscript([
+    userLine('/qnf:plan-phase 1 --n 0', 'human-zero'),
+    assistantLine([bashCommitBlock('node /path/nf-tools.cjs commit "docs: plan" --files 04-01-PLAN.md')], 'assistant-commit'),
+    assistantLine([{ type: 'text', text: 'Plan with --n 0.' }], 'assistant-final'),
+  ]);
+  try {
+    const { stdout, exitCode } = runHook({
+      stop_hook_active: false,
+      hook_event_name: 'Stop',
+      transcript_path: tmpFile,
+      last_assistant_message: 'Plan with --n 0.',
+    });
+    // --n 0 → parseQuorumSizeFlag returns null (n=0 fails n>=1 check)
+    // Solo mode not triggered, and no quorum calls made → should block
+    assert.strictEqual(exitCode, 0, 'exit code must be 0 even when blocking');
+    assert.ok(stdout.length > 0, 'stdout must contain block decision — --n 0 is invalid');
+    const parsed = JSON.parse(stdout);
+    assert.strictEqual(parsed.decision, 'block', 'decision must be block — --n 0 is not valid solo mode');
+  } finally {
+    fs.unlinkSync(tmpFile);
+  }
+});
+
 // ── Profile Guard Tests ─────────────────────────────────────────────────────
 
 // TC-PROFILE-MINIMAL-EXIT: hook_profile=minimal → nf-stop exits 0 with no output (profile guard)

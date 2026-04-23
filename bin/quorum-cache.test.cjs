@@ -169,3 +169,37 @@ describe('isCacheValid', () => {
     assert.equal(isCacheValid(null, 'abc', []), false);
   });
 });
+
+// ADVERSARIAL: computeCacheKey with oversized prompt (1MB) should not crash or hang
+// If the function uses a streaming hash or doesn't limit input size, it could cause issues.
+describe('computeCacheKey adversarial', () => {
+  it('handles oversized prompt (1MB string) without crashing', () => {
+    const largePrompt = 'x'.repeat(1024 * 1024); // 1MB string
+    const slots = [{ slot: 'codex-1' }];
+    const cfg = ['codex-1'];
+    let key;
+    assert.doesNotThrow(() => {
+      key = computeCacheKey(largePrompt, 'ctx', slots, cfg, 'HEAD1');
+    }, 'computeCacheKey must not throw on 1MB input');
+    assert.ok(typeof key === 'string' && key.length === 64, 'key should still be a 64-char hex string');
+  });
+
+  it('handles oversized context_yaml (500KB) without crashing', () => {
+    const largeCtx = 'y'.repeat(500 * 1024); // 500KB string
+    const slots = [{ slot: 'gemini-1' }];
+    let key;
+    assert.doesNotThrow(() => {
+      key = computeCacheKey('prompt', largeCtx, slots, [], 'HEAD1');
+    }, 'computeCacheKey must not throw on 500KB context');
+    assert.ok(typeof key === 'string' && key.length === 64, 'key should still be a 64-char hex string');
+  });
+
+  it('produces different keys for significantly different large inputs', () => {
+    const prompt1 = 'a'.repeat(10000);
+    const prompt2 = 'b'.repeat(10000);
+    const slots = [{ slot: 'codex-1' }];
+    const key1 = computeCacheKey(prompt1, '', slots, [], 'HEAD1');
+    const key2 = computeCacheKey(prompt2, '', slots, [], 'HEAD1');
+    assert.notEqual(key1, key2, 'different large inputs must produce different keys');
+  });
+});

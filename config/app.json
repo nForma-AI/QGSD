@@ -10,5 +10,9 @@
   "example_config": {
     "auth_env_var": "NF_API_KEY",
     "cert_path": "/etc/nforma/keys/private.pem"
+  },
+  "example_data": {
+    "item_a": "abc123",
+    "item_b": "xyz789"
   }
 }

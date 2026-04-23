@@ -866,3 +866,28 @@ test('TC-CRE: context_retrieval_enabled defaults to true when no config file pre
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
 });
+
+// ADVERSARIAL: quorum.minSize is validated as positive integer but NOT checked against agent count
+// If quorum.minSize=10 but quorum_active only has 3 slots, the quorum can NEVER be satisfied.
+// This is a design flaw: minSize validation only checks ">= 1", not against available slots.
+test('ADVERSARIAL: quorum.minSize exceeding quorum_active count is not validated — no warning emitted', async (t) => {
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-adv-minmax-'));
+  let stderrOutput = '';
+  const origWrite = process.stderr.write.bind(process.stderr);
+  process.stderr.write = (msg) => { stderrOutput += msg; return true; };
+  try {
+    // minSize=10 but only 3 slots in quorum_active — quorum can never be satisfied
+    writeTempConfig(projectDir, JSON.stringify({
+      quorum_active: ['codex-1', 'gemini-1', 'opencode-1'],
+      quorum: { minSize: 10 }
+    }));
+    const config = loadConfig(projectDir);
+    // Validation only checks minSize >= 1, NOT minSize <= quorum_active.length
+    assert.strictEqual(config.quorum.minSize, 10, 'minSize=10 should be accepted (no upper bound check)');
+    // No warning should be emitted about the unsatisfiable quorum
+    assert.ok(!stderrOutput.includes('quorum.minSize'), 'no warning about minSize exceeding agent count');
+  } finally {
+    process.stderr.write = origWrite;
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
