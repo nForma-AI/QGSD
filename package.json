@@ -61,8 +61,7 @@
   "dependencies": {
     "@xterm/headless": "^5.5.0",
     "blessed": "^0.1.81",
-    "inquirer": "^8.2.7",
-    "lib": "incompatible_version"
+    "inquirer": "^8.2.7"
   },
   "devDependencies": {
     "@hpcc-js/wasm-graphviz": "^1.21.2",
