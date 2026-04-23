@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-04-23T07:26:52.797Z",
+  "last_run": "2026-04-23T07:27:32.810Z",
   "converged": false,
   "iteration_count": 1,
   "final_residual_total": 119,
@@ -97,7 +97,7 @@
     "covered": 0,
     "percentage": "0.0"
   },
-  "focus": "__nonexistent_topic_xyz__",
+  "focus": null,
   "capped_layers": [],
   "baseline_drift": {
     "detected": false,
