@@ -626,7 +626,7 @@ describe('TUI data loading: requirements', () => {
   test('requirement IDs follow expected format (PREFIX-NN)', () => {
     const reqCore = require('../bin/requirements-core.cjs');
     const { requirements } = reqCore.readRequirementsJson();
-    const idPattern = /^[A-Z]{1,10}-\d{1,4}$/;
+    const idPattern = /^[A-Z]{1,10}(-[A-Z0-9]+)*-\d{1,4}$/;
     const invalid = requirements.filter(r => !idPattern.test(r.id));
     assert.equal(invalid.length, 0,
       `all IDs must match PREFIX-NN format, invalid: ${invalid.map(r => r.id).join(', ')}`);

@@ -156,3 +156,10 @@ bin/.planning/
 
 # Repowise caches (co-change graph, hotspot risk) — regenerated on demand
 .planning/repowise/
+
+# Benchmark run results (local artifacts, CI uploads them as artifacts)
+nf-benchmark/results/
+nf-benchmark/baseline.json
+
+# Generated petri net files (PNML)
+.planning/formal/petri/*.pnml

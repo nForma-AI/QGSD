@@ -1,64 +1,176 @@
 name: Benchmark gate
 
-# Runs on all PRs to main — blocks merge if solve benchmark regresses vs baseline.
-# Baseline is stored in benchmarks/solve-baseline.json.
-# Update it with: bash scripts/update-benchmark-baseline.sh
-"on":
+# Source of truth: benchmarks/full-benchmark-baseline.json (nForma repo)
+# nf-benchmark submodule = generic challenge suite (tool-agnostic)
+#
+# PR:  full 230-challenge benchmark — BLOCKS merge if regression vs baseline
+# Push to main: full benchmark — auto-commits improved baseline to nForma repo
+
+on:
   pull_request:
+    branches: [main]
+  push:
     branches: [main]
 
 jobs:
-  benchmark:
-    name: nf:solve benchmark
+  regression-gate:
+    name: Benchmark regression gate
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 240
+    timeout-minutes: 180
 
     steps:
-      - name: Checkout
+      - name: Checkout (with submodules)
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
+          cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install nForma dependencies
         run: npm ci --ignore-scripts || npm install --ignore-scripts
 
-      - name: Build artifacts
+      - name: Build nForma artifacts
         run: npm run build:hooks && npm run build:machines
 
-      - name: Run nf-benchmark solve
-        id: bench
+      - name: Install benchmark dependencies
+        working-directory: nf-benchmark
+        run: npm ci
+
+      - name: Restore coderlm binary cache
+        id: coderlm-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.claude/nf-bin/coderlm
+          key: coderlm-${{ runner.os }}-${{ runner.arch }}
+
+      - name: Install Rust toolchain (for coderlm build)
+        if: steps.coderlm-cache.outputs.cache-hit != 'true'
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Seed baseline from source of truth
+        run: cp benchmarks/full-benchmark-baseline.json nf-benchmark/baseline.json
+
+      - name: Run full benchmark (regression gate)
+        working-directory: nf-benchmark
+        run: |
+          node bin/nf-benchmark.cjs run \
+            --project-root .. \
+            --timeout 600 \
+            --compare-baseline \
+            --baseline-tolerance 0
         env:
-          NF_SOLVE_SESSION_ID: benchmark-${{ github.run_id }}-${{ github.run_attempt }}
-        run: |
-          node "$HOME/code/nf-benchmark/bin/nf-benchmark.cjs" run \
-            --project-root "$PWD" \
-            --parallel 4
+          CI: true
 
-      - name: Find latest report
-        id: report
-        run: |
-          REPORT=$(ls "$HOME/code/nf-benchmark/results"/report-*.json 2>/dev/null | sort -r | head -1)
-          echo "report=$(realpath "$REPORT")" >> "$GITHUB_OUTPUT"
-
-      - name: Parse and compare results
-        id: results
-        env:
-          REPORT: ${{ steps.report.outputs.report }}
-          BASELINE: ${{ github.workspace }}/benchmarks/solve-baseline.json
-        run: python3 scripts/benchmark-gate-parse.py
-
-      - name: Show summary
-        run: |
-          echo "Benchmark result: ${{ steps.results.outputs.passed }}/${{ steps.results.outputs.total }} (${{ steps.results.outputs.pass_rate }}%)"
-          echo "Baseline floor  : ${{ steps.results.outputs.baseline_rate }}%"
-          echo "Delta          : ${{ steps.results.outputs.delta }}pp"
-          python3 scripts/benchmark-check.py \
-            ${{ steps.results.outputs.pass_rate }} \
-            ${{ steps.results.outputs.baseline_rate }}
-
-      - name: Store per-category scores as GitHub secrets
+      - name: Upload PR results
         if: always()
-        run: python3 scripts/benchmark-secrets-sync.py || true
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-benchmark-${{ github.event.pull_request.number }}
+          path: nf-benchmark/results/
+          retention-days: 7
+
+  baseline-update:
+    name: Benchmark baseline update
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install nForma dependencies
+        run: npm ci --ignore-scripts || npm install --ignore-scripts
+
+      - name: Build nForma artifacts
+        run: npm run build:hooks && npm run build:machines
+
+      - name: Install benchmark dependencies
+        working-directory: nf-benchmark
+        run: npm ci
+
+      - name: Restore coderlm binary cache
+        id: coderlm-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.claude/nf-bin/coderlm
+          key: coderlm-${{ runner.os }}-${{ runner.arch }}
+
+      - name: Install Rust toolchain (for coderlm build)
+        if: steps.coderlm-cache.outputs.cache-hit != 'true'
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Save pre-run baseline rate
+        id: pre-baseline
+        run: |
+          PRE_RATE=$(node -p "const b=require('./benchmarks/full-benchmark-baseline.json'); b.pass_rate")
+          echo "pre_rate=$PRE_RATE" >> "$GITHUB_OUTPUT"
+
+      - name: Seed baseline from source of truth
+        run: cp benchmarks/full-benchmark-baseline.json nf-benchmark/baseline.json
+
+      - name: Run full benchmark
+        working-directory: nf-benchmark
+        run: |
+          node bin/nf-benchmark.cjs run \
+            --project-root .. \
+            --timeout 600 \
+            --save-baseline
+        env:
+          CI: true
+
+      - name: Check for improvement
+        id: improvement
+        run: |
+          NEW_RATE=$(node -p "JSON.parse(require('fs').readFileSync('nf-benchmark/baseline.json','utf8')).pass_rate")
+          echo "new_rate=$NEW_RATE" >> "$GITHUB_OUTPUT"
+          PRE_RATE=${{ steps.pre-baseline.outputs.pre_rate }}
+          echo "Baseline: ${PRE_RATE}% -> ${NEW_RATE}%"
+          if node -e "process.exit(Number('${NEW_RATE}') > Number('${PRE_RATE}') ? 0 : 1)"; then
+            echo "improved=true" >> "$GITHUB_OUTPUT"
+            echo "Score improved from ${PRE_RATE}% to ${NEW_RATE}%!"
+          else
+            echo "improved=false" >> "$GITHUB_OUTPUT"
+            echo "Score did not improve (${PRE_RATE}% -> ${NEW_RATE}%)"
+          fi
+
+      - name: Commit improved baseline
+        if: steps.improvement.outputs.improved == 'true'
+        run: |
+          cp nf-benchmark/baseline.json benchmarks/full-benchmark-baseline.json
+          node -e "
+            const fs = require('fs');
+            const b = JSON.parse(fs.readFileSync('benchmarks/full-benchmark-baseline.json', 'utf8'));
+            b.note = 'Source of truth for nForma benchmark score. Updated automatically by CI on push to main when score improves. PRs that degrade this score are blocked.';
+            fs.writeFileSync('benchmarks/full-benchmark-baseline.json', JSON.stringify(b, null, 2) + '\n');
+          "
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add benchmarks/full-benchmark-baseline.json
+          git commit -m "chore(bench): update baseline to ${{ steps.improvement.outputs.new_rate }}% (was ${{ steps.pre-baseline.outputs.pre_rate }}%)"
+          git push origin main
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results-${{ github.run_id }}
+          path: |
+            nf-benchmark/results/
+            nf-benchmark/baseline.json
+          retention-days: 30
