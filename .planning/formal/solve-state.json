@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-04-23T07:24:52.758Z",
+  "last_run": "2026-04-23T07:25:32.980Z",
   "converged": false,
   "iteration_count": 1,
   "final_residual_total": 115,
@@ -24,7 +24,7 @@
   ],
   "known_issues": [
     {
-      "layer": "r_to_d",
+      "layer": "r_to_f",
       "residual": 1
     },
     {
@@ -89,11 +89,11 @@
     }
   ],
   "r_to_f_progress": {
-    "total": 0,
+    "total": 471,
     "covered": 0,
-    "percentage": 0
+    "percentage": "0.0"
   },
-  "focus": null,
+  "focus": "formal model",
   "capped_layers": [],
   "baseline_drift": {
     "detected": false,
