@@ -6,6 +6,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.43.0-rc.1] - 2026-04-23 — next prerelease
+
+### Changed
+- ci: testing next release pipeline (0.43.0 milestone)
+
 ## [0.42.6] - 2026-04-23 — CI/CD testing
 
 ### Changed
