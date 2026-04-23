@@ -1,8 +1,8 @@
 {
-  "last_run": "2026-04-23T07:25:32.980Z",
+  "last_run": "2026-04-23T07:26:12.732Z",
   "converged": false,
   "iteration_count": 1,
-  "final_residual_total": 115,
+  "final_residual_total": 119,
   "reverse_discovery_total": 9,
   "heatmap_total": 663,
   "real_impact": {
@@ -25,6 +25,10 @@
   "known_issues": [
     {
       "layer": "r_to_f",
+      "residual": 4
+    },
+    {
+      "layer": "r_to_d",
       "residual": 1
     },
     {
@@ -93,7 +97,7 @@
     "covered": 0,
     "percentage": "0.0"
   },
-  "focus": "formal model",
+  "focus": null,
   "capped_layers": [],
   "baseline_drift": {
     "detected": false,
