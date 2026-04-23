@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-04-22T11:44:44.839Z",
+  "last_run": "2026-04-23T07:21:16.978Z",
   "converged": false,
   "iteration_count": 1,
   "final_residual_total": 119,
@@ -57,7 +57,7 @@
     },
     {
       "layer": "l3_to_tc",
-      "residual": 2
+      "residual": 1
     },
     {
       "layer": "git_heatmap",
@@ -97,7 +97,7 @@
     "covered": 0,
     "percentage": "0.0"
   },
-  "focus": "NONEXISTENT-FOCUS-TERM",
+  "focus": null,
   "capped_layers": [],
   "baseline_drift": {
     "detected": false,
