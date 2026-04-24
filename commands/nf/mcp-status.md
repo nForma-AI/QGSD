@@ -8,14 +8,8 @@ allowed-tools:
   - mcp__codex-1__identity
   - mcp__gemini-1__identity
   - mcp__opencode-1__identity
-  - mcp__opencode-2__identity
   - mcp__copilot-1__identity
   - mcp__claude-1__identity
-  - mcp__claude-2__identity
-  - mcp__claude-3__identity
-  - mcp__claude-4__identity
-  - mcp__claude-5__identity
-  - mcp__claude-6__identity
   - mcp__ccr-1__identity
   - mcp__ccr-2__identity
   - mcp__ccr-3__identity
@@ -25,14 +19,8 @@ allowed-tools:
   - mcp__codex-1__health_check
   - mcp__gemini-1__health_check
   - mcp__opencode-1__health_check
-  - mcp__opencode-2__health_check
   - mcp__copilot-1__health_check
   - mcp__claude-1__health_check
-  - mcp__claude-2__health_check
-  - mcp__claude-3__health_check
-  - mcp__claude-4__health_check
-  - mcp__claude-5__health_check
-  - mcp__claude-6__health_check
   - mcp__ccr-1__health_check
   - mcp__ccr-2__health_check
   - mcp__ccr-3__health_check
@@ -185,7 +173,7 @@ You are a data-collection sub-agent. Your only job is to call the MCP tools list
 
 The configured quorum slots are: ${JSON.stringify(allSlots)}
 
-Call identity and health_check for each slot listed above. Use tool names in the format mcp__<slot>__identity and mcp__<slot>__health_check. Tool names preserve hyphens: for slot 'ccr-1' call mcp__ccr-1__identity and mcp__ccr-1__health_check (NOT mcp__ccr_1__identity). For slot 'opencode-2' call mcp__opencode-2__identity and mcp__opencode-2__health_check.
+Call identity and health_check for each slot listed above. Use tool names in the format mcp__<slot>__identity and mcp__<slot>__health_check. Tool names preserve hyphens: for slot 'ccr-1' call mcp__ccr-1__identity and mcp__ccr-1__health_check (NOT mcp__ccr_1__identity).
 
 Call each tool with {} as input. Wrap every call in try/catch — if a tool throws or is unavailable, record null for that field.
 
@@ -250,16 +238,17 @@ Example output format:
 │ Agent       │ Auth │ Provider     │ Model                                             │ Health       │ Latency │
 ├─────────────┼──────┼──────────────┼───────────────────────────────────────────────────┼──────────────┼─────────┤
 │ claude      │ sub  │ Anthropic    │ claude-sonnet-4-6                                 │ orchestrator │ —       │
-│ codex-1     │ sub  │ OpenAI       │ gpt-5.3-codex                                     │ available    │ 245ms   │
-│ gemini-1    │ sub  │ Google       │ gemini-2.5-pro                                    │ available    │ 312ms   │
-│ opencode-1  │ sub  │ OpenCode     │ xai/grok-3                                        │ available    │ 891ms   │
+│ codex-1     │ sub  │ OpenAI       │ gpt-5.4                                           │ available    │ 245ms   │
+│ gemini-1    │ sub  │ Google       │ gemini-3-flash-preview                            │ available    │ 312ms   │
+│ opencode-1  │ sub  │ OpenCode     │ grok-code-fast-1                                  │ available    │ 891ms   │
 │ copilot-1   │ sub  │ GitHub       │ gpt-4.1                                           │ available    │ 1204ms  │
-│ claude-1    │ api  │ AkashML      │ deepseek-ai/DeepSeek-V3.2                         │ available    │ 524ms   │
-│ claude-2    │ api  │ AkashML      │ MiniMaxAI/MiniMax-M2.5                            │ available    │ 735ms   │
-│ claude-3    │ api  │ Together.xyz │ Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8           │ available    │ 761ms   │
-│ claude-4    │ api  │ Fireworks    │ accounts/fireworks/models/kimi-k2p5               │ available    │ 1828ms  │
-│ claude-5    │ api  │ Together.xyz │ meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8 │ available    │ 20601ms │
-│ claude-6    │ api  │ Fireworks    │ accounts/fireworks/models/glm-5                   │ fallback     │ 312ms   │
+│ claude-1    │ sub  │ Anthropic    │ claude-opus-4-6                                   │ available    │ 524ms   │
+│ ccr-1       │ api  │ Together.xyz │ MiniMaxAI/MiniMax-M2.5                            │ available    │ 735ms   │
+│ ccr-2       │ api  │ Together.xyz │ Qwen/Qwen3.5-397B-A17B                            │ available    │ 761ms   │
+│ ccr-3       │ api  │ Together.xyz │ Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8           │ available    │ 680ms   │
+│ ccr-4       │ api  │ Together.xyz │ moonshotai/Kimi-K2.5                              │ available    │ 1828ms  │
+│ ccr-5       │ api  │ Together.xyz │ openai/gpt-oss-120b                               │ available    │ 920ms   │
+│ ccr-6       │ api  │ Together.xyz │ zai-org/GLM-5.1                                   │ available    │ 312ms   │
 └─────────────┴──────┴──────────────┴───────────────────────────────────────────────────┴──────────────┴─────────┘
 
 Scoreboard: 156 rounds recorded | Last update: 2026-02-23T14:23:52.301Z

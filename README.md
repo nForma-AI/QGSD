@@ -1,5 +1,11 @@
 <div align="center">
 
+> **Get started** — give this prompt to your coding agent:
+>
+> *Clone https://github.com/nForma-AI/nForma, then read `onboard.md` at the root — it contains your full instructions for onboarding me through this tool.*
+
+<br>
+
 <img src="docs/assets/nf-logo-2000-transparent.png" alt="nForma logo" width="200">
 
 # nForma — Consensus before code. Proof before production.
@@ -338,7 +344,7 @@ gh auth login
 
 #### API Agents — Claude Code Router (CCR)
 
-API-based slots (`claude-1` through `claude-6`) use [Claude Code Router](https://github.com/musistudio/claude-code-router) to route requests to providers like AkashML, Together.xyz, and Fireworks. See the [CCR README](https://github.com/musistudio/claude-code-router#-getting-started) for installation and configuration.
+API-based slots (`ccr-1` through `ccr-6`) use [Claude Code Router](https://github.com/musistudio/claude-code-router) to route requests to providers like Together.xyz. See the [CCR README](https://github.com/musistudio/claude-code-router#-getting-started) for installation and configuration.
 
 #### Registration
 

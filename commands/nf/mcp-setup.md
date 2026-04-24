@@ -66,11 +66,12 @@ different LLM provider. You need at least one to use quorum.
 
 | Agent | Provider | Base URL | Model |
 |---|---|---|---|
-| claude-1 | AkashML | https://api.akashml.com/v1 | deepseek-ai/DeepSeek-V3 |
-| claude-2 | AkashML | https://api.akashml.com/v1 | MiniMaxAI/MiniMax-M2.5 |
-| claude-3 | Together.xyz | https://api.together.xyz/v1 | Qwen/Qwen3-Coder-480B |
-| claude-5 | Together.xyz | https://api.together.xyz/v1 | meta-llama/Llama-4-M |
-| claude-4 | Fireworks | https://api.fireworks.ai/inference/v1 | kimi |
+| ccr-1 | Together.xyz | https://api.together.xyz/v1 | MiniMaxAI/MiniMax-M2.5 |
+| ccr-2 | Together.xyz | https://api.together.xyz/v1 | Qwen/Qwen3.5-397B-A17B |
+| ccr-3 | Together.xyz | https://api.together.xyz/v1 | Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8 |
+| ccr-4 | Together.xyz | https://api.together.xyz/v1 | moonshotai/Kimi-K2.5 |
+| ccr-5 | Together.xyz | https://api.together.xyz/v1 | openai/gpt-oss-120b |
+| ccr-6 | Together.xyz | https://api.together.xyz/v1 | zai-org/GLM-5.1 |
 
 ### Step 2a: Select agent template
 
@@ -78,11 +79,12 @@ Use AskUserQuestion:
 - header: "Choose an agent to configure"
 - question: "Select an agent template to set up. You can add more after."
 - options (omit agents already configured or skipped in this session):
-  - "1 — claude-1 (AkashML, DeepSeek-V3)"
-  - "2 — claude-2 (AkashML, MiniMax-M2.5)"
-  - "3 — claude-3 (Together.xyz, Qwen3-Coder-480B)"
-  - "4 — claude-5 (Together.xyz, Llama-4-M)"
-  - "5 — claude-4 (Fireworks, kimi)"
+  - "1 — ccr-1 (Together.xyz, MiniMax-M2.5)"
+  - "2 — ccr-2 (Together.xyz, Qwen3.5-397B)"
+  - "3 — ccr-3 (Together.xyz, Qwen3-Coder-480B)"
+  - "4 — ccr-4 (Together.xyz, Kimi-K2.5)"
+  - "5 — ccr-5 (Together.xyz, gpt-oss-120b)"
+  - "6 — ccr-6 (Together.xyz, GLM-5.1)"
   - "Skip — configure later via /nf:mcp-setup"
 
 If "Skip" is chosen, display:
@@ -493,8 +495,8 @@ Render a numbered table with columns: #, Agent, Model, Provider, Key:
 ```
 #   Agent                Model                       Provider                               Key
 ──  ───────────────────  ──────────────────────────  ─────────────────────────────────────  ──────────
-1   claude-1             deepseek-ai/DeepSeek-V3     https://api.akashml.com/v1             key stored
-2   claude-2             MiniMaxAI/MiniMax-M2.5      https://api.akashml.com/v1             no key
+1   ccr-1                MiniMaxAI/MiniMax-M2.5      https://api.together.xyz/v1            key stored
+2   ccr-2                Qwen/Qwen3.5-397B-A17B      https://api.together.xyz/v1            no key
 ```
 
 Use AskUserQuestion:
@@ -533,16 +535,16 @@ Then use AskUserQuestion with two sections of options:
 - header: "Add Agent — Select Template"
 - question: "Select an agent template to add:\n\n(Agents already configured are excluded)"
 - options — build the list using these filtering rules:
-  - **Claude MCP slots** (omit if agent name already in EXISTING_SERVERS):
-    - "1 — claude-1 (AkashML, DeepSeek-V3)"
-    - "2 — claude-2 (AkashML, MiniMax-M2.5)"
-    - "3 — claude-3 (Together.xyz, Qwen3-Coder-480B)"
-    - "4 — claude-5 (Together.xyz, Llama-4-M)"
-    - "5 — claude-4 (Fireworks, kimi)"
+  - **CCR slots** (omit if agent name already in EXISTING_SERVERS):
+    - "1 — ccr-1 (Together.xyz, MiniMax-M2.5)"
+    - "2 — ccr-2 (Together.xyz, Qwen3.5-397B)"
+    - "3 — ccr-3 (Together.xyz, Qwen3-Coder-480B)"
+    - "4 — ccr-4 (Together.xyz, Kimi-K2.5)"
+    - "5 — ccr-5 (Together.xyz, gpt-oss-120b)"
+    - "6 — ccr-6 (Together.xyz, GLM-5.1)"
   - **Native CLI second slots** (omit if second slot already in EXISTING_SERVERS OR if first slot NOT in EXISTING_SERVERS):
-    - "6 — codex-cli-2 (second Codex slot — copies codex-cli-1 config)" [show only if codex-cli-1 is in EXISTING_SERVERS AND codex-cli-2 is NOT in EXISTING_SERVERS]
-    - "7 — gemini-cli-2 (second Gemini slot — copies gemini-cli-1 config)" [show only if gemini-cli-1 is in EXISTING_SERVERS AND gemini-cli-2 is NOT in EXISTING_SERVERS]
-    - "8 — opencode-2 (second OpenCode slot — copies opencode-1 config)" [show only if opencode-1 is in EXISTING_SERVERS AND opencode-2 is NOT in EXISTING_SERVERS]
+    - "7 — codex-cli-2 (second Codex slot — copies codex-cli-1 config)" [show only if codex-cli-1 is in EXISTING_SERVERS AND codex-cli-2 is NOT in EXISTING_SERVERS]
+    - "8 — gemini-cli-2 (second Gemini slot — copies gemini-cli-1 config)" [show only if gemini-cli-1 is in EXISTING_SERVERS AND gemini-cli-2 is NOT in EXISTING_SERVERS]
     - "9 — copilot-2 (second Copilot slot — copies copilot-1 config)" [show only if copilot-1 is in EXISTING_SERVERS AND copilot-2 is NOT in EXISTING_SERVERS]
   - "Cancel — back to roster"
 
@@ -550,22 +552,22 @@ If "Cancel — back to roster": display "No changes made." Return to roster disp
 
 **Resolver — map selection to slot details:**
 
-Claude MCP slot resolver (options 1–5):
-- "1 — claude-1…" → agentName=`claude-1`, provider=`AkashML`, baseUrl=`https://api.akashml.com/v1`, model=`deepseek-ai/DeepSeek-V3`
-- "2 — claude-2…" → agentName=`claude-2`, provider=`AkashML`, baseUrl=`https://api.akashml.com/v1`, model=`MiniMaxAI/MiniMax-M2.5`
-- "3 — claude-3…" → agentName=`claude-3`, provider=`Together.xyz`, baseUrl=`https://api.together.xyz/v1`, model=`Qwen/Qwen3-Coder-480B`
-- "4 — claude-5…" → agentName=`claude-5`, provider=`Together.xyz`, baseUrl=`https://api.together.xyz/v1`, model=`meta-llama/Llama-4-M`
-- "5 — claude-4…" → agentName=`claude-4`, provider=`Fireworks`, baseUrl=`https://api.fireworks.ai/inference/v1`, model=`kimi`
+CCR slot resolver (options 1–6):
+- "1 — ccr-1…" → agentName=`ccr-1`, provider=`Together.xyz`, baseUrl=`https://api.together.xyz/v1`, model=`MiniMaxAI/MiniMax-M2.5`
+- "2 — ccr-2…" → agentName=`ccr-2`, provider=`Together.xyz`, baseUrl=`https://api.together.xyz/v1`, model=`Qwen/Qwen3.5-397B-A17B`
+- "3 — ccr-3…" → agentName=`ccr-3`, provider=`Together.xyz`, baseUrl=`https://api.together.xyz/v1`, model=`Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8`
+- "4 — ccr-4…" → agentName=`ccr-4`, provider=`Together.xyz`, baseUrl=`https://api.together.xyz/v1`, model=`moonshotai/Kimi-K2.5`
+- "5 — ccr-5…" → agentName=`ccr-5`, provider=`Together.xyz`, baseUrl=`https://api.together.xyz/v1`, model=`openai/gpt-oss-120b`
+- "6 — ccr-6…" → agentName=`ccr-6`, provider=`Together.xyz`, baseUrl=`https://api.together.xyz/v1`, model=`zai-org/GLM-5.1`
 
-→ When options 1–5 selected: continue to Step B (API key collection) as before.
+→ When options 1–6 selected: continue to Step B (API key collection) as before.
 
-Native CLI second-slot resolver (options 6–9):
-- "6 — codex-cli-2…" → newSlot=`codex-cli-2`, sourceSlot=`codex-cli-1`
-- "7 — gemini-cli-2…" → newSlot=`gemini-cli-2`, sourceSlot=`gemini-cli-1`
-- "8 — opencode-2…" → newSlot=`opencode-2`, sourceSlot=`opencode-1`
+Native CLI second-slot resolver (options 7–9):
+- "7 — codex-cli-2…" → newSlot=`codex-cli-2`, sourceSlot=`codex-cli-1`
+- "8 — gemini-cli-2…" → newSlot=`gemini-cli-2`, sourceSlot=`gemini-cli-1`
 - "9 — copilot-2…" → newSlot=`copilot-2`, sourceSlot=`copilot-1`
 
-→ When options 6–9 selected: route to **Step B-native** below (skip the API key step).
+→ When options 7–9 selected: route to **Step B-native** below (skip the API key step).
 
 **Step B — Collect API key (claude-mcp-server slots only)**
 

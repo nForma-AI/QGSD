@@ -52,7 +52,7 @@ NF_EVAL
 )
 ```
 
-`$SLOT_NAMES` is now a JSON array string. Example: `["codex-1","gemini-1","opencode-1","copilot-1","claude-1","claude-2","claude-3","claude-4","claude-5","claude-6"]`
+`$SLOT_NAMES` is now a JSON array string. Example: `["codex-1","gemini-1","opencode-1","copilot-1","claude-1","ccr-1","ccr-2","ccr-3","ccr-4","ccr-5","ccr-6"]`
 
 Parse the slot count from `$SLOT_NAMES` (array length) for the banner. Store as `$SLOT_COUNT`.
 
@@ -352,7 +352,7 @@ If no repairs were attempted, skip this step.
 
   Repaired:
     claude-1: SERVICE_DOWN → INFERENCE_OK
-    claude-3: SERVICE_DOWN → INFERENCE_OK
+    ccr-3: SERVICE_DOWN → INFERENCE_OK
 
   Still broken (manual action needed):
     gemini-1: QUOTA_EXCEEDED — wait ~30min

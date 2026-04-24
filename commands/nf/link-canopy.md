@@ -339,12 +339,13 @@ nForma quorum agents found ({count}):
 2   gemini-1          gemini-3-pro-preview                      Google          sub    gemini-cli
 3   opencode-1        grok-code-fast-1                          OpenCode        sub    opencode-cli
 4   copilot-1         gpt-4.1                                   GitHub          sub    copilot-cli
-5   claude-1          deepseek-ai/DeepSeek-V3.2                 AkashML         api    claude-code-router
-6   claude-2          MiniMaxAI/MiniMax-M2.5                    AkashML         api    claude-code-router
-7   claude-3          Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8  Together.xyz    api    claude-code-router
-8   claude-4          moonshotai/Kimi-K2.5                      Together.xyz    api    claude-code-router
-9   claude-5          meta-llama/Llama-4-Maverick-17B-128E...   Together.xyz    api    claude-code-router
-10  claude-6          zai-org/GLM-5                             Together.xyz    api    claude-code-router
+5   claude-1          claude-opus-4-6                           Anthropic       sub    claude-cli
+6   ccr-1             MiniMaxAI/MiniMax-M2.5                    Together.xyz    api    unified-mcp-server
+7   ccr-2             Qwen/Qwen3.5-397B-A17B                    Together.xyz    api    unified-mcp-server
+8   ccr-3             Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8  Together.xyz    api    unified-mcp-server
+9   ccr-4             moonshotai/Kimi-K2.5                      Together.xyz    api    unified-mcp-server
+10  ccr-5             openai/gpt-oss-120b                       Together.xyz    api    unified-mcp-server
+11  ccr-6             zai-org/GLM-5.1                           Together.xyz    api    unified-mcp-server
 ```
 
 (Table rows are dynamically generated from the slots data — the above is an example.)

@@ -7,7 +7,6 @@ allowed-tools:
   - mcp__codex-1__identity
   - mcp__gemini-1__identity
   - mcp__opencode-1__identity
-  - mcp__opencode-2__identity
   - mcp__copilot-1__identity
   - mcp__claude-1__identity
   - mcp__ccr-1__identity

@@ -914,21 +914,8 @@ process.stdin.on('end', () => {
     const prefs = config.model_preferences || {};
     const overrideEntries = Object.entries(prefs).filter(([, m]) => m && typeof m === 'string');
     if (overrideEntries.length > 0 && !activeSlots) {
-      // Agent key → primary quorum tool call mapping
-      const AGENT_TOOL_MAP = {
-        'codex-cli-1':  'mcp__codex-cli-1__review',
-        'gemini-cli-1': 'mcp__gemini-cli-1__gemini',
-        'opencode-1':   'mcp__opencode-1__opencode',
-        'copilot-1':    'mcp__copilot-1__ask',
-        'claude-1':     'mcp__claude-1__claude',
-        'claude-2':     'mcp__claude-2__claude',
-        'claude-3':     'mcp__claude-3__claude',
-        'claude-4':     'mcp__claude-4__claude',
-        'claude-5':     'mcp__claude-5__claude',
-        'claude-6':     'mcp__claude-6__claude',
-      };
       const lines = overrideEntries.map(([agent, model]) => {
-        const tool = AGENT_TOOL_MAP[agent] || ('mcp__' + agent);
+        const tool = slotToToolCall(agent);
         return '  - When calling ' + tool + ', include model="' + model + '" in the tool input';
       }).join('\n');
       instructions += '\n\nModel overrides (from nf.json model_preferences):\n' +
