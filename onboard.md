@@ -91,11 +91,17 @@ if (ghInfo.installed) {
   // Check if copilot extension is installed
   try {
     const ext = spawnSync('gh', ['copilot', '--version'], { encoding: 'utf8', timeout: 5000 });
+    let authed = null;
+    try {
+      const auth = spawnSync('gh', ['auth', 'status'], { encoding: 'utf8', timeout: 5000 });
+      const authOut = (auth.stdout || '') + (auth.stderr || '');
+      authed = auth.status === 0 && /logged in|active account/i.test(authOut);
+    } catch (e) { authed = false; }
     result.clis.copilot = {
       installed: ext.status === 0,
       version: ghInfo.version,
       path: ghInfo.path,
-      authenticated: null,
+      authenticated: ext.status === 0 ? authed : null,
       note: ext.status === 0 ? 'gh copilot extension installed' : 'gh installed but copilot extension missing'
     };
   } catch (e) {
@@ -171,7 +177,7 @@ Parse the full JSON output as `DETECT`.
 
 Display the results clearly to the user. Use this format:
 
-```
+```text
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  nForma ► ONBOARDING
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -222,7 +228,7 @@ Ask the user if they want to proceed with installation. If yes, run:
 npm ci --ignore-scripts && node bin/install.js --claude --global
 ```
 
-After install, tell them: **Restart your agent session** so hooks and commands load. Then run `/nf:onboard` or paste this prompt again to continue.
+After install, tell them: **Restart your agent session** so hooks and commands load. Then paste this prompt again to continue.
 
 **Stop here.** Do not continue in the same session.
 
@@ -244,7 +250,7 @@ If `nforma.commands_synced` is true but important CLIs are not installed or not 
 | CLI | What it adds to quorum | Install |
 |-----|----------------------|---------|
 | codex | OpenAI GPT models | `npm install -g @openai/codex` |
-| gemini | Google Gemini models | `npm install -g @anthropic-ai/gemini-cli` (or via Google) |
+| gemini | Google Gemini models | `npm install -g @google/gemini-cli` |
 | opencode | xAI Grok models | `npm install -g opencode` |
 | copilot | GitHub Copilot models | `gh extension install github/gh-copilot` |
 | ccr | Open-weight models (Qwen, Llama, DeepSeek, etc.) via Together.xyz — no separate CLI subscription needed, just an API key | `npm install -g @musistudio/claude-code-router` |
