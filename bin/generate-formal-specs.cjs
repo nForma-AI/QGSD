@@ -323,7 +323,7 @@ const tlaCfgHeader = (file, desc) => [
 ].join('\n');
 
 const safetyCfg = tlaCfgHeader('.planning/formal/tla/MCsafety.cfg',
-  'TLC safety model: N=' + SAFETY_AGENTS + ' agents, symmetry reduction, no liveness.') + '\n' + [
+  'TLC safety model: N=' + SAFETY_AGENTS + ' agents, no liveness.') + '\n' + [
   'SPECIFICATION Spec',
   'CONSTANTS',
   agentDecls(SAFETY_AGENTS),
