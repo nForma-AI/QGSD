@@ -26,6 +26,7 @@ function resolveTlaJar(projectRoot) {
   const candidates = [
     path.join(NF_FORMAL_HOME, 'tla', 'tla2tools.jar'),
     path.join(root, '.planning', 'formal', 'tla', 'tla2tools.jar'),
+    path.join(os.homedir(), '.claude', '.formal', 'tla', 'tla2tools.jar'),
   ];
   return candidates.find(p => fs.existsSync(p)) || null;
 }
@@ -40,6 +41,7 @@ function resolveAlloyJar(projectRoot) {
   const candidates = [
     path.join(NF_FORMAL_HOME, 'alloy', 'org.alloytools.alloy.dist.jar'),
     path.join(root, '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar'),
+    path.join(os.homedir(), '.claude', '.formal', 'alloy', 'org.alloytools.alloy.dist.jar'),
     path.join(os.homedir(), '.claude', '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar'),
   ];
   return candidates.find(p => fs.existsSync(p)) || null;

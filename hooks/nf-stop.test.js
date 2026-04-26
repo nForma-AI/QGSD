@@ -917,7 +917,7 @@ test('TC20c: real /qnf:new-project tag on a decision turn blocks when quorum mis
 // TC-CEIL-2: ceiling blocks when only 4 of 5 required agents have been called
 // TC-CEIL-3: error response does not count — 5 calls made but one is error → still blocks
 //
-// These tests use quorum_active (not required_models) and minSize config to exercise
+// These tests use quorum_active (not required_models) and maxSize config to exercise
 // the success-counter loop in nf-stop.js main().
 
 // Helper: build a user JSONL line with a tool_result that has is_error:true
@@ -956,10 +956,10 @@ function toolResultSuccessLine(toolUseId, resultText, uuid) {
   });
 }
 
-// TC-CEIL-1: 11-agent pool, minSize=5, preferSub=true
+// TC-CEIL-1: 11-agent pool, maxSize=5, preferSub=true
 // First 5 sorted agents (4 sub + 1 api) all have successful responses → ceiling satisfied → pass
 test('TC-CEIL-1: ceiling passes with exactly 5 successful calls out of 11-agent pool', () => {
-  // Build config: 11 slots (4 sub + 7 api), minSize = 5, preferSub = true
+  // Build config: 11 slots (4 sub + 7 api), maxSize = 5, preferSub = true
   const slots = [
     'slot-sub-1', 'slot-sub-2', 'slot-sub-3', 'slot-sub-4',  // sub agents
     'slot-api-1', 'slot-api-2', 'slot-api-3', 'slot-api-4',
@@ -973,7 +973,7 @@ test('TC-CEIL-1: ceiling passes with exactly 5 successful calls out of 11-agent 
     quorum_commands: ['plan-phase'],
     quorum_active: slots,
     agent_config: agentConfig,
-    quorum: { minSize: 5, preferSub: true },
+    quorum: { maxSize: 5, preferSub: true },
   });
   const homeDir = path.join(os.tmpdir(), `nf-home-ceil1-${Date.now()}`);
   const claudeDir = path.join(homeDir, '.claude');
@@ -1027,7 +1027,7 @@ test('TC-CEIL-1: ceiling passes with exactly 5 successful calls out of 11-agent 
   }
 });
 
-// TC-CEIL-2: Same 11-agent pool, minSize=5, but only 4 of the first 5 agents called → block
+// TC-CEIL-2: Same 11-agent pool, maxSize=5, but only 4 of the first 5 agents called → block
 test('TC-CEIL-2: ceiling blocks when only 4 of 5 required agents have been called', () => {
   const slots = [
     'slot-sub-1', 'slot-sub-2', 'slot-sub-3', 'slot-sub-4',
@@ -1100,10 +1100,10 @@ test('TC-CEIL-2: ceiling blocks when only 4 of 5 required agents have been calle
 });
 
 // TC-CEIL-3: error response does not count toward ceiling
-// 6 slots active, minSize=5 (so failover scenario: 5 calls made but slot-3 returns error → only 4 successful → block)
+// 6 slots active, maxSize=5 (so failover scenario: 5 calls made but slot-3 returns error → only 4 successful → block)
 test('TC-CEIL-3: error response does not count toward ceiling — still blocks when one call errored', () => {
-  // 6 slots configured (>= minSize) to test the failover-beyond-ceiling scenario
-  // minSize = 5, but one of the 5 calls returns an error → successCount = 4 → block
+  // 6 slots configured (>= maxSize) to test the failover-beyond-ceiling scenario
+  // maxSize = 5, but one of the 5 calls returns an error → successCount = 4 → block
   const slots = [
     'slot-api-1', 'slot-api-2', 'slot-api-3',
     'slot-api-4', 'slot-api-5', 'slot-api-6',
@@ -1182,9 +1182,9 @@ test('TC-CEIL-3: error response does not count toward ceiling — still blocks w
   }
 });
 
-// ── TC-DEFAULT-CEIL: Default ceiling = 2 (no quorum.maxSize in config) ────────
+// ── TC-DEFAULT-CEIL: Ceiling = 2 (explicit quorum.maxSize=2) ────────
 //
-// TC-DEFAULT-CEIL-PASS: 3-slot pool, no maxSize config → default = 2.
+// TC-DEFAULT-CEIL-PASS: 3-slot pool, maxSize=2.
 //   First 2 slots (sub-first) called successfully → ceiling satisfied → pass.
 // TC-DEFAULT-CEIL-BLOCK: Same pool, only 1 successful call → block.
 
@@ -1196,7 +1196,7 @@ test('TC-DEFAULT-CEIL-PASS: default ceiling=2 passes with 2 successful calls', (
     quorum_commands: ['quick'],
     quorum_active: slots,
     agent_config: agentConfig,
-    // No quorum.maxSize — default kicks in (= 2)
+    quorum: { maxSize: 2 },
   });
   const homeDir = path.join(os.tmpdir(), `nf-home-dceil-pass-${Date.now()}`);
   const claudeDir = path.join(homeDir, '.claude');
@@ -1241,7 +1241,7 @@ test('TC-DEFAULT-CEIL-BLOCK: default ceiling=2 blocks with only 1 successful cal
     quorum_commands: ['quick'],
     quorum_active: slots,
     agent_config: agentConfig,
-    // No quorum.maxSize — default = 2
+    quorum: { maxSize: 2 },
   });
   const homeDir = path.join(os.tmpdir(), `nf-home-dceil-block-${Date.now()}`);
   const claudeDir = path.join(homeDir, '.claude');
