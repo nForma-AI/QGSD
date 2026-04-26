@@ -925,7 +925,7 @@ process.exit(1);
     // With preferSub=true: cappedSlots=[codex-1, gemini-1], remaining=[claude-1]
     const nfConfig = {
       quorum_active: ['codex-1', 'gemini-1', 'claude-1'],
-      quorum: { minSize: 1, maxSize: 3 },
+      quorum: { maxSize: 3 },
       agent_config: {
         'codex-1': { auth_type: 'sub' },
         'gemini-1': { auth_type: 'sub' },

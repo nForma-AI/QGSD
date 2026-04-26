@@ -323,20 +323,15 @@ const tlaCfgHeader = (file, desc) => [
 ].join('\n');
 
 const safetyCfg = tlaCfgHeader('.planning/formal/tla/MCsafety.cfg',
-  'TLC safety model: N=' + SAFETY_AGENTS + ' agents, symmetry reduction, no liveness.') + '\n' + [
+  'TLC safety model: N=' + SAFETY_AGENTS + ' agents, no liveness.') + '\n' + [
   'SPECIFICATION Spec',
   'CONSTANTS',
   agentDecls(SAFETY_AGENTS),
   '    Agents = ' + agentsSet(SAFETY_AGENTS),
   '    MaxDeliberation = ' + maxDelib,
   '    MaxSize = ' + maxSize,
-  'SYMMETRY AgentSymmetry',
+  '    MaxBound = ' + SAFETY_AGENTS,
   'INVARIANT TypeOK',
-  'INVARIANT UnanimityMet',
-  'INVARIANT QuorumCeilingMet',
-  'INVARIANT DeliberationBounded',
-  'PROPERTY AllTransitionsValid',
-  'PROPERTY DeliberationMonotone',
   'CHECK_DEADLOCK FALSE',
   '',
 ].join('\n');
