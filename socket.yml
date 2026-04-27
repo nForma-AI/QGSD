@@ -1,0 +1,21 @@
+version: 2
+
+projectIgnorePaths:
+  - "node_modules/**"
+  - ".next/**"
+  - "dist/**"
+  - "build/**"
+  - ".planning/**"
+
+issueRules:
+  malware: true
+  typosquat: true
+  native-code: true
+  telemetry: true
+  install-scripts: false
+
+githubApp:
+  enabled: true
+  pullRequestAlertsEnabled: true
+  dependencyOverviewEnabled: true
+  projectReportsEnabled: true

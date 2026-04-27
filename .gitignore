@@ -6,6 +6,15 @@ node_modules/
 .vscode/
 TO-DOS.md
 
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+certs/
+secrets/
+.sentryclirc
+
 /research.claude/
 commands.html
 
