@@ -1,1 +1,13 @@
-gitleaks protect --staged --config .gitleaks.toml --redact --verbose
+#!/bin/sh
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "gitleaks is not installed. Install it before committing."
+  echo "  macOS:  brew install gitleaks"
+  echo "  Linux:  https://github.com/gitleaks/gitleaks#install"
+  exit 1
+fi
+
+if ! gitleaks protect --staged --config .gitleaks.toml --redact --verbose; then
+  echo "Secrets detected! Commit blocked."
+  exit 1
+fi
