@@ -3,6 +3,11 @@
 
 /**
  * Solution Simulation Loop Module
+ *
+ * @deprecated Use formal-fix-loop.cjs instead. This module uses callback-driven
+ * architecture (onTweakFix). The replacement uses callLlm injection for better
+ * testability and reuse. Kept for backward compatibility only.
+ *
  * Orchestrates the solution simulation pipeline: normalize fix intent, generate consequence models,
  * run convergence gates, and display iteration progress with automatic escalation.
  *

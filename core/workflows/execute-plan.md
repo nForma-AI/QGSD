@@ -132,24 +132,28 @@ Task(
     <formal_coverage_auto_detection>
     **Formal coverage auto-detection (hybrid A+B):** Before each atomic commit:
     1. Get changed files: CHANGED=$(git diff --name-only HEAD 2>/dev/null | tr '\n' ',')
-    2. If CHANGED is non-empty, run: node bin/formal-coverage-intersect.cjs --files \"$CHANGED\" 2>/dev/null
+    2. If CHANGED is non-empty, run: node bin/formal-coverage-intersect.cjs --files "$CHANGED" 2>/dev/null
     3. If exit code is 0 (intersections found) OR the plan declares `formal_artifacts: update`:
        - Run: node bin/run-formal-verify.cjs 2>&1
        - If exit 0: log 'Formal coverage verified: models OK'
        - If exit 1: log 'WARNING: Formal model drift detected' (do NOT block commit -- fail-open)
     4. If formal-coverage-intersect.cjs is not found or errors: skip silently (fail-open)
     5. **Loop 2 simulation gate (GATE-02, GATE-03, GATE-04):** If step 2 found intersections (exit code 0):
-       a. Run Loop 2 via `simulateSolutionLoop` from `$HOME/.claude/nf-bin/solution-simulation-loop.cjs` with:
-          - `fixIdea`: description of code changes in current diff
-          - `bugDescription`: plan objective or task description
-          - `maxIterations`: 10, `formalism`: 'tla'
-          - `onTweakFix` callback (GATE-05): reads `iterationContext.verdict` to identify failing gates. Returns `null` if all pass or stuck. Otherwise returns refinement string.
-          Store result with fields: `converged`, `iterations`, `escalationReason`, `bestGatesPassing`, `tsvPath`.
+       a. Run Loop 2 via `refineFix` from `$HOME/.claude/nf-bin/formal-fix-loop.cjs` with:
+          - `buggySource`: content of the file being changed
+          - `testSource`: content of associated test file
+          - `testPath`: absolute path to test file
+          - `stubPath`: absolute path to file being changed
+          - `testFailureOutput`: test runner output before fix
+          - `constraint`: `{ invariant: '<from formal model>', english: '<human-readable>' }`
+          - `maxIterations`: 10
+          - `callLlm`: spawns LLM subprocess via resolve-cli.cjs + spawnSync
+          Store result with fields: `converged`, `iterations`, `fixedSource`, `gates`, `rejectionReasons`.
        b. Route on result:
           - **converged === true:** Log 'Loop 2: CONVERGED'. Continue to commit.
           - **converged === false (fail-open, default):** Log 'WARNING: Loop 2 did not converge'. Continue to commit.
           - **converged === false AND plan frontmatter `strict_simulation: true`:** Log 'BLOCKED'. Do NOT commit.
-       c. If solution-simulation-loop.cjs is not found or throws: skip silently (fail-open)
+       c. If formal-fix-loop.cjs is not found or throws: skip silently (fail-open)
     6. If step 2 found NO intersections: skip Loop 2 entirely — silent, no log
     </formal_coverage_auto_detection>
 
