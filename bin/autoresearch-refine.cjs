@@ -4,6 +4,10 @@
 /**
  * autoresearch-refine.cjs
  *
+ * @deprecated Use formal-model-loop.cjs instead. This module uses callback-driven
+ * architecture (onTweak). The replacement uses callLlm injection for better
+ * testability and reuse. Kept for backward compatibility only.
+ *
  * Autoresearch-style micro-loop for formal model refinement.
  * Module-only API (not a CLI). The calling Agent subprocess require()s this
  * module and passes an onTweak callback to perform model edits.

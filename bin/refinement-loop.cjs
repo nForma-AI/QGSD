@@ -4,6 +4,10 @@
 /**
  * refinement-loop.cjs
  *
+ * @deprecated Use formal-model-loop.cjs instead. This module is superseded by
+ * the convergent refinement loop with callLlm injection. Kept for backward
+ * compatibility only.
+ *
  * Bug context normalization and inverted verification loop for model refinement.
  * When --bug-context is provided, the model checker's semantics are inverted:
  * finding a violation means the model REPRODUCES the bug (success),

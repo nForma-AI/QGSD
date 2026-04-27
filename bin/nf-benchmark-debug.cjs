@@ -11,6 +11,8 @@
 //   node bin/nf-benchmark-debug.cjs --json
 //   node bin/nf-benchmark-debug.cjs --verbose
 //   node bin/nf-benchmark-debug.cjs --timeout 120000
+//   node bin/nf-benchmark-debug.cjs --tier easy
+//   node bin/nf-benchmark-debug.cjs --tier easy --dry-run
 
 const fs = require('fs');
 const path = require('path');
@@ -21,9 +23,16 @@ const dryRun = args.includes('--dry-run');
 const jsonOutput = args.includes('--json');
 const verbose = args.includes('--verbose');
 const timeoutIdx = args.indexOf('--timeout');
-const runnerTimeout = timeoutIdx !== -1 ? parseInt(args[timeoutIdx + 1], 10) : 180000;
+const runnerTimeout = timeoutIdx !== -1 ? parseInt(args[timeoutIdx + 1], 10) : 360000;
 const trackIdx = args.indexOf('--track');
 const track = trackIdx !== -1 ? args[trackIdx + 1] : 'full';
+const tierIdx = args.indexOf('--tier');
+const tierFilter = tierIdx !== -1 ? args[tierIdx + 1] : null;
+const VALID_TIERS = ['easy', 'medium', 'hard', 'extreme', 'legendary'];
+if (tierFilter !== null && !VALID_TIERS.includes(tierFilter)) {
+  process.stderr.write('[nf-benchmark-debug] ERROR: --tier must be one of: ' + VALID_TIERS.join(', ') + '\n');
+  process.exit(1);
+}
 
 // Smoke track: 5 representative easy stubs, ~3 min in CI.
 // Used on every PR to verify the fix pipeline works end-to-end without
@@ -142,9 +151,13 @@ const STUBS = [
 ];
 
 // Apply track filter
-const ACTIVE_STUBS = track === 'smoke'
+let ACTIVE_STUBS = track === 'smoke'
   ? STUBS.filter(function(s) { return SMOKE_IDS.has(s.id); })
   : STUBS;
+// Apply tier filter
+if (tierFilter !== null) {
+  ACTIVE_STUBS = ACTIVE_STUBS.filter(function(s) { return s.tier === tierFilter; });
+}
 
 if (dryRun) {
   if (jsonOutput) {
@@ -194,7 +207,7 @@ ACTIVE_STUBS.forEach(function(entry) {
   let errorCode = null;
 
   try {
-    const runnerArgs = ['--stub', absStubPath, '--test', absTestPath];
+    const runnerArgs = ['--stub', absStubPath, '--test', absTestPath, '--tier', entry.tier];
     if (verbose) runnerArgs.push('--verbose');
 
     const runResult = spawnSync('node', [NF_DEBUG_RUNNER].concat(runnerArgs), {
