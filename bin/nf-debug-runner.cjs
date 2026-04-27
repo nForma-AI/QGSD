@@ -2,23 +2,25 @@
 'use strict';
 // bin/nf-debug-runner.cjs
 // Fix-cycle runner for a single debug benchmark stub.
-// Protocol: run test → if fail, assemble formal context → quorum fix → apply → re-run test.
+// Uses shared formal-model-loop (Loop 1) and formal-fix-loop (Loop 2).
 //
 // Usage:
-//   node bin/nf-debug-runner.cjs --stub <path> --test <path>
-//   node bin/nf-debug-runner.cjs --stub <path> --test <path> --dry-run
-//   node bin/nf-debug-runner.cjs --stub <path> --test <path> --verbose
-//   node bin/nf-debug-runner.cjs --stub <path> --test <path> --timeout 60000
+//   node bin/nf-debug-runner.cjs --stub <path> --test <path> [--tier easy] [--verbose] [--no-formal]
 
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
+
+const { refineModel, formalismForTier } = require('./formal-model-loop.cjs');
+const { refineFix } = require('./formal-fix-loop.cjs');
 
 const args = process.argv.slice(2);
 const dryRun = args.includes('--dry-run');
 const verbose = args.includes('--verbose');
 const stubIdx = args.indexOf('--stub');
 const testIdx = args.indexOf('--test');
+const tierIdx = args.indexOf('--tier');
+const noFormalIdx = args.indexOf('--no-formal');
 const timeoutIdx = args.indexOf('--timeout');
 
 if (stubIdx === -1 || testIdx === -1) {
@@ -28,138 +30,123 @@ if (stubIdx === -1 || testIdx === -1) {
 
 const stubPath = path.resolve(args[stubIdx + 1]);
 const testPath = path.resolve(args[testIdx + 1]);
-const quorumTimeout = timeoutIdx !== -1 ? parseInt(args[timeoutIdx + 1], 10) : 150000;
-
-const ROOT = process.cwd();
-const DEBUG_FORMAL_CTX = path.join(__dirname, 'debug-formal-context.cjs');
-const CALL_QUORUM_SLOT = path.join(__dirname, 'call-quorum-slot.cjs');
-
-// Pre-flight check: verify required dependencies exist
-if (!fs.existsSync(DEBUG_FORMAL_CTX)) {
-  process.stderr.write('ERROR: bin/debug-formal-context.cjs not found at ' + DEBUG_FORMAL_CTX + '\n');
-  process.exit(1);
-}
-if (!fs.existsSync(CALL_QUORUM_SLOT)) {
-  process.stderr.write('ERROR: bin/call-quorum-slot.cjs not found at ' + CALL_QUORUM_SLOT + '\n');
-  process.exit(1);
-}
+const tier = tierIdx !== -1 ? args[tierIdx + 1] : 'easy';
+const useFormal = noFormalIdx === -1;
+const quorumTimeout = timeoutIdx !== -1 ? parseInt(args[timeoutIdx + 1], 10) : 300000;
+const formalism = formalismForTier(tier);
 
 if (dryRun) {
-  process.stdout.write(JSON.stringify({ dry_run: true, stub: stubPath, test: testPath }) + '\n');
+  process.stdout.write(JSON.stringify({ dry_run: true, stub: stubPath, test: testPath, formal: useFormal, tier, formalism }) + '\n');
   process.exit(0);
 }
 
-// Track original stub source for restoration in finally block
 let originalStubSource = null;
 const startTime = Date.now();
 
-try {
-  // Step 1: run test
-  const spawnOpts = { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 };
-  if (verbose) spawnOpts.stdio = ['pipe', 'inherit', 'inherit'];
+function log(msg) {
+  if (verbose) process.stderr.write('[nf-debug-runner] ' + msg + '\n');
+}
 
-  let testResult = spawnSync('node', [testPath], { ...spawnOpts, cwd: ROOT });
+function callLlm(prompt) {
+  const claudeCli = require('./resolve-cli.cjs').resolveCli('claude') || 'claude';
+  return Promise.resolve(spawnSync(claudeCli, [
+    '-p', prompt,
+    '--dangerously-skip-permissions',
+    '--model', 'claude-haiku-4-5-20251001'
+  ], {
+    cwd: process.cwd(),
+    encoding: 'utf8',
+    maxBuffer: 4 * 1024 * 1024,
+    timeout: quorumTimeout
+  }));
+}
+
+async function main() {
+  // ── Step 1: Run test ────────────────────────────────────────────────────────
+  let testResult = spawnSync('node', [testPath], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024, cwd: process.cwd() });
+  if (verbose && testResult.stderr) process.stderr.write(testResult.stderr);
+  if (verbose && testResult.stdout) process.stderr.write(testResult.stdout);
 
   if (testResult.status === 0) {
-    if (verbose) process.stderr.write('[nf-debug-runner] test already passes — no fix needed\n');
+    log('test already passes');
     process.stdout.write(JSON.stringify({ fixed: false, already_passing: true, elapsed_ms: Date.now() - startTime }) + '\n');
-    process.exit(0);
+    return;
   }
 
   const testFailureOutput = (testResult.stderr || '') + (testResult.stdout || '');
 
-  // Step 2: assemble formal context
+  // ── Step 2: Read sources ────────────────────────────────────────────────────
   const stubSource = fs.readFileSync(stubPath, 'utf8');
   originalStubSource = stubSource;
-  const description = 'Bug in fn.cjs. Test failure:\n' + testFailureOutput.slice(0, 1000);
+  const testSource = fs.readFileSync(testPath, 'utf8');
 
-  const ctxResult = spawnSync('node', [DEBUG_FORMAL_CTX, '--description', description, '--format', 'json'], {
-    cwd: ROOT, encoding: 'utf8', maxBuffer: 4 * 1024 * 1024, timeout: 30000
+  // ── Step 3: Loop 1 — Model refinement ──────────────────────────────────────
+  let modelResult = { converged: false, iterations: 0, spec: null, invariant: null, english: null, bugExplanation: null };
+
+  if (useFormal) {
+    log('Loop 1: refining formal model...');
+    modelResult = await refineModel({
+      codeSource: stubSource,
+      testSource: testSource,
+      testFailureOutput: testFailureOutput,
+      formalism,
+      maxIterations: 3,
+      callLlm,
+      onLog: log
+    });
+  }
+
+  const constraint = modelResult.invariant && modelResult.english
+    ? { invariant: modelResult.invariant, english: modelResult.english }
+    : null;
+
+  // ── Step 4: Loop 2 — Fix refinement ────────────────────────────────────────
+  log('Loop 2: refining fix...');
+  const fixResult = await refineFix({
+    buggySource: stubSource,
+    testSource: testSource,
+    testPath: testPath,
+    stubPath: stubPath,
+    testFailureOutput: testFailureOutput,
+    constraint,
+    spec: modelResult.spec,
+    bugExplanation: modelResult.bugExplanation,
+    maxIterations: 3,
+    callLlm,
+    onLog: log
   });
 
-  let formalContext = '';
-  try {
-    const ctxParsed = JSON.parse(ctxResult.stdout || '{}');
-    formalContext = ctxParsed.constraint_block || ctxParsed.context || '';
-  } catch (_) {
-    formalContext = ctxResult.stdout || '';
-  }
+  // ── Step 5: Report ──────────────────────────────────────────────────────────
+  const output = {
+    fixed: fixResult.converged,
+    exit_code: fixResult.converged ? 0 : 1,
+    elapsed_ms: Date.now() - startTime,
+    loop1: { converged: modelResult.converged, iterations: modelResult.iterations },
+    loop2: { converged: fixResult.converged, iterations: fixResult.iterations, gates: fixResult.gates },
+    formal: useFormal ? {
+      formalism,
+      constraint: constraint ? constraint.english : null,
+      invariant: constraint ? constraint.invariant : null,
+      bug_explanation: modelResult.bugExplanation
+    } : null
+  };
 
-  // Step 3: build prompt and call quorum
-  const prompt = [
-    'Fix the following buggy JavaScript function.',
-    'The test is failing with this output:',
-    testFailureOutput.slice(0, 500),
-    '',
-    'Buggy source (file: fn.cjs):',
-    '```js',
-    stubSource,
-    '```',
-    '',
-    formalContext ? ('Formal context:\n' + formalContext) : '',
-    '',
-    'Return ONLY the fixed source code in a ```js ... ``` code block. Do not explain.',
-  ].join('\n');
+  process.stdout.write(JSON.stringify(output) + '\n');
+  process.exit(output.fixed ? 0 : 1);
+}
 
-  const claudeCli = require('./resolve-cli.cjs').resolveCli('claude') || 'claude';
-  const quorumResult = spawnSync(claudeCli, ['-p', prompt, '--dangerously-skip-permissions', '--model', 'claude-haiku-4-5-20251001'], {
-    cwd: ROOT,
-    encoding: 'utf8',
-    maxBuffer: 4 * 1024 * 1024,
-    timeout: quorumTimeout
-  });
-
-  if (quorumResult.signal === 'SIGTERM' || (quorumResult.error && quorumResult.error.code === 'ETIMEDOUT')) {
-    const elapsed = Date.now() - startTime;
-    process.stderr.write('[nf-debug-runner] quorum call timed out after ' + elapsed + 'ms\n');
-    process.stdout.write(JSON.stringify({ fixed: false, error: 'timeout', elapsed_ms: elapsed }) + '\n');
-    process.exit(1);
-  }
-
-  if (quorumResult.status !== 0 || !quorumResult.stdout) {
-    process.stderr.write('[nf-debug-runner] quorum call failed\n');
-    process.stdout.write(JSON.stringify({ fixed: false, error: 'quorum_failed', elapsed_ms: Date.now() - startTime }) + '\n');
-    process.exit(1);
-  }
-
-  // Step 4: extract code block from response using robust regex
-  const response = quorumResult.stdout;
-  const codeMatch = response.match(/```(?:js|javascript)?\n?([\s\S]*?)\n?```/);
-  if (!codeMatch) {
-    process.stderr.write('[nf-debug-runner] no code block found in quorum response\n');
-    process.stdout.write(JSON.stringify({ fixed: false, error: 'no_code_block', elapsed_ms: Date.now() - startTime }) + '\n');
-    process.exit(1);
-  }
-
-  const fixedSource = codeMatch[1].trim();
-
-  // Step 5: validate JavaScript syntax before writing
-  try {
-    new Function(fixedSource);  // Quick syntax check
-  } catch (syntaxErr) {
-    process.stderr.write('[nf-debug-runner] extracted code has invalid syntax: ' + syntaxErr.message + '\n');
-    process.stdout.write(JSON.stringify({ fixed: false, error: 'invalid_syntax', elapsed_ms: Date.now() - startTime }) + '\n');
-    process.exit(1);
-  }
-
-  // Step 6: apply fix (overwrite stub) — guaranteed to restore on error
-  fs.writeFileSync(stubPath, fixedSource, 'utf8');
-
-  // Step 7: re-run test
-  testResult = spawnSync('node', [testPath], { ...spawnOpts, cwd: ROOT });
-  const fixed = testResult.status === 0;
-
-  process.stdout.write(JSON.stringify({ fixed, exit_code: testResult.status, elapsed_ms: Date.now() - startTime }) + '\n');
-  process.exit(fixed ? 0 : 1);
-} finally {
-  // Guarantee stub source restoration if runner crashed or timed out mid-execution
+main().catch(function(err) {
+  process.stderr.write('[nf-debug-runner] fatal: ' + err.message + '\n');
+  process.stdout.write(JSON.stringify({ fixed: false, error: 'fatal', message: err.message, elapsed_ms: Date.now() - startTime }) + '\n');
+  process.exit(1);
+}).finally(function() {
   if (originalStubSource !== null && fs.existsSync(stubPath)) {
     try {
-      // Only restore if we got partway through and the stub was modified
-      // (This is defensive; in normal operation the stub is correctly applied above)
-      const _currentSource = fs.readFileSync(stubPath, 'utf8');
-    } catch (_) {
-      // Ignore read errors in finally
-    }
+      const currentSource = fs.readFileSync(stubPath, 'utf8');
+      if (currentSource !== originalStubSource) {
+        fs.writeFileSync(stubPath, originalStubSource, 'utf8');
+        if (verbose) process.stderr.write('[nf-debug-runner] stub restored\n');
+      }
+    } catch (_) {}
   }
-}
+});

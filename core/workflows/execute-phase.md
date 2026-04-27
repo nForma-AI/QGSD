@@ -223,31 +223,33 @@ node ~/.claude/nf/bin/nf-tools.cjs activity-set \
           - If exit 0: log "Formal coverage verified: models OK"
           - If exit 1: log "WARNING: Formal model drift detected" (do NOT block commit -- fail-open)
        4. If formal-coverage-intersect.cjs is not found or errors: skip silently (fail-open)
-       5. **Loop 2 simulation gate (GATE-02, GATE-03, GATE-04):** If step 2 found intersections (exit code 0):
-          a. Run Loop 2 via `simulateSolutionLoop` from `$HOME/.claude/nf-bin/solution-simulation-loop.cjs` with:
-             - `fixIdea`: description of code changes in current diff
-             - `bugDescription`: "Formal model coverage check for plan execution"
-             - `maxIterations`: 10, `formalism`: 'tla'
-             - `onTweakFix` callback (GATE-05): reads `iterationContext.verdict` to identify which gates failed (`gate1_invariants`, `gate2_bug_resolved`, `gate3_neighbors`). Returns `null` if all gates pass or if `iterationContext.stuck_reason` is set. Otherwise returns a refinement string: `"Iteration N: Gates failing: [list]. Previous fix idea: ... Refine the approach to address the failing gate(s). Make ONE targeted edit."`.
-             Store the result object with fields: `converged`, `iterations`, `escalationReason`, `bestGatesPassing`, `tsvPath`.
-          b. Route on result:
-             - **converged === true:** Log `"Loop 2: CONVERGED (${result.iterations.length} iterations)"`. Continue to commit.
-             - **converged === false (fail-open, default):** Log `"WARNING: Loop 2 did not converge — ${result.iterations.length} iterations. Proceeding (fail-open)."`. Continue to commit.
-             - **converged === false AND plan frontmatter contains `strict_simulation: true` (fail-closed):** Log `"BLOCKED: Loop 2 failed to converge. Fix required before commit."`. Do NOT commit.
-          c. **Non-convergence reporting (fail-open path only):** When Loop 2 did not converge and the commit proceeds:
-             - Log the TSV trace path: `"Loop 2 trace: ${result.tsvPath}"`
-             - Include in SUMMARY.md under "## Issues Encountered":
-               ```
-               ### Loop 2 Simulation Warning
-               - **Status:** Non-converged (fail-open)
-               - **Iterations:** ${result.iterations.length}
-               - **Best gates passing:** ${result.bestGatesPassing}/3
-               - **Reason:** ${result.escalationReason || 'Max iterations reached'}
-               - **TSV trace:** ${result.tsvPath}
-               ```
-          d. **Non-convergence reporting (fail-closed path):** Include TSV trace in BLOCKED message: `"TSV trace at ${result.tsvPath} shows iteration history"`
-          e. If solution-simulation-loop.cjs is not found or throws: skip silently (fail-open)
-       6. If step 2 found NO intersections: skip Loop 2 entirely (GATE-03) — silent, no log
+        5. **Loop 2 simulation gate (GATE-02, GATE-03, GATE-04):** If step 2 found intersections (exit code 0):
+           a. Run Loop 2 via `refineFix` from `$HOME/.claude/nf-bin/formal-fix-loop.cjs` with:
+              - `buggySource`: content of the file being changed in current diff
+              - `testSource`: content of the associated test file
+              - `testPath`: absolute path to the test file
+              - `stubPath`: absolute path to the file being changed
+              - `testFailureOutput`: output from running the test before fix
+              - `constraint`: `{ invariant: '<from formal model>', english: '<human-readable>' }` (from formal-coverage-intersect results)
+              - `maxIterations`: 10
+              - `callLlm`: function that spawns LLM subprocess via `require(path.join(process.env.HOME, '.claude', 'nf-bin', 'resolve-cli.cjs'))()` + `spawnSync(claudePath, ['-p', prompt, '--model', 'claude-haiku-4-5-20251001', '--max-turns', '1'], { encoding: 'utf8', maxBuffer: 4*1024*1024, timeout: 120000 })`
+              Store result with fields: `converged`, `iterations`, `fixedSource`, `gates`, `rejectionReasons`.
+           b. Route on result:
+              - **converged === true:** Log `"Loop 2: CONVERGED (${result.iterations} iterations)"`. Continue to commit.
+              - **converged === false (fail-open, default):** Log `"WARNING: Loop 2 did not converge — ${result.iterations} iterations. Proceeding (fail-open)."`. Continue to commit.
+              - **converged === false AND plan frontmatter contains `strict_simulation: true` (fail-closed):** Log `"BLOCKED: Loop 2 failed to converge. Fix required before commit."`. Do NOT commit.
+           c. **Non-convergence reporting (fail-open path only):** When Loop 2 did not converge and the commit proceeds:
+              - Include in SUMMARY.md under "## Issues Encountered":
+                ```
+                ### Loop 2 Simulation Warning
+                - **Status:** Non-converged (fail-open)
+                - **Iterations:** ${result.iterations}
+                - **Gates passed:** ${Object.entries(result.gates).filter(([k,v]) => v).map(([k]) => k).join(', ') || 'none'}
+                - **Reason:** ${result.rejectionReasons.slice(-1)[0] || 'Max iterations reached'}
+                ```
+           d. **Non-convergence reporting (fail-closed path):** Include rejection reasons in BLOCKED message: `"Loop 2 blocked: ${result.rejectionReasons.slice(-1)[0]}"`
+           e. If formal-fix-loop.cjs is not found or throws: skip silently (fail-open)
+        6. If step 2 found NO intersections: skip Loop 2 entirely (GATE-03) — silent, no log
        </formal_coverage_auto_detection>
 
        ${DEBUG_CONSTRAINTS || DEBUG_FORMAL_VERDICT || DEBUG_REPRODUCING_MODEL ?

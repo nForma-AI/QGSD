@@ -2018,7 +2018,7 @@
 
 **Requirement:** solve-remediate b_to_f layer dispatches through /nf:debug (not deprecated /nf:model-driven-fix)
 
-**Implementation:** The `commands/nf/solve-remediate.md` skill file routes `b_to_f` layer remediation through `/nf:debug` for covered-not-reproduced blind spots (using autoresearch-refine.cjs for iterative refinement) and through `/nf:close-formal-gaps` for not-covered gaps. The deprecated `/nf:model-driven-fix` skill is no longer referenced in any remediation dispatch path.
+**Implementation:** The `commands/nf/solve-remediate.md` skill file routes `b_to_f` layer remediation through `/nf:debug` for covered-not-reproduced blind spots (using formal-model-loop.cjs for iterative refinement) and through `/nf:close-formal-gaps` for not-covered gaps. The deprecated `/nf:model-driven-fix` skill is no longer referenced in any remediation dispatch path.
 
 **Source files:** commands/nf/solve-remediate.md, commands/nf/model-driven-fix.md
 
