@@ -3,6 +3,7 @@
 ## Milestones
 
 - ✅ **v0.42 Repowise Intelligence Integration** — Phases 54–58 (shipped 2026-04-12)
+- 🔄 **v0.43 CodeGen Benchmark Track** — Phases 59–64 (in progress)
 - 📋 **Next milestone** — TBD
 
 ## Phases
@@ -18,6 +19,18 @@
 
 </details>
 
+<details>
+<summary>🔄 v0.43 CodeGen Benchmark Track (Phases 59–64) — IN PROGRESS</summary>
+
+- [ ] Phase 59: Problem Schema & Fixture Datasets (2 plans)
+- [ ] Phase 60: Multi-Language Execution Harness (2 plans)
+- [ ] Phase 61: Codegen Runner & Scorer (2 plans)
+- [ ] Phase 62: CI Smoke Gate & Baseline Automation (2 plans)
+- [ ] Phase 63: Benchmark Matrix Integration (1 plan)
+- [ ] Phase 64: MultiPL-E Scaffold & Gap Closure (1 plan)
+
+</details>
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -27,3 +40,9 @@
 | 56. Co-Change Prediction | v0.42 | 2/2 | Complete | 2026-04-11 |
 | 57. Skeleton Views | v0.42 | 1/1 | Complete | 2026-04-11 |
 | 58. Budget-Aware Compression | v0.42 | 1/1 | Complete | 2026-04-11 |
+| 59. Problem Schema & Fixture Datasets | v0.43 | 0/2 | Not started | — |
+| 60. Multi-Language Execution Harness | v0.43 | 0/2 | Not started | — |
+| 61. Codegen Runner & Scorer | v0.43 | 0/2 | Not started | — |
+| 62. CI Smoke Gate & Baseline Automation | v0.43 | 0/2 | Not started | — |
+| 63. Benchmark Matrix Integration | v0.43 | 0/1 | Not started | — |
+| 64. MultiPL-E Scaffold & Gap Closure | v0.43 | 0/1 | Not started | — |

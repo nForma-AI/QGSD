@@ -672,3 +672,21 @@ Archive: `.planning/milestones/v0.15-MILESTONE-AUDIT.md`
 
 ---
 
+
+## v0.43 — CodeGen Benchmark Track (In Progress)
+
+**Phases:** 59–64 (6 phases, 10 plans)
+**Requirements:** 25 defined (SCH-01/02, FIX-01–03, EXE-01–05, RUN-01/02, SCOR-01–03, BASE-01, CI-04/05, GATE-01, MAT-01/02, DOC-01, MULT-01–03)
+**Timeline:** Starting 2026-04-27
+
+**Goal**: Add industry-standard code generation benchmarks (HumanEval: 164 problems, MBPP: 500 sanitized problems) as a new `codegen` track, enabling comparability with published results. Creates a 3-axis benchmark matrix: code generation (HumanEval/MBPP) + autonomous debugging (nf:debug) + formal alignment (nf:solve).
+
+**Key design decisions:**
+- Multi-language execution harness (python3, node) with temp-dir isolation — no Docker
+- Standard pass@k scoring (pass@1, pass@10, pass@100) via unbiased estimator — separate from quorum consensus
+- LLM invocation reuses CLI-based `callClaude()` from `nf-debug-runner.cjs` — no new SDK dependency
+- Language-agnostic problem schema designed for MultiPL-E translations
+- CI smoke gate (5 problems) following the same pattern as nf:debug smoke gate
+
+---
+
