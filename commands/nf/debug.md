@@ -76,36 +76,44 @@ Fail-open on checker errors.
 
 ### Step A.7: Refinement (Loop 1)
 
-Run autoresearch-refine to iteratively improve model. Skip if $FORMAL_VERDICT is "reproduced".
+Run formal-model-loop to iteratively generate and validate a formal spec that explains the bug. Skip if $FORMAL_VERDICT is "reproduced".
 This is a MODULE-ONLY API. The Agent subprocess require()s it directly:
 
 ```javascript
 const path = require('path');
+const fs = require('fs');
+const { spawnSync } = require('child_process');
 const nfBin = path.join(process.env.HOME, '.claude', 'nf-bin');
-const { refine } = require(path.join(nfBin, 'autoresearch-refine.cjs'));
+const { refineModel } = require(path.join(nfBin, 'formal-model-loop.cjs'));
 
-const result = await refine({
-  modelPath: '<path to model from A.5 or newly created>',
-  bugContext: '$ARGUMENTS',
-  formalism: FORMALISM || 'tla',
-  maxIterations: 10,
-  verbose: false,
-  onTweak: async (path, ctx) => {
-    // Agent reads ctx.checkerOutput + ctx.tsvHistory
-    // Agent reads ctx.consecutiveDiscards to detect stuck patterns
-    // Agent makes ONE targeted edit to the model file
-    // Returns one-sentence description, or null to skip
-    return 'description of change';
-  }
+// Build callLlm: spawns a subprocess LLM call
+const claudeBin = path.join(nfBin, 'resolve-cli.cjs');
+let claudePath;
+try { claudePath = require(claudeBin)(); } catch (_) { claudePath = 'claude'; }
+
+const callLlm = (prompt) => spawnSync(claudePath, [
+  '-p', prompt, '--model', 'claude-haiku-4-5-20251001', '--max-turns', '1'
+], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024, timeout: 120000 });
+
+// Read source code from the failing test area
+const codeSource = fs.readFileSync('<path to buggy source>', 'utf8');
+const testSource = fs.readFileSync('<path to test file>', 'utf8');
+
+const result = await refineModel({
+  codeSource,
+  testSource,
+  testFailureOutput: $TEST_OUTPUT || '',
+  formalism: FORMALISM || 'alloy',
+  maxIterations: 5,
+  callLlm,
+  onLog: (msg) => process.stderr.write(msg + '\n')
 });
 ```
 
-Key constraints to specify in the prompt:
-- No per-iteration git commits (in-memory rollback, TSV-as-memory)
-- Single final commit by Agent after refine() returns
-- If result.converged: set $REPRODUCING_MODEL=result.finalModel, $FORMAL_VERDICT="reproduced"
-- If not converged: set $REPRODUCING_MODEL=result.finalModel (best effort), $FORMAL_VERDICT="not_reproduced"
-- Store result.resultsLog as $TSV_LOG for artifact tracking
+Key constraints:
+- If result.converged: set $REPRODUCING_MODEL=result.spec, $FORMAL_VERDICT="reproduced"
+- If not converged: set $REPRODUCING_MODEL=result.spec (best effort), $FORMAL_VERDICT="not_reproduced"
+- Store result.english as $CONSTRAINT_ENGLISH, result.invariant as $CONSTRAINT_INVARIANT for A.8
 
 If no model exists to refine (no models from A.5 and no close-formal-gaps available), set $FORMAL_VERDICT="no-model" and proceed to A.8.
 

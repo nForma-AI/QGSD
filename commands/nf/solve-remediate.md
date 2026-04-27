@@ -304,11 +304,11 @@ Track a counter for B->F blind spot dispatches. For each covered_not_reproduced 
    ```
    The debug skill's discovery phase identifies relevant formal models and injects the failure description into spec refinement, biasing toward capturing the failure mode.
 
-   Note: /nf:debug uses autoresearch-refine.cjs for iterative
-   refinement (up to 10 iterations with in-memory rollback and TSV-as-memory logging).
-   The TSV results log is written alongside the model file. Single final commit by caller.
+   Note: /nf:debug uses formal-model-loop.cjs for iterative
+   refinement (convergent loop with callLlm injection, up to 5 iterations).
+   The loop generates and validates formal specs until the model explains the bug.
 
-4. Log: `"B->F: dispatching /nf:debug (autoresearch-refine, in-memory rollback) for blind spot {bug_id} ({N} models to refine)"`
+4. Log: `"B->F: dispatching /nf:debug (formal-model-loop, convergent refinement) for blind spot {bug_id} ({N} models to refine)"`
 
 If the counter reaches 100, log `"B->F: max blind spot dispatches (100) reached this cycle — {N} remaining blind spots deferred"`, append `{ "layer": "b_to_f", "dispatched": 100, "max": 100, "bucket": "blind_spots" }` to the `capped_layers` array, and skip remaining blind spot entries.
 

@@ -78,8 +78,7 @@ If `--batch` is active, log the implicit FSM candidates but proceed without paus
 **Bug context parsing (MRF-01):**
 
 If `--bug-context` is provided:
-- Normalize the value: `BUG_CONTEXT=$(node bin/refinement-loop.cjs --normalize "$RAW_VALUE" 2>/dev/null)`
-  (Auto-detects file path vs inline text, trims whitespace, fails-open to empty string)
+- Normalize the value: if the value is a file path (starts with `./`, `../`, `/`, or ends in `.cjs`/`.js`/`.ts`), read its content. Otherwise trim whitespace. Store as `$BUG_CONTEXT`.
 - Store normalized text as `$BUG_CONTEXT`
 - Log: `Bug context loaded: {first 80 chars of $BUG_CONTEXT}...`
 
@@ -294,31 +293,54 @@ When `$BUG_CONTEXT` is non-empty (`--bug-context` was provided), use **inverted 
 - Model checker finds error (violation) = model **REPRODUCES** the bug = **SUCCESS**
 - Model checker passes (no errors) = model does **NOT** capture the failure = **RETRY**
 
-Run the refinement loop:
-```bash
-node bin/refinement-loop.cjs --model "$MODEL_PATH" --bug-context "$BUG_CONTEXT" --formalism "$FORMALISM" ${VERBOSE:+--verbose} --format json
+Run the refinement loop using `formal-model-loop.cjs`:
+
+```javascript
+const path = require('path');
+const fs = require('fs');
+const { spawnSync } = require('child_process');
+const nfBin = path.join(process.env.HOME, '.claude', 'nf-bin');
+const { refineModel } = require(path.join(nfBin, 'formal-model-loop.cjs'));
+
+let claudePath;
+try { claudePath = require(path.join(nfBin, 'resolve-cli.cjs'))(); } catch (_) { claudePath = 'claude'; }
+
+const callLlm = (prompt) => spawnSync(claudePath, [
+  '-p', prompt, '--model', 'claude-haiku-4-5-20251001', '--max-turns', '1'
+], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024, timeout: 120000 });
+
+const codeSource = fs.readFileSync('<source file for the requirement>', 'utf8');
+const testSource = ''; // test source if available
+
+const result = await refineModel({
+  codeSource,
+  testSource,
+  testFailureOutput: $BUG_CONTEXT,
+  formalism: '$FORMALISM',
+  maxIterations: 3,
+  callLlm,
+  onLog: (msg) => console.error(msg)
+});
 ```
 
-Parse the JSON output and route:
+Route on result:
 
-- **`status == "reproduced"`**: Log success, display iteration feedback:
-  `Attempt {N}: reproduced -- {summary}`
+- **`result.converged === true`**: Log success: `Model converged — reproduces bug in ${result.iterations} iteration(s)`.
   Continue to Step 7 (registry update).
 
-- **`status == "not_reproduced"` AND refinement retries remain (< 3 total attempts)**:
-  Display: `Attempt {N}: still passes -- {summary}, retry {N} of 2`
+- **`result.converged === false`** AND refinement retries remain (< 3 total attempts):
+  Display: `Attempt {N}: not converged, retry {N} of 2`
   Return to Step 5 to regenerate the model with refinement context. Append to the generation prompt:
-  `"Previous model passed all checks -- it did not capture the failure. Checker output: {iteration summary}. Refine the invariants to be more specific to the described failure mode."`
-  Then re-run Step 6 (up to 2 additional retries, 3 total attempts).
+  `"Previous model did not converge. Extracted invariant: ${result.invariant}. Bug explanation: ${result.bugExplanation}. Refine the invariants to be more specific to the described failure mode."`
+  Then re-run this step (up to 2 additional retries, 3 total attempts).
 
-- **`status == "not_reproduced"` AND all attempts exhausted (3 total)**:
+- **`result.converged === false`** AND all attempts exhausted (3 total):
   Display: `Model refinement exhausted (3 attempts). Model remains incomplete — does not capture the failure.`
   Continue to Step 7 with a note that model is unverified for bug reproduction.
 
 **Feedback display:**
-- If `$VERBOSE` is true: show full checker output for each iteration
+- If `$VERBOSE` is true: show full output for each iteration
 - Otherwise: show summary verdicts only (default per user decision)
-- Always include pointer to full checker output file in summary
 
 **When `$BUG_CONTEXT` is empty:** This entire section is skipped. Step 6 behaves identically to before (standard verification: no errors = success, errors = fix or report).
 </step>

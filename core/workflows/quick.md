@@ -1081,50 +1081,63 @@ When you encounter these tools in the constraints below, log "WARNING: [tool] no
      - If exit 1: log "WARNING: Formal model drift detected" (do NOT block commit -- fail-open)
   4. If formal-coverage-intersect.cjs is not found or errors: log "WARNING: formal-coverage-intersect.cjs not found -- skipping formal coverage check (fail-open)" and continue without blocking
 - **Loop 2 pre-commit simulation gate (GATE-01, GATE-03, GATE-04):** After formal coverage auto-detection passes (step 3 above), if formal models were found in scope (exit code 0 from formal-coverage-intersect.cjs):
-  1. Determine if `--strict` flag was passed to the quick task (from `$STRICT_MODE` variable, default false)
-  2. Run Loop 2 simulation via node heredoc (executor-delegated):
-     ```bash
-     node << 'NF_LOOP2'
-     const ssl = JSON.parse(process.env.HOME + '/.claude/nf-bin/solution-simulation-loop.cjs');
-     // Executor calls simulateSolutionLoop with these parameters:
-     // fixIdea: "Code changes in current diff for task ${task_number}"
-     // bugDescription: "${DESCRIPTION}"
-     // maxIterations: 10, formalism: 'tla'
-     // onTweakFix: callback that reads iterationContext.verdict,
-     //   identifies failing gates (invariants, bug_resolved, neighbors),
-     //   returns null if all pass or stuck, else returns refinement string
-     NF_LOOP2
-     ```
-     The executor MUST call `simulateSolutionLoop` from `$HOME/.claude/nf-bin/solution-simulation-loop.cjs` with:
-     - `fixIdea`: description of code changes in current diff
-     - `bugDescription`: the task description (`${DESCRIPTION}`)
-     - `maxIterations`: 10
-     - `formalism`: 'tla'
-     - `onTweakFix` callback (GATE-05): reads `iterationContext.verdict` to identify which gates failed (`gate1_invariants`, `gate2_bug_resolved`, `gate3_neighbors`). Returns `null` if all gates pass or if `iterationContext.stuck_reason` is set. Otherwise returns a refinement string: `"Iteration N: Gates failing: [list]. Previous fix idea: ... Refine the approach to address the failing gate(s). Make ONE targeted edit."`.
-     Store the result object with fields: `converged`, `iterations`, `escalationReason`, `bestGatesPassing`, `tsvPath`.
-  3. Route on result:
-     - **converged === true:** Log `"Loop 2 simulation: CONVERGED after ${result.iterations.length} iteration(s)"`. Proceed to commit.
-     - **converged === false AND NOT $STRICT_MODE (fail-open, default):** Log `"WARNING: Loop 2 simulation did not converge — ${result.iterations.length} iterations, ${result.escalationReason || 'max iterations reached'}. Proceeding (fail-open)."`. Proceed to commit anyway.
-     - **converged === false AND $STRICT_MODE (fail-closed):** Log `"BLOCKED: Loop 2 simulation failed to converge after ${result.iterations.length} iterations. Fix required before commit."`. Do NOT commit. Report failure to orchestrator with TSV trace path: `${result.tsvPath}`.
-  4. **Non-convergence reporting (fail-open path only):** When Loop 2 did not converge and the commit proceeds:
-     - Log the TSV trace path: `"Loop 2 trace: ${result.tsvPath}"`
-     - When creating SUMMARY.md, include under "## Issues Encountered":
-       ```
-       ### Loop 2 Simulation Warning
-       - **Status:** Non-converged (fail-open)
-       - **Iterations:** ${result.iterations.length}
-       - **Best gates passing:** ${result.bestGatesPassing}/3
-       - **Reason:** ${result.escalationReason || 'Max iterations reached'}
-       - **TSV trace:** ${result.tsvPath}
-       ```
-  5. **Non-convergence reporting (fail-closed path):** When --strict blocks the commit, include TSV trace in BLOCKED message: `"TSV trace at ${result.tsvPath} shows iteration history"`
-  7. **Loop 2 SUMMARY.md reporting (--full mode, MANDATORY):** When `$FULL_MODE` is true, Loop 2 results MUST always be recorded in SUMMARY.md regardless of outcome:
-     - **Converged:** Under "## Formal Modeling", add: `### Loop 2 Simulation\n- **Status:** Converged\n- **Iterations:** ${result.iterations.length}\n- **TSV trace:** ${result.tsvPath}`
-     - **Non-converged (fail-open):** Use the existing "## Issues Encountered" format (item 4 above).
-     - **Skipped (tool unavailable):** Under "## Formal Modeling", add: `### Loop 2 Simulation\n- **Status:** Skipped (tool unavailable)\n- **Reason:** solution-simulation-loop.cjs not found`
-     - **Not applicable (no intersections):** Under "## Formal Modeling", add: `### Loop 2 Simulation\n- **Status:** Not applicable (no formal coverage intersections)`
-     This ensures the Step 6.1 audit gate can reliably grep SUMMARY.md for Loop 2 evidence.
-  6. If solution-simulation-loop.cjs is not found, module loading fails, or simulateSolutionLoop throws: log "WARNING: solution-simulation-loop.cjs not found or errored -- skipping Loop 2 simulation (fail-open)". Do NOT skip silently.
+   1. Determine if `--strict` flag was passed to the quick task (from `$STRICT_MODE` variable, default false)
+   2. Run Loop 2 via `refineFix` from `$HOME/.claude/nf-bin/formal-fix-loop.cjs`:
+      ```javascript
+      const path = require('path');
+      const fs = require('fs');
+      const { spawnSync } = require('child_process');
+      const nfBin = path.join(process.env.HOME, '.claude', 'nf-bin');
+      const { refineFix } = require(path.join(nfBin, 'formal-fix-loop.cjs'));
+
+      let claudePath;
+      try { claudePath = require(path.join(nfBin, 'resolve-cli.cjs'))(); } catch (_) { claudePath = 'claude'; }
+
+      const callLlm = (prompt) => spawnSync(claudePath, [
+        '-p', prompt, '--model', 'claude-haiku-4-5-20251001', '--max-turns', '1'
+      ], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024, timeout: 120000 });
+
+      // Read the files being modified in this commit
+      const buggySource = fs.readFileSync('<file being fixed>', 'utf8');
+      const testSource = fs.readFileSync('<test file>', 'utf8');
+      const testFailureOutput = 'Output from running the test before fix';
+
+      const result = await refineFix({
+        buggySource,
+        testSource,
+        testPath: '<absolute path to test file>',
+        stubPath: '<absolute path to file being fixed>',
+        testFailureOutput,
+        constraint: { invariant: '<from formal model>', english: '<human-readable constraint>' },
+        spec: '<formal spec from formal-model-loop, if available>',
+        bugExplanation: '${DESCRIPTION}',
+        maxIterations: 10,
+        callLlm,
+        onLog: (msg) => process.stderr.write(msg + '\n')
+      });
+      ```
+      Store the result object with fields: `converged`, `iterations`, `fixedSource`, `gates`, `rejectionReasons`.
+   3. Route on result:
+      - **converged === true:** Log `"Loop 2 simulation: CONVERGED after ${result.iterations} iteration(s)"`. Proceed to commit.
+      - **converged === false AND NOT $STRICT_MODE (fail-open, default):** Log `"WARNING: Loop 2 simulation did not converge — ${result.iterations} iterations. Proceeding (fail-open)."`. Proceed to commit anyway.
+      - **converged === false AND $STRICT_MODE (fail-closed):** Log `"BLOCKED: Loop 2 simulation failed to converge after ${result.iterations} iterations. Fix required before commit."`. Do NOT commit. Report failure to orchestrator.
+   4. **Non-convergence reporting (fail-open path only):** When Loop 2 did not converge and the commit proceeds:
+      - When creating SUMMARY.md, include under "## Issues Encountered":
+        ```
+        ### Loop 2 Simulation Warning
+        - **Status:** Non-converged (fail-open)
+        - **Iterations:** ${result.iterations}
+        - **Gates passed:** ${Object.entries(result.gates).filter(([k,v]) => v).map(([k]) => k).join(', ') || 'none'}
+        - **Rejection reasons:** ${result.rejectionReasons.slice(-1)[0] || 'max iterations reached'}
+        ```
+   5. **Non-convergence reporting (fail-closed path):** When --strict blocks the commit, include rejection reasons in BLOCKED message: `"Loop 2 blocked: ${result.rejectionReasons.slice(-1)[0]}"`
+   7. **Loop 2 SUMMARY.md reporting (--full mode, MANDATORY):** When `$FULL_MODE` is true, Loop 2 results MUST always be recorded in SUMMARY.md regardless of outcome:
+      - **Converged:** Under "## Formal Modeling", add: `### Loop 2 Simulation\n- **Status:** Converged\n- **Iterations:** ${result.iterations}\n- **Gates:** ${JSON.stringify(result.gates)}`
+      - **Non-converged (fail-open):** Use the existing "## Issues Encountered" format (item 4 above).
+      - **Skipped (tool unavailable):** Under "## Formal Modeling", add: `### Loop 2 Simulation\n- **Status:** Skipped (tool unavailable)\n- **Reason:** formal-fix-loop.cjs not found`
+      - **Not applicable (no intersections):** Under "## Formal Modeling", add: `### Loop 2 Simulation\n- **Status:** Not applicable (no formal coverage intersections)`
+      This ensures the Step 6.1 audit gate can reliably grep SUMMARY.md for Loop 2 evidence.
+   6. If formal-fix-loop.cjs is not found, module loading fails, or refineFix throws: log "WARNING: formal-fix-loop.cjs not found or errored -- skipping Loop 2 simulation (fail-open)". Do NOT skip silently.
 - If formal-coverage-intersect.cjs found NO intersections (exit code non-zero): skip Loop 2 entirely — log "INFO: No formal coverage intersections found -- Loop 2 not needed (GATE-03)." If the tool was not found, log "WARNING: formal-coverage-intersect.cjs not found -- skipping Loop 2 (fail-open, GATE-03)."
 - If the plan declares `formal_artifacts: update` or `formal_artifacts: create`, execute those formal file changes and include the .planning/formal/ files in the atomic commit for that task (alongside the implementation files)
 - Formal/ files must never be committed separately — always include in the task's atomic commit
@@ -1218,7 +1231,7 @@ SUMMARY_CONTENT=$(cat "${QUICK_DIR}/${next_num}-SUMMARY.md" 2>/dev/null)
 
 # Check for formal step execution evidence
 FORMAL_COVERAGE_RAN=$(echo "$SUMMARY_CONTENT" | grep -c "formal-coverage-intersect\|Formal coverage verified\|formal coverage")
-LOOP2_RAN=$(echo "$SUMMARY_CONTENT" | grep -c "Loop 2\|solution-simulation-loop\|CONVERGED\|Non-converged\|Skipped (tool unavailable)\|Not applicable")
+LOOP2_RAN=$(echo "$SUMMARY_CONTENT" | grep -c "Loop 2\|formal-fix-loop\|CONVERGED\|Non-converged\|Skipped (tool unavailable)\|Not applicable")
 
 if [ "$FORMAL_COVERAGE_RAN" -eq 0 ] && [ ${#FORMAL_TOOLS_MISSING[@]} -eq 0 ]; then
   echo ":: AUDIT WARNING: Formal coverage auto-detection appears to have been skipped despite tools being available."
