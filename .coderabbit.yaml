@@ -8,10 +8,43 @@ reviews:
   profile: chill
   request_changes_workflow: false
   high_level_summary: true
+  high_level_summary_placeholder: "@coderabbitai summary"
+  auto_title_placeholder: "@coderabbitai"
   review_status: true
   collapse_walkthrough: false
   poem: false
   changed_files_summary: true
+
+  path_instructions:
+    - path: "bin/**"
+      instructions: |
+        CLI scripts — check for shell injection via unsanitized inputs,
+        proper error handling, and ensure no secrets are logged.
+    - path: "src/machines/**"
+      instructions: |
+        XState machines — verify state transitions are exhaustive,
+        guards return boolean, and actions have no side effects in declarations.
+    - path: "hooks/**"
+      instructions: |
+        Claude hooks — review for prompt injection vectors, validate all inputs,
+        ensure require paths use $HOME/.claude/nf-bin/ with CWD fallback.
+    - path: "bin/*.test.cjs"
+      instructions: |
+        Tests — prefer parameterized patterns. Avoid duplicating test cases
+        that already exist in other test files.
+
+  path_filters:
+    - "!node_modules/**"
+    - "!dist/**"
+    - "!**/*.lock"
+    - "!.planning/**"
+
+  tools:
+    eslint:
+      enabled: true
+    biome:
+      enabled: false
+
   auto_review:
     enabled: true
     drafts: false
